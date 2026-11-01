@@ -50,7 +50,19 @@ ngoặc là trước khi làm mượt.
 
 Dừng giữa chừng (D7):
 
-Dung lượng thư viện (C3):
+Dung lượng thư viện (C3), `apkanalyzer files list --raw-size --download-size` trên APK debug của app spike
+(chỉ `arm64-v8a`), 2026-11-01:
+
+| Tệp trong APK | Cỡ thô | Cỡ tải về (nén) | Ghi chú |
+| --- | --- | --- | --- |
+| `lib/arm64-v8a/libonnxruntime.so` | 22,2 MB | 7,9 MB | |
+| `lib/arm64-v8a/libsherpa-onnx-jni.so` | 4,6 MB | 1,9 MB | DT_NEEDED chỉ có `libonnxruntime.so` + thư viện hệ thống |
+| `lib/arm64-v8a/libsherpa-onnx-c-api.so` | 4,3 MB | 1,8 MB | JNI không dùng → Stage 9 bỏ được bằng `packaging.jniLibs.excludes` |
+| `lib/arm64-v8a/libsherpa-onnx-cxx-api.so` | 0,3 MB | 0,1 MB | như trên |
+| Cả APK debug (gồm Compose, media3, work, chưa R8) | 45,2 MB | 25,0 MB | |
+
+AAR 2.0.1 **có** `libsherpa-onnx-c-api.so` cho cả 4 ABI, khác điều ghi lúc plan ("bản Android tắt C API"). Kotlin API vẫn
+chỉ đi qua JNI.
 
 ## 3. Giải mã và resampler
 
@@ -80,3 +92,14 @@ Hướng dẫn cài đặt cần ghi cho người dùng:
 
 | Thành phần | Giấy phép | Nguồn (URL) | Ngày kiểm | Ghi công |
 | --- | --- | --- | --- | --- |
+| pyannote segmentation-3.0 (`model.onnx`, `model.int8.onnx`) | MIT, © 2022 CNRS | thẻ HF `huggingface.co/api/models/pyannote/segmentation-3.0` (`license: mit`, gated); tệp `LICENSE` trong `sherpa-onnx-pyannote-segmentation-3-0.tar.bz2` cùng nội dung | 2026-11-01 | giữ câu bản quyền MIT trong màn hình giấy phép |
+| 3D-Speaker CAM++ zh-cn common | Apache-2.0 | ModelScope API `modelscope.cn/api/v1/models/iic/speech_campplus_sv_zh-cn_16k-common` (`License: Apache License 2.0`) | 2026-11-01 | NOTICE / tên giấy phép |
+| 3D-Speaker CAM++ zh_en advanced | Apache-2.0 | `…/iic/speech_campplus_sv_zh_en_16k-common_advanced` | 2026-11-01 | như trên |
+| 3D-Speaker ERes2Net base 200k | Apache-2.0 | `…/iic/speech_eres2net_base_200k_sv_zh-cn_16k-common` | 2026-11-01 | như trên |
+| NeMo TitaNet small | Theo giấy phép NeMo Toolkit = Apache-2.0 | `catalog.ngc.nvidia.com/orgs/nvidia/teams/nemo/models/titanet_small`: "License to use this model is covered by the license of the NeMo Toolkit"; `NVIDIA/NeMo` Apache-2.0. Bản large trên HF là CC-BY-4.0 | 2026-11-01 | nếu chọn: ghi công NVIDIA như CC-BY cho chắc |
+| WeSpeaker ResNet34-LM (VoxCeleb) | CC-BY-4.0 (theo dataset VoxCeleb) | `wenet-e2e/wespeaker/docs/pretrained.md`: model VoxCeleb "follows Creative Commons Attribution 4.0 International License"; thẻ HF `Wespeaker/wespeaker-voxceleb-resnet34-LM` `cc-by-4.0` | 2026-11-01 | nếu chọn: "Speaker embedding: WeSpeaker ResNet34-LM (VoxCeleb), CC BY 4.0, wenet-e2e/wespeaker" |
+| sherpa-onnx 2.0.1 (AAR, JNI) | Apache-2.0 | `gh api repos/k2-fsa/sherpa-onnx/license` | 2026-11-01 | NOTICE / tên giấy phép |
+| ONNX Runtime (`libonnxruntime.so` trong AAR) | MIT | `gh api repos/microsoft/onnxruntime/license`. AAR **không** kèm LICENSE / NOTICE / ThirdPartyNotices → Stage 9 tự thêm | 2026-11-01 | câu bản quyền MIT của Microsoft |
+| androidx.media3 1.11.1 | Apache-2.0 | `gh api repos/androidx/media/license` | 2026-11-01 | |
+| androidx.work 2.12.0 | Apache-2.0 | AndroidX (AOSP) | 2026-11-01 | |
+| reverb-diarization v1 / v2 | phi thương mại | (lúc plan) | 2026-11-01 | **loại**, không dùng |

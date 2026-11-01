@@ -25,3 +25,6 @@ captures/
 
 # Python (script golden)
 __pycache__/
+
+# AAR sherpa-onnx của app spike (49 MB, tải bằng spikes/diarization/fetch_models.ps1)
+spikes/android/app/libs/

@@ -1,6 +1,6 @@
 # Stage 1 — Spike kỹ thuật
 
-**Trạng thái:** 📝 đã plan chi tiết 2026-11-01 · **Cần xong trước:** 0
+**Trạng thái:** 🔨 đang làm từ 2026-11-01 · **Cần xong trước:** 0
 
 ## Mục tiêu
 
@@ -241,13 +241,13 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### A. Chuẩn bị dữ liệu và công cụ
 
-- [ ] **A1. Khung `spikes/` và `.gitignore`.** Tạo cây thư mục ở trên và `spikes/README.md` (mục lục, biến
+- [x] **A1. Khung `spikes/` và `.gitignore`.** Tạo cây thư mục ở trên và `spikes/README.md` (mục lục, biến
   `GUZZ_SPIKE_DATA`). Thêm `spikes/android/app/libs/` vào `.gitignore`. Đặt `GUZZ_SPIKE_DATA` mức User =
   `D:\GuzzMobileData\stage-01`. Đây là biến thường, không phải `Path`, nên dùng `SetEnvironmentVariable` được. Đặt xong thì
   khởi động lại app Claude, hoặc đặt tạm `$env:GUZZ_SPIKE_DATA` trong shell.
   **Kiểm:** `git check-ignore -v spikes/android/app/libs/x.aar` báo tệp bị bỏ qua; `.\gradlew projects` vẫn chỉ có `:app`,
   `:core:common`, `:core:audio`.
-- [ ] **A2. Danh sách bài (D28)** ghi vào `$D\recordings.json` (ngoài repo): mỗi mã trỏ tới thư mục tạm của desktop
+- [x] **A2. Danh sách bài (D28)** ghi vào `$D\recordings.json` (ngoài repo): mỗi mã trỏ tới thư mục tạm của desktop
   (`D:\Guzz\data\tmp\*_<đuôi>`) hoặc tới tệp gốc.
 
   | Mã | Dùng cho | Nguồn (đuôi thư mục tạm) | Desktop: sạch / gốc (phút) / số người |
@@ -263,7 +263,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   | V1 | giải mã video | tệp gốc của `*_c2301aab` (mp4, 467 MB) | 39,2 / 59,7 / 3 |
 
   **Kiểm:** tệp có đủ 9 mã; mọi đường dẫn đều tồn tại.
-- [ ] **A3. `spikes/diarization/prepare_data.py`.** Chạy bằng `D:\Guzz\runtime\python\python.exe -B -s`, dùng
+- [x] **A3. `spikes/diarization/prepare_data.py`.** Chạy bằng `D:\Guzz\runtime\python\python.exe -B -s`, dùng
   `D:\Guzz\runtime\ffmpeg\ffmpeg.exe`. Chạy lại nhiều lần được: tệp đã có và đúng SHA-256 thì bỏ qua. Script làm:
   - **B1–B5**, chép vào `$D\<mã>\`:
     - `sach.flac` và `danh_sach_doan.json`;
@@ -285,13 +285,13 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   ghi `$start = Get-Date` trước khi chạy, sau đó lệnh
   `Get-ChildItem D:\Guzz -Recurse -File | ? { $_.FullName -notlike 'D:\Guzz\runtime\*' -and $_.LastWriteTime -gt $start }`
   ra trống.
-- [ ] **A4. Python cho sherpa-onnx.** Chạy lần lượt:
+- [x] **A4. Python cho sherpa-onnx.** Chạy lần lượt:
   - `uv venv --python 3.12 $D\venv`
   - `uv pip install --python $D\venv sherpa-onnx==2.0.1 numpy soundfile psutil`
   - `uv pip freeze --python $D\venv > spikes\diarization\requirements.txt`
 
   **Kiểm:** `& $D\venv\Scripts\python.exe -c "import sherpa_onnx; print(sherpa_onnx.__version__)"` in ra `2.0.1`.
-- [ ] **A5. `spikes/diarization/fetch_models.ps1`** tải vào `$D\models\`. Mỗi tệp tải về để trong một thư mục riêng.
+- [x] **A5. `spikes/diarization/fetch_models.ps1`** tải vào `$D\models\`. Mỗi tệp tải về để trong một thư mục riêng.
   - Tải:
     - `sherpa-onnx-pyannote-segmentation-3-0.tar.bz2`: giải nén ra `seg\`, đọc tệp LICENSE đi kèm;
     - 5 model embedding của D33;
@@ -306,7 +306,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### B. Độ chính xác trên PC (mục 1; D28, D29, D33, D34)
 
-- [ ] **B1. `run_sherpa.py`** (chạy bằng venv của A4).
+- [x] **B1. `run_sherpa.py`** (chạy bằng venv của A4).
   - Đầu vào: wav / flac / f32, 16 kHz mono.
   - Tham số: `--seg`, `--emb`, `--threads` (mặc định 8), `--shift` (`window_shift_ratio`), `--threshold` hoặc
     `--num-clusters`, `--out`.
@@ -316,7 +316,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
   **Kiểm:** chạy `0-four-speakers-zh.wav` với `--num-clusters 4` thì `so_nguoi` = 4; `speaker.load_speaker_turns` của desktop
   đọc được JSON ra.
-- [ ] **B2. `evaluate.py`** (chạy bằng `D:\Guzz\runtime\nguoi_noi\python.exe -B -s`).
+- [x] **B2. `evaluate.py`** (chạy bằng `D:\Guzz\runtime\nguoi_noi\python.exe -B -s`).
   - Với mỗi cặp (`ref.json`, JSON của sherpa-onnx), tính cả trước và sau `process_turns`:
     - DER, tách thành miss / false alarm / confusion;
     - phần trăm thời gian của người nói chính ở mỗi bên và độ lệch giữa hai bên;
@@ -395,7 +395,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
   **Kiểm:** chạy `--es bench noop --ei seconds 60` rồi `adb pull`: `noop.jsonl` có dòng bắt đầu, dòng kết thúc, PSS đỉnh
   > 0; thông báo hiện trong lúc chạy; log ghi `getLargeMemoryClass()` = 512.
-- [ ] **C3. Dung lượng thư viện** (cho Stage 9): chạy `apkanalyzer files list` và `apkanalyzer files download-size` trên APK
+- [x] **C3. Dung lượng thư viện** (cho Stage 9): chạy `apkanalyzer files list` và `apkanalyzer files download-size` trên APK
   spike.
   **Kiểm:** cỡ `lib/arm64-v8a/libsherpa-onnx-jni.so` và `libonnxruntime.so` đã ghi vào stage-01-results.md.
 
@@ -553,7 +553,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### H. Giấy phép (mục 6)
 
-- [ ] **H1. Bảng giấy phép** cho mọi thứ đã chọn hoặc định đóng gói:
+- [x] **H1. Bảng giấy phép** cho mọi thứ đã chọn hoặc định đóng gói:
   - segmentation-3.0: MIT, đối chiếu thẻ HF với tệp LICENSE trong tar.bz2;
   - model embedding chọn ở B. 3D-Speaker: trường License trên ModelScope. TitaNet small: trang NGC
     `nvidia/nemo/titanet_small`. WeSpeaker: `wespeaker/docs/pretrained.md`;
@@ -619,5 +619,36 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 - **2026-11-01, plan.** Kiểm thông tin bên ngoài (mục "Thông tin bên ngoài"). Hỏi người dùng 10 câu trắc nghiệm, cả 10 câu
   đều chọn phương án Recommended (D28–D38). Viết kế hoạch chi tiết A–J và khung stage-01-results.md. Plan bị ngắt giữa
   chừng vì người dùng cần để dành token; câu trả lời được lưu ở ghi chú ngoài repo, phiên sau làm tiếp.
+- **2026-11-01, làm A–B2.**
+  - App Claude giữ `JAVA_HOME` cũ (JDK 25 đã gỡ) và chưa có `GUZZ_SPIKE_DATA`: lệnh Gradle trong session này đặt tạm
+    `$env:JAVA_HOME` / `$env:ANDROID_HOME` / `$env:GUZZ_SPIKE_DATA` từ giá trị mức User.
+  - A3: 5 bài đều chỉ có một JSON pyannote trong thư mục tạm, chạy trên `sach.flac` (desktop mặc định `run_on =
+    da_lam_sach`). `L1_10m` / `L1_60m` là phần đầu của `L1_120m.f32` (giải mã một lần), giống hệt cắt riêng.
+    Thêm `_common.py` (thư viện chuẩn) dùng chung cho các script, vì mỗi script chạy bằng một Python khác nhau.
+  - A4: cài thêm `scipy` vào venv cho `linear_sum_assignment` của B8.
+  - B1: bản Python của sherpa-onnx để `min_duration_on = 0,3`, Kotlin để 0,2. `run_sherpa.py` đặt rõ 0,2 / 0,5 để PC và
+    điện thoại chạy cùng cấu hình. Docstring Python của `process` ghi "Return a non-zero value to abort", trái với đọc mã
+    nguồn lúc plan → D7 thử trên máy.
+  - B2: kiểm "gán hết cho một người" theo plan (confusion ≈ phần người khác, ±0,5 điểm) chỉ đúng khi collar 0. Với
+    collar 0,5 s, B1 còn 6,9% thay vì 11,2%, vì ref có 3 623 lượt và collar bỏ 0,25 s mỗi bên ranh giới. Self-test kiểm
+    cả hai: collar 0 so với phần người khác, collar 0,5 so với phần người khác tính sau khi bỏ vùng collar (tự tính, không
+    qua pyannote). Cả 5 bài khớp tới 0,1 điểm.
+  - Thêm `sweep.py`: chạy B3–B8 theo nhóm, mỗi lần chạy một process để RAM đỉnh đúng, JSON đã có thì bỏ qua.
+- **2026-11-01, làm C, H1, viết code D–G.**
+  - App spike chia package: `bench/` (BenchActivity, BenchService, MemSampler, BatteryProbe, BenchLog), `diarize/`,
+    `media/`, `automation/`. Vì vậy class của G1/G2 là `io.github.cozycode890.guzz.spike.automation.RunReceiver` và
+    `….automation.TrampolineActivity`, không phải `….spike.RunReceiver` như plan; lệnh và macro trong `spikes/README.md`
+    dùng tên mới.
+  - Thêm `WAKE_LOCK`: BenchService và HeartbeatService giữ partial wake lock, vì FGS không giữ CPU thức khi màn hình tắt.
+    Guzz thật cũng phải làm vậy (ghi vào Phát sinh của Stage 4 ở I3).
+  - `RunReceiver` / `TrampolineActivity` có extra `bench` thì khởi động BenchService thay cho HeartbeatService, để D6 / G4
+    chạy bench 2 giờ bằng MacroDroid; xong bench thì phát DONE.
+  - D7 cách 3: `IsolatedBenchService` (process `:diarize`) được gọi bằng `startService`, nên không lên FGS được thì vẫn
+    chạy như service thường.
+  - C3: AAR 2.0.1 có `libsherpa-onnx-c-api.so` (plan ghi bản Android tắt C API). JNI không phụ thuộc vào nó.
+  - E4: alias của 10 kHz và 15 kHz khi ra 16 kHz rơi đúng 6 kHz và 1 kHz, tức trùng hai sin còn lại của `tones48k`.
+    `compare_pcm.py` đo suy giảm 10 / 15 kHz trên đoạn quét sin (quét tuyến tính nên thời điểm ứng với tần số), còn
+    `tones48k` chỉ kiểm biên độ 1 / 6 kHz.
+  - F3: `gemini_compare.py` chỉ gửi khi có `--yes`.
 
 ## Phát sinh

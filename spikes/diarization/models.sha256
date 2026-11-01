@@ -1,0 +1,5 @@
+c3a928cc16d165ce869553f71fcbe6fc1c1b513aee0665414548780a979b2325  checksum\checksum.txt
+24615ee884c897d9d2ba09bb4d30da6bb1b15e685065962db5b02e76e4996488  seg-tar\sherpa-onnx-pyannote-segmentation-3-0.tar.bz2
+220ad67ca923bef2fa91f2390c786097bf305bceb5e261d4af67b38e938e1079  seg\model.onnx
+d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d  seg\model.int8.onnx
+bedf036caed208386c67b4ef4b11f83d74dd0d420b102163a1c33cd09cde7010  test-wav\0-four-speakers-zh.wav

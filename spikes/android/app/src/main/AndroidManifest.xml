@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- FGS không giữ CPU thức khi màn hình tắt; bench và heartbeat giữ partial wake lock như Guzz thật sẽ phải làm. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- largeHeap: heap Java tối đa 512 MB trên máy thử thay vì 256 MB (D34). -->
+    <application
+        android:name=".SpikeApp"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        tools:ignore="MissingApplicationIcon">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Nhận lệnh đo từ adb: am start -n …/.bench.BenchActivity -\-es bench <tên> … -->
+        <activity
+            android:name=".bench.BenchActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service
+            android:name=".bench.BenchService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProcessing|dataSync" />
+
+        <!-- D7 cách 3: tách giọng trong process riêng, process chính giết được mà không chết theo. -->
+        <service
+            android:name=".bench.IsolatedBenchService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProcessing|dataSync"
+            android:process=":diarize" />
+
+        <!-- G1: các cách MacroDroid khởi động việc nền. -->
+        <receiver
+            android:name=".automation.RunReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="io.github.cozycode890.guzz.spike.action.RUN" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".automation.TrampolineActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service
+            android:name=".automation.HeartbeatService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProcessing|dataSync" />
+
+        <!-- WorkManager tự khai service này; thêm loại FGS để setForeground() của ExpeditedWorker hợp lệ. -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="mediaProcessing|dataSync"
+            tools:node="merge" />
+    </application>
+
+</manifest>
