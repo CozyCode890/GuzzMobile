@@ -336,7 +336,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   `shift` ∈ {0,1; 0,25; 0,5}, chạy trên B1–B5.
   **Kiểm:** bảng DER / thời gian / RAM theo shift. Chọn shift lớn nhất mà DER trung bình tăng không quá 1 điểm % so với 0,1
   (shift lớn thì ít embedding hơn, nên nhanh và nhẹ hơn). Ghi lựa chọn vào Nhật ký.
-- [ ] **B4. So 5 embedding (D33)** với shift chọn ở B3, `num_clusters` = số người của desktop, trên B1–B5.
+- [x] **B4. So 5 embedding (D33)** với shift chọn ở B3, `num_clusters` = số người của desktop, trên B1–B5.
   **Kiểm:** bảng DER sau làm mượt theo embedding × bài; chọn ra 2 embedding có DER trung bình thấp nhất.
 - [ ] **B5. Ngưỡng phân cụm**, cho trường hợp không biết số người nói (mặc định của desktop). Chạy 2 embedding của B4 ×
   `threshold` ∈ {0,3; 0,4; 0,5; 0,6; 0,7; 0,8}, trên B1–B5.
@@ -411,9 +411,9 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   độ), ghi JSON cùng định dạng với PC vào `results/`. Chạy `L1_10m` với cấu hình tốt nhất của B.
   **Kiểm:** chạy `run_sherpa.py` trên PC với cùng tệp, cùng cấu hình; `evaluate.py` so JSON của điện thoại với JSON của PC
   (PC làm tham chiếu) → DER ≤ 1%.
-- [ ] **D3. Số luồng.** `L1_10m`, `numThreads` ∈ {1, 2, 4, 6, 8}.
+- [x] **D3. Số luồng.** `L1_10m`, `numThreads` ∈ {1, 2, 4, 6, 8}.
   **Kiểm:** bảng thời gian theo số luồng. Chọn số luồng nhỏ nhất mà chậm hơn bản nhanh nhất không quá 10%, dùng cho D4–D6.
-- [ ] **D4. 1 giờ và 2 giờ, chạy nguyên bài.** `L1_60m`, rồi `L1_120m` (`FloatArray` 460 MB, sát heap 512 MB). Bắt
+- [x] **D4. 1 giờ và 2 giờ, chạy nguyên bài.** `L1_60m`, rồi `L1_120m` (`FloatArray` 460 MB, sát heap 512 MB). Bắt
   `OutOfMemoryError` và ghi lại, không để app chết.
   **Kiểm:** mỗi lần chạy có một dòng kết quả: thời gian, PSS đỉnh, `VmHWM`, heap Java đỉnh. Nếu OOM thì ghi nó xảy ra ở đâu:
   lúc cấp mảng hay lúc chạy native.
@@ -490,7 +490,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### G. Intent → việc chạy nền (mục 5; D35)
 
-- [ ] **G1. Thành phần trong app spike.**
+- [x] **G1. Thành phần trong app spike.**
   - `RunReceiver`: exported, action `io.github.cozycode890.guzz.spike.action.RUN`, extra `method`, `request_id`,
     `minutes`. Với `method=broadcast` thì gọi `startForegroundService` ngay; với `method=work` thì xếp `ExpeditedWorker`
     vào hàng đợi.
@@ -673,5 +673,48 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
     Kotlin 2.x (invokedynamic + D8) không có method đó. Sửa bằng lớp callback viết rõ (`ProgressCallback`). Stage 5 phải
     làm như vậy (ghi ở I3).
   - Thêm `spikes/android/run_bench.ps1` và `spikes/android/batches/*.txt` để chạy lần lượt nhiều bench qua adb.
+  - D3 (màn hình tắt cả 5 lượt): 1 / 2 / 4 / 6 / 8 luồng = 213 / 125 / 77 / 113 / 108 s. Lượt 4 luồng chạy đầu tiên lúc
+    máy mát, nên `batches/d4.txt` đo lặp 4 luồng và thêm 3 luồng trước khi chốt.
+  - G1 (lệnh từ adb, chỉ để kiểm code): broadcast, work và TrampolineActivity đều lên FGS, đủ nhịp 3 phút, phát DONE.
+  - 15:21 process app bị `BackupManagerService` giết để sao lưu đầy đủ (`FullBackupSession`, máy đang sạc và rảnh) dù
+    đang có hai FGS. App spike đặt `android:allowBackup="false"`. Guzz thật cũng phải chặn (ghi ở I3 cho Stage 4 / 9).
+  - Session bị ngắt giữa chừng: B4 và hàng đợi trên máy dừng; chạy lại (`sweep.py B4` bỏ qua JSON đã có;
+    `run_bench.ps1` bỏ qua log đã có `ket_thuc`). Bench đang chạy trên máy vẫn chạy tiếp vì nằm trong FGS của app.
+  - Người dùng hỏi chạy qua Wi-Fi: máy đã để adbd nghe TCP 5555, `adb connect 192.168.1.6:5555` được ngay, không đổi gì
+    trên máy. Từ đây dùng `$env:ANDROID_SERIAL = '192.168.1.6:5555'`; `run_bench.ps1` tự connect lại khi rớt Wi-Fi và
+    không tính rớt kết nối là app chết. Máy rút cáp được, nên D6 / G3 không cần cáp; đêm G3 thì `adb disconnect` để PC
+    không đánh thức máy.
+  - B4 xong: chọn CAM++ zh_en advanced (DER TB 8,2%) và ERes2Net base (9,9%) cho B5. B5 chạy `--jobs 3 --threads 5`.
+  - D3: chọn 4 luồng. D4: nguyên bài 60 phút PSS 3,7 GB; 120 phút bị giết vì LOW_MEMORY sau 21 phút → D30 không đạt với
+    nguyên bài ở shift 0,1. D5 đo thêm P = 15 và 20 phút ngoài P = 30 / 60 của plan (B8, D5), vì RAM phân cụm tăng
+    theo bình phương độ dài phần; chọn P cuối cùng để ở I2. D5 chạy trước B5 / B8 với embedding của B4 và ngưỡng tạm
+    0,5, vì ngưỡng gần như không đổi thời gian và RAM.
+  - D7 cách 1: callback trả về 1 không dừng được, sherpa-onnx chạy tới hết.
+  - B5, CAM++ zh_en, ngưỡng 0,3–0,7: mỗi bài ra 12–471 cụm, DER TB 41–89%, 0 bài đạt; ngưỡng 0,3 bài B1 hết RAM trên PC
+    (`MemoryError`), các lượt khác RAM đỉnh tới 7,7 GB. Khoảng cách cosine nằm trong [0, 2], phân cụm complete-linkage
+    đòi mọi cặp trong cụm gần nhau nên cần ngưỡng cao hơn nhiều. Bỏ phần ERes2Net ở 0,3–0,8; chạy CAM++ zh_en ở 0,8 / 0,9 /
+    1,0 / 1,1 / 1,2 trước, rồi ERes2Net quanh vùng tốt nhất. Luật chọn ngưỡng của B5 giữ nguyên.
+  - **RAM của sherpa-onnx phình theo số cụm** (ép 2–5 người ở B4: khoảng 1,1 GB trên PC; ngưỡng 0,3: 7,7 GB). Vậy 3,7 GB
+    của D4 (60 phút, ngưỡng 0,5 → 100 cụm) chủ yếu do ngưỡng sai. D4 / D5 đo lại với ngưỡng của B5; bỏ hai lượt D5 P = 15
+    / 30 ở ngưỡng 0,5.
+  - D5 kiểm 1 đạt: `L1_10m`, P = 3 phút, O = 60 s, bản Kotlin trùng bản Python 136/136 lượt, cách nối từng nhãn giống hệt.
+  - Người dùng bật "Gỡ lỗi không dây" → adb trên PC tự nối thêm kết nối TLS qua mDNS; chạy adb server với `ADB_MDNS=0`.
+    Theo yêu cầu người dùng, adb chuyển sang địa chỉ Tailscale `100.71.61.23:5555` (`ANDROID_SERIAL`), bỏ đường LAN.
+    Lưu ý cho G3 / D6: app Tailscale (VPN) chạy trên máy có thể ảnh hưởng Doze và pin; ghi lại lúc chạy đêm.
+  - D5, `L1_120m`, P = 20 phút, ngưỡng tạm 0,5 (71 cụm): 22,9 phút, PSS 556 MB, đạt D30 ngay cả với số cụm quá nhiều.
+  - D7 cách 3: giết process `:diarize` mất 54 ms, process chính sống, RAM trả lại.
+- **2026-11-01 18:40, TẠM DỪNG theo yêu cầu người dùng (đi thi; người dùng báo khi nào chạy tiếp).** Đã tắt mọi job
+  trên PC; trên máy gửi `bench stop` (lượt `dec_L1ogg_sinc` có thể chạy nốt rồi tự dừng). Khi chạy tiếp:
+  1. Kết nối máy: `adb connect 100.71.61.23:5555` (Tailscale), `$env:ANDROID_SERIAL = '100.71.61.23:5555'`. Có hai kết
+     nối thì `adb kill-server; $env:ADB_MDNS = '0'; adb start-server`. Máy khởi động lại thì phải cắm USB, người dùng chạy
+     `adb tcpip 5555`. Đặt tạm `$env:JAVA_HOME`, `$env:ANDROID_HOME`, `$env:GUZZ_SPIKE_DATA` từ giá trị mức User.
+  2. PC, B5: chạy lại `sweep.py B5 --shift 0.1 --embs campplus-zhen --thresholds 0.8 0.9 1.0 1.1 1.2 --jobs 3 --threads 5`
+     (đã có 4/5 bài ở 0,8; ở 0,8 vẫn ra 27–110 cụm, có thể cần ngưỡng > 1,2). Thấy vùng tốt thì chạy ERes2Net quanh đó,
+     rồi chọn ngưỡng theo luật B5. Sau đó B6, B7, B8 (thêm P = 15 / 20 ngoài 30 / 60).
+  3. Máy: E3 còn `dec_L1ogg_sinc` (nếu chưa có `ket_thuc`), `dec_V1mp4_only/_sinc/_sonic`
+     (`run_bench.ps1 -Batch spikes\android\batches\e3.txt`, bỏ qua lượt đã xong). Rồi E4 với `L1.m4a_{sinc,sonic}.f32`.
+  4. Máy, sau B5: đo lại D4 (nguyên bài 60 / 120 phút) và D5 (`L1_120m`, `L2`, P đã chọn) với ngưỡng của B5; D7 cách 2.
+  5. Việc chờ người dùng: G2 tạo 4 macro (hướng dẫn trong `spikes/README.md`, mục "Macro MacroDroid"), cài đặt S1, rồi đêm
+     1 (G3 S1) và đêm 2 (S0); D6 + G4; G5 (`device_config`); F3 (hỏi lại trước khi gửi Gemini).
 
 ## Phát sinh

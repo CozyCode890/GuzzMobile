@@ -1,0 +1,8 @@
+# D5 + D7: chia phần (D34). D4 cho thấy nguyên bài 60 phút ở shift 0,1 đã tốn PSS 3,7 GB, bài 120 phút bị giết vì
+# LOW_MEMORY, nên đo RAM theo độ dài phần P = 15 / 20 / 30 phút. Embedding CAM++ zh_en advanced (B4), ngưỡng 0,5 tạm
+# thời (B5 chưa xong; ngưỡng ít ảnh hưởng thời gian và RAM).
+d5_L1_10m_p3 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es piece_minutes 3 --es overlap_seconds 60 --es out d5_L1_10m_p3
+d5_L1_120m_p20 --es bench diarize --es input L1_120m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es piece_minutes 20 --es overlap_seconds 60 --es out d5_L1_120m_p20
+d5_L1_120m_p15 --es bench diarize --es input L1_120m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es piece_minutes 15 --es overlap_seconds 60 --es out d5_L1_120m_p15
+d5_L1_120m_p30 --es bench diarize --es input L1_120m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es piece_minutes 30 --es overlap_seconds 60 --es out d5_L1_120m_p30
+d7_isolated --es bench isolated --ei kill_after_sec 30 --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es out d7_isolated

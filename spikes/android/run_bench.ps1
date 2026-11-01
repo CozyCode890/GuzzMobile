@@ -21,6 +21,18 @@ $D = if ($env:GUZZ_SPIKE_DATA) { $env:GUZZ_SPIKE_DATA } else { 'D:\GuzzMobileDat
 $out = Join-Path $D 'out\phone'
 New-Item -ItemType Directory -Force $out | Out-Null
 
+# Qua Wi-Fi ($env:ANDROID_SERIAL = "<ip>:5555"), máy ngủ hay đổi mạng thì adb rớt kết nối: thử connect lại.
+# Trả về true nếu adb đang thấy máy.
+function Test-Adb {
+    if ((adb get-state 2>$null) -eq 'device') { return $true }
+    if ($env:ANDROID_SERIAL -and $env:ANDROID_SERIAL.Contains(':')) {
+        adb connect $env:ANDROID_SERIAL 2>&1 | Out-Null
+        Start-Sleep -Seconds 2
+        return (adb get-state 2>$null) -eq 'device'
+    }
+    return $false
+}
+
 function Get-EndCount([string]$name) {
     $text = adb shell "cat $files/results/$name.jsonl 2>/dev/null"
     return @($text | Select-String '"su_kien":"ket_thuc"').Count
@@ -39,6 +51,8 @@ function Invoke-Bench([string]$name, [string[]]$extras) {
         if (((Get-Date) - $t0).TotalMinutes -gt $TimeoutMin) { throw "Quá $TimeoutMin phút: $name" }
         Start-Sleep -Seconds 5
         # Lỗi native (vd JNI abort) giết cả process mà không kịp ghi ket_thuc: thấy process mất 3 lần liền thì bỏ qua.
+        # Mất kết nối adb thì không tính là process mất.
+        if (-not (Test-Adb)) { continue }
         if (-not (adb shell pidof $pkg)) { $gone++ } else { $gone = 0 }
         if ($gone -ge 3) {
             Write-Host "  PROCESS CHẾT, không có ket_thuc: $name"

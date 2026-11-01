@@ -41,8 +41,20 @@ mảng âm thanh: bản Python chép mảng numpy sang `std::vector` (85 phút =
 
 ### B4. Embedding (num_clusters = số người của desktop)
 
-| Embedding | B1 | B2 | B3 | B4 | B5 | TB |
-| --- | --- | --- | --- | --- | --- | --- |
+PC, shift 0,1, trên `sach.flac`, 2026-11-01. Chạy 2 process song song × 8 luồng, nên cột thời gian chỉ so được giữa các
+embedding với nhau. DER sau làm mượt (trong ngoặc: trước làm mượt), %.
+
+| Embedding | B1 | B2 | B3 | B4 | B5 | TB | Đạt D29 | Thời gian 5 bài (s) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CAM++ zh-cn common | 4,3 | 2,8 | 7,2 | 45,5 | 1,3 | 12,2 (11,6) | 3/5 | 1 942 |
+| **CAM++ zh_en advanced** | 4,6 | 2,8 | 7,2 | 25,3 | 1,3 | **8,2** (8,8) | 3/5 | 2 477 |
+| **ERes2Net base 200k** | 4,6 | 1,3 | 8,9 | 33,6 | 1,3 | **9,9** (10,1) | 4/5 | 5 529 |
+| NeMo TitaNet small | 2,5 | 2,8 | 6,5 | 45,5 | 1,3 | 11,7 (10,9) | 3/5 | 3 096 |
+| WeSpeaker ResNet34-LM | 4,3 | 2,4 | 51,9 | 38,7 | 1,3 | 19,7 (18,8) | 3/5 | 4 537 |
+
+Chọn cho B5: **CAM++ zh_en advanced** và **ERes2Net base** (DER trung bình thấp nhất). ERes2Net chậm gấp khoảng 2,2 lần
+CAM++. B4 (4 người, người chính 53,6%) trượt với mọi embedding. B2 trượt "số người" ở 3 embedding vì làm mượt nuốt hết
+người phụ (người chính 97,2% ở desktop).
 
 ### B5. Ngưỡng phân cụm
 
@@ -63,10 +75,41 @@ D2 (kiểm bản điện thoại so với bản PC): `L1_10m`, CAM++ zh-cn, shif
 **trùng hoàn toàn** với JSON của `run_sherpa.py` trên PC: 144/144 lượt cùng mốc (±2 ms) và cùng nhãn, DER 0,0%.
 (Ngưỡng 0,5 ra 25 người cho bài 1 người: ngưỡng chọn ở B5.)
 
+D3 (số luồng), `L1_10m`, CAM++ zh-cn, shift 0,1, ngưỡng 0,5, máy cắm sạc. Chọn **4 luồng**: nhanh nhất; nhiều luồng hơn
+lại chậm đi, có lẽ vì luồng thừa rơi vào nhân nhỏ và các luồng ONNX phải chờ nhau.
+
+| Luồng | 1 | 2 | 3 | 4 | 4 (đo lặp) | 6 | 8 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Thời gian (s) | 212,7 | 125,4 | 120,7 | **77,2** | 90,3 | 113,2 | 107,5 |
+| Màn hình | tắt | tắt | bật | tắt | bật | tắt | tắt |
+| PSS đỉnh (MB) | 358 | 311 | 340 | 302 | 303 | 341 | 331 |
+
+D4 và D5 (bảng dưới), D6 (pin và nhiệt). VmHWM là đỉnh RSS suốt đời process, nên lượt sau trong cùng process thừa hưởng
+đỉnh của lượt trước; lấy PSS đỉnh làm số chính (tiêu chí D30).
+
 | Đầu vào | Cách chạy | Luồng | Thời gian | PSS đỉnh | VmHWM | Heap Java đỉnh | Pin | Nhiệt đỉnh |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `L1_10m` | nguyên bài, CAM++ zh-cn, shift 0,1 | 4 | 77 s (RTF 0,13) | 302 MB | 545 MB | 51 MB | cắm sạc | 33 °C |
+| `L1_60m` | nguyên bài, như trên | 4 | 716 s (RTF 0,20) | **3 739 MB** (native 3 729 MB) | 3 911 MB | 239 MB | cắm sạc | |
+| `L1_120m` | nguyên bài, như trên | 4 | **bị giết sau 21 phút** | — | RSS 6,2 GB lúc bị giết | 443 MB (mảng 460 MB cấp được) | cắm sạc | |
+| `L1_120m` | chia phần P = 20 phút, O = 60 s, CAM++ zh_en, ngưỡng **0,5 (tạm, ra 71 cụm)** | 4 | **1 372 s (22,9 phút)** | **556 MB** | | | rút cáp: −8% | 41,1 °C |
+
+Ngưỡng 0,5 sinh quá nhiều cụm, mà RAM phình theo số cụm (xem B5), nên các số trên là cận trên; đo lại với ngưỡng của B5.
+
+D4: cấp `FloatArray` 460 MB cho bài 2 giờ **được** (heap Java lên 443 / 512 MB), nhưng phần native (phân cụm) phình theo
+bình phương số embedding: bài 60 phút đã 3,7 GB, bài 120 phút bị hệ thống giết lúc chạy native
+(`ApplicationExitInfo` reason `LOW_MEMORY`, importance 125 = FGS, RSS 6,2 GB). **Chạy nguyên bài ở shift 0,1 không dùng
+được trên điện thoại** → chia phần (D5).
 
 Dừng giữa chừng (D7):
+
+- Cách 1, callback trả về khác 0: `L1_10m`, callback trả về 1 từ khối 79 / 792. sherpa-onnx **vẫn gọi tiếp 712 lần và
+  chạy tới hết** (63 s sau lần trả về đầu tiên). Giá trị trả về bị bỏ qua đúng như đọc mã nguồn, dù docstring Python ghi
+  "Return a non-zero value to abort". Không dừng được bằng callback.
+- Cách 3, process riêng: bench `diarize` chạy trong process `:diarize`, sau 30 s thì `Process.killProcess`. Process
+  `:diarize` biến mất sau 54 ms, process chính vẫn sống, RAM trống của máy trở lại (4 795 → 4 983 MB sau 2 s; PSS của
+  `:diarize` lúc giết 205 MB).
+- Cách 2 (chia phần + lệnh Dừng): chưa đo.
 
 Dung lượng thư viện (C3), `apkanalyzer files list --raw-size --download-size` trên APK debug của app spike
 (chỉ `arm64-v8a`), 2026-11-01:
