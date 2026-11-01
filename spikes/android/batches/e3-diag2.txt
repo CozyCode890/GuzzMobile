@@ -1,0 +1,5 @@
+# E3, chẩn đoán tiếp: sync và async, màn hình tắt, 300 s đầu của L1.m4a, chỉ giải mã; lặp lại để thấy dao động.
+diag_sync_off2 --es bench decode --es input L1.m4a --es mode decode --ei max_seconds 300 --es api sync
+diag_async_off --es bench decode --es input L1.m4a --es mode decode --ei max_seconds 300 --es api async
+diag_sync_off3 --es bench decode --es input L1.m4a --es mode decode --ei max_seconds 300 --es api sync
+diag_async_off2 --es bench decode --es input L1.m4a --es mode decode --ei max_seconds 300 --es api async

@@ -198,16 +198,27 @@ object DiarizeBench : Bench {
 
     private fun diarize(sd: OfflineSpeakerDiarization, samples: FloatArray, label: String, b: BenchContext,
                         probe: CallbackProbe?): List<Seg> {
-        var last = 0L
-        val result = sd.processWithCallback(samples, { done: Int, total: Int, _: Long ->
+        val result = sd.processWithCallback(samples, ProgressCallback(label, b, probe), 0L)
+        return result.sortedBy { it.start }.map { Seg(it.start.toDouble(), it.end.toDouble(), it.speaker) }
+    }
+
+    /**
+     * Callback tiến độ phải là lớp viết rõ, không dùng lambda: JNI của sherpa-onnx tìm method
+     * `invoke(IIJ)Ljava/lang/Integer;`, mà lambda của Kotlin 2.x (invokedynamic, D8 desugar) chỉ có bản
+     * `invoke(Object, Object, Object)`, nên JNI ném NoSuchMethodError và process bị abort (gặp ở D2).
+     */
+    private class ProgressCallback(val label: String, val b: BenchContext, val probe: CallbackProbe?) :
+        (Int, Int, Long) -> Int {
+        private var last = 0L
+
+        override fun invoke(done: Int, total: Int, arg: Long): Int {
             val now = SystemClock.elapsedRealtime()
             if (done == total || now - last > 5000) {
                 last = now
                 b.progress("$label: $done/$total khối")
             }
-            probe?.onProgress(done, total) ?: 0
-        }, 0L)
-        return result.sortedBy { it.start }.map { Seg(it.start.toDouble(), it.end.toDouble(), it.speaker) }
+            return probe?.onProgress(done, total) ?: 0
+        }
     }
 
     /** Embedding của tối đa 30 s tiếng nói (lượt dài trước), chuẩn hoá L2. Port của run_sherpa.py: mean_embedding. */

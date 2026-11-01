@@ -4,7 +4,7 @@ Bước E4 của Stage 1: chất lượng resampler trên điện thoại (D38).
 Chạy bằng Python của desktop (numpy + scipy):
     D:\\Guzz\\runtime\\python\\python.exe -B -s spikes\\media\\compare_pcm.py [--phone-dir $D\\out\\phone\\decode]
 
-Đọc các tệp f32 16 kHz mà bench `decode` ghi ra (`<tệp>_<resampler>.f32`, đã `adb pull` về --phone-dir) và so:
+Đọc các tệp f32 16 kHz mà bench `decode` ghi ra (`<tệp kèm đuôi>_<resampler>.f32`, đã `adb pull` về --phone-dir) và so:
   - sweep48k: với scipy.signal.resample_poly(x, 1, 3) của cùng đầu vào 16-bit; SNR trong dải 0–7 kHz. Suy giảm ở 10 kHz
     và 15 kHz đo trên chính đoạn quét: quét tuyến tính nên mỗi thời điểm ứng với một tần số, lấy RMS đầu ra quanh lúc
     quét qua 10 / 15 kHz so với RMS của sin 0,5 (−9 dBFS). Không đo bằng tones48k được, vì alias của 10 kHz và 15 kHz khi
@@ -136,9 +136,9 @@ def main() -> None:
     durations = []
     for rs in ("sinc", "sonic"):
         cells = [rs]
-        sw = pdir / f"sweep48k_{rs}.f32"
-        to = pdir / f"tones48k_{rs}.f32"
-        l1 = pdir / f"L1_{rs}.f32"
+        sw = pdir / f"sweep48k.wav_{rs}.f32"
+        to = pdir / f"tones48k.wav_{rs}.f32"
+        l1 = pdir / f"L1.m4a_{rs}.f32"
         s = sweep_metrics(read_f32(sw), media / "sweep48k.wav") if sw.is_file() else None
         t = tones_metrics(read_f32(to)) if to.is_file() else None
         r = real_metrics(read_f32(l1), media / "L1.m4a", D / "out" / "L1_ffmpeg16k.f32") if l1.is_file() else None

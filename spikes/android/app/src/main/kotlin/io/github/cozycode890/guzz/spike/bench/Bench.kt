@@ -72,7 +72,9 @@ object BenchRunner {
             log.write("su_kien" to "loi", "loi" to "Không có phép đo '$name'", "tham_so" to argJson)
             return null
         }
-        log.write("su_kien" to "bat_dau", "tham_so" to argJson)
+        val pm = ctx.getSystemService(android.os.PowerManager::class.java)
+        // Màn hình tắt thì HyperOS hạ xung CPU: giải mã chậm đi khoảng 2 lần, nên mỗi dòng ghi trạng thái màn hình.
+        log.write("su_kien" to "bat_dau", "tham_so" to argJson, "man_hinh_bat" to pm.isInteractive)
         val battery = BatteryProbe(ctx).start()
         val mem = MemSampler { battery.sample() }.start()
         val t0 = SystemClock.elapsedRealtime()
@@ -89,6 +91,7 @@ object BenchRunner {
             "su_kien" to "ket_thuc",
             "tham_so" to argJson,
             "giay" to seconds,
+            "man_hinh_bat" to pm.isInteractive,
             "ram" to mem.stop(),
             "pin" to battery.stop(),
             "ket_qua" to result,

@@ -28,8 +28,9 @@ import kotlin.math.roundToInt
  */
 object EncodeBench : Bench {
     private const val SR = 16000
-    private const val TIMEOUT_US = 5000L
-    private const val FRAME = 1024
+    private const val TIMEOUT_US = 1000L
+    // Mẫu mỗi buffer đầu vào (1 s). Bộ mã hoá tự chia khung (Opus 20 ms, AAC 1 024 mẫu).
+    private const val FRAME = 16000
 
     override fun run(b: BenchContext): JSONObject {
         val input = Paths.resolve(Paths.input(b.ctx), b.string("input", "F1.f32")!!)
@@ -42,6 +43,9 @@ object EncodeBench : Bench {
             val t0 = SystemClock.elapsedRealtime()
             val r = when {
                 v == "wav" -> writeWav(pcm, File(outDir, "${input.nameWithoutExtension}_wav.wav"))
+                // F1 thấy MediaMuxer MPEG_4 nhận track FLAC trên API 36: thử ghi thật FLAC trong MP4.
+                v == "flacmp4" -> encodeMuxed(pcm, MediaFormat.MIMETYPE_AUDIO_FLAC, 0,
+                    MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4, File(outDir, "${input.nameWithoutExtension}_flacmp4.mp4"))
                 v.startsWith("flac") -> encodeFlac(pcm, File(outDir, "${input.nameWithoutExtension}_$v.flac"),
                     v.removePrefix("flac").toIntOrNull())
                 v.startsWith("opus") -> encodeMuxed(pcm, MediaFormat.MIMETYPE_AUDIO_OPUS,
@@ -89,20 +93,20 @@ object EncodeBench : Bench {
         var outEos = false
         try {
             while (!outEos) {
-                if (!inEos) {
-                    val ii = codec.dequeueInputBuffer(TIMEOUT_US)
-                    if (ii >= 0) {
-                        val ib = codec.getInputBuffer(ii)!!.order(ByteOrder.nativeOrder())
-                        val n = minOf(FRAME, pcm.size - fed, ib.capacity() / 2)
-                        val pts = fed * 1_000_000L / SR
-                        if (n <= 0) {
-                            codec.queueInputBuffer(ii, 0, 0, pts, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
-                            inEos = true
-                        } else {
-                            ib.asShortBuffer().put(pcm, fed, n)
-                            codec.queueInputBuffer(ii, 0, n * 2, pts, 0)
-                            fed += n
-                        }
+                // Nạp mọi buffer đầu vào đang trống, không chờ; chỉ chờ (ngắn) ở phía đầu ra (xem DecodeBench).
+                while (!inEos) {
+                    val ii = codec.dequeueInputBuffer(0)
+                    if (ii < 0) break
+                    val ib = codec.getInputBuffer(ii)!!.order(ByteOrder.nativeOrder())
+                    val n = minOf(FRAME, pcm.size - fed, ib.capacity() / 2)
+                    val pts = fed * 1_000_000L / SR
+                    if (n <= 0) {
+                        codec.queueInputBuffer(ii, 0, 0, pts, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        inEos = true
+                    } else {
+                        ib.asShortBuffer().put(pcm, fed, n)
+                        codec.queueInputBuffer(ii, 0, n * 2, pts, 0)
+                        fed += n
                     }
                 }
                 val oi = codec.dequeueOutputBuffer(info, TIMEOUT_US)
@@ -130,7 +134,7 @@ object EncodeBench : Bench {
 
     private fun encodeMuxed(pcm: ShortArray, mime: String, bitrate: Int, outFormat: Int, out: File): JSONObject {
         val fmt = MediaFormat.createAudioFormat(mime, SR, 1).apply {
-            setInteger(MediaFormat.KEY_BIT_RATE, bitrate)
+            if (bitrate > 0) setInteger(MediaFormat.KEY_BIT_RATE, bitrate)
             setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, FRAME * 2 * 4)
             if (mime == MediaFormat.MIMETYPE_AUDIO_AAC) {
                 setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)

@@ -1,0 +1,6 @@
+# D2 + D3: L1_10m, CAM++ zh-cn, shift 0,1 (B3), ngưỡng 0,5; số luồng 1, 2, 4, 6, 8. Bản 4 luồng dùng cho D2 (so với PC).
+diar_L1_10m_th4 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh-cn_16k-common.onnx --es shift 0.1 --es threshold 0.5 --ei threads 4 --es out L1_10m__campplus-zh_t0.5_th4
+diar_L1_10m_th1 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh-cn_16k-common.onnx --es shift 0.1 --es threshold 0.5 --ei threads 1 --es out L1_10m__campplus-zh_t0.5_th1
+diar_L1_10m_th2 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh-cn_16k-common.onnx --es shift 0.1 --es threshold 0.5 --ei threads 2 --es out L1_10m__campplus-zh_t0.5_th2
+diar_L1_10m_th6 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh-cn_16k-common.onnx --es shift 0.1 --es threshold 0.5 --ei threads 6 --es out L1_10m__campplus-zh_t0.5_th6
+diar_L1_10m_th8 --es bench diarize --es input L1_10m.f32 --es emb emb/3dspeaker_speech_campplus_sv_zh-cn_16k-common.onnx --es shift 0.1 --es threshold 0.5 --ei threads 8 --es out L1_10m__campplus-zh_t0.5_th8

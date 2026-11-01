@@ -1,0 +1,4 @@
+# E3, chẩn đoán vì sao giải mã chậm (3,6 × thời gian thực lúc màn hình tắt): 300 s đầu của L1.m4a, chỉ giải mã.
+# ext = tệp trên /sdcard (qua FUSE), int = tệp chép vào bộ nhớ trong của app.
+diag_ext_off --es bench decode --es input L1.m4a --es mode decode --ei max_seconds 300
+diag_int_off --es bench decode --es input /data/user/0/io.github.cozycode890.guzz.spike.debug/files/input/L1.m4a --es mode decode --ei max_seconds 300

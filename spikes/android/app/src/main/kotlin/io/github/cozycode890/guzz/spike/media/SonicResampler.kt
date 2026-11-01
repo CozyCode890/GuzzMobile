@@ -16,7 +16,8 @@ class SonicResampler(inRate: Int, outRate: Int) {
 
     init {
         sonic.configure(AudioProcessor.AudioFormat(inRate, 1, C.ENCODING_PCM_16BIT))
-        sonic.flush()
+        // Media3 1.11: flush() không tham số chỉ là mặc định gọi sang bản có StreamMetadata, Sonic chỉ cài bản này.
+        sonic.flush(AudioProcessor.StreamMetadata.DEFAULT)
     }
 
     /** Thêm [n] mẫu mono 16-bit; trả về mẫu ra (float [-1, 1)). */

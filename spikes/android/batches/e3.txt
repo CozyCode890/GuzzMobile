@@ -1,0 +1,18 @@
+# E3: giải mã + resample bằng MediaCodec async (nhanh và ổn định hơn sync, xem Nhật ký). Hai tệp đo resampler (E4)
+# chạy nhanh; tệp thật: chỉ giải mã, rồi cả chuỗi với từng resampler.
+decode_sweep_sinc --es bench decode --es input sweep48k.wav --es resampler sinc
+decode_tones_sinc --es bench decode --es input tones48k.wav --es resampler sinc
+decode_sweep_sonic2 --es bench decode --es input sweep48k.wav --es resampler sonic
+decode_tones_sonic2 --es bench decode --es input tones48k.wav --es resampler sonic
+dec_L1m4a_only --es bench decode --es api async --es input L1.m4a --es mode decode
+dec_L1m4a_sinc --es bench decode --es api async --es input L1.m4a --es resampler sinc
+dec_L1m4a_sonic --es bench decode --es api async --es input L1.m4a --es resampler sonic
+dec_A1aac_only --es bench decode --es api async --es input A1.aac --es mode decode
+dec_A1aac_sinc --es bench decode --es api async --es input A1.aac --es resampler sinc
+dec_L1mp3_only --es bench decode --es api async --es input L1.mp3 --es mode decode
+dec_L1mp3_sinc --es bench decode --es api async --es input L1.mp3 --es resampler sinc
+dec_L1ogg_only --es bench decode --es api async --es input L1.ogg --es mode decode
+dec_L1ogg_sinc --es bench decode --es api async --es input L1.ogg --es resampler sinc
+dec_V1mp4_only --es bench decode --es api async --es input V1.mp4 --es mode decode
+dec_V1mp4_sinc --es bench decode --es api async --es input V1.mp4 --es resampler sinc
+dec_V1mp4_sonic --es bench decode --es api async --es input V1.mp4 --es resampler sonic

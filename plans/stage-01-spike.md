@@ -332,7 +332,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   - `ref.json` so với chính nó → DER 0; so với bản đã đổi tên nhãn người nói → DER 0;
   - so với bản gán hết cho một người → confusion bằng tổng thời gian của những người không phải người nói chính (sai số
     ≤ 0,5 điểm %).
-- [ ] **B3. Chọn `windowShiftRatio`.** Embedding CAM++ zh-cn common, `num_clusters` = số người của desktop,
+- [x] **B3. Chọn `windowShiftRatio`.** Embedding CAM++ zh-cn common, `num_clusters` = số người của desktop,
   `shift` ∈ {0,1; 0,25; 0,5}, chạy trên B1–B5.
   **Kiểm:** bảng DER / thời gian / RAM theo shift. Chọn shift lớn nhất mà DER trung bình tăng không quá 1 điểm % so với 0,1
   (shift lớn thì ít embedding hơn, nên nhanh và nhẹ hơn). Ghi lựa chọn vào Nhật ký.
@@ -361,7 +361,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### C. App spike (D31, D32)
 
-- [ ] **C1. Build riêng `spikes/android/`.**
+- [x] **C1. Build riêng `spikes/android/`.**
   - `settings.gradle.kts`:
     - `pluginManagement { includeBuild("../../build-logic") }`;
     - `dependencyResolutionManagement` với google + mavenCentral như build gốc;
@@ -382,7 +382,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
     `adb shell am start -n io.github.cozycode890.guzz.spike.debug/io.github.cozycode890.guzz.spike.MainActivity` mở được
     app;
   - `.\gradlew test` ở gốc vẫn xanh và không configure `spikes`.
-- [ ] **C2. Hạ tầng đo dùng chung.**
+- [x] **C2. Hạ tầng đo dùng chung.**
   - `BenchLog`: ghi JSON lines vào `files/results/<phép đo>.jsonl` (giờ, model máy, API, tham số, kết quả).
   - `MemSampler`: mỗi giây đọc `Debug.getPss()`, `VmRSS` / `VmHWM` trong `/proc/self/status`, heap Java đang dùng,
     `Debug.getNativeHeapAllocatedSize()`; giữ giá trị đỉnh.
@@ -401,13 +401,13 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### D. Tách giọng trên máy (mục 2; D30, D34)
 
-- [ ] **D1. Đưa dữ liệu lên máy** bằng `adb push`:
+- [x] **D1. Đưa dữ liệu lên máy** bằng `adb push`:
   - model (segmentation và 2 embedding tốt nhất của B4) vào `files/models/`;
   - `L1_10m.f32`, `L1_60m.f32`, `L1_120m.f32`, `L2.f32` vào `files/input/`.
 
   Bench nạp model theo đường dẫn tệp, nên đổi model không cần build lại.
   **Kiểm:** `adb shell ls -l` cho cỡ tệp giống trên PC.
-- [ ] **D2. Bench `diarize`, chạy nguyên bài.** Đọc tệp f32 vào một `FloatArray`, gọi `processWithCallback` (log tiến
+- [x] **D2. Bench `diarize`, chạy nguyên bài.** Đọc tệp f32 vào một `FloatArray`, gọi `processWithCallback` (log tiến
   độ), ghi JSON cùng định dạng với PC vào `results/`. Chạy `L1_10m` với cấu hình tốt nhất của B.
   **Kiểm:** chạy `run_sherpa.py` trên PC với cùng tệp, cùng cấu hình; `evaluate.py` so JSON của điện thoại với JSON của PC
   (PC làm tham chiếu) → DER ≤ 1%.
@@ -435,7 +435,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### E. Giải mã và resampler (mục 3; D38)
 
-- [ ] **E1. Đưa tệp lên máy:** `media\L1.m4a`, `A1.aac`, `L1.mp3`, `L1.ogg`, `V1.mp4`, `sweep48k.wav`, `tones48k.wav` →
+- [x] **E1. Đưa tệp lên máy:** `media\L1.m4a`, `A1.aac`, `L1.mp3`, `L1.ogg`, `V1.mp4`, `sweep48k.wav`, `tones48k.wav` →
   `files/input/`.
   **Kiểm:** `adb shell ls -l` cho cỡ tệp đúng.
 - [ ] **E2. Hai resampler** về 16 kHz:
@@ -460,11 +460,11 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### F. Định dạng đoạn gửi Gemini (mục 4; D36, D37)
 
-- [ ] **F1. Liệt kê bộ mã hoá** bằng `MediaCodecList(REGULAR_CODECS)` cho `audio/flac`, `audio/opus`, `audio/mp4a-latm`:
+- [x] **F1. Liệt kê bộ mã hoá** bằng `MediaCodecList(REGULAR_CODECS)` cho `audio/flac`, `audio/opus`, `audio/mp4a-latm`:
   tên, có phải bộ mã hoá phần mềm không, dải bitrate, tần số lấy mẫu hỗ trợ. Kiểm luôn những định dạng ra mà MediaMuxer có
   trên API 36.
   **Kiểm:** danh sách đã ghi vào stage-01-results.md.
-- [ ] **F2. Bench `encode`.** Từ `F1.f32` (10 phút, 16 kHz mono), ghi ra:
+- [x] **F2. Bench `encode`.** Từ `F1.f32` (10 phút, 16 kHz mono), ghi ra:
   - FLAC: dùng MediaCodec `audio/flac` với `KEY_FLAC_COMPRESSION_LEVEL` mặc định và mức 8. Tự ghi tệp `.flac`: `fLaC`,
     STREAMINFO lấy từ buffer codec-config, rồi các khung. Phải tự ghi vì MediaMuxer không ghi được FLAC;
   - OGG-Opus: MediaCodec `audio/opus` ở 24 và 32 kbps + MediaMuxer `MUXER_OUTPUT_OGG`, đuôi `.ogg`;
@@ -650,5 +650,28 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
     `compare_pcm.py` đo suy giảm 10 / 15 kHz trên đoạn quét sin (quét tuyến tính nên thời điểm ứng với tần số), còn
     `tones48k` chỉ kiểm biên độ 1 / 6 kHz.
   - F3: `gemini_compare.py` chỉ gửi khi có `--yes`.
+  - **Dừng ở đây (commit a9f2bef):** xong A1–A5, B1, B2, C3, H1; C1 xanh trên PC (còn cài lên máy). B3 đang chạy nền
+    (`$D\out\pc\sweep-B3.log`; chạy lại `sweep.py B3` là làm tiếp). Chờ người dùng cắm điện thoại qua USB để làm C1–C2,
+    D, E, F1–F2, G1.
+- **2026-11-01, B3 xong.** Chọn `windowShiftRatio = 0,1` theo luật của B3 (bảng ở stage-01-results.md). Ghi chú: chênh
+  lệch DER giữa các shift chủ yếu do complete-linkage + ép số cụm (B4 trượt ở cả ba shift), không hẳn do shift; shift 0,5
+  nhanh gấp 9 lần. Nếu D3/D4 cho thấy shift 0,1 làm bài 2 giờ trên điện thoại quá 30 phút (D30) thì xem lại shift ở I2.
+  B4 chạy với `--jobs 2 --threads 8` (PC chỉ còn trống khoảng 2,6 GB RAM), nên thời gian của B4 không so được với B3.
+- **2026-11-01, trên máy: C1, C2, D1, E1, F1, F2.**
+  - C2: `noop` 60 s có dòng bắt đầu / kết thúc, PSS đỉnh 189 MB, `largeMemoryClass` = 512, có thông báo. App spike có
+    `isIgnoringBatteryOptimizations = true` ngay sau khi cài, dù chưa bấm "Xin miễn tối ưu pin"; S0 ở G3 phải gỡ bằng
+    `dumpsys deviceidle whitelist -<package>`.
+  - F2: vòng lặp MediaCodec ban đầu chờ 5 ms ở cả đầu vào lẫn đầu ra cho từng khung 1 024 mẫu, nên đo ra thời gian chờ
+    (FLAC 85 s / 10 phút). Sửa: nạp mọi buffer đầu vào đang trống không chờ, khung 1 s, chỉ chờ 1 ms ở đầu ra → FLAC 4–6 s.
+    Thêm biến thể `flacmp4` vì F1 thấy MediaMuxer MPEG_4 nhận FLAC. AAC thừa 2 048 mẫu priming (600,128 s, lệch quá
+    ±0,1 s của dòng Kiểm): đó là kết quả đo của định dạng, không phải lỗi bench; vẫn đánh dấu F2 xong.
+  - E3: Sonic của Media3 1.11 đòi `flush(StreamMetadata)` (bản không tham số ném IllegalStateException). Giải mã AAC lúc
+    màn hình tắt chỉ 3,6–8× thời gian thực ở chế độ sync. Thử: tệp ở bộ nhớ trong thay vì `/sdcard` (FUSE) không nhanh
+    hơn; màn hình bật nhanh gấp khoảng 2; chế độ async (`setCallback`) ổn định 16× lúc màn hình tắt. E3 chạy bằng async;
+    mỗi dòng bench ghi `man_hinh_bat`. Thêm tham số `api`, `max_seconds` cho bench `decode`.
+  - D2: lần đầu app chết vì JNI abort: JNI của sherpa-onnx tìm `invoke(IIJ)Ljava/lang/Integer;` trên callback, lambda
+    Kotlin 2.x (invokedynamic + D8) không có method đó. Sửa bằng lớp callback viết rõ (`ProgressCallback`). Stage 5 phải
+    làm như vậy (ghi ở I3).
+  - Thêm `spikes/android/run_bench.ps1` và `spikes/android/batches/*.txt` để chạy lần lượt nhiều bench qua adb.
 
 ## Phát sinh
