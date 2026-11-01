@@ -18,7 +18,10 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class SettingsTest {
 
@@ -115,6 +118,32 @@ class SettingsTest {
         settings.set(SettingKeys.LOG_SIZE_MB, 4)
         settings.reset(SettingKeys.LOG_SIZE_MB)
         assertEquals(2, settings.get(SettingKeys.LOG_SIZE_MB))
+    }
+
+    @Test
+    fun `recordAppVersion tạo tệp ở lần mở đầu, trả về bản của lần mở trước`() = runBlocking {
+        val settings = open()
+        assertFalse(file.exists())
+
+        assertEquals(0, settings.recordAppVersion(1))
+        assertTrue(file.exists(), "lần mở đầu phải tạo tệp cài đặt")
+        assertEquals(1, settings.recordAppVersion(1))
+        assertEquals(1, settings.recordAppVersion(3))
+        closeAll()
+
+        assertEquals(3, open().get(SettingKeys.LAST_VERSION_CODE))
+    }
+
+    @Test
+    fun `recordAppVersion cùng bản thì không ghi lại tệp`() = runBlocking {
+        val settings = open()
+        settings.recordAppVersion(2)
+        val written = file.lastModified()
+        val bytes = file.readBytes()
+        Thread.sleep(20) // để lastModified khác đi nếu tệp bị ghi lại
+        settings.recordAppVersion(2)
+        assertEquals(written, file.lastModified())
+        assertContentEquals(bytes, file.readBytes())
     }
 
     @Test

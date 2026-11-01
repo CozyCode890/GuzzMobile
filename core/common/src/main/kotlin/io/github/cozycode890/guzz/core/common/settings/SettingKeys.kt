@@ -21,4 +21,13 @@ object SettingKeys {
         LOG_SIZE_MB,
         OLD_LOG_COUNT,
     )
+
+    // [APP]: trạng thái app tự ghi, người dùng không chỉnh. Không nằm trong [all] để không bị xuất / nhập cùng cài đặt.
+
+    /** versionCode của lần mở app gần nhất; 0 = chưa mở lần nào (D27). Ghi bằng [Settings.recordAppVersion]. */
+    val LAST_VERSION_CODE = IntSetting("APP", "last_version_code", default = 0, min = 0, sameAsDesktop = false)
+
+    val appState: List<SettingKey<*>> = listOf(
+        LAST_VERSION_CODE,
+    )
 }

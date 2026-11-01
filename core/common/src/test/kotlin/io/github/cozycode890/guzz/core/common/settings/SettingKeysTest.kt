@@ -4,14 +4,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SettingKeysTest {
 
+    // Cài đặt và trạng thái app nằm chung một tệp DataStore nên id phải khác nhau trên cả hai danh sách.
+    private val everyKey = SettingKeys.all + SettingKeys.appState
+
     @Test
     fun `id có dạng SECTION chấm key như config_default_txt`() {
         val pattern = Regex("[A-Z][A-Z0-9_]*\\.[a-z][a-z0-9_]*")
-        for (key in SettingKeys.all) {
+        for (key in everyKey) {
             assertTrue(pattern.matches(key.id), "id sai dạng: ${key.id}")
             assertEquals("${key.section}.${key.key}", key.id)
         }
@@ -19,8 +23,16 @@ class SettingKeysTest {
 
     @Test
     fun `không có hai mục trùng id`() {
-        val duplicates = SettingKeys.all.groupBy { it.id }.filterValues { it.size > 1 }.keys
+        val duplicates = everyKey.groupBy { it.id }.filterValues { it.size > 1 }.keys
         assertTrue(duplicates.isEmpty(), "trùng id: $duplicates")
+    }
+
+    @Test
+    fun `trạng thái app chỉ có trên mobile, không lẫn vào danh sách cài đặt`() {
+        for (key in SettingKeys.appState) {
+            assertFalse(key.sameAsDesktop, key.id)
+            assertFalse(key in SettingKeys.all, key.id)
+        }
     }
 
     @Test

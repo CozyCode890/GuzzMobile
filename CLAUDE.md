@@ -7,14 +7,14 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 0 (đang làm).
-**Việc tiếp theo:** làm tiếp Stage 0 theo mục "Kế hoạch chi tiết" của [stage-00-setup.md](plans/stage-00-setup.md):
-chờ người dùng đồng ý giấy phép SDK (A3), rồi A4, A5, A7 và các bước còn `[ ]` (E, F3, G3, C5, B3–B4, I, J, K). Mã của
-`:app` đã viết nhưng chưa build lần nào.
+**Stage hiện tại:** Stage 1 (chưa plan chi tiết). Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** plan chi tiết Stage 1 ([stage-01-spike.md](plans/stage-01-spike.md)) trong một session riêng, theo
+"Cách làm việc giữa các session" bên dưới. Stage 3 (client Gemini) chỉ cần Stage 0 nên plan và làm song song được với
+Stage 1–2.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
-| 0 | Khởi tạo dự án | 🔨 | [stage-00-setup.md](plans/stage-00-setup.md) |
+| 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ⬜ | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ⬜ | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ⬜ | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
@@ -88,8 +88,9 @@ Chạy trong PowerShell 7 tại `D:\GuzzMobile`. Máy mới thì làm mục "Cà
 .\gradlew installSideloadDebug
 adb shell am start -n io.github.cozycode890.guzz.debug/io.github.cozycode890.guzz.MainActivity
 
-# Nhật ký: tệp trên máy (guzz.log, guzz.log.1, …) và logcat của app
-adb pull /sdcard/Android/data/io.github.cozycode890.guzz.debug/files/logs "$env:TEMP\guzz-logs"
+# Nhật ký: tệp trên máy (guzz.log, guzz.log.1, …) và logcat của app. Dấu "/." để chạy lại nhiều lần vẫn chép đè vào
+# đúng thư mục đó, không sinh thư mục con logs\
+adb pull /sdcard/Android/data/io.github.cozycode890.guzz.debug/files/logs/. "$env:TEMP\guzz-logs"
 adb logcat -d -s Guzz
 
 # Tạo lại dữ liệu golden (cần Guzz desktop ở D:\Guzz hoặc $env:GUZZ_DESKTOP_DIR), xong thì xem git diff testdata/golden
@@ -136,4 +137,4 @@ adb logcat -d -s Guzz
 - Máy thật: Xiaomi 15T, Android 16, HyperOS 3.0, đã bật Gỡ lỗi USB (chi tiết ở D22).
 - Python và runtime của Guzz desktop (dùng cho golden test): `D:\Guzz\runtime\python\python.exe`; pyannote:
   `D:\Guzz\runtime\nguoi_noi\python.exe`; ffmpeg: `D:\Guzz\runtime\ffmpeg\ffmpeg.exe`.
-- `D:\GuzzMobile` là git repo, nhánh `main`.
+- `D:\GuzzMobile` là git repo, nhánh `main`, remote `origin` = `CozyCode890/GuzzMobile` (private, SSH).

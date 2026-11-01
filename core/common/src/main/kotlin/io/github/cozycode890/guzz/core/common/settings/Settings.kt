@@ -36,6 +36,23 @@ class Settings(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it.remove(key.preferencesKey) }
     }
 
+    /**
+     * Ghi [versionCode] của lần mở này vào [SettingKeys.LAST_VERSION_CODE], trả về giá trị của lần mở trước (0 = lần
+     * mở đầu tiên). Cùng versionCode thì không ghi lại.
+     *
+     * Vì sao ghi ngay lúc mở app (D27): DataStore chỉ tạo tệp ở lần ghi đầu, và khi cài đè bản mới (Stage 9) cần biết
+     * bản cũ là bản nào để chuyển dữ liệu.
+     */
+    suspend fun recordAppVersion(versionCode: Int): Int {
+        val key = SettingKeys.LAST_VERSION_CODE
+        var previous = key.default
+        dataStore.edit { prefs ->
+            previous = read(prefs, key)
+            if (previous != versionCode) prefs[key.preferencesKey] = key.sanitize(versionCode)
+        }
+        return previous
+    }
+
     private fun <T : Any> read(prefs: Preferences, key: SettingKey<T>): T {
         val stored = try {
             prefs[key.preferencesKey]?.let(key::sanitize)

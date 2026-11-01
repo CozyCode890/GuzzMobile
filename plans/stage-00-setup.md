@@ -1,6 +1,6 @@
 # Stage 0 — Khởi tạo dự án
 
-**Trạng thái:** 🔨 đang làm (bắt đầu 2026-10-31; plan chi tiết 2026-10-31) · **Cần xong trước:** —
+**Trạng thái:** ✅ xong 2026-11-01 (bắt đầu 2026-10-31; plan chi tiết 2026-10-31) · **Cần xong trước:** —
 
 ## Mục tiêu
 
@@ -43,9 +43,9 @@ Dựng sẵn khung dự án: build được, test được, cài lên máy thậ
 
 ## Tiêu chí hoàn thành
 
-- [ ] Build sạch từ một bản clone mới, chỉ theo các lệnh ghi trong CLAUDE.md.
-- [ ] APK chạy trên máy thật.
-- [ ] Golden test mẫu: sửa số trong Kotlin thì test đỏ, khôi phục lại thì test xanh.
+- [x] Build sạch từ một bản clone mới, chỉ theo các lệnh ghi trong CLAUDE.md. (J2, 2026-11-01)
+- [x] APK chạy trên máy thật. (E5, Xiaomi 15T, 2026-11-01)
+- [x] Golden test mẫu: sửa số trong Kotlin thì test đỏ, khôi phục lại thì test xanh. (H6, 2026-10-31)
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -76,6 +76,7 @@ Hỏi người dùng ngày 2026-10-31. Mã số tiếp theo bảng ở [README �
 | D24 | Bộ phiên bản Gradle / AGP (hỏi lúc làm C1) | **AGP 9.3.3 + Gradle 9.7.1**, Kotlin 2.4.21 | Kotlin 2.4.21 (bản ổn định mới nhất) mới được JetBrains kiểm tới AGP 9.3.1 và Gradle 9.7.0; AGP 9.3 vẫn hỗ trợ API 37. AGP mới nhất (9.5.0) để nâng sau khi Kotlin 2.5 ra. |
 | D25 | Bản JUnit cho module JVM (hỏi lúc làm C1) | **JUnit 6.1.3** (`junit-bom`), vẫn dùng `kotlin-test-junit5` | JUnit 6 là dòng đang phát triển, cùng API Jupiter nên tinh thần D17 giữ nguyên; cần Java 17, đã có. Trục trặc thì lùi về 5.14. |
 | D26 | Ghim JDK 21 cho daemon (hỏi lúc làm C4) | **Viết tay** `gradle/gradle-daemon-jvm.properties` chỉ có `toolchainVersion=21`, không thêm plugin foojay | `updateDaemonJvm` của Gradle 9.7 đòi khai báo kho tải JDK. Gradle tự tìm JDK 21 đã cài; máy mới cài JDK 21 trước (ghi trong CLAUDE.md), đúng tinh thần D19. Không thêm phụ thuộc. |
+| D27 | Kiểm F3 khi Stage 0 chưa ghi cài đặt nào (hỏi lúc làm F3, 2026-11-01) | **Lưu versionCode lúc mở app**: mục chỉ có trên mobile `APP.last_version_code` (`sameAsDesktop = false`), nằm trong `SettingKeys.appState`, không trong `SettingKeys.all` nên không xuất / nhập; `Settings.recordAppVersion` ghi khi khác lần trước | DataStore chỉ tạo tệp ở lần ghi đầu nên kiểm F3 trên máy không ra tệp. Ghi versionCode thì tệp có ngay lần mở đầu, và Stage 9 dùng nó để biết vừa cài đè bản mới mà chuyển dữ liệu cũ. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -114,7 +115,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   **Kiểm:** `(Get-Command adb).Source` chỉ ra một bản; `adb devices` không báo "server version doesn't match".
 - [x] **A6. Đọc thông tin máy thật** (làm luôn lúc plan, 2026-10-31): Gỡ lỗi USB đã bật, `adb devices -l` thấy
   `TOCMU4GYCYJBHA5X … model:25069PTEBG device:goya`; kết quả `getprop` và `/proc/meminfo` ghi ở D22.
-- [ ] **A7. Cho phép cài qua USB trên HyperOS.** Trong Tuỳ chọn nhà phát triển bật "Cài đặt qua USB" (và "Gỡ lỗi USB
+- [x] **A7. Cho phép cài qua USB trên HyperOS.** Trong Tuỳ chọn nhà phát triển bật "Cài đặt qua USB" (và "Gỡ lỗi USB
   (Cài đặt bảo mật)" nếu cần cấp quyền qua adb). HyperOS thường đòi đăng nhập tài khoản Xiaomi để bật mục này — người dùng
   tự làm trên máy.
   **Kiểm:** ở E5, `installSideloadDebug` không báo `INSTALL_FAILED_USER_RESTRICTED`.
@@ -126,10 +127,10 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
 - [x] **B2. `.gitignore`:** `.gradle/`, `build/`, `.kotlin/`, `local.properties`, `.idea/`, `*.iml`, `captures/`,
   `.cxx/`, `.externalNativeBuild/`, `*.jks`, `*.keystore`, `*.apk`, `*.aab`, `__pycache__/`.
   **Kiểm:** `git check-ignore -v local.properties app/build/x .gradle/x` báo cả ba bị bỏ qua.
-- [ ] **B3. `.gitattributes`:** `* text=auto eol=lf`; `*.bat`, `*.cmd` → `eol=crlf`; `*.wav`, `*.jar`, `*.png`,
+- [x] **B3. `.gitattributes`:** `* text=auto eol=lf`; `*.bat`, `*.cmd` → `eol=crlf`; `*.wav`, `*.jar`, `*.png`,
   `*.webp` → `binary`.
   **Kiểm:** sau commit đầu, `git ls-files --eol gradlew gradlew.bat` báo `i/lf` cho cả hai, `w/crlf` cho `gradlew.bat`.
-- [ ] **B4. `.editorconfig`:** UTF-8, LF, thụt 4 dấu cách (Kotlin, Python, Gradle KTS), 2 cho YAML / JSON / TOML,
+- [x] **B4. `.editorconfig`:** UTF-8, LF, thụt 4 dấu cách (Kotlin, Python, Gradle KTS), 2 cho YAML / JSON / TOML,
   `max_line_length = 120` như desktop; `[*.{bat,cmd}]` dùng CRLF.
   **Kiểm:** `git ls-files .editorconfig` có tệp sau commit đầu.
 
@@ -188,7 +189,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
 - [x] **E2. Chuỗi giao diện.** `values/strings.xml` tiếng Việt (mặc định), `values-en/strings.xml` tiếng Anh; tên app
   bản debug "Guzz (debug)" (D10). Không có chuỗi viết cứng trong code Compose.
   **Kiểm:** `.\gradlew :app:lintSideloadDebug` không báo `MissingTranslation` hay `HardcodedText`.
-- [ ] **E3. Icon tạm.** Adaptive icon (`mipmap-anydpi-v26/ic_launcher.xml`, `ic_launcher_round.xml`), foreground là
+- [x] **E3. Icon tạm.** Adaptive icon (`mipmap-anydpi-v26/ic_launcher.xml`, `ic_launcher_round.xml`), foreground là
   vector chữ "G", nền một màu. Icon chính thức để Stage 9.
   **Kiểm:** lint không báo thiếu icon; trên máy thật (E5) icon hiện ở màn hình chính.
 - [x] **E4. Hai flavor.** Dimension `distribution`: `sideload` (`isDefault = true`) và `play`.
@@ -197,7 +198,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   `false` ở play.
   **Kiểm:** `.\gradlew assembleSideloadDebug assemblePlayDebug` xanh;
   `apkanalyzer manifest permissions <apk>`: APK sideload có `MANAGE_EXTERNAL_STORAGE`, APK play không có.
-- [ ] **E5. Cài lên máy thật.** `.\gradlew installSideloadDebug`, rồi
+- [x] **E5. Cài lên máy thật.** `.\gradlew installSideloadDebug`, rồi
   `adb shell am start -n io.github.cozycode890.guzz.debug/io.github.cozycode890.guzz.MainActivity`.
   **Kiểm:** máy hiện "Guzz" và dòng `0.1.0 · sideload · debug`; `adb shell pidof io.github.cozycode890.guzz.debug` ra
   PID; `adb logcat -d -b crash` không có dòng nào của Guzz.
@@ -217,7 +218,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   lạ) thì đọc ra giá trị đã chặn / mặc định, giống cách `config.py` đọc.
   **Kiểm:** `.\gradlew :core:common:test` xanh với các ca: chưa có gì → mặc định; `set` rồi `get`; đóng rồi mở lại
   DataStore trên cùng tệp (thư mục tạm của JUnit) vẫn còn giá trị; giá trị vi phạm ràng buộc → giá trị đã chặn.
-- [ ] **F3. Nối vào app.** `AppContainer` tạo DataStore ở `filesDir/datastore/settings.preferences_pb`.
+- [x] **F3. Nối vào app.** `AppContainer` tạo DataStore ở `filesDir/datastore/settings.preferences_pb`.
   **Kiểm:** sau khi mở app trên máy, `adb shell run-as io.github.cozycode890.guzz.debug ls files/datastore` thấy tệp.
 
 ### G. Log (D14, D15)
@@ -234,7 +235,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   Ghi UTF-8, an toàn khi nhiều luồng cùng ghi.
   **Kiểm:** test với `maxBytes` nhỏ: đúng số tệp, đúng thứ tự (tệp `.1` mới nhất), tiếng Việt có dấu đọc lại đúng;
   `old_log_count = 0` thì chỉ còn một tệp và không bao giờ vượt `maxBytes`; nhiều luồng ghi song song không mất / lẫn dòng.
-- [ ] **G3. Nối vào app.** `LogcatSink` (tag `Guzz`) và `RotatingFileSink` ở `getExternalFilesDir(null)/logs/guzz.log`
+- [x] **G3. Nối vào app.** `LogcatSink` (tag `Guzz`) và `RotatingFileSink` ở `getExternalFilesDir(null)/logs/guzz.log`
   (`null` thì lùi về `filesDir/logs`). Gắn sink ngay trong `GuzzApp.onCreate` với giá trị mặc định, rồi cập nhật mức log /
   dung lượng theo `Settings.flow` trong scope của app (không đọc DataStore chặn luồng chính). Bắt lỗi chưa xử lý
   (`Thread.setDefaultUncaughtExceptionHandler`): ghi ERROR kèm stack trace rồi chuyển cho handler cũ. Lúc khởi động ghi
@@ -296,12 +297,12 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
 
 ### I. Lệnh và tài liệu
 
-- [ ] **I1. Điền "Lệnh thường dùng" trong CLAUDE.md:** build (`.\gradlew assembleSideloadDebug`, `assemblePlayDebug`), test
+- [x] **I1. Điền "Lệnh thường dùng" trong CLAUDE.md:** build (`.\gradlew assembleSideloadDebug`, `assemblePlayDebug`), test
   (`.\gradlew test`), lint (`.\gradlew lint`), cài và mở trên máy (`installSideloadDebug` + `adb shell am start …`), lấy
   nhật ký (`adb pull …/files/logs`), tạo lại dữ liệu golden (`.\tools\golden\regenerate.ps1`), và việc cần làm một lần
   trên máy mới (JDK 21, `JAVA_HOME`, `ANDROID_HOME`, gói SDK).
   **Kiểm:** chạy lại từng lệnh đã ghi, lệnh nào cũng chạy được đúng như chép.
-- [ ] **I2. Cập nhật "Môi trường máy" trong CLAUDE.md:** JDK 21 cho Gradle, `JAVA_HOME`, `ANDROID_HOME`, adb nào được dùng,
+- [x] **I2. Cập nhật "Môi trường máy" trong CLAUDE.md:** JDK 21 cho Gradle, `JAVA_HOME`, `ANDROID_HOME`, adb nào được dùng,
   máy thật ở D22.
   **Kiểm:** đọc lại mục, khớp kết quả của A1–A6.
 - [x] **I3. `tools/golden/README.md`** và KDoc đủ để session sau thêm golden test mới mà không cần hỏi lại.
@@ -309,22 +310,22 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
 
 ### J. Commit, GitHub, clone sạch
 
-- [ ] **J1. Commit đầu.** Trước khi commit: `git status` không có `local.properties`, `build/`, API key hay bản ghi thật;
+- [x] **J1. Commit đầu.** Trước khi commit: `git status` không có `local.properties`, `build/`, API key hay bản ghi thật;
   `git ls-files *.wav` chỉ ra tệp trong `testdata/golden/`. Commit message tiếng Việt, vd
   "Khởi tạo Guzz Mobile: khung Gradle, app rỗng, Settings, nhật ký, golden test mẫu".
   **Kiểm:** `git log --oneline` có commit; `git status` sạch.
-- [ ] **J2. Build từ bản clone sạch.** `git clone D:\GuzzMobile <scratchpad>\guzz-clone`, đặt tạm
+- [x] **J2. Build từ bản clone sạch.** `git clone D:\GuzzMobile <scratchpad>\guzz-clone`, đặt tạm
   `$env:GUZZ_DESKTOP_DIR` trỏ tới một thư mục không tồn tại (chắc chắn test không đọc desktop), rồi chạy **đúng** các lệnh
   build / test đã ghi trong CLAUDE.md.
   **Kiểm:** `BUILD SUCCESSFUL`; báo cáo test có golden test chunker. Đây là tiêu chí hoàn thành thứ nhất.
-- [ ] **J3. Đẩy lên GitHub (D21).** Đẩy lên là việc ra ngoài máy, nên **hỏi lại người dùng** ngay trước khi chạy:
+- [x] **J3. Đẩy lên GitHub (D21).** Đẩy lên là việc ra ngoài máy, nên **hỏi lại người dùng** ngay trước khi chạy:
   `gh repo create CozyCode890/GuzzMobile --private --source . --remote origin --push`.
   **Kiểm:** `gh repo view CozyCode890/GuzzMobile --json visibility` ra `PRIVATE`; `git status -sb` báo
   `## main...origin/main`.
 
 ### K. Đóng stage
 
-- [ ] **K1.** Tick đủ "Tiêu chí hoàn thành"; CLAUDE.md: Stage 0 → ✅ kèm ngày, "Stage hiện tại" và "Việc tiếp theo" → plan
+- [x] **K1.** Tick đủ "Tiêu chí hoàn thành"; CLAUDE.md: Stage 0 → ✅ kèm ngày, "Stage hiện tại" và "Việc tiếp theo" → plan
   chi tiết Stage 1 (Stage 3 làm song song được). Commit, push.
   **Kiểm:** `git log -1` có commit đóng stage; bảng trong CLAUDE.md ghi ✅.
 
@@ -415,6 +416,27 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   `37.0.1-15733141`, nên không phải hỏi người dùng. Giữ nguyên `PATH`: chỉ bản winget có trên `PATH`
   (`Get-Command adb -All` ra đúng một đường dẫn). Gradle dùng bản trong SDK. Hai bản cùng phiên bản nên không bị
   "server version doesn't match". Khi một trong hai bản được cập nhật mà bản kia không, sẽ phải chọn lại.
+- **2026-11-01, J1–J2.** Commit đầu là `196e6d3`. Bản clone sạch ở scratchpad, `GUZZ_DESKTOP_DIR` trỏ tới một thư mục
+  không tồn tại. Chạy đúng bốn lệnh `assembleSideloadDebug`, `assemblePlayDebug`, `test`, `lint` của CLAUDE.md: đều
+  `BUILD SUCCESSFUL`. Riêng task test lấy kết quả từ build cache dùng chung của máy (`FROM-CACHE`), nên chạy thêm
+  `.\gradlew clean test --no-build-cache` để test chạy thật trên bản clone: 56 test xanh, có 7 ca của `ChunkerGoldenTest`.
+  Máy mới không có build cache thì `test` tự chạy thật.
+- **2026-11-01, J3.** Người dùng đồng ý trong chat, đã chạy `gh repo create … --private --source . --remote origin --push`:
+  `PRIVATE`, `main...origin/main`.
+- **2026-11-01, A7, E3, E5.** `installSideloadDebug` không báo `INSTALL_FAILED_USER_RESTRICTED`, nghĩa là "Cài đặt qua USB"
+  đã bật. Ảnh chụp màn hình và `uiautomator dump` cho thấy "Guzz", "Turn audio and video into text" và
+  `0.1.0 · sideload · debug`. Câu thứ hai là bản tiếng Anh vì điện thoại đang để tiếng Anh, tức `values-en` chạy đúng.
+  `pidof` ra PID, `logcat -b crash` trống. Màn hình chính của HyperOS dùng ngăn ứng dụng, không đặt icon ra trang đầu;
+  người dùng mở ngăn ứng dụng xác nhận icon "Guzz (debug)" hiện đúng.
+- **2026-11-01, F3 (D27).** Lần kiểm đầu không có `files/datastore/`, vì DataStore chỉ tạo tệp ở lần ghi đầu mà Stage 0
+  chỉ đọc. Hỏi người dùng, chọn D27: thêm `APP.last_version_code` và `Settings.recordAppVersion`. `GuzzApp` gọi hàm này
+  ở nền lúc mở app, có 3 test JVM mới. Cài lại lên máy: có `settings.preferences_pb` (29 byte), log ghi "Lần mở đầu tiên
+  trên máy này (versionCode 1)". `force-stop` rồi mở lại thì tệp không bị ghi lại, không có dòng log mới.
+- **2026-11-01, G3, I1.** `am crash` → `guzz.log` có `ERROR | Lỗi chưa xử lý ở luồng main` kèm stack trace
+  `CrashedByAdbException`. Handler cũ vẫn chạy: `AndroidRuntime: FATAL EXCEPTION`, tiến trình thoát. Lệnh `adb pull …/logs`
+  chạy lần hai khi thư mục đích đã có thì chép vào thư mục con `logs\`, nên CLAUDE.md đổi sang `…/logs/.`; đã kiểm cả khi
+  thư mục đích chưa có lẫn khi đã có. Các lệnh khác của "Lệnh thường dùng" đều đã chạy đúng như chép. Riêng
+  `sdkmanager --licenses` không chạy lại, vì đó là việc người dùng tự quyết.
 - **2026-10-31, F2.** `Settings.create` thêm `ReplaceFileCorruptionHandler { emptyPreferences() }`: tệp cài đặt hỏng thì mọi
   mục về mặc định và ghi tiếp được, thay vì app ném `CorruptionException` lúc đọc (giống `config.py` đọc lỗi thì dùng mặc
   định). Có test riêng.

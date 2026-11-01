@@ -63,3 +63,6 @@ _(viết ở session của stage này)_
   tương thích của Kotlin (kotlinlang.org/docs/gradle-configure-project.html) đã phủ.
 - (Từ Stage 0, 2026-10-31) `sdkmanager` (cmdline-tools 22.0) báo deprecated, khuyên dùng Android CLI (`android sdk …`,
   cùng thư mục cmdline-tools). Lệnh cài SDK trong CLAUDE.md vẫn dùng `sdkmanager`; đổi khi `sdkmanager` thôi chạy.
+- (Từ Stage 0, 2026-11-01) Mỗi lần mở app, `GuzzApp` ghi versionCode vào `APP.last_version_code` (D27).
+  `Settings.recordAppVersion` trả về versionCode của lần mở trước, với 0 nghĩa là lần mở đầu tiên. Chỗ này dùng được để
+  chuyển dữ liệu cũ khi cài đè bản mới, ứng với tiêu chí "Cài đè bản mới lên bản cũ: giữ nguyên dữ liệu và cài đặt".

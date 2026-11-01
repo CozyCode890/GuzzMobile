@@ -60,6 +60,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D24 | 2026-10-31 | Bộ phiên bản Gradle / AGP (Stage 0) | **AGP 9.3.3 + Gradle 9.7.1**, Kotlin 2.4.21 | Nằm trong bảng tương thích của Kotlin 2.4.21; AGP 9.5 để sau khi Kotlin 2.5 ra. |
 | D25 | 2026-10-31 | Bản JUnit cho module JVM (Stage 0) | **JUnit 6.1.3**, vẫn dùng `kotlin-test-junit5` | Cùng API Jupiter với JUnit 5, là dòng đang phát triển. |
 | D26 | 2026-10-31 | Ghim JDK 21 cho daemon (Stage 0) | **Viết tay** `gradle-daemon-jvm.properties` (`toolchainVersion=21`), không plugin foojay | `updateDaemonJvm` đòi kho tải JDK; JDK 21 cài tay như D19, không thêm phụ thuộc. |
+| D27 | 2026-11-01 | Kiểm tệp cài đặt trên máy khi chưa ghi cài đặt nào (Stage 0) | **Lưu versionCode lúc mở app** vào `APP.last_version_code` (chỉ có trên mobile, không xuất / nhập) | DataStore chỉ tạo tệp ở lần ghi đầu; Stage 9 cần biết vừa cài đè bản mới để chuyển dữ liệu cũ. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
