@@ -7,15 +7,15 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 1 (chưa plan chi tiết). Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 1 ([stage-01-spike.md](plans/stage-01-spike.md)) trong một session riêng, theo
-"Cách làm việc giữa các session" bên dưới. Stage 3 (client Gemini) chỉ cần Stage 0 nên plan và làm song song được với
+**Stage hiện tại:** Stage 1 (đã plan chi tiết 2026-11-01). Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** làm Stage 1 từ bước A1 theo [stage-01-spike.md](plans/stage-01-spike.md). Bước B chạy nền vài giờ trên
+PC; bước G cần hai đêm để điện thoại rút cáp. Stage 3 (client Gemini) chỉ cần Stage 0, nên plan và làm song song được với
 Stage 1–2.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
-| 1 | Spike kỹ thuật | ⬜ | [stage-01-spike.md](plans/stage-01-spike.md) |
+| 1 | Spike kỹ thuật | 📝 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ⬜ | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ⬜ | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |

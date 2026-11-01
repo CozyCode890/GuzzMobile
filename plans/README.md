@@ -61,6 +61,17 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D25 | 2026-10-31 | Bản JUnit cho module JVM (Stage 0) | **JUnit 6.1.3**, vẫn dùng `kotlin-test-junit5` | Cùng API Jupiter với JUnit 5, là dòng đang phát triển. |
 | D26 | 2026-10-31 | Ghim JDK 21 cho daemon (Stage 0) | **Viết tay** `gradle-daemon-jvm.properties` (`toolchainVersion=21`), không plugin foojay | `updateDaemonJvm` đòi kho tải JDK; JDK 21 cài tay như D19, không thêm phụ thuộc. |
 | D27 | 2026-11-01 | Kiểm tệp cài đặt trên máy khi chưa ghi cài đặt nào (Stage 0) | **Lưu versionCode lúc mở app** vào `APP.last_version_code` (chỉ có trên mobile, không xuất / nhập) | DataStore chỉ tạo tệp ở lần ghi đầu; Stage 9 cần biết vừa cài đè bản mới để chuyển dữ liệu cũ. |
+| D28 | 2026-11-01 | Bản ghi để đo (Stage 1) | **5 bài đã có kết quả pyannote của desktop** (2, 3, 5, 4 và 1 người nói), chép ra `D:\GuzzMobileData\stage-01` cùng tệp gốc; thêm bài 2 giờ để đo tốc độ | Có sẵn tham chiếu; chép ra thì desktop chạy lại cũng không ghi đè. |
+| D29 | 2026-11-01 | Độ chính xác chấp nhận (Stage 1) | Mỗi bài, sau `process_turns`: **DER so với desktop ≤ 15%** (collar 0,5 s), người nói chính lệch ≤ 5 điểm %, số người lệch ≤ 1 | Đủ để ghi đúng giảng viên và người hỏi. |
+| D30 | 2026-11-01 | Tốc độ / RAM trên máy (Stage 1) | **Bài 2 giờ ≤ 30 phút, PSS đỉnh ≤ 1 GB**, pin ≤ 45 °C, tốn ≤ 10% pin | Chạy nền được; HyperOS khó giết vì thiếu RAM. |
+| D31 | 2026-11-01 | App đo trên điện thoại (Stage 1) | **App spike tự viết** (`...guzz.spike`), AAR sherpa-onnx 2.0.1 | Đổi được cấu hình, đo được RAM; dùng chung cho mọi phép đo. |
+| D32 | 2026-11-01 | Chỗ để code spike (Stage 1) | **`spikes/` trên `main`, giữ lại**; `spikes/android` là build Gradle riêng | Đo lại được; Stage 5 dùng lại script so độ chính xác. |
+| D33 | 2026-11-01 | Model embedding thử (Stage 1) | **3D-Speaker (Apache-2.0) + NeMo TitaNet small, WeSpeaker ResNet34-LM (CC-BY-4.0)** | WeSpeaker cùng họ với embedding của desktop; CC-BY chỉ cần ghi công. |
+| D34 | 2026-11-01 | Bài dài quá heap Java (Stage 1) | **Chia phần ≤ 30–60 phút có chồng lấn, nối người nói**; Kotlin, không NDK | Kotlin API nhận cả bài trong một `FloatArray`, heap tối đa 512 MB, bản Android không có C API. |
+| D35 | 2026-11-01 | Tiêu chí chạy nền (Stage 1) | **Sau khi cài một lần** (pin không hạn chế, Autostart): ≥ 1 cách lên FGS 10/10 lần khi màn hình tắt, Doze; chạy liền ≥ 60 phút | Cài một lần là chấp nhận được; thử thêm khi chưa cài gì. |
+| D36 | 2026-11-01 | Định dạng đoạn đưa vào đo (Stage 1) | **FLAC, OGG-Opus, M4A-AAC, WAV** | M4A-AAC chạy được từ minSdk 26; Opus cần API 29. |
+| D37 | 2026-11-01 | Gửi thử Gemini (Stage 1) | **Có, khoảng 5 yêu cầu** bằng `google_ai.py` của desktop; hỏi lại trước khi gửi | Biết định dạng nén có làm kém bản chép lời không. |
+| D38 | 2026-11-01 | Resampler đưa vào đo (Stage 1) | **Windowed-sinc tự viết + `SonicAudioProcessor` của Media3** | Stage 2 chọn theo SNR và tốc độ. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
@@ -134,7 +145,9 @@ Stage 3 không cần Stage 1 và 2, nên làm song song được với hai stage
    phân cụm nhanh theo ngưỡng. → Stage 1 đo trên bản ghi lớp học thật, so với kết quả pyannote của desktop; bước làm mượt
    của `speaker.py` bù được một phần.
 2. **Thời gian và RAM trên CPU điện thoại với bài 1–2 giờ.** Riêng mảng PCM float của bài 2 giờ ở 16 kHz đã khoảng 460 MB.
-   → Stage 1 đo; Stage 2 không giữ cả bài trong RAM (đọc theo khối từ tệp PCM tạm).
+   → Stage 1 đo; Stage 2 không giữ cả bài trong RAM (đọc theo khối từ tệp PCM tạm). Kotlin API của sherpa-onnx nhận cả
+   bài trong một `FloatArray`, trong khi heap Java của máy thử tối đa 512 MB → Stage 1 thử chia phần rồi nối người nói
+   (D34).
 3. **Android hạn chế việc chạy nền.** Từ Android 12 app ở nền không tự khởi động foreground service được (trừ vài
    ngoại lệ); Android 15 giới hạn 6 giờ / 24 giờ cho FGS loại `dataSync` / `mediaProcessing`. Intent từ MacroDroid lúc
    màn hình tắt có thể bị chặn. → Stage 1 thử các cách: broadcast khi Guzz đã được miễn tối ưu pin, activity trong suốt,
