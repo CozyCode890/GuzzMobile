@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_config_keys.py"
+  },
+  "sections": {
+    "AUDIO": {
+      "bandpass_high": "7000",
+      "bandpass_low": "80",
+      "denoise": "true",
+      "extensions": ".m4a,.flac,.mp3,.wav,.wma,.aac,.ogg,.opus",
+      "keep_silence": "400",
+      "level_window_sec": "3.0",
+      "min_silence_len": "1000",
+      "noise_sample_sec": "1.5",
+      "prop_decrease": "0.8",
+      "sample_rate": "16000",
+      "silence_thresh_offset": "20",
+      "target_dbfs": "-16.0",
+      "transient_clamp_db": "0",
+      "trim_silence": "true"
+    },
+    "CHUNKING": {
+      "chunk_minutes": "10",
+      "format": "flac",
+      "min_last_chunk_seconds": "60",
+      "search_seconds": "20"
+    },
+    "FALLBACK": {
+      "enabled": "true",
+      "max_all_locked_wait_min": "20",
+      "models": "gemini-3.5-flash-lite, gemini-3.5-flash, gemini-3.8-flash, gemini-3.5-transcribe",
+      "overload_lock_minutes": "10",
+      "proactive_daily_lock": "true",
+      "retries_before_switch": "2",
+      "return_to_main_model": "true",
+      "switch_wait_threshold_sec": "0"
+    },
+    "GOOGLE_AI": {
+      "chunk_retries": "4",
+      "delete_remote_file": "true",
+      "languages": "",
+      "model": "gemini-3.5-flash-lite",
+      "prompt_file": "prompt.txt",
+      "store_on_server": "false",
+      "timeout_seconds": "600",
+      "token_rate_limit": "10000",
+      "transcribe_mode": "smart",
+      "vocabulary": ""
+    },
+    "GUI": {
+      "accent_color": "",
+      "language": "vi",
+      "log_font_size": "12",
+      "mica": "true",
+      "remember_window": "true",
+      "scale": "auto",
+      "theme": "auto"
+    },
+    "OUTPUT": {
+      "add_header": "false",
+      "encoding": "utf-8",
+      "extension": ".txt",
+      "filename_template": "{name}",
+      "mark_chunks": "false",
+      "newline": "crlf",
+      "on_conflict": "number",
+      "open_when_done": "none",
+      "output_dir": "",
+      "save_clean_audio": "false",
+      "save_speaker_map": "false"
+    },
+    "QUEUE": {
+      "browse_folder": "",
+      "include_subfolders": "false",
+      "keep_awake": "true",
+      "notify_when_done": "true",
+      "on_file_error": "continue",
+      "remember_browse_folder": "true",
+      "sound_when_done": "true"
+    },
+    "QUOTAS": {
+      "gemini-3.5-flash": "250000, 5, 20",
+      "gemini-3.5-flash-lite": "250000, 15, 500",
+      "gemini-3.5-transcribe": "10000, 3, 25",
+      "gemini-3.8-flash": "250000, 5, 20"
+    },
+    "SPEAKERS": {
+      "density_min_sec": "15",
+      "density_window_sec": "60",
+      "device": "auto",
+      "enabled": "false",
+      "generic_label": "Người nói",
+      "label_main_speaker": "true",
+      "main_label": "Giảng viên",
+      "map_delivery": "file",
+      "mark_review": "true",
+      "max_paragraph_sec": "60",
+      "max_speakers": "6",
+      "merge_gap_sec": "1.0",
+      "method": "pyannote",
+      "min_speakers": "1",
+      "model_dir": "auto",
+      "num_speakers": "0",
+      "offline": "false",
+      "other_label": "Người hỏi",
+      "paragraph_gap_sec": "3.0",
+      "paragraph_template": "[{time}] {speaker}: {text}",
+      "prompt_file": "prompt_diarization.txt",
+      "pyannote_model": "pyannote/speaker-diarization-community-1",
+      "python_path": "auto",
+      "run_on": "clean",
+      "sandwich_gap_sec": "1.0",
+      "sandwich_max_sec": "3.0",
+      "smooth": "true",
+      "timeout_minutes": "60",
+      "timestamps": "true"
+    },
+    "SYSTEM": {
+      "delete_temp_when_done": "false",
+      "ffmpeg_path": "auto",
+      "log_file": "logs\\guzz.log",
+      "log_level": "INFO",
+      "log_size_mb": "2",
+      "old_log_count": "5",
+      "temp_folder": "tmp"
+    },
+    "VIDEO": {
+      "accept_video": "true",
+      "audio_track": "auto",
+      "extensions": ".mp4,.mkv,.mov,.avi,.wmv,.webm,.m4v,.mpg,.mpeg,.ts,.flv,.3gp",
+      "extract_first": "true",
+      "extract_format": "flac",
+      "save_extracted": "false",
+      "skip_silent": "true"
+    }
+  }
+}

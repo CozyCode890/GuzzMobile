@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Icon tạm (Stage 0); icon chính thức để Stage 9. -->
+    <color name="ic_launcher_background">#1E5AA8</color>
+</resources>

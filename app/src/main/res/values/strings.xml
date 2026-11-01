@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tiếng Việt là mặc định; tiếng Anh ở values-en. -->
+<resources>
+    <!-- Bản debug đè tên này ở src/debug (D10). -->
+    <string name="app_name" translatable="false">Guzz</string>
+    <string name="main_title" translatable="false">Guzz</string>
+    <string name="main_tagline">Chuyển âm thanh và video thành văn bản</string>
+    <!-- <versionName> · <flavor> · <buildType> -->
+    <string name="build_info" translatable="false">%1$s · %2$s · %3$s</string>
+</resources>

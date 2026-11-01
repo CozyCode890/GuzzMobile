@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_wav_io.py"
+  },
+  "samples_int16": [
+    0,
+    1,
+    -1,
+    32767,
+    -32768,
+    16384,
+    -16384,
+    12345,
+    -12345,
+    2,
+    0
+  ],
+  "sr": 8000
+}

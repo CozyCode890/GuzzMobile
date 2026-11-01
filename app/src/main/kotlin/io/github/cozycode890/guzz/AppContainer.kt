@@ -1,0 +1,38 @@
+package io.github.cozycode890.guzz
+
+import android.content.Context
+import io.github.cozycode890.guzz.core.common.log.RotatingFileSink
+import io.github.cozycode890.guzz.core.common.settings.SettingKeys
+import io.github.cozycode890.guzz.core.common.settings.Settings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import java.io.File
+
+/**
+ * Các đối tượng dùng chung của app, dựng tay (D13): không thư viện DI, module JVM thuần chỉ nhận tham số qua
+ * constructor. Sống cùng [GuzzApp].
+ */
+class AppContainer(context: Context) {
+    /** Scope sống cùng app, cho việc nền không gắn với màn hình nào. */
+    val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    val settings: Settings = Settings.create(File(context.filesDir, "datastore/settings.preferences_pb"))
+
+    /**
+     * `Android/data/<package>/files/logs/guzz.log` (D15): không cần quyền, lấy được bằng `adb pull` hoặc cắm USB, kể cả
+     * bản release. Bộ nhớ ngoài không dùng được (hiếm) thì lùi về bộ nhớ trong của app.
+     */
+    val logFile: File = File(context.getExternalFilesDir(null) ?: context.filesDir, "logs/guzz.log")
+
+    /** Mở với giá trị mặc định; [AppLogging] cập nhật theo Settings khi đọc xong. */
+    val logFileSink = RotatingFileSink(
+        logFile,
+        maxBytes = SettingKeys.LOG_SIZE_MB.default * BYTES_PER_MB,
+        backupCount = SettingKeys.OLD_LOG_COUNT.default,
+    )
+
+    companion object {
+        const val BYTES_PER_MB = 1024L * 1024L
+    }
+}

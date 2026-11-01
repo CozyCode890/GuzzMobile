@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chỉ bản sideload (APK tự cài) xin "Truy cập mọi tệp": nhận được đường dẫn tuyệt đối từ MacroDroid (D4, D6).
+     Play không cho quyền này nếu không có lý do đặc biệt, nên bản play không khai báo. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+</manifest>

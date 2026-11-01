@@ -1,0 +1,106 @@
+{
+  "cases": [
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        7000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "a_shorter_than_length_plus_min_last",
+      "search_seconds": 2.0,
+      "sr": 1000,
+      "wav": "short.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        8000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "a_exactly_length_plus_min_last",
+      "search_seconds": 2.0,
+      "sr": 1000,
+      "wav": "exact.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        6425,
+        12175,
+        18675,
+        25000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "b_silence_in_each_window",
+      "search_seconds": 2.0,
+      "sr": 1000,
+      "wav": "multi.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        6000,
+        12000,
+        18000,
+        25000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "c_zero_search_cuts_at_target",
+      "search_seconds": 0.0,
+      "sr": 1000,
+      "wav": "multi.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        5925,
+        14000
+      ],
+      "min_last_chunk_seconds": 3.0,
+      "name": "d_short_last_chunk_merged",
+      "search_seconds": 2.0,
+      "sr": 1000,
+      "wav": "merge.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        6725,
+        10000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "e_deeper_silence_outside_window_ignored",
+      "search_seconds": 1.0,
+      "sr": 1000,
+      "wav": "outside.wav"
+    },
+    {
+      "chunk_minutes": 0.1,
+      "expected": [
+        0,
+        5825,
+        10225,
+        15925,
+        20000
+      ],
+      "min_last_chunk_seconds": 2.0,
+      "name": "f_continuous_noise",
+      "search_seconds": 2.0,
+      "sr": 1000,
+      "wav": "noise.wav"
+    }
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_chunker.py"
+  }
+}

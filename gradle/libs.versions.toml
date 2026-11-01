@@ -1,0 +1,58 @@
+# Phiên bản chốt ở Stage 0 bước C1 (2026-10-31), D24 và D25. Nguồn ghi trong Nhật ký của plans/stage-00-setup.md.
+
+[versions]
+agp = "9.3.3"
+kotlin = "2.4.21"
+composeBom = "2026.09.00"
+activityCompose = "1.13.0"
+datastore = "1.3.0"
+coroutines = "1.11.0"
+serialization = "1.12.0"
+junit = "6.1.3"
+junit4 = "4.13.2"
+
+# Android SDK. compileSdk = targetSdk = bản ổn định mới nhất.
+compileSdk = "37"
+targetSdk = "37"
+minSdk = "26"
+buildTools = "37.0.0"
+
+# Biên dịch bằng JDK 21, xuất bytecode 17 để D8 của Android chắc chắn đọc được.
+jdk = "21"
+jvmTarget = "17"
+
+[libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+
+# Chỉ build-logic dùng.
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+# Convention plugin trong build-logic/ (D12).
+guzz-jvm-library = { id = "guzz.jvm.library" }
+guzz-android-library = { id = "guzz.android.library" }
+guzz-android-application = { id = "guzz.android.application" }
+guzz-android-compose = { id = "guzz.android.compose" }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Debug và release cài song song (D10): tên khác để phân biệt trên màn hình chính. -->
+    <string name="app_name" translatable="false">Guzz (debug)</string>
+</resources>
