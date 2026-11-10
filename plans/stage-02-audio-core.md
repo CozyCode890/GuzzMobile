@@ -77,3 +77,19 @@ _(viết ở session của stage này)_
 - (Từ Stage 0, 2026-10-31) `Chunker.findSplitPoints` hiện nhận cả bài trong một `FloatArray`. Bài 2 giờ ở 16 kHz là
   khoảng 460 MB (README §6, rủi ro 2): Stage 2 cần bản tính năng lượng khối theo từng khối đọc từ tệp PCM tạm (chỉ giữ
   mảng năng lượng, 50 ms một số), golden test hiện có vẫn phải xanh.
+- (Từ Stage 1, 2026-11-10) Hai câu "Câu hỏi cần chốt" đã có đáp án: định dạng đoạn là **FLAC** (D41), resampler là
+  **windowed-sinc tự viết** (D40). Số đo ở [stage-01-results.md](stage-01-results.md) §3–4.
+  - FLAC: MediaCodec `audio/flac`, tự ghi tệp `.flac` (`fLaC` + STREAMINFO lấy từ buffer codec-config, rồi các khung;
+    điền lại tổng số mẫu và MD5 sau khi ghi xong). Tham khảo `spikes/android/.../media/EncodeBench.kt`. 10 phút = 9,6 MB,
+    mã hoá 4–6 s.
+  - Resampler: port `spikes/android/.../media/SincResampler.kt` (32 zero-crossing, Kaiser β 8,6, cắt 7,52 kHz) và
+    `SincResamplerTest`. Bản spike chậm: giải mã + sinc + ghi tệp của bài m4a 135 phút mất 22,5 phút, chỉ giải mã mất 5,4
+    phút → tối ưu (polyphase với bảng hệ số tính sẵn cho tỉ lệ 3 : 1 và 160 : 441, bớt zero-crossing nếu SNR vẫn đạt) rồi
+    đo lại.
+  - Giải mã: dùng MediaCodec **chế độ async** (`setCallback`). Chế độ sync lúc màn hình tắt chỉ 3,6–8× thời gian thực,
+    async ổn định khoảng 16×. Tham khảo `spikes/android/.../media/DecodeBench.kt`.
+- (Từ Stage 1, 2026-11-10) Phần đo của Stage 1 chuyển sang đây, làm thành bước kiểm của bộ giải mã thật (D40):
+  - giải mã `V1.mp4` (video 60 phút) và `L1.ogg` cả chuỗi;
+  - thời lượng PCM ra lệch ≤ 0,1 s so với `ffmpeg -i`;
+  - SNR của PCM giải mã trên máy so với `ffmpeg -ac 1 -ar 16000 -f f32le`, dùng `spikes/media/compare_pcm.py`.
+  Tệp thử nằm ở `$env:GUZZ_SPIKE_DATA\media\` (ngoài repo).

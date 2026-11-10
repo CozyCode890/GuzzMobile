@@ -63,3 +63,8 @@ _(viết ở session của stage này)_
 ## Nhật ký
 
 ## Phát sinh
+
+- (Từ Stage 1, 2026-11-10) Đoạn gửi Gemini mặc định là FLAC (D41), 9,6 MB / 10 phút. Nếu muốn có tuỳ chọn "tiết kiệm dữ
+  liệu di động": OGG-Opus 32 kbps chỉ 3 MB / 10 phút nhưng mã hoá mất 46 s (FLAC 4–6 s), và phải thử xem bản chép lời có
+  kém đi không trước khi đưa ra (`spikes/formats/gemini_compare.py`, bước F3 cũ của Stage 1; gửi Gemini thì hỏi người
+  dùng trước).

@@ -1,6 +1,6 @@
 # Stage 1 — Spike kỹ thuật
 
-**Trạng thái:** 🔨 đang làm từ 2026-11-01 · **Cần xong trước:** 0
+**Trạng thái:** ✅ 2026-11-10, đã rút gọn (D39–D42): phần chưa đo chuyển sang Stage 2, 4, 5, 6 · **Cần xong trước:** 0
 
 ## Mục tiêu
 
@@ -58,9 +58,11 @@ Lấy số đo trên máy thật cho những câu hỏi có thể làm đổ k�
 
 ## Tiêu chí hoàn thành
 
-- [ ] Cả 6 mục trên đều có số đo hoặc kết luận trên máy thật.
-- [ ] Đã chọn được mặc định cho các stage 2, 5, 6.
-- [ ] Quyết định đi tiếp / đổi hướng cho sherpa-onnx đã ghi vào README §2.
+Rút gọn ngày 2026-11-10 (D39–D42): mục nào chưa đo xong thì có kết luận tạm và tên stage nhận phần còn lại.
+
+- [x] Cả 6 mục trên đều có số đo hoặc kết luận trên máy thật, hoặc đã ghi stage nhận phần còn lại.
+- [x] Đã chọn được mặc định cho các stage 2, 5, 6 (ghi ở "Phát sinh" của từng stage).
+- [x] Quyết định đi tiếp / đổi hướng cho sherpa-onnx đã ghi vào README §2 (D39).
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -176,6 +178,16 @@ Hỏi người dùng ngày 2026-11-01. Người dùng chọn phương án Recomm
 | D37 | Có gửi thử Gemini để so định dạng không | **Có, khoảng 5 yêu cầu**: một đoạn 10 phút, mỗi định dạng gửi một lần, FLAC gửi hai lần; chạy bằng `google_ai.py` của desktop với key đã lưu; hỏi lại người dùng ngay trước khi gửi | Biết định dạng nén có làm bản chép lời kém đi không trước khi Stage 2 chọn. FLAC gửi hai lần cho biết Gemini tự dao động bao nhiêu. |
 | D38 | Đo resampler nào | **Windowed-sinc tự viết** (Kotlin thuần) và **`SonicAudioProcessor` của Media3** | Stage 2 chọn theo chất lượng (SNR so với ffmpeg) và tốc độ. |
 
+**Rút gọn stage**, hỏi người dùng ngày 2026-11-10 vì không đủ thời gian cho spike dài; muốn vừa làm vừa thử ở stage sau.
+Người dùng chọn phương án Recommended ở cả 4 câu.
+
+| # | Câu hỏi | Chọn | Lý do |
+| --- | --- | --- | --- |
+| D39 | Phần tách giọng còn lại (B5–B8, đo lại D4 / D5, D6, D7 cách 2) | **Chuyển sang Stage 5. Đi tiếp với sherpa-onnx** (I2) | Bài 2 giờ chia phần đã đạt D30; biết số người thì độ chính xác tạm được. Rủi ro còn lại (ngưỡng khi không biết số người) chỉ ảnh hưởng Stage 5. |
+| D40 | Giải mã và resampler (E3–E4) | **Chốt `SincResampler`, loại Sonic**; phần chưa đo thành bước kiểm của Stage 2 | Sonic không lọc chống alias. |
+| D41 | Định dạng đoạn (F3) | **FLAC, bỏ F3** | Không mất dữ liệu, giống desktop. |
+| D42 | Chạy nền và MacroDroid (G2–G6) | **G4, G5 → Stage 4; G2, G3, G6 → Stage 6**; chỉ một đêm S1, bỏ S0 | Thử trên code thật. |
+
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
 - PC (pip) và điện thoại (AAR) dùng cùng một bản sherpa-onnx **2.0.1**, để so được kết quả hai nơi.
@@ -213,6 +225,9 @@ Hỏi người dùng ngày 2026-11-01. Người dùng chọn phương án Recomm
 
 Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. Lệnh chạy trong PowerShell 7 tại `D:\GuzzMobile`, với
 `$D = $env:GUZZ_SPIKE_DATA`. Số đo ghi vào [stage-01-results.md](stage-01-results.md) ngay khi có.
+
+**Rút gọn 2026-11-10 (D39–D42):** bước còn `[ ]` có dòng in đậm ở đầu, ghi bước đó bỏ hay chuyển sang stage nào. Phần đã
+chuyển được chép sang mục "Phát sinh" của stage nhận.
 
 Thứ tự:
 
@@ -338,16 +353,18 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   (shift lớn thì ít embedding hơn, nên nhanh và nhẹ hơn). Ghi lựa chọn vào Nhật ký.
 - [x] **B4. So 5 embedding (D33)** với shift chọn ở B3, `num_clusters` = số người của desktop, trên B1–B5.
   **Kiểm:** bảng DER sau làm mượt theo embedding × bài; chọn ra 2 embedding có DER trung bình thấp nhất.
-- [ ] **B5. Ngưỡng phân cụm**, cho trường hợp không biết số người nói (mặc định của desktop). Chạy 2 embedding của B4 ×
+- [ ] **→ Stage 5 (D39).** Đã chạy CAM++ zh_en ở 0,3–0,8: không bài nào đạt (xem Nhật ký).
+  **B5. Ngưỡng phân cụm**, cho trường hợp không biết số người nói (mặc định của desktop). Chạy 2 embedding của B4 ×
   `threshold` ∈ {0,3; 0,4; 0,5; 0,6; 0,7; 0,8}, trên B1–B5.
   **Kiểm:** bảng theo ngưỡng. Chọn **một** ngưỡng chung cho cả 5 bài: trước hết lấy ngưỡng có nhiều bài đạt D29 nhất, hoà
   thì lấy ngưỡng có DER trung bình thấp hơn. Ghi rõ bài nào trượt tiêu chí nào.
-- [ ] **B6. Segmentation int8** với cấu hình tốt nhất (embedding và ngưỡng của B5).
+- [ ] **→ Stage 5 (D39).** **B6. Segmentation int8** với cấu hình tốt nhất (embedding và ngưỡng của B5).
   **Kiểm:** bảng DER và thời gian của int8 so với fp32 trên B1–B5.
-- [ ] **B7. Âm thanh gốc** (`goc16k.wav`) với cấu hình tốt nhất, chấm bằng `evaluate.py --remap`.
+- [ ] **→ Stage 5 (D39).** **B7. Âm thanh gốc** (`goc16k.wav`) với cấu hình tốt nhất, chấm bằng `evaluate.py --remap`.
   **Kiểm:** bảng "sạch / gốc" cho B1–B5, kèm nhận xét trong stage-01-results.md: Stage 5 nên mặc định chạy trên âm thanh
   nào.
-- [ ] **B8. Chia phần rồi nối người nói (D34)**, `run_sherpa.py --piece-minutes 30|60 --overlap-seconds 60`. Các bước:
+- [ ] **→ Stage 5 (D39).** Thuật toán đã viết (Python và Kotlin, khớp nhau ở D5); chưa chấm DER trên B1–B5.
+  **B8. Chia phần rồi nối người nói (D34)**, `run_sherpa.py --piece-minutes 30|60 --overlap-seconds 60`. Các bước:
   1. Cắt bài thành các phần dài P phút; hai phần liền nhau chồng lấn O giây. Tách giọng từng phần với cấu hình tốt nhất.
   2. Nối phần k+1 vào phần k: trong vùng chồng lấn, lập ma trận thời gian trùng nhau giữa nhãn của hai phần, ghép cặp bằng
      `scipy.optimize.linear_sum_assignment`; chỉ nhận cặp trùng ≥ 5 s.
@@ -417,15 +434,21 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   `OutOfMemoryError` và ghi lại, không để app chết.
   **Kiểm:** mỗi lần chạy có một dòng kết quả: thời gian, PSS đỉnh, `VmHWM`, heap Java đỉnh. Nếu OOM thì ghi nó xảy ra ở đâu:
   lúc cấp mảng hay lúc chạy native.
-- [ ] **D5. 2 giờ, chia phần (D34).** Port sang Kotlin thuật toán nối người nói của B8, đặt trong app spike. Đọc từng phần từ
+- [ ] **Một phần; còn lại → Stage 5 (D39).** Đã có: kiểm 1 đạt; `L1_120m` P = 20 phút với ngưỡng tạm 0,5. Còn: `L2`, và đo
+  lại với ngưỡng thật.
+  **D5. 2 giờ, chia phần (D34).** Port sang Kotlin thuật toán nối người nói của B8, đặt trong app spike. Đọc từng phần từ
   tệp f32 (`FileChannel`), không lúc nào giữ cả bài trong heap. Chạy `L1_120m` và `L2` với P chọn ở B8.
   **Kiểm:**
   - chạy `L1_10m` với phần nhỏ (P = 3 phút, O = 60 s): kết quả giống bản Python cùng tham số, DER giữa hai bản ≤ 1%;
   - với `L1_120m` và `L2`: thời gian và PSS đỉnh, so với ngưỡng D30.
-- [ ] **D6. Pin và nhiệt.** Chạy một lần bài 2 giờ, chọn cách tốt nhất trong D4 / D5. Máy rút cáp, màn hình tắt từ lúc bắt
+- [ ] **→ Stage 5 (D39).** Số tạm từ lượt D5 `L1_120m` rút cáp: −8% pin, nhiệt đỉnh 41,1 °C (khởi động bằng adb, không
+  qua MacroDroid).
+  **D6. Pin và nhiệt.** Chạy một lần bài 2 giờ, chọn cách tốt nhất trong D4 / D5. Máy rút cáp, màn hình tắt từ lúc bắt
   đầu; khởi động bằng MacroDroid, gộp với G4. Cắm lại máy rồi mới lấy kết quả.
   **Kiểm:** số % pin và µAh đã tốn, nhiệt độ pin đỉnh, trạng thái nhiệt đỉnh; so với D30.
-- [ ] **D7. Dừng giữa chừng** (cho Stage 5). Thử ba cách:
+- [ ] **Một phần; cách 2 → Stage 5 (D39).** Cách 1 không dừng được; cách 3 dừng trong 54 ms. Đề xuất cho Stage 5: chạy
+  tách giọng trong process riêng.
+  **D7. Dừng giữa chừng** (cho Stage 5). Thử ba cách:
   1. callback trả về khác 0 thì `process` có dừng sớm không (theo mã nguồn v2.0.1 thì không);
   2. chạy chia phần: từ lúc bấm Dừng tới khi phần đang chạy xong mất bao lâu;
   3. chạy bench trong process riêng (`android:process=":diarize"`) rồi `Process.killProcess`: process chính còn sống
@@ -438,18 +461,21 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 - [x] **E1. Đưa tệp lên máy:** `media\L1.m4a`, `A1.aac`, `L1.mp3`, `L1.ogg`, `V1.mp4`, `sweep48k.wav`, `tones48k.wav` →
   `files/input/`.
   **Kiểm:** `adb shell ls -l` cho cỡ tệp đúng.
-- [ ] **E2. Hai resampler** về 16 kHz:
+- [x] **E2. Hai resampler** về 16 kHz:
   - `SincResampler`: windowed-sinc polyphase với cửa sổ Kaiser, Kotlin thuần, có unit test JVM (sin 1 kHz ở 48 kHz đổi
     sang 16 kHz vẫn là sin 1 kHz, đúng biên độ, đã bù độ trễ);
   - `SonicAudioProcessor` của media3 1.11.1, đặt `setOutputSampleRateHz(16000)`.
 
   **Kiểm:** `.\gradlew -p spikes\android :app:testDebugUnitTest` xanh.
-- [ ] **E3. Bench `decode`.** Chuỗi xử lý: MediaExtractor chọn luồng âm thanh đầu tiên → MediaCodec → PCM → trộn mono →
+- [ ] **Một phần; còn lại → Stage 2 (D40).** Đã đo m4a, aac, mp3, ogg (chỉ giải mã). Còn: `V1.mp4`, ogg cả chuỗi, đối chiếu
+  thời lượng với `ffmpeg -i`.
+  **E3. Bench `decode`.** Chuỗi xử lý: MediaExtractor chọn luồng âm thanh đầu tiên → MediaCodec → PCM → trộn mono →
   resample (chọn resampler bằng extra) → ghi f32 ra tệp theo từng khối, không giữ cả bài. Đo riêng thời gian chỉ giải mã
   và thời gian cả chuỗi. Ghi tên bộ giải mã (`MediaCodec.getName()`), tần số lấy mẫu và số kênh gốc, PSS đỉnh.
   **Kiểm:** bảng định dạng × resampler: nhanh gấp mấy lần thời gian thực, PSS đỉnh. Thời lượng PCM ra lệch ≤ 0,1 s so với
   `ffmpeg -i`.
-- [ ] **E4. Chất lượng resampler.** `spikes/media/compare_pcm.py` (chạy bằng `D:\Guzz\runtime\python\python.exe -B -s`,
+- [ ] **Một phần; SNR tệp thật → Stage 2 (D40).** Đã đo `sweep48k` và `tones48k`: chọn sinc.
+  **E4. Chất lượng resampler.** `spikes/media/compare_pcm.py` (chạy bằng `D:\Guzz\runtime\python\python.exe -B -s`,
   dùng numpy + scipy):
   - `sweep48k`: so đầu ra của điện thoại với `scipy.signal.resample_poly`, tính SNR trong dải 0–7 kHz;
   - `tones48k`: đo sin 10 kHz và 15 kHz bị suy giảm bao nhiêu. Hai tần số này trên Nyquist 8 kHz nên phải bị lọc đi;
@@ -475,7 +501,8 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   **Kiểm:** `adb pull` về `$D\out\formats\`.
   - Mỗi tệp chạy `ffmpeg -v error -i <tệp> -f null -` không báo lỗi; thời lượng 600 s ± 0,1 s.
   - FLAC giải mã ngược ra PCM 16-bit trùng từng mẫu với đầu vào đã lượng tử hoá 16-bit.
-- [ ] **F3. Gửi thử Gemini (D37).** `spikes/formats/gemini_compare.py`, chạy bằng
+- [ ] **Bỏ (D41): chọn FLAC.** Script `gemini_compare.py` vẫn giữ, Stage 8 dùng lại nếu xét Opus.
+  **F3. Gửi thử Gemini (D37).** `spikes/formats/gemini_compare.py`, chạy bằng
   `D:\Guzz\runtime\python\python.exe -B -s`:
   - đọc cài đặt thật của desktop bằng `config.load_config()` (chỉ đọc);
   - tạo `google_ai.Client(google_ai.get_api_key())`;
@@ -514,7 +541,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   `adb shell am broadcast -n io.github.cozycode890.guzz.spike.debug/io.github.cozycode890.guzz.spike.RunReceiver -a io.github.cozycode890.guzz.spike.action.RUN --es method broadcast --es request_id t1`.
   Log có dòng `ok`, thông báo hiện trong 3 phút, rồi có dòng DONE. Làm tương tự với `method=work` và với `am start`
   `TrampolineActivity`. Lệnh từ adb chỉ để kiểm code, không tính vào kết quả.
-- [ ] **G2. Macro MacroDroid.** Người dùng tạo trên máy theo hướng dẫn Claude soạn; hướng dẫn chép vào `spikes/README.md`.
+- [ ] **→ Stage 6 (D42).** **G2. Macro MacroDroid.** Người dùng tạo trên máy theo hướng dẫn Claude soạn; hướng dẫn chép vào `spikes/README.md`.
   - "Spike broadcast": trigger "Regular Interval" 30 phút → action "Send Intent", Target Broadcast, Package
     `io.github.cozycode890.guzz.spike.debug`, Class `io.github.cozycode890.guzz.spike.RunReceiver`, Action
     `io.github.cozycode890.guzz.spike.action.RUN`, extra `method=broadcast`, `request_id` = giờ hệ thống.
@@ -527,7 +554,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   Bản thân MacroDroid cũng phải được đặt pin "No restrictions", bật "Autostart" và có quyền "Display over other apps"
   (người dùng bật). Thiếu một trong ba thì lỗi nằm ở phía gửi.
   **Kiểm:** bật macro lúc màn hình đang mở; log của MacroDroid có lần gửi, `automation.jsonl` có lần nhận tương ứng.
-- [ ] **G3. Ma trận thử.** Máy rút cáp suốt đêm, vì máy đang sạc không vào Doze. Trước khi tắt màn hình, vuốt app spike khỏi
+- [ ] **→ Stage 6 (D42), chỉ S1 (một đêm).** **G3. Ma trận thử.** Máy rút cáp suốt đêm, vì máy đang sạc không vào Doze. Trước khi tắt màn hình, vuốt app spike khỏi
   đa nhiệm.
   - **S1, đêm 1**, sau khi cài một lần: app spike "No restrictions" + "Autostart", đã bấm "Xin miễn tối ưu pin". Ba macro
     chạy cả đêm; mỗi cách cần ≥ 10 lần ở trạng thái `isInteractive = false` và `isDeviceIdleMode = true`. Nếu đêm đó quá ít
@@ -538,16 +565,16 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
   **Kiểm:** bảng cách × cài đặt: số lần FGS lên / số lần MacroDroid gửi (đếm từ log hai bên), kèm các lỗi gặp. Đạt D35 khi
   ít nhất một cách ở S1 được 10/10.
-- [ ] **G4. Chạy dài.** Dùng cách đã đạt ở G3: MacroDroid khởi động lúc màn hình tắt, chạy bench 2 giờ của D6. Nếu D chưa
+- [ ] **→ Stage 4 (D42).** **G4. Chạy dài.** Dùng cách đã đạt ở G3: MacroDroid khởi động lúc màn hình tắt, chạy bench 2 giờ của D6. Nếu D chưa
   xong thì chạy `HeartbeatService` 90 phút.
   **Kiểm:** nhịp trong log liền ≥ 60 phút, không hở quá 2 phút; service không bị giết; ghi lại suốt lúc chạy có mạng hay
   không.
-- [ ] **G5. `onTimeout`** (cho Stage 4). Người dùng tự chạy
+- [ ] **→ Stage 4 (D42).** **G5. `onTimeout`** (cho Stage 4). Người dùng tự chạy
   `adb shell device_config put activity_manager media_processing_fgs_timeout_duration 120000`, rồi mở `HeartbeatService` 5
   phút từ app. Xong thì chạy `adb shell device_config delete activity_manager media_processing_fgs_timeout_duration`.
   **Kiểm:** log có `onTimeout(startId, fgsType)` vào khoảng phút thứ 2; service dừng trong ≤ 1 s;
   `adb logcat -d -b crash` không có dòng nào của app spike.
-- [ ] **G6. Sự kiện gửi ngược về MacroDroid** (rủi ro của Stage 6): đếm số broadcast DONE mà macro "Spike DONE" bắt được,
+- [ ] **→ Stage 6 (D42).** **G6. Sự kiện gửi ngược về MacroDroid** (rủi ro của Stage 6): đếm số broadcast DONE mà macro "Spike DONE" bắt được,
   kể cả lúc màn hình tắt.
   **Kiểm:** log MacroDroid có DONE cho ≥ 3 lần chạy lúc màn hình tắt, `request_id` khớp.
 
@@ -564,7 +591,7 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### I. Tổng hợp và quyết định
 
-- [ ] **I1. Viết xong [stage-01-results.md](stage-01-results.md).** Gồm số đo của 6 mục và các mặc định đã chọn:
+- [x] **I1. Viết xong [stage-01-results.md](stage-01-results.md).** Gồm số đo của 6 mục và các mặc định đã chọn:
   - tách giọng: embedding, ngưỡng, `windowShiftRatio`, fp32 hay int8, số luồng, chạy nguyên bài hay chia phần (P, O), chạy
     trên âm thanh gốc hay âm thanh sạch, cách Dừng giữa chừng;
   - âm thanh: resampler, định dạng và bitrate của đoạn;
@@ -572,11 +599,11 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   - bảng giấy phép.
 
   **Kiểm:** mỗi mục có số đo kèm tên máy, bản Android, ngày đo; không còn ô "chưa đo".
-- [ ] **I2. Đi tiếp hay đổi hướng với sherpa-onnx.** Cả 5 bài đạt D29 và bài 2 giờ đạt D30 (chạy nguyên bài hoặc chia phần)
+- [x] **I2. Đi tiếp hay đổi hướng với sherpa-onnx.** Đi tiếp (D39); hỏi lại ở Stage 5 nếu ngưỡng không đạt. Cả 5 bài đạt D29 và bài 2 giờ đạt D30 (chạy nguyên bài hoặc chia phần)
   thì đi tiếp. Không đạt thì ghi rõ bài nào trượt tiêu chí nào, vì sao, rồi **hỏi người dùng** bằng câu trắc nghiệm: đi
   tiếp kèm rủi ro, nới ngưỡng, hay đổi hướng (tự ghép VAD + embedding trên ONNX Runtime, hoặc thu hẹp phạm vi tách giọng).
   **Kiểm:** quyết định có số D mới trong README §2.
-- [ ] **I3. Mặc định cho stage sau.** Ghi vào mục "Phát sinh" của từng stage:
+- [x] **I3. Mặc định cho stage sau.** Ghi vào mục "Phát sinh" của từng stage:
   - Stage 2: định dạng đoạn, resampler, đọc PCM theo khối;
   - Stage 4: loại FGS, `onTimeout`, có mạng trong Doze không;
   - Stage 5: model, ngưỡng, shift, chia phần, cách Dừng, âm thanh gốc hay sạch;
@@ -588,14 +615,14 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
 
 ### J. Đóng stage
 
-- [ ] **J1. Lệnh.** Thêm vào "Lệnh thường dùng" của CLAUDE.md các lệnh: build và cài app spike, đẩy dữ liệu lên máy, lấy kết
+- [x] **J1. Lệnh.** Thêm vào "Lệnh thường dùng" của CLAUDE.md các lệnh: build và cài app spike, đẩy dữ liệu lên máy, lấy kết
   quả về, chạy các script đo trên PC.
   **Kiểm:** chạy lại từng lệnh đúng như đã chép, lệnh nào cũng chạy được.
-- [ ] **J2. Kiểm trước khi commit:** `git status` không có bản ghi, JSON lượt nói, bản chép lời, model hay AAR;
+- [x] **J2. Kiểm trước khi commit:** `git status` không có bản ghi, JSON lượt nói, bản chép lời, model hay AAR;
   `git ls-files spikes` chỉ có code, script và `models.sha256`.
   **Kiểm:** `git ls-files | Select-String '\.(flac|wav|m4a|aac|mp3|ogg|mp4|f32|onnx|aar)$'` chỉ ra tệp trong
   `testdata/golden/`.
-- [ ] **J3. Đóng stage.** Tick đủ "Tiêu chí hoàn thành". Trong CLAUDE.md: Stage 1 → ✅ kèm ngày; cập nhật "Stage hiện tại";
+- [x] **J3. Đóng stage.** Tick đủ "Tiêu chí hoàn thành". Trong CLAUDE.md: Stage 1 → ✅ kèm ngày; cập nhật "Stage hiện tại";
   "Việc tiếp theo" → plan chi tiết Stage 2. Commit message tiếng Việt, push lên `main`.
   **Kiểm:** `git log -1` có commit đóng stage; `git status -sb` báo `## main...origin/main`.
 
@@ -716,5 +743,16 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
   4. Máy, sau B5: đo lại D4 (nguyên bài 60 / 120 phút) và D5 (`L1_120m`, `L2`, P đã chọn) với ngưỡng của B5; D7 cách 2.
   5. Việc chờ người dùng: G2 tạo 4 macro (hướng dẫn trong `spikes/README.md`, mục "Macro MacroDroid"), cài đặt S1, rồi đêm
      1 (G3 S1) và đêm 2 (S0); D6 + G4; G5 (`device_config`); F3 (hỏi lại trước khi gửi Gemini).
+- **2026-11-10, rút gọn và đóng stage.** Người dùng không đủ thời gian cho phần đo còn lại (nhiều giờ trên PC, hai đêm rút
+  cáp), muốn vừa làm vừa thử ở stage sau. Hỏi 4 câu trắc nghiệm, cả 4 chọn Recommended (D39–D42). Không chạy thêm phép đo
+  nào trên PC hay trên máy.
+  - Chép số E3 đã có trong `$D\out\phone\dec_*.jsonl` (m4a, aac, mp3, ogg) vào stage-01-results.md. Cả chuỗi giải mã +
+    sinc + ghi tệp chậm hơn chỉ giải mã 1,4–4,2 lần: Stage 2 phải tối ưu resampler (ghi ở Phát sinh của Stage 2).
+  - E2: `.\gradlew -p spikes\android :app:testDebugUnitTest` xanh (`SincResamplerTest`, `TurnsTest`).
+  - Ngưỡng B5 chưa chốt: Stage 5 làm tiếp từ 0,8 trở lên (0,8 vẫn ra 27–110 cụm). JSON B5 đã có nằm ở `$D\out\pc\`;
+    `sweep.py` bỏ qua JSON đã có.
+  - Phần chuyển đi đã chép vào "Phát sinh" của Stage 2, 4, 5, 6, 8, 9.
+  - J1: CLAUDE.md chỉ thêm một mục trỏ tới `spikes/README.md` (đã có đủ lệnh build, cài, đẩy dữ liệu, chạy bench), không
+    chép lại từng lệnh.
 
 ## Phát sinh

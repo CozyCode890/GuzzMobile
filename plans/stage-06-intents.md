@@ -1,6 +1,6 @@
 # Stage 6 — Intent cho MacroDroid
 
-**Trạng thái:** ⬜ chưa plan chi tiết · **Cần xong trước:** 4 (và kết quả mục 5 của Stage 1)
+**Trạng thái:** ⬜ chưa plan chi tiết · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây, D42)
 
 ## Mục tiêu
 
@@ -67,8 +67,8 @@ tự chép lời → thông báo hoặc mở bản chép lời.
 
 ## Rủi ro
 
-- Hạn chế chạy nền của Android (README rủi ro 3) — đã thử ở Stage 1, nhưng mỗi bản Android và mỗi hãng một khác → ghi rõ
-  trong tài liệu những máy đã thử.
+- Hạn chế chạy nền của Android (README rủi ro 3): Stage 1 chỉ thử lúc màn hình bật, phần thử lúc màn hình tắt làm ở
+  stage này (D42). Mỗi bản Android và mỗi hãng một khác → ghi rõ trong tài liệu những máy đã thử.
 - Broadcast ngầm (implicit) gửi ra ngoài: chỉ receiver đăng ký lúc chạy mới nhận được (MacroDroid đăng ký kiểu này) →
   kiểm tra thật.
 
@@ -79,3 +79,19 @@ _(viết ở session của stage này)_
 ## Nhật ký
 
 ## Phát sinh
+
+- (Từ Stage 1, 2026-11-10) Phép thử MacroDroid của Stage 1 chuyển sang đây, rút gọn (D42). Thử trên receiver thật của
+  Guzz, hoặc trên app spike (`spikes/android`) nếu muốn biết trước khi viết code:
+  - tạo macro theo `spikes/README.md`, mục "Macro MacroDroid" (đổi tên package / class sang của Guzz);
+  - **chỉ một đêm**, máy đã cài đặt (pin "No restrictions", Autostart, miễn tối ưu pin), rút cáp, app bị vuốt khỏi đa
+    nhiệm: mỗi cách (broadcast, activity trong suốt, WorkManager) ≥ 10 lần với màn hình tắt và Doze. Đạt D35 khi ít nhất
+    một cách được 10/10. Bỏ đêm "chưa cài gì";
+  - sự kiện gửi ngược về MacroDroid: macro bắt được DONE (ở đây là `FILE_DONE`) cho ≥ 3 lần chạy lúc màn hình tắt,
+    `request_id` khớp.
+- (Từ Stage 1, 2026-11-10) Điều đã biết:
+  - bằng adb lúc màn hình bật, cả ba cách đều lên FGS (app spike, G1);
+  - cài qua adb xong thì app đã được miễn tối ưu pin dù chưa bấm xin → muốn thử trạng thái chưa miễn thì gỡ bằng
+    `adb shell dumpsys deviceidle whitelist -<package>`;
+  - MacroDroid cũng phải được đặt pin "No restrictions", Autostart và quyền "Display over other apps", thiếu thì lỗi
+    nằm ở phía gửi;
+  - adb qua Tailscale: app VPN chạy trên máy có thể ảnh hưởng Doze và pin; đêm thử thì `adb disconnect`.

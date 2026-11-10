@@ -70,3 +70,18 @@ _(viết ở session của stage này)_
 ## Nhật ký
 
 ## Phát sinh
+
+- (Từ Stage 1, 2026-11-10) Hai phép thử chạy nền của Stage 1 chuyển sang đây, làm trên foreground service thật (D42):
+  - **Chạy dài** (G4 cũ): màn hình tắt suốt lúc chạy, nhật ký ghi nhịp liền ≥ 60 phút, không hở quá 2 phút, service không
+    bị giết; ghi lại lúc chạy có mạng hay không (gọi Gemini trong Doze). Gộp vào tiêu chí "Chạy thật một bài 1 giờ".
+  - **`onTimeout`** (G5 cũ): người dùng tự chạy
+    `adb shell device_config put activity_manager media_processing_fgs_timeout_duration 120000`, chạy một bài; nhật ký có
+    `onTimeout` vào khoảng phút thứ 2, service dừng trong ≤ 1 s, `adb logcat -d -b crash` trống. Hoàn tác:
+    `adb shell device_config delete activity_manager media_processing_fgs_timeout_duration`.
+- (Từ Stage 1, 2026-11-10) Điều đã biết từ app spike:
+  - FGS không giữ CPU thức lúc màn hình tắt → service giữ partial wake lock (`WAKE_LOCK`) trong lúc chạy;
+  - `BackupManagerService` giết process app để sao lưu đầy đủ khi máy sạc và rảnh, dù đang có FGS → đặt
+    `android:allowBackup="false"` (khớp Phát sinh của Stage 3 về sao lưu API key);
+  - Android 16: job (kể cả WorkManager) chạy song song với FGS bị tính vào quota → không chạy việc dài bằng WorkManager
+    cùng lúc với service.
+  - Tham khảo `spikes/android/.../bench/BenchService.kt` và `automation/HeartbeatService.kt`.

@@ -72,6 +72,10 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D36 | 2026-11-01 | Định dạng đoạn đưa vào đo (Stage 1) | **FLAC, OGG-Opus, M4A-AAC, WAV** | M4A-AAC chạy được từ minSdk 26; Opus cần API 29. |
 | D37 | 2026-11-01 | Gửi thử Gemini (Stage 1) | **Có, khoảng 5 yêu cầu** bằng `google_ai.py` của desktop; hỏi lại trước khi gửi | Biết định dạng nén có làm kém bản chép lời không. |
 | D38 | 2026-11-01 | Resampler đưa vào đo (Stage 1) | **Windowed-sinc tự viết + `SonicAudioProcessor` của Media3** | Stage 2 chọn theo SNR và tốc độ. |
+| D39 | 2026-11-10 | Rút gọn Stage 1: phần tách giọng còn lại | **Chuyển sang Stage 5** (ngưỡng phân cụm, int8, âm thanh gốc, chia phần trên PC, đo lại trên máy, Dừng giữa các phần). **Đi tiếp với sherpa-onnx**; Stage 5 chốt ngưỡng, không đạt D29 thì hỏi lại | Không đủ thời gian cho spike dài. Phần quyết định cả kế hoạch đã có số: bài 2 giờ chia phần 20 phút chạy 23 phút, 556 MB, đạt D30. Stage 2–4 không phụ thuộc tách giọng. |
+| D40 | 2026-11-10 | Resampler; giải mã chưa đo xong (Stage 1) | **`SincResampler` tự viết**, loại Sonic. Giải mã MP4, đối chiếu thời lượng và SNR tệp thật với ffmpeg → bước kiểm của Stage 2 | Sonic không lọc chống alias (10 / 15 kHz giữ nguyên 0 dB); sinc suy giảm −96 dB. |
+| D41 | 2026-11-10 | Định dạng đoạn gửi Gemini (Stage 1) | **FLAC** (tự ghi tệp `.flac`), bỏ phép thử gửi Gemini (F3) | Không mất dữ liệu, giống desktop, nên không cần so chất lượng; 9,6 MB / 10 phút, mã hoá 4–6 s. Giảm dung lượng bằng Opus để Stage 8 xét. |
+| D42 | 2026-11-10 | Rút gọn Stage 1: chạy nền và MacroDroid | **Chạy dài lúc màn hình tắt và `onTimeout` → Stage 4; macro, Doze và sự kiện DONE → Stage 6**, chỉ thử một đêm với máy đã cài đặt pin, bỏ đêm "chưa cài gì" | Thử trên code thật thay vì app spike; hướng dẫn cài đặt ghi thẳng các bước bắt buộc. Tiêu chí D35 giữ nguyên, áp ở Stage 6. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
@@ -126,7 +130,7 @@ sherpa-onnx, service, intent) mới nằm ở module Android. Stage 0 có thể 
 | Stage | Tên | Xong stage thì có gì | Cần xong trước |
 | --- | --- | --- | --- |
 | 0 | [Khởi tạo dự án](stage-00-setup.md) | Repo git, build ra APK rỗng, khung module, công cụ golden test | — |
-| 1 | [Spike kỹ thuật](stage-01-spike.md) | Số đo thật: sherpa-onnx đúng/nhanh tới đâu, giải mã nhanh tới đâu, intent có khởi động được việc nền khi màn hình tắt không; quyết định đi tiếp hay đổi hướng | 0 |
+| 1 | [Spike kỹ thuật](stage-01-spike.md) | Số đo thật: sherpa-onnx đúng/nhanh tới đâu, giải mã nhanh tới đâu, intent có khởi động được việc nền khi màn hình tắt không; quyết định đi tiếp hay đổi hướng. Đã rút gọn (D39–D42): phần chưa đo chuyển sang Stage 2, 4, 5, 6 | 0 |
 | 2 | [Lõi âm thanh tối giản](stage-02-audio-core.md) | Tệp âm thanh / video → các đoạn + TimeMap, khớp chunker của Python | 1 |
 | 3 | [Client Gemini, hạn mức, đổi model](stage-03-gemini-client.md) | Gửi một đoạn lên Gemini; xử lý đủ các loại lỗi như desktop | 0 |
 | 4 | [Pipeline + hàng đợi nền — **MVP**](stage-04-pipeline-mvp.md) | Chọn tệp → .txt, chạy được khi tắt màn hình, dừng rồi làm tiếp không gửi lại đoạn đã xong | 2, 3 |
@@ -143,15 +147,17 @@ Stage 3 không cần Stage 1 và 2, nên làm song song được với hai stage
 
 1. **sherpa-onnx tách giọng kém chính xác hơn pyannote community-1.** Desktop phân cụm bằng VBx/PLDA, còn sherpa-onnx
    phân cụm nhanh theo ngưỡng. → Stage 1 đo trên bản ghi lớp học thật, so với kết quả pyannote của desktop; bước làm mượt
-   của `speaker.py` bù được một phần.
+   của `speaker.py` bù được một phần. Stage 1: biết số người thì CAM++ zh_en đạt 3/5 bài, DER trung bình 8,2%; chưa tìm
+   được ngưỡng khi không biết số người → Stage 5 (D39).
 2. **Thời gian và RAM trên CPU điện thoại với bài 1–2 giờ.** Riêng mảng PCM float của bài 2 giờ ở 16 kHz đã khoảng 460 MB.
    → Stage 1 đo; Stage 2 không giữ cả bài trong RAM (đọc theo khối từ tệp PCM tạm). Kotlin API của sherpa-onnx nhận cả
    bài trong một `FloatArray`, trong khi heap Java của máy thử tối đa 512 MB → Stage 1 thử chia phần rồi nối người nói
-   (D34).
+   (D34). Stage 1: chạy nguyên bài 2 giờ bị giết vì hết RAM; chia phần 20 phút thì 23 phút, 556 MB, đạt D30.
 3. **Android hạn chế việc chạy nền.** Từ Android 12 app ở nền không tự khởi động foreground service được (trừ vài
    ngoại lệ); Android 15 giới hạn 6 giờ / 24 giờ cho FGS loại `dataSync` / `mediaProcessing`. Intent từ MacroDroid lúc
-   màn hình tắt có thể bị chặn. → Stage 1 thử các cách: broadcast khi Guzz đã được miễn tối ưu pin, activity trong suốt,
-   WorkManager.
+   màn hình tắt có thể bị chặn. → Thử các cách: broadcast khi Guzz đã được miễn tối ưu pin, activity trong suốt,
+   WorkManager. Stage 1 mới thử bằng adb lúc màn hình bật (cả ba đều lên FGS); thử lúc màn hình tắt chuyển sang Stage 4
+   và 6 (D42).
 4. **Hãng điện thoại (Xiaomi, Samsung, Oppo…) tự giết app chạy nền.** → Hướng dẫn tắt tối ưu pin; cache từng đoạn để
    làm tiếp (desktop đã có).
 5. **Không đếm chung hạn mức với desktop**, trong khi Google đếm theo tài khoản. → App tự học hạn mức từ lỗi 429 (desktop

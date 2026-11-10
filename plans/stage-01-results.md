@@ -7,16 +7,18 @@
 
 ## Tóm tắt
 
+Stage rút gọn ngày 2026-11-10 (D39–D42): mục nào chưa đo xong thì ghi kết luận tạm và stage nhận phần còn lại.
+
 | Mục | Kết luận | Mặc định chọn |
 | --- | --- | --- |
-| 1. Tách giọng: độ chính xác | chưa đo | |
-| 2. Tách giọng: tốc độ, RAM, pin | chưa đo | |
-| 3. Giải mã + resampler | chưa đo | |
-| 4. Định dạng đoạn | chưa đo | |
-| 5. Intent → chạy nền | chưa đo | |
-| 6. Giấy phép | chưa kiểm | |
+| 1. Tách giọng: độ chính xác | Biết số người: DER TB 8,2%, 3/5 bài đạt D29 (B4 trượt với mọi embedding). Không biết số người: chưa tìm được ngưỡng, 0,3–0,8 ra quá nhiều cụm → **Stage 5** | segmentation-3.0 fp32, **CAM++ zh_en advanced** (dự phòng ERes2Net base), shift **0,1**, `min_duration_on` 0,2 / `off` 0,5; ngưỡng, int8, âm thanh gốc hay sạch: Stage 5 chọn |
+| 2. Tách giọng: tốc độ, RAM, pin | Nguyên bài 2 giờ bị giết vì hết RAM. **Chia phần 20 phút: 22,9 phút, PSS 556 MB, −8% pin, 41,1 °C → đạt D30** (ngưỡng tạm 0,5). Callback không dừng được; process riêng dừng trong 54 ms | **4 luồng**, **chia phần P = 20 phút, O = 60 s**, tách giọng chạy trong **process riêng**; đo lại với ngưỡng thật ở Stage 5 |
+| 3. Giải mã + resampler | MediaCodec async: chỉ giải mã 12–25× thời gian thực, cả chuỗi với sinc 6–12×; PSS ≤ 306 MB. Sonic không lọc chống alias | **`SincResampler`**, MediaCodec **async**, đọc / ghi theo khối. MP4 và đối chiếu ffmpeg: Stage 2 |
+| 4. Định dạng đoạn | FLAC 9,6 MB / 10 phút, mã hoá 4–6 s, trùng từng mẫu. Không gửi thử Gemini (D41) | **FLAC**, tự ghi tệp `.flac` |
+| 5. Intent → chạy nền | Bằng adb lúc màn hình bật: broadcast, WorkManager, activity trong suốt đều lên FGS. Lúc màn hình tắt / Doze: chưa thử → **Stage 4, 6** | FGS `mediaProcessing` (API 35+) / `dataSync`, giữ partial wake lock, `allowBackup="false"` |
+| 6. Giấy phép | Không mục nào đã chọn bị giới hạn phi thương mại | Model chọn đều MIT / Apache-2.0, không cần ghi công CC-BY |
 
-Đi tiếp / đổi hướng với sherpa-onnx: _chưa quyết_ (bước I2).
+Đi tiếp / đổi hướng với sherpa-onnx: **đi tiếp** (D39). Stage 5 chốt ngưỡng; không đạt D29 thì hỏi lại người dùng.
 
 ## 1. Độ chính xác trên PC
 
@@ -56,15 +58,18 @@ Chọn cho B5: **CAM++ zh_en advanced** và **ERes2Net base** (DER trung bình t
 CAM++. B4 (4 người, người chính 53,6%) trượt với mọi embedding. B2 trượt "số người" ở 3 embedding vì làm mượt nuốt hết
 người phụ (người chính 97,2% ở desktop).
 
-### B5. Ngưỡng phân cụm
+### B5. Ngưỡng phân cụm (chưa xong → Stage 5)
 
-| Embedding | Ngưỡng | DER TB | Số bài đạt D29 | Bài trượt (tiêu chí) |
-| --- | --- | --- | --- | --- |
+CAM++ zh_en advanced, shift 0,1, 2026-11-01: ngưỡng 0,3–0,7 ra 12–471 cụm mỗi bài, DER TB 41–89%, **0 bài đạt**. Ngưỡng 0,3
+làm B1 hết RAM trên PC (`MemoryError`), các lượt khác RAM đỉnh tới 7,7 GB. Ngưỡng 0,8 (4/5 bài): vẫn ra 27–110 cụm.
+Khoảng cách cosine nằm trong [0, 2], complete-linkage đòi mọi cặp trong cụm đều gần nhau, nên ngưỡng phải cao hơn nhiều;
+Stage 5 thử từ 0,8 trở lên, có thể cần > 1,2. **RAM của sherpa-onnx phình theo số cụm**, nên ngưỡng sai cũng làm hỏng
+số RAM.
 
 ### B6–B8. int8, âm thanh gốc, chia phần
 
-| Biến thể | B1 | B2 | B3 | B4 | B5 | Ghi chú |
-| --- | --- | --- | --- | --- | --- | --- |
+Chưa đo → Stage 5 (D39). Thuật toán nối người nói (B8) đã có bản Python (`run_sherpa.py --piece-minutes`) và bản Kotlin
+(app spike), khớp nhau trên `L1_10m` với P = 3 phút.
 
 ## 2. Tách giọng trên máy
 
@@ -109,7 +114,9 @@ Dừng giữa chừng (D7):
 - Cách 3, process riêng: bench `diarize` chạy trong process `:diarize`, sau 30 s thì `Process.killProcess`. Process
   `:diarize` biến mất sau 54 ms, process chính vẫn sống, RAM trống của máy trở lại (4 795 → 4 983 MB sau 2 s; PSS của
   `:diarize` lúc giết 205 MB).
-- Cách 2 (chia phần + lệnh Dừng): chưa đo.
+- Cách 2 (chia phần + lệnh Dừng): chưa đo → Stage 5.
+
+Đề xuất cho Stage 5: chạy tách giọng trong process riêng, Dừng thì giết process đó; cache kết quả từng phần để chạy lại.
 
 Dung lượng thư viện (C3), `apkanalyzer files list --raw-size --download-size` trên APK debug của app spike
 (chỉ `arm64-v8a`), 2026-11-01:
@@ -127,8 +134,24 @@ chỉ đi qua JNI.
 
 ## 3. Giải mã và resampler
 
-| Tệp | Bộ giải mã | Resampler | × thời gian thực | PSS đỉnh | Lệch thời lượng |
-| --- | --- | --- | --- | --- | --- |
+E3, bench `decode`, MediaCodec chế độ async, Xiaomi 15T, Android 16, 2026-11-01. "Chỉ giải mã" là MediaExtractor +
+MediaCodec, bỏ PCM đi; "sinc" / "sonic" là cả chuỗi: giải mã, trộn mono, resample về 16 kHz, ghi f32 ra tệp theo khối.
+Thời lượng ra khớp thời lượng đọc từ tệp; chưa đối chiếu với `ffmpeg -i`.
+
+| Tệp | Bộ giải mã | Gốc | Chuỗi | × thời gian thực | PSS đỉnh | Màn hình |
+| --- | --- | --- | --- | --- | --- | --- |
+| L1.m4a (135,5 phút) | `c2.android.aac.decoder` | 48 kHz, 2 kênh | chỉ giải mã | 25,2 | 91 MB | tắt |
+| L1.m4a | như trên | | sinc | 6,0 | 92 MB | tắt |
+| L1.m4a | như trên | | sonic | 5,1 | 91 MB | tắt |
+| A1.aac (ADTS, 120 phút) | `c2.android.aac.decoder` | 44,1 kHz, 2 kênh | chỉ giải mã | 11,6 | 90 MB | bật |
+| A1.aac | như trên | | sinc | 8,4 | 99 MB | bật |
+| L1.mp3 (64 kbps) | `c2.android.mp3.decoder` | 48 kHz, 1 kênh | chỉ giải mã | 17,7 | 306 MB | bật |
+| L1.mp3 | như trên | | sinc | 12,4 | 211 MB | bật |
+| L1.ogg (Opus 32 kbps) | `c2.android.opus.decoder` | 48 kHz, 1 kênh | chỉ giải mã | 14,4 | 166 MB | tắt |
+| V1.mp4 | | | | chưa đo → Stage 2 | | |
+
+Cả chuỗi chậm hơn chỉ giải mã nhiều: L1.m4a với sinc mất 22,5 phút cho 135 phút âm thanh, trong khi chỉ giải mã mất 5,4
+phút. Resampler sinc 32 zero-crossing viết thẳng (chưa tối ưu) là phần tốn nhất → Stage 2 tối ưu rồi đo lại.
 
 E4, `spikes/media/compare_pcm.py`, 2026-11-01. Tệp tổng hợp 48 kHz giải mã trên máy rồi resample về 16 kHz. Suy giảm
 10 / 15 kHz đo trên đoạn quét sin (RMS đầu ra lúc quét qua tần số đó so với RMS của sin 0,5). Biên độ 1 / 6 kHz đo trên
@@ -138,6 +161,8 @@ E4, `spikes/media/compare_pcm.py`, 2026-11-01. Tệp tổng hợp 48 kHz giải 
 | --- | --- | --- | --- |
 | `SincResampler` (32 zero-crossing, Kaiser β 8,6, cắt 7,52 kHz) | 50,9 dB so với `resample_poly` | −96,0 / −97,1 dB | |
 | `SonicAudioProcessor` (Media3 1.11.1) | 50,3 dB | **0,0 / 0,0 dB**: không lọc chống alias | |
+
+SNR trên tệp thật (L1.m4a so với ffmpeg): chưa đo → Stage 2. Chọn **sinc** (D40).
 
 Biên độ trên `tones48k`: sinc giữ 1 kHz và 6 kHz đúng tới 0,001 dB, phần dư −97 dB. Sonic ra **toàn số 0**: tỉ lệ đúng 3 : 1
 nên Sonic chỉ lấy mỗi mẫu thứ ba, không lọc gì; 15 kHz gập về 1 kHz, 10 kHz gập về 6 kHz, ngược pha, triệt tiêu đúng hai sin
@@ -179,14 +204,25 @@ PSS đỉnh của cả lượt mã hoá 8 biến thể: 139 MB (gồm mảng flo
   trống tổng số mẫu và MD5; bench điền lại sau khi ghi xong.
 - AAC: MediaMuxer không ghi edit list bỏ 2 048 mẫu priming, nên mọi mốc thời gian trong đoạn trễ 128 ms.
 
+Cột Gemini để trống: bỏ phép thử F3 (D41), chọn **FLAC**. Không mất dữ liệu nên không cần so chất lượng chép lời.
+
 ## 5. Intent → chạy nền
 
-| Cách | Cài đặt | FGS lên / lần gửi | Lỗi gặp |
-| --- | --- | --- | --- |
+Chỉ có G1 (kiểm code bằng adb, lúc màn hình bật và app đang mở, 2026-11-01): broadcast, WorkManager expedited và
+`TrampolineActivity` đều lên FGS, chạy đủ 3 phút, phát DONE. Không tính là kết quả theo D35.
 
-Chạy dài (G4), onTimeout (G5), sự kiện gửi ngược về MacroDroid (G6):
+Phần còn lại chuyển đi (D42): chạy dài lúc màn hình tắt (G4) và `onTimeout` (G5) → Stage 4; macro MacroDroid, thử một đêm
+lúc màn hình tắt + Doze (G3, chỉ S1) và sự kiện DONE (G6) → Stage 6.
 
-Hướng dẫn cài đặt cần ghi cho người dùng:
+Điều đã biết, áp cho Guzz thật:
+
+- FGS không giữ CPU thức khi màn hình tắt → giữ partial wake lock (`WAKE_LOCK`) trong lúc chạy.
+- `BackupManagerService` giết process app để sao lưu đầy đủ (máy sạc và rảnh) dù đang có FGS → `allowBackup="false"`.
+- App spike có `isIgnoringBatteryOptimizations = true` ngay sau khi cài qua adb, chưa bấm xin miễn.
+- JNI của sherpa-onnx cần callback là lớp viết rõ có `invoke(IIJ)Ljava/lang/Integer;`; lambda Kotlin 2.x làm JNI abort.
+
+Hướng dẫn cài đặt cần ghi cho người dùng: Stage 6 viết. Dự kiến gồm pin "No restrictions" và Autostart của HyperOS cho
+cả Guzz lẫn MacroDroid, thêm quyền "Display over other apps" cho MacroDroid.
 
 ## 6. Giấy phép
 

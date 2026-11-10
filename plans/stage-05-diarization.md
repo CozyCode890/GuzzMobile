@@ -50,7 +50,7 @@ hay token Hugging Face.
 ## Tiêu chí hoàn thành
 
 - [ ] Golden test `speaker.py` khớp.
-- [ ] Bài giảng thật: số người và thời gian nói của giảng viên gần với desktop (ngưỡng đặt ở Stage 1).
+- [ ] Bài giảng thật: số người và thời gian nói của giảng viên gần với desktop (ngưỡng D29).
 - [ ] Dừng giữa lúc đang tách giọng, rồi chạy lại thì dùng lại được kết quả đã cache.
 
 ## Câu hỏi cần chốt khi plan chi tiết
@@ -72,3 +72,25 @@ _(viết ở session của stage này)_
 ## Nhật ký
 
 ## Phát sinh
+
+- (Từ Stage 1, 2026-11-10) Mặc định đã chọn ở Stage 1 ([stage-01-results.md](stage-01-results.md) §1–2): sherpa-onnx
+  2.0.1, segmentation-3.0 fp32, embedding **CAM++ zh_en advanced** (dự phòng ERes2Net base 200k, chậm gấp 2,2 lần),
+  `windowShiftRatio` 0,1, `minDurationOn` 0,2 / `minDurationOff` 0,5, **4 luồng**, **chia phần P = 20 phút, chồng lấn
+  60 s** rồi nối người nói, chạy trong **process riêng** để Dừng được. Bài 2 giờ chia phần: 22,9 phút, PSS 556 MB,
+  −8% pin, 41,1 °C (ngưỡng tạm 0,5). Model chọn đều MIT / Apache-2.0, không cần ghi công CC-BY.
+- (Từ Stage 1, 2026-11-10) Việc đo còn lại của Stage 1 chuyển sang đây (D39), làm cùng lúc viết `:core:diarization`:
+  - **Ngưỡng phân cụm khi không biết số người** (B5 cũ). Đây là rủi ro chính: ngưỡng 0,3–0,8 ra 12–471 cụm, 0 bài đạt
+    D29. Khoảng cách cosine trong [0, 2] và complete-linkage cần ngưỡng cao hơn nhiều: thử từ 0,8 tới > 1,2 bằng
+    `spikes/diarization/sweep.py B5` (JSON đã có ở `$env:GUZZ_SPIKE_DATA\out\pc\` thì bỏ qua). Chọn ngưỡng theo luật của
+    B5 trong stage-01-spike.md. Không ngưỡng nào đạt thì **hỏi người dùng** (trắc nghiệm): bắt nhập số người, giả lập
+    min–max bằng vài ngưỡng, hay đổi cách phân cụm / đổi hướng (README §2, D39). RAM phình theo số cụm, nên ngưỡng sai
+    cũng làm sai số RAM.
+  - Segmentation int8 (B6), chạy trên âm thanh gốc hay âm thanh sạch (B7), DER của bản chia phần so với nguyên bài (B8).
+  - Trên máy, với ngưỡng thật: bài 2 giờ chia phần (`L1_120m` và `L2`, 5 người), pin và nhiệt khi rút cáp (D6 cũ), thời
+    gian từ lúc bấm Dừng tới khi phần đang chạy xong (D7 cách 2).
+- (Từ Stage 1, 2026-11-10) Lưu ý khi viết code:
+  - JNI của sherpa-onnx tìm `invoke(IIJ)Ljava/lang/Integer;` trên callback; lambda Kotlin 2.x không có method đó và làm
+    app chết vì JNI abort → dùng lớp callback viết rõ (`ProgressCallback` trong `spikes/android/.../diarize/`).
+  - Giá trị trả về của callback bị bỏ qua: không dừng sherpa-onnx giữa chừng được, chỉ dừng được giữa các phần hoặc giết
+    process (`Process.killProcess` process `:diarize` mất 54 ms, process chính sống).
+  - Thuật toán nối người nói đã có bản Kotlin (`PieceLinker.kt`, `Hungarian.kt`) khớp bản Python 136/136 lượt.

@@ -66,3 +66,10 @@ _(viết ở session của stage này)_
 - (Từ Stage 0, 2026-11-01) Mỗi lần mở app, `GuzzApp` ghi versionCode vào `APP.last_version_code` (D27).
   `Settings.recordAppVersion` trả về versionCode của lần mở trước, với 0 nghĩa là lần mở đầu tiên. Chỗ này dùng được để
   chuyển dữ liệu cũ khi cài đè bản mới, ứng với tiêu chí "Cài đè bản mới lên bản cũ: giữ nguyên dữ liệu và cài đặt".
+- (Từ Stage 1, 2026-11-10) Dung lượng thư viện tách giọng (arm64-v8a, [stage-01-results.md](stage-01-results.md) §2):
+  `libonnxruntime.so` 22,2 MB (tải về 7,9 MB), `libsherpa-onnx-jni.so` 4,6 MB. AAR có thêm `libsherpa-onnx-c-api.so` và
+  `libsherpa-onnx-cxx-api.so` mà JNI không dùng → bỏ bằng `packaging.jniLibs.excludes`.
+- (Từ Stage 1, 2026-11-10) Giấy phép: AAR sherpa-onnx không kèm LICENSE / NOTICE của ONNX Runtime (MIT) → tự thêm vào màn
+  hình giấy phép, cùng câu bản quyền MIT của segmentation-3.0. Model đã chọn không có CC-BY, không cần ghi công riêng.
+- (Từ Stage 1, 2026-11-10) `android:allowBackup="false"`: sao lưu đầy đủ làm hệ thống giết process đang chạy FGS (xem
+  Phát sinh của Stage 4).
