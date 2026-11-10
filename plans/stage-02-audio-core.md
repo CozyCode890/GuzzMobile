@@ -308,6 +308,14 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     `tools/device/audio_debug.ps1` mở màn hình thử bằng `am start -S` (dừng hẳn app rồi mở lại): không thì lần chạy thứ
     hai lúc máy khoá không bắt đầu. Kiểm: chạy `A1.aac`, tắt màn hình, 10 s sau gửi Dừng → chỉ còn `ket_qua.json` báo
     `CancellationException`, không có `danh_sach_doan.json` hay tệp `.part`.
+  - **D2, dừng ở đây (2026-11-10 21:14).** Lần chạy `L1_120m.m4a` lúc màn hình tắt bị treo ngay khi màn hình tắt:
+    `goc.pcm.part` đứng ở 3,9 MB; logcat: HyperOS `PowerManagerServiceImpl` báo wake lock `guzz:debug-audio` **DISABLED,
+    reason: Process Priority** dù service là FGS (procState 4). App spike Stage 1 chạy được lúc màn hình tắt, có lẽ vì đã
+    được đặt pin "No restrictions". Việc tiếp: người dùng đặt pin "No restrictions" (+ Autostart) cho
+    `io.github.cozycode890.guzz.debug`, rồi chạy lại `.\tools\device\audio_debug.ps1 -Path L1_120m.m4a -ScreenOff
+    -PullPcm "$env:GUZZ_SPIKE_DATA\out\stage-02"`, sau đó A1.aac, L1.mp3, L1.ogg, V1.mp4 (đã `adb push` sẵn vào
+    `files/input/`), D3, D4, E. Ghi điều này vào hướng dẫn cài đặt (Stage 4 / 6). Tiến trình treo đang còn trên máy:
+    gửi Dừng bằng `AudioDebugStopReceiver` hoặc `adb shell am force-stop io.github.cozycode890.guzz.debug`.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
     `spikes/media/compare_pcm.py`, để script của Stage 1 vẫn chạy lại được như cũ.
 
