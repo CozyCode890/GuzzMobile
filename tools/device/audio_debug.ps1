@@ -24,7 +24,10 @@ $name = [IO.Path]::GetFileNameWithoutExtension($Path) -replace '[^\p{L}\p{N}._-]
 $folder = "$files/debug-audio/$name"
 
 adb shell rm -f "$folder/ket_qua.json" | Out-Null
-adb shell am start -n $activity --es path $Path --es track $Track --ez auto_run true | Out-Null
+# -S: dừng hẳn app rồi mở lại. Không có -S mà màn hình thử còn nằm trên cùng từ lần trước thì intent mới chỉ được giao
+# khi activity hiện lại (máy đang khoá thì không bao giờ), nên lần chạy không bắt đầu. Mở mới cũng cho số RAM sạch.
+adb shell input keyevent KEYCODE_WAKEUP | Out-Null
+adb shell am start -S -n $activity --es path $Path --es track $Track --ez auto_run true | Out-Null
 if ($ScreenOff) {
     Start-Sleep -Seconds 2
     adb shell input keyevent KEYCODE_SLEEP | Out-Null
@@ -48,7 +51,7 @@ if ($Pull -or $PullPcm) {
     if ($PullPcm) { adb pull "$folder/goc.pcm" $dest | Out-Null }
 }
 if ($r.ket_qua -ne 'ok') {
-    Write-Host "$Path: LỖI $($r.loi)"
+    Write-Host "${Path}: LỖI $($r.loi)"
 } else {
     Write-Host ("{0}: {1:N1} phút âm thanh ({2}, {3} Hz × {4}) → {5} đoạn trong {6:N1} s (×{7:N1}); giải mã {8:N1} s, " +
         "cắt đoạn {9:N1} s; PSS đỉnh {10} MB; màn hình bật lúc đầu / cuối: {11} / {12}") -f $Path, ($r.giay_am_thanh / 60),

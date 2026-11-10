@@ -227,7 +227,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
 ### D. Màn hình thử và đo trên máy (D45, D49)
 
-- [ ] **D1. Màn hình thử** trong `app/src/debug/`: chọn tệp (`OpenDocument`, `audio/*` và `video/*`), chọn luồng, Chạy /
+- [x] **D1. Màn hình thử** trong `app/src/debug/`: chọn tệp (`OpenDocument`, `audio/*` và `video/*`), chọn luồng, Chạy /
   Dừng, tiến độ theo bước, kết quả (thời lượng gốc / sạch, số đoạn, thời gian từng bước, PSS đỉnh, đường dẫn). Chạy trong
   một foreground service chỉ có ở bản debug, giữ partial wake lock (như `BenchService` của app spike), để đo được lúc màn
   hình tắt; Stage 4 thay bằng service thật. Nhận lệnh adb: `--es path <tệp trong files/input>`, `--es track`,
@@ -303,6 +303,13 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     Thư viện test thiết bị: `androidx.test:runner` 1.7.0, `androidx.test.ext:junit` 1.3.0 (bản ổn định mới nhất).
   - C4, Xiaomi 15T qua adb Tailscale: 9 / 9 test xanh. AAC 44,1 kHz stereo trong m4a của ffmpeg ra đúng 3,000 s ± 20 ms,
     tức Android tự bỏ mẫu priming theo edit list (khác tệp AAC do MediaMuxer ghi ở Stage 1, không có edit list).
+  - D1: gửi `--ez stop true` cho màn hình thử không dừng được lúc màn hình tắt: activity đang bị dừng nên intent mới chỉ
+    được giao khi nó hiện lại. Thêm `AudioDebugStopReceiver` (chỉ bản debug) để adb gửi lệnh Dừng. Cũng vì vậy
+    `tools/device/audio_debug.ps1` mở màn hình thử bằng `am start -S` (dừng hẳn app rồi mở lại): không thì lần chạy thứ
+    hai lúc máy khoá không bắt đầu. Kiểm: chạy `A1.aac`, tắt màn hình, 10 s sau gửi Dừng → chỉ còn `ket_qua.json` báo
+    `CancellationException`, không có `danh_sach_doan.json` hay tệp `.part`.
+  - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
+    `spikes/media/compare_pcm.py`, để script của Stage 1 vẫn chạy lại được như cũ.
 
 ## Phát sinh
 
