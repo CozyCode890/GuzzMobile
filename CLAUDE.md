@@ -7,10 +7,11 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 2, đã plan chi tiết ngày 2026-11-10, chưa bắt đầu làm. Stage 1 xong ngày 2026-11-10 (rút gọn,
-D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** làm Stage 2 theo mục "Kế hoạch chi tiết" của [stage-02-audio-core.md](plans/stage-02-audio-core.md),
-bắt đầu từ A1; phần B chạy hết trên PC, chưa cần điện thoại. Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
+**Stage hiện tại:** Stage 2 (đang làm từ 2026-11-10). Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày
+2026-11-01.
+**Việc tiếp theo:** làm tiếp Stage 2 theo mục "Kế hoạch chi tiết" của
+[stage-02-audio-core.md](plans/stage-02-audio-core.md): bước nào đã `[x]` là xong, xem "Nhật ký" của tệp đó để biết làm
+khác kế hoạch ở đâu. Phần B chạy hết trên PC, chưa cần điện thoại. Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
 song được. Stage 1 đã chuyển phần đo chưa xong sang mục "Phát sinh" của Stage 2, 4, 5, 6: phép đo thành bước kiểm trên
 code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
 
@@ -18,7 +19,7 @@ code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-resul
 | --- | --- | --- | --- |
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
-| 2 | Lõi âm thanh tối giản | 📝 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
+| 2 | Lõi âm thanh tối giản | 🔨 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ⬜ | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |

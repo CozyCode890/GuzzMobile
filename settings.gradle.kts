@@ -32,3 +32,4 @@ rootProject.name = "GuzzMobile"
 include(":app")
 include(":core:common")
 include(":core:audio")
+include(":core:media")

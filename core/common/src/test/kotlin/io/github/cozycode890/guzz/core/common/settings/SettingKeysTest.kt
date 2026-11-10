@@ -54,6 +54,21 @@ class SettingKeysTest {
     }
 
     @Test
+    fun `format chỉ có flac, wav và mp3 của desktop về flac`() {
+        val key = SettingKeys.CHUNK_FORMAT
+        assertEquals("flac", key.sanitize("FLAC"))
+        assertEquals("flac", key.sanitize("wav"))
+        assertEquals("flac", key.sanitize("mp3"))
+    }
+
+    @Test
+    fun `chunk_minutes không xuống tới 0`() {
+        assertEquals(0.1, SettingKeys.CHUNK_MINUTES.sanitize(0.0))
+        assertEquals(0.1, SettingKeys.CHUNK_MINUTES.sanitize(-3.0))
+        assertEquals(15.0, SettingKeys.CHUNK_MINUTES.sanitize(15.0))
+    }
+
+    @Test
     fun `double NaN lấy mặc định, ngoài khoảng bị chặn`() {
         val key = DoubleSetting("TEST", "ratio", default = 0.5, min = 0.0, max = 1.0)
         assertEquals(0.5, key.sanitize(Double.NaN))

@@ -37,19 +37,35 @@ object Chunker {
         searchSeconds: Double = 20.0,
         minLastChunkSeconds: Double = 60.0,
     ): List<Int> {
-        val n = y.size
+        val energy = blockEnergy(y, blockSize(sr))
+        return findSplitPoints(energy, y.size.toLong(), sr, chunkMinutes, searchSeconds, minLastChunkSeconds)
+            .map { it.toInt() }
+    }
+
+    /**
+     * Như bản nhận `FloatArray`, nhưng nhận sẵn năng lượng từng khối 50 ms (từ [BlockEnergyAccumulator]) và tổng số mẫu
+     * [n], để không phải giữ cả bài trong RAM (D43). Điểm cắt là `Long` vì bài dài không giới hạn (D44).
+     */
+    fun findSplitPoints(
+        energy: DoubleArray,
+        n: Long,
+        sr: Int,
+        chunkMinutes: Double = 10.0,
+        searchSeconds: Double = 20.0,
+        minLastChunkSeconds: Double = 60.0,
+    ): List<Long> {
         val length = Math.rint(chunkMinutes * 60 * sr).toLong()
         val minLast = (maxOf(0.0, minLastChunkSeconds) * sr).toLong()
         val search = (maxOf(0.0, searchSeconds) * sr).toLong()
         // So `n - length <= minLast` thay cho `n <= length + minLast` để không tràn số khi length rất lớn.
-        if (length <= 0 || n - length <= minLast) return listOf(0, n)
+        if (length <= 0 || n - length <= minLast) return listOf(0L, n)
 
-        val block = maxOf(1, sr * BLOCK_MS / 1000)
-        val smoothed = movingAverage(blockEnergy(y, block), maxOf(1, SILENCE_WINDOW_MS / BLOCK_MS))
+        val block = blockSize(sr)
+        val smoothed = movingAverage(energy, maxOf(1, SILENCE_WINDOW_MS / BLOCK_MS))
 
-        val points = mutableListOf(0)
+        val points = mutableListOf(0L)
         while (n - points.last() > length + minLast) {
-            val prev = points.last().toLong()
+            val prev = points.last()
             val target = prev + length
             // Không lùi quá nửa đoạn (đoạn quá ngắn), không tiến sát cuối file (đoạn cuối quá ngắn). Vì
             // n - prev > length + minLast nên luôn có a <= target < b.
@@ -67,25 +83,18 @@ object Chunker {
                 }
                 k.toLong() * block + block / 2
             }
-            points += minOf(maxOf(cut, prev + 1), n - 1L).toInt()
+            points += minOf(maxOf(cut, prev + 1), n - 1L)
         }
         points += n
         return points
     }
 
+    /** Số mẫu mỗi khối đo năng lượng: `max(1, sr * 50 // 1000)`. */
+    fun blockSize(sr: Int): Int = maxOf(1, sr * BLOCK_MS / 1000)
+
     /** Năng lượng trung bình (bình phương) của từng khối `block` mẫu; phần lẻ cuối bị bỏ. Port của `_block_energy`. */
-    internal fun blockEnergy(y: FloatArray, block: Int): DoubleArray {
-        val numBlocks = y.size / block
-        return DoubleArray(numBlocks) { k ->
-            var sum = 0.0
-            val start = k * block
-            for (i in start until start + block) {
-                val v = y[i].toDouble()
-                sum += v * v
-            }
-            sum / block
-        }
-    }
+    internal fun blockEnergy(y: FloatArray, block: Int): DoubleArray =
+        BlockEnergyAccumulator(block).apply { add(y, 0, y.size) }.result()
 
     /**
      * Trung bình trượt cửa sổ [window] khối, cửa sổ ở mép bị cắt bớt (chia cho số khối thật có).

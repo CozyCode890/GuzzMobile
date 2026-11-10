@@ -26,7 +26,12 @@ class DesktopDefaultsTest {
             dynamicTest(key.id) {
                 val section = assertNotNull(desktop[key.section], "desktop không có section [${key.section}]")
                 val value = assertNotNull(section[key.key], "desktop không có ${key.id}")
-                assertEquals(value, configText(key), key.id)
+                if (key is DoubleSetting) {
+                    // config.default.txt viết "-16.0" còn _format_setting ghi lại thành "-16": so giá trị số.
+                    assertEquals(value.trim().toDouble(), key.default, key.id)
+                } else {
+                    assertEquals(value, configText(key), key.id)
+                }
             }
         }
     }

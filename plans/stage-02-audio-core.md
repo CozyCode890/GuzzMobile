@@ -1,6 +1,6 @@
 # Stage 2 — Lõi âm thanh tối giản
 
-**Trạng thái:** 📝 đã plan chi tiết 2026-11-10 · **Cần xong trước:** 1
+**Trạng thái:** 🔨 đang làm từ 2026-11-10 · **Cần xong trước:** 1
 
 ## Mục tiêu
 
@@ -139,40 +139,40 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
 ### A. Khung
 
-- [ ] **A1. Module `:core:media`** (plugin `guzz.android.library`), phụ thuộc `:core:audio`, `:core:common`, coroutines;
+- [x] **A1. Module `:core:media`** (plugin `guzz.android.library`), phụ thuộc `:core:audio`, `:core:common`, coroutines;
   thêm vào `settings.gradle.kts`; `:app` phụ thuộc `:core:media`.
   **Kiểm:** `.\gradlew projects` có `:core:media`; `.\gradlew assembleSideloadDebug test lint` xanh.
-- [ ] **A2. Cài đặt** (mục "Mặc định kỹ thuật"): thêm vào `SettingKeys` với chặn trên / dưới như `config.py`.
+- [x] **A2. Cài đặt** (mục "Mặc định kỹ thuật"): thêm vào `SettingKeys` với chặn trên / dưới như `config.py`.
   `[CHUNKING] format` là `ChoiceSetting` chỉ có `flac` (D48). Bỏ `[VIDEO] extract_first`, `extract_format` (D47).
   **Kiểm:** `DesktopDefaultsTest` xanh và có các mục mới (mặc định khớp desktop); test `format = wav` → `flac`.
 
 ### B. Thuật toán JVM và golden test (`:core:common`, `:core:audio`)
 
-- [ ] **B1. TimeMap** ở `:core:common`, port lớp `TimeMap` (`untrimmed`, `to_original`, `to_clean`, `to_json`).
+- [x] **B1. TimeMap** ở `:core:common`, port lớp `TimeMap` (`untrimmed`, `to_original`, `to_clean`, `to_json`).
   `tools/golden/gen_timemap.py`: vài bản đồ (rỗng, một đoạn, nhiều đoạn), mỗi bản đồ đổi một loạt mốc (đầu, cuối, trong
   khoảng đã cắt, ngoài cùng) theo cả hai chiều.
   **Kiểm:** `TimeMapGoldenTest` xanh, kết quả khớp tới 1e-9 s.
-- [ ] **B2. PCM 16-bit:** `SampleSource` (đọc khoảng mẫu ra `FloatArray`), `Pcm16File` (đọc theo khối từ tệp),
+- [x] **B2. PCM 16-bit:** `SampleSource` (đọc khoảng mẫu ra `FloatArray`), `Pcm16File` (đọc theo khối từ tệp),
   `Pcm16Writer` (ghi `.part`, `close()` thì đổi tên), `FloatArraySource` cho test.
   **Kiểm:** unit test: ghi rồi đọc lại trùng từng mẫu; đọc vắt qua ranh giới khối; giá trị = int16 / 32768 (so với
   `Golden.readWav` của Stage 0).
-- [ ] **B3. Âm lượng:** port `measure_dbfs` (theo khối), `boost_and_normalize` dạng `SampleSource` bọc ngoài (nhân hệ số
+- [x] **B3. Âm lượng:** port `measure_dbfs` (theo khối), `boost_and_normalize` dạng `SampleSource` bọc ngoài (nhân hệ số
   float32 rồi kẹp). `tools/golden/gen_audio_processing.py` (dùng chung cho B3–B5, 2 kHz để WAV gọn): tín hiệu bình
   thường, tín hiệu bị kẹp khi khuếch đại, toàn số 0 (dBFS = −∞ → giữ nguyên).
   **Kiểm:** dBFS lệch ≤ 1e-4 dB; hệ số float32 trùng; mọi mẫu sau khuếch đại trùng từng bit.
-- [ ] **B4. `find_speech_segments`** dạng chạy một lượt, bộ nhớ cỡ `min_silence_len`, giữ đúng phép tính của Python
+- [x] **B4. `find_speech_segments`** dạng chạy một lượt, bộ nhớ cỡ `min_silence_len`, giữ đúng phép tính của Python
   (`round` / `int` của thời lượng ms, tổng tích luỹ double, `floor(rms) <= ngưỡng`). Ca golden: không có chỗ lặng; lặng
   ở đầu / cuối; khoảng lặng ngắn hơn `min_silence_len`; toàn lặng → `[]`; tệp ngắn hơn cửa sổ; số mẫu không chia hết cho
   1 ms. Script golden kiểm biên an toàn: không cửa sổ nào có rms sát ngưỡng làm tròn (như `gen_chunker.py`).
   **Kiểm:** `SpeechSegmentsGoldenTest` khớp hẳn mọi khoảng.
-- [ ] **B5. `trim_silence`** → các khoảng mẫu giữ lại + TimeMap. Ca golden: `keep_silence` làm hai khoảng dính nhau thì
+- [x] **B5. `trim_silence`** → các khoảng mẫu giữ lại + TimeMap. Ca golden: `keep_silence` làm hai khoảng dính nhau thì
   gộp; khoảng chạm đầu / cuối tệp; không có khoảng nào → giữ cả tệp.
   **Kiểm:** golden khớp hẳn (khoảng mẫu và `ban_do_thoi_gian`).
-- [ ] **B6. Chunker theo khối.** Tách `findSplitPoints` thành bộ cộng năng lượng khối 50 ms (nạp dần từng khối mẫu) và
+- [x] **B6. Chunker theo khối.** Tách `findSplitPoints` thành bộ cộng năng lượng khối 50 ms (nạp dần từng khối mẫu) và
   phần tìm điểm cắt trên mảng năng lượng; giữ bản nhận `FloatArray` cho test cũ (việc ở "Phát sinh" từ Stage 0).
   **Kiểm:** `ChunkerGoldenTest` cũ vẫn xanh; test mới: trên tín hiệu ngẫu nhiên, nạp theo khối độ dài bất kỳ cho cùng
   kết quả với bản mảng.
-- [ ] **B7. `SincResampler`** ở `:core:audio`: port bản spike (`spikes/android/.../media/SincResampler.kt`), viết lại
+- [x] **B7. `SincResampler`** ở `:core:audio`: port bản spike (`spikes/android/.../media/SincResampler.kt`), viết lại
   dạng polyphase (mục "Mặc định kỹ thuật"), chạy theo khối.
   **Kiểm:**
   - unit test: sin 1 kHz 48 k → 16 k đúng biên độ (±0,01 dB) và đúng pha sau khi bù độ trễ; sin 10 / 15 kHz bị suy giảm
@@ -264,6 +264,22 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
   của desktop và mục "Phát sinh" từ Stage 0, 1. Hỏi người dùng 7 câu trắc nghiệm, cả 7 chọn Recommended (D43–D49). Theo
   yêu cầu của người dùng ở Stage 1 (vừa làm vừa thử), phép đo nằm trong các bước làm thật (D2–D3) chứ không có bước đo
   riêng.
+- **2026-11-10, làm A–B7** (session riêng, tách từ session plan).
+  - A2: desktop không chặn các số `[AUDIO]` / `[CHUNKING]` (chỉ báo lỗi `chunk_minutes <= 0`); mobile kẹp `min_silence_len`,
+    `keep_silence` ≥ 0, `chunk_minutes` ≥ 0,1, `search_seconds`, `min_last_chunk_seconds` ≥ 0. `DesktopDefaultsTest` so số
+    thực theo giá trị: `config.default.txt` viết `-16.0`, `_format_setting` ghi `-16`.
+  - B3: hệ số khuếch đại float32 của desktop lệch 1–2 ulp so với hệ số tính từ tổng chính xác ngay ở ca golden đầu tiên
+    (np.dot float32 của BLAS cộng sai cỡ 1e-7 tương đối). Kotlin cộng double nên trùng hệ số "chính xác". Golden ghi cả
+    hai; test so hệ số theo dung sai 4 ulp, còn tìm khoảng có tiếng / cắt lặng chạy trên tín hiệu khuếch đại bằng đúng hệ
+    số của desktop và khớp tuyệt đối. Với bản ghi thật (B9) chính điều này sinh ra lệch nhỏ, nên B9 có dung sai.
+  - B4: đã kiểm trên numpy 2.5.3 của desktop: `np.add.reduceat` (float64) = phần tử đầu + `pairwise_sum` của phần còn
+    lại, khớp từng bit với mọi độ dài ô 2–300; `np.cumsum` cộng tuần tự. Kotlin làm đúng như vậy (`SpeechSegments.cellSum`),
+    có golden kiểm 300 ô đầu của ca 16 kHz.
+  - B7: trên PC, 2 giờ mono 48 kHz → 16 kHz mất 9,7 s (744 lần thời gian thực); bản spike 23,5 s, tức chỉ nhanh hơn 2,4
+    lần, chưa tới mục tiêu ≥ 5 lần của plan. 8 tổng riêng không nhanh hơn 4 tổng. Mục tiêu 5 lần dựa trên giả định resample
+    là phần chậm của bản spike trên máy (6 phút cho 135 phút âm thanh), nhưng tính theo số phép nhân cộng thì resample chỉ
+    cỡ chục giây; phần chậm của spike nằm ở chỗ khác (ghi float từng mẫu, trộn kênh). Giữ 32 zero-crossing; ngưỡng thật là
+    D45, đo ở D2. Nếu D2 cho thấy resample vẫn là nút thắt thì mới giảm zero-crossing (hỏi người dùng trước).
 
 ## Phát sinh
 
