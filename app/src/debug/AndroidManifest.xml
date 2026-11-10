@@ -18,6 +18,11 @@
             android:exported="true"
             android:label="@string/debug_audio_title" />
 
+        <!-- Dừng bằng adb lúc màn hình tắt (xem KDoc). -->
+        <receiver
+            android:name=".debug.AudioDebugStopReceiver"
+            android:exported="true" />
+
         <service
             android:name=".debug.AudioDebugService"
             android:exported="false"

@@ -46,7 +46,8 @@ import io.github.cozycode890.guzz.ui.theme.GuzzTheme
  *     adb shell am start -n io.github.cozycode890.guzz.debug/io.github.cozycode890.guzz.debug.AudioDebugActivity \
  *         --es path L1_120m.m4a --es track auto --ez auto_run true
  *
- * Dừng bằng adb: cùng lệnh với `--ez stop true`. Kết quả: `files/debug-audio/<tên bài>/ket_qua.json`.
+ * Dừng bằng adb: cùng lệnh với `--ez stop true` khi màn hình đang bật; màn hình tắt thì dùng [AudioDebugStopReceiver].
+ * Kết quả: `files/debug-audio/<tên bài>/ket_qua.json`.
  */
 class AudioDebugActivity : ComponentActivity() {
 
