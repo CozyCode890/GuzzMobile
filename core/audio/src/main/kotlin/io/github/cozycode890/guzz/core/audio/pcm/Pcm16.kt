@@ -45,13 +45,16 @@ object Pcm16 {
 /**
  * Tệp PCM 16-bit little-endian mono, không header, đọc theo khoảng (D43). Đọc như `SampleSource` (float) hoặc lấy thẳng
  * int16 ([readShorts]) để chép ra đoạn mà không đổi qua float.
+ *
+ * @param dataOffset byte bắt đầu của mẫu đầu tiên (vd sau header WAV); [dataBytes] = số byte mẫu, mặc định tới hết tệp.
  */
-class Pcm16File(val file: File) : SampleSource, Closeable {
+class Pcm16File(val file: File, private val dataOffset: Long = 0, dataBytes: Long = -1) : SampleSource, Closeable {
     private val raf = RandomAccessFile(file, "r")
     private val channel: FileChannel = raf.channel
     private var bytes: ByteBuffer = ByteBuffer.allocateDirect(0)
 
-    override val size: Long = channel.size() / Pcm16.BYTES_PER_SAMPLE
+    override val size: Long =
+        (if (dataBytes >= 0) dataBytes else channel.size() - dataOffset) / Pcm16.BYTES_PER_SAMPLE
 
     override fun read(start: Long, dst: FloatArray, offset: Int, count: Int) {
         val shorts = fill(start, count).asShortBuffer()
@@ -67,7 +70,7 @@ class Pcm16File(val file: File) : SampleSource, Closeable {
         val need = count * Pcm16.BYTES_PER_SAMPLE
         if (bytes.capacity() < need) bytes = ByteBuffer.allocateDirect(need)
         bytes.clear().limit(need)
-        var pos = start * Pcm16.BYTES_PER_SAMPLE
+        var pos = dataOffset + start * Pcm16.BYTES_PER_SAMPLE
         while (bytes.hasRemaining()) {
             val n = channel.read(bytes, pos)
             if (n < 0) throw IOException("${file.name}: hết tệp sớm ở byte $pos")

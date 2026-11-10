@@ -180,7 +180,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     cùng kết quả với nạp một lần;
   - đo trên PC: đổi 2 giờ mono 48 kHz → 16 kHz, ghi thời gian vào Nhật ký. Mục tiêu nhanh hơn bản spike ≥ 5 lần (bản spike
     mất khoảng 6 phút trên máy cho 135 phút âm thanh, phần resample và ghi).
-- [ ] **B8. `ChunkPreparer`** (port của `transcribe.prepare_chunks`, chưa có cache): nhận `SampleSource` của `goc.pcm`,
+- [x] **B8. `ChunkPreparer`** (port của `transcribe.prepare_chunks`, chưa có cache): nhận `SampleSource` của `goc.pcm`,
   cài đặt, thư mục tạm, `ChunkEncoder` (interface; test dùng bản ghi WAV, máy dùng FLAC ở C3), callback tiến độ. Chạy các
   lượt ở "Mặc định kỹ thuật", ghi `danh_sach_doan.json` sau cùng. `trim_silence = false` thì TimeMap không cắt.
   `tools/golden/gen_prepare.py`: một bài tổng hợp vài phút ở 2 kHz với tham số thu nhỏ (`chunk_minutes` = 0,5…), chạy
@@ -190,7 +190,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     desktop;
   - huỷ giữa chừng thì không có `danh_sach_doan.json`, không còn tệp `.part`;
   - bài toàn lặng / cắt xong không còn gì thì báo lỗi đúng như desktop.
-- [ ] **B9. Golden trên bản ghi thật (D46).** `tools/golden/real_golden.py` (không tên `gen_*` để `regenerate.ps1` không
+- [x] **B9. Golden trên bản ghi thật (D46).** `tools/golden/real_golden.py` (không tên `gen_*` để `regenerate.ps1` không
   chạy nó): với B1–B5, đọc `goc16k.wav` trong `$env:GUZZ_SPIKE_DATA\<mã>\` (Stage 1, giải mã bằng ffmpeg), chạy các hàm
   desktop như B8 với cài đặt mặc định, ghi `$env:GUZZ_SPIKE_DATA\golden-stage-02\<mã>.json` (ngoài repo). Tham số
   `--pcm <tệp>` để chạy trên `goc.pcm` lấy từ điện thoại (D3). `RealRecordingGoldenTest` tự bỏ qua khi không có biến
@@ -280,6 +280,22 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     là phần chậm của bản spike trên máy (6 phút cho 135 phút âm thanh), nhưng tính theo số phép nhân cộng thì resample chỉ
     cỡ chục giây; phần chậm của spike nằm ở chỗ khác (ghi float từng mẫu, trộn kênh). Giữ 32 zero-crossing; ngưỡng thật là
     D45, đo ở D2. Nếu D2 cho thấy resample vẫn là nút thắt thì mới giảm zero-crossing (hỏi người dùng trước).
+  - B8: `gen_prepare.py` chạy ở 1 kHz (90 giây, 180 KB WAV) thay vì 2 kHz cho gọn; tự thử seed tới khi hệ số khuếch đại
+    của desktop trùng hệ số chính xác (7 seed đầu đều lệch 1–3 ulp), vì ca này so cả mẫu int16 của từng đoạn.
+    `ChunkPreparer` nhận `ChunkEncoder` (interface) nên test ghi int16 thẳng ra tệp và so SHA-256 với `write_chunks` (WAV)
+    của desktop.
+  - B9, trên PC (Ryzen 7 7435HS), cài đặt mặc định của desktop, `goc16k.wav` của Stage 1:
+
+    | Bài | Dài (phút) | Kotlin (s) | Python (s) | Heap đỉnh (MB) | Giữ lại lệch (s) | Mốc TimeMap lệch > 10 ms | Đoạn | Điểm cắt lệch tối đa (s) |
+    | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+    | B1 | 114,3 | 1,6 | 4,9 | 102 | 0,002 | 0 / 3 082 | 8 | 0,002 |
+    | B2 | 112,3 | 1,6 | 4,9 | 101 | 0,000 | 0 / 3 016 | 9 | 0,000 |
+    | B3 | 114,7 | 2,3 | 4,9 | 107 | 0,000 | 0 / 4 | 12 | 0,000 |
+    | B4 | 78,9 | 1,1 | 3,2 | 96 | 0,001 | 0 / 1 810 | 3 | 0,001 |
+    | B5 | 84,5 | 1,3 | 3,5 | 101 | 0,004 | 0 / 1 092 | 8 | 0,004 |
+
+    Hệ số khuếch đại của desktop lệch hệ số chính xác tới 5e-6 tương đối (B1: 2,506202 / 2,506189), vẫn chỉ làm mốc lệch
+    vài ms. Heap đỉnh (gồm cả JUnit) không tăng theo độ dài bài (B4 79 phút 96 MB, B2 112 phút 101 MB).
 
 ## Phát sinh
 

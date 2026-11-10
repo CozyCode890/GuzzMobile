@@ -1,0 +1,182 @@
+{
+  "chunk_pcm": [
+    {
+      "samples": 12125,
+      "sha256": "376d8d48cac7be853fe0ac372db049a4001eb3af44c385165176c6766d5f8cb0"
+    },
+    {
+      "samples": 13600,
+      "sha256": "9977e6c8161c08fad07b9303d9311f2fdf6d7c2a845086101d78d0105e25015e"
+    },
+    {
+      "samples": 15100,
+      "sha256": "7314eedefc136cc1aa06b624e6c4b0c1e8b7b84dbfde8bb3db750d689597452b"
+    },
+    {
+      "samples": 13850,
+      "sha256": "0def53da171cbffc67e88a062e0278c2d44b42c5edebaccf29d06e465a0c8d08"
+    },
+    {
+      "samples": 15500,
+      "sha256": "7391693668d6eb8c0d3c2216bdb601234aac01dc5bd7b1670867f27d3314af87"
+    },
+    {
+      "samples": 6339,
+      "sha256": "6198014769b05384d4bb3b7943d3777ce52653e9c3105d3298ae1747889711f8"
+    }
+  ],
+  "chunks": [
+    {
+      "end": 12.125,
+      "file": "doan_001.flac",
+      "start": 0.0
+    },
+    {
+      "end": 25.725,
+      "file": "doan_002.flac",
+      "start": 12.125
+    },
+    {
+      "end": 40.825,
+      "file": "doan_003.flac",
+      "start": 25.725
+    },
+    {
+      "end": 54.675,
+      "file": "doan_004.flac",
+      "start": 40.825
+    },
+    {
+      "end": 70.175,
+      "file": "doan_005.flac",
+      "start": 54.675
+    },
+    {
+      "end": 76.514,
+      "file": "doan_006.flac",
+      "start": 70.175
+    }
+  ],
+  "kept": [
+    [
+      1232,
+      6291
+    ],
+    [
+      7702,
+      14778
+    ],
+    [
+      15230,
+      23275
+    ],
+    [
+      25708,
+      31284
+    ],
+    [
+      31613,
+      38256
+    ],
+    [
+      38910,
+      47296
+    ],
+    [
+      49227,
+      55299
+    ],
+    [
+      55504,
+      63296
+    ],
+    [
+      64312,
+      71234
+    ],
+    [
+      71709,
+      80271
+    ],
+    [
+      81907,
+      88288
+    ]
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_prepare.py"
+  },
+  "orig_duration": 90.0,
+  "points": [
+    0,
+    12125,
+    25725,
+    40825,
+    54675,
+    70175,
+    76514
+  ],
+  "seed": 20261117,
+  "settings": {
+    "chunk_minutes": 0.25,
+    "keep_silence": 300,
+    "min_last_chunk_seconds": 4.0,
+    "min_silence_len": 700,
+    "search_seconds": 3.0,
+    "silence_thresh_offset": 16,
+    "target_dbfs": -16.0,
+    "trim_silence": true
+  },
+  "sr": 1000,
+  "time_map": [
+    [
+      1.232,
+      6.291
+    ],
+    [
+      7.702,
+      14.778
+    ],
+    [
+      15.23,
+      23.275
+    ],
+    [
+      25.708,
+      31.284
+    ],
+    [
+      31.613,
+      38.256
+    ],
+    [
+      38.91,
+      47.296
+    ],
+    [
+      49.227,
+      55.299
+    ],
+    [
+      55.504,
+      63.296
+    ],
+    [
+      64.312,
+      71.234
+    ],
+    [
+      71.709,
+      80.271
+    ],
+    [
+      81.907,
+      88.288
+    ]
+  ],
+  "wav": "lecture.wav"
+}
