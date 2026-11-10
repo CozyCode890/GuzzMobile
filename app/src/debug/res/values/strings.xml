@@ -2,4 +2,14 @@
 <resources>
     <!-- Debug và release cài song song (D10): tên khác để phân biệt trên màn hình chính. -->
     <string name="app_name" translatable="false">Guzz (debug)</string>
+
+    <!-- Màn hình thử lõi âm thanh (Stage 2, D49), chỉ có ở bản debug. -->
+    <string name="debug_audio_title">Thử lõi âm thanh</string>
+    <string name="debug_audio_pick">Chọn tệp</string>
+    <string name="debug_audio_none">Chưa chọn tệp</string>
+    <string name="debug_audio_track">Luồng âm thanh (auto, 0, 1…)</string>
+    <string name="debug_audio_run">Chạy</string>
+    <string name="debug_audio_stop">Dừng</string>
+    <string name="debug_audio_notification">Đang xử lý âm thanh</string>
+    <string name="debug_audio_channel">Thử lõi âm thanh</string>
 </resources>

@@ -97,7 +97,25 @@ adb pull /sdcard/Android/data/io.github.cozycode890.guzz.debug/files/logs/. "$en
 adb logcat -d -s Guzz
 
 # Tạo lại dữ liệu golden (cần Guzz desktop ở D:\Guzz hoặc $env:GUZZ_DESKTOP_DIR), xong thì xem git diff testdata/golden
+# và testdata/media (tệp thử tổng hợp cho test trên máy)
 .\tools\golden\regenerate.ps1
+
+# Golden trên bản ghi thật (Stage 2, D46): bài B1–B5 ở $env:GUZZ_SPIKE_DATA (ngoài repo). Chạy desktop một lần, rồi test
+# Kotlin; thiếu dữ liệu thì test tự bỏ qua. --rerun vì Gradle không biết dữ liệu ngoài repo đã đổi.
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\real_golden.py
+.\gradlew :core:audio:test --tests "*RealRecordingGoldenTest" --rerun -i
+
+# Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
+$env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i
+
+# Test trên máy của :core:media (giải mã, chọn luồng, FLAC), điện thoại nối adb
+.\gradlew :core:media:connectedDebugAndroidTest
+
+# Màn hình thử lõi âm thanh (chỉ bản debug, D49): tệp adb push vào files/input/ rồi chạy, chờ xong, in kết quả.
+# -ScreenOff tắt màn hình ngay sau khi bắt đầu; -PullPcm kéo goc.pcm về để so với ffmpeg / Python.
+adb push <tệp> /sdcard/Android/data/io.github.cozycode890.guzz.debug/files/input/
+.\tools\device\audio_debug.ps1 -Path <tên tệp> -ScreenOff
+D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_ffmpeg.py --pcm <goc.pcm> --src <tệp gốc>
 
 # App spike của Stage 1 (build Gradle riêng, app không phụ thuộc vào). Lệnh đẩy dữ liệu, chạy bench, adb qua Wi-Fi và
 # script đo trên PC: spikes/README.md. Dữ liệu ngoài repo ở $env:GUZZ_SPIKE_DATA (D:\GuzzMobileData\stage-01).

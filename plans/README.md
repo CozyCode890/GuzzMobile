@@ -97,8 +97,9 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 ```
 :app                  Compose UI, điều hướng, thông báo, ghép các module
 :core:common          Settings, TimeMap, kiểu dữ liệu chung, log                  JVM thuần
-:core:audio           chunker, cắt lặng, chuẩn hoá; (Stage 7) DSP đầy đủ          JVM thuần
-:core:media           giải mã, resample, ghi đoạn, liệt kê luồng của video         Android (MediaCodec)
+:core:audio           chunker, cắt lặng, chuẩn hoá, resampler, đọc / ghi PCM 16-bit,
+                      ChunkPreparer; (Stage 7) DSP đầy đủ                          JVM thuần
+:core:media           giải mã, ghi đoạn FLAC, liệt kê / chọn luồng, kiểm chỗ trống Android (MediaCodec)
 :core:gemini          Files API, Interactions API, phân loại lỗi, RateLimiter,
                       QuotaTracker, đổi model dự phòng                             JVM thuần
 :core:speaker         port speaker.py: làm mượt, gán người nói, đặt tên, định dạng JVM thuần

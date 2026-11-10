@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chỉ bản debug (D49): màn hình thử lõi âm thanh của Stage 2 và service chạy nó lúc tắt màn hình. Stage 4 thay bằng
+     màn hình Hàng đợi và service thật; quyền dưới đây khi đó chuyển sang manifest chính. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Android 15+: loại mediaProcessing; Android 8–14: dataSync (README Stage 1, "Foreground service và chạy nền"). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- FGS không giữ CPU thức khi màn hình tắt (Stage 1): service giữ partial wake lock trong lúc chạy. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application>
+        <!-- exported để chạy được bằng adb shell am start (lệnh đầy đủ ở KDoc của AudioDebugActivity). -->
+        <activity
+            android:name=".debug.AudioDebugActivity"
+            android:exported="true"
+            android:label="@string/debug_audio_title" />
+
+        <service
+            android:name=".debug.AudioDebugService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProcessing|dataSync" />
+    </application>
+
+</manifest>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="debug_audio_title">Audio core test</string>
+    <string name="debug_audio_pick">Pick file</string>
+    <string name="debug_audio_none">No file picked</string>
+    <string name="debug_audio_track">Audio track (auto, 0, 1…)</string>
+    <string name="debug_audio_run">Run</string>
+    <string name="debug_audio_stop">Stop</string>
+    <string name="debug_audio_notification">Processing audio</string>
+    <string name="debug_audio_channel">Audio core test</string>
+</resources>
