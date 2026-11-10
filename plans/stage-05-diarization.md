@@ -94,3 +94,6 @@ _(viết ở session của stage này)_
   - Giá trị trả về của callback bị bỏ qua: không dừng sherpa-onnx giữa chừng được, chỉ dừng được giữa các phần hoặc giết
     process (`Process.killProcess` process `:diarize` mất 54 ms, process chính sống).
   - Thuật toán nối người nói đã có bản Kotlin (`PieceLinker.kt`, `Hungarian.kt`) khớp bản Python 136/136 lượt.
+- (Từ plan Stage 2, 2026-11-10) Stage 2 để lại trong thư mục tạm `goc.pcm` (âm thanh gốc) và `sach.pcm` (đã chuẩn hoá và
+  cắt lặng), cả hai là PCM 16-bit 16 kHz mono, đọc theo khối bằng `Pcm16File` của `:core:audio`. Tách giọng chia phần đọc
+  thẳng từ đây, không cần giải mã lại.

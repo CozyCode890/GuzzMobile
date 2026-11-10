@@ -76,6 +76,13 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D40 | 2026-11-10 | Resampler; giải mã chưa đo xong (Stage 1) | **`SincResampler` tự viết**, loại Sonic. Giải mã MP4, đối chiếu thời lượng và SNR tệp thật với ffmpeg → bước kiểm của Stage 2 | Sonic không lọc chống alias (10 / 15 kHz giữ nguyên 0 dB); sinc suy giảm −96 dB. |
 | D41 | 2026-11-10 | Định dạng đoạn gửi Gemini (Stage 1) | **FLAC** (tự ghi tệp `.flac`), bỏ phép thử gửi Gemini (F3) | Không mất dữ liệu, giống desktop, nên không cần so chất lượng; 9,6 MB / 10 phút, mã hoá 4–6 s. Giảm dung lượng bằng Opus để Stage 8 xét. |
 | D42 | 2026-11-10 | Rút gọn Stage 1: chạy nền và MacroDroid | **Chạy dài lúc màn hình tắt và `onTimeout` → Stage 4; macro, Doze và sự kiện DONE → Stage 6**, chỉ thử một đêm với máy đã cài đặt pin, bỏ đêm "chưa cài gì" | Thử trên code thật thay vì app spike; hướng dẫn cài đặt ghi thẳng các bước bắt buộc. Tiêu chí D35 giữ nguyên, áp ở Stage 6. |
+| D43 | 2026-11-10 | PCM của cả bài (Stage 2) | **Tệp tạm PCM 16-bit 16 kHz mono, đọc / ghi theo khối** | RAM không tăng theo độ dài bài; giống desktop đọc s16 từ ffmpeg. |
+| D44 | 2026-11-10 | Tệp dài hơn 3 giờ (Stage 2) | **Không giới hạn**; ước lượng dung lượng tạm trước khi giải mã, thiếu thì báo lỗi rõ | Chỉ dung lượng trống mới giới hạn độ dài. |
+| D45 | 2026-11-10 | Ngưỡng tốc độ (Stage 2) | Bài 2 giờ → các đoạn FLAC, Xiaomi 15T, màn hình tắt: **≤ 10 phút, PSS ≤ 300 MB** | Phải tối ưu resampler, không cần vắt kiệt. |
+| D46 | 2026-11-10 | Dữ liệu golden (Stage 2) | **Tổng hợp trong repo + bản ghi thật chạy tại máy** (tự bỏ qua khi thiếu dữ liệu) | Repo không chứa bản ghi thật mà vẫn kiểm trên bài 1–2 giờ. |
+| D47 | 2026-11-10 | `[VIDEO] extract_first`, `extract_format`, `save_extracted` (Stage 2) | **Bỏ hai mục đầu; `save_extracted` → Stage 4** | Mobile luôn giải mã một lần ra PCM tạm. |
+| D48 | 2026-11-10 | `[CHUNKING] format` (Stage 2) | **Chỉ `flac`** | Đúng D41; Android không có bộ mã hoá MP3. |
+| D49 | 2026-11-10 | Màn hình thử của Stage 2 | **Tối giản, chỉ bản debug**, nhận thêm lệnh adb | Thử được trình chọn tệp và content:// URI. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

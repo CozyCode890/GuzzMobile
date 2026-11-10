@@ -85,3 +85,11 @@ _(viết ở session của stage này)_
   - Android 16: job (kể cả WorkManager) chạy song song với FGS bị tính vào quota → không chạy việc dài bằng WorkManager
     cùng lúc với service.
   - Tham khảo `spikes/android/.../bench/BenchService.kt` và `automation/HeartbeatService.kt`.
+- (Từ plan Stage 2, 2026-11-10) Việc Stage 2 để lại cho stage này:
+  - `[VIDEO] save_extracted` (D47): chép tiếng của video ra cạnh bản chép lời. Mobile có sẵn `goc.pcm` trong thư mục
+    tạm, chỉ cần mã hoá ra FLAC khi lưu kết quả;
+  - `[VIDEO] skip_silent`: Stage 2 ném `NoAudioError`, stage này quyết bỏ qua tệp hay báo lỗi;
+  - mã băm cache (`audio_hash`) cho thư mục tạm của Stage 2 (`goc.pcm`, `sach.pcm`, `doan_*.flac`,
+    `danh_sach_doan.json`, chưa có khoá `ma`); bài 2 giờ chiếm khoảng 660 MB tạm, cần chính sách dọn;
+  - màn hình thử và foreground service chỉ có ở bản debug của Stage 2 (D49): thay bằng màn hình Hàng đợi và service
+    thật.
