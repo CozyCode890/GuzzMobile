@@ -203,19 +203,19 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
 ### C. Giải mã và mã hoá (`:core:media`)
 
-- [ ] **C1. Luồng âm thanh.** `MediaInput` (đường dẫn hoặc content:// URI → `MediaExtractor` qua file descriptor),
+- [x] **C1. Luồng âm thanh.** `MediaInput` (đường dẫn hoặc content:// URI → `MediaExtractor` qua file descriptor),
   `listAudioTracks` (thứ tự, MIME, ngôn ngữ, tần số, số kênh, thời lượng), `selectAudioTrack` (port `video_io`).
   **Kiểm:** unit test JVM port `TestSelectTrack` của `tests/test_video.py` (`auto`, rỗng, số hợp lệ, số ngoài khoảng, chữ
   linh tinh, không có luồng nào).
-- [ ] **C2. `AudioDecoder`:** MediaCodec async → trộn mono → `SincResampler` → int16 → `Pcm16Writer` (`goc.pcm`). Báo tiến
+- [x] **C2. `AudioDecoder`:** MediaCodec async → trộn mono → `SincResampler` → int16 → `Pcm16Writer` (`goc.pcm`). Báo tiến
   độ theo thời điểm mẫu / thời lượng, dừng được. Kiểm dung lượng trống trước khi bắt đầu (D44): thiếu thì
   `InsufficientStorageException` kèm số MB cần và còn.
   **Kiểm:** unit test JVM cho công thức ước lượng dung lượng và cho bước trộn kênh; phần còn lại kiểm ở C4.
-- [ ] **C3. `FlacEncoder`** (`ChunkEncoder` cho máy): MediaCodec `audio/flac`, tự ghi tệp `.flac` (port từ
+- [x] **C3. `FlacEncoder`** (`ChunkEncoder` cho máy): MediaCodec `audio/flac`, tự ghi tệp `.flac` (port từ
   `spikes/android/.../media/EncodeBench.kt`). Phần ghép header (`fLaC` + STREAMINFO từ buffer codec-config, điền tổng số
   mẫu và MD5) là hàm thuần.
   **Kiểm:** unit test JVM cho phần ghép header (STREAMINFO đúng số mẫu, MD5 của PCM).
-- [ ] **C4. Test trên máy** (`.\gradlew :core:media:connectedDebugAndroidTest`, điện thoại nối adb). Tệp thử tổng hợp, sinh
+- [x] **C4. Test trên máy** (`.\gradlew :core:media:connectedDebugAndroidTest`, điện thoại nối adb). Tệp thử tổng hợp, sinh
   bằng ffmpeg của desktop qua `tools/golden/gen_media.py`, commit vào `testdata/media/` (vài chục KB, không phải bản ghi
   thật): m4a AAC stereo 44,1 kHz; mp3 mono 48 kHz; ogg Opus; mp4 có hình và 2 luồng âm thanh (440 Hz và 880 Hz); mp4 có
   hình không có tiếng; một tệp hỏng (cắt cụt).
@@ -296,6 +296,13 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
     Hệ số khuếch đại của desktop lệch hệ số chính xác tới 5e-6 tương đối (B1: 2,506202 / 2,506189), vẫn chỉ làm mốc lệch
     vài ms. Heap đỉnh (gồm cả JUnit) không tăng theo độ dài bài (B4 79 phút 96 MB, B2 112 phút 101 MB).
+  - C: tên lớp lỗi theo kiểu Kotlin là `NoAudioException` (plan ghi `NoAudioError` theo desktop). Desktop chỉ báo
+    "không có tiếng" với tệp video; mobile báo `NoAudioException` cho mọi tệp mở được mà không có luồng âm thanh, còn tệp
+    không mở được là `MediaReadException`. Thêm `AudioPreparation` (chọn luồng → kiểm chỗ trống → giải mã → `ChunkPreparer`)
+    cho màn hình thử và Stage 4 dùng lại. AGP 9 bỏ `sourceSets[...]` kiểu cũ: assets của test trên máy thêm bằng Variant API.
+    Thư viện test thiết bị: `androidx.test:runner` 1.7.0, `androidx.test.ext:junit` 1.3.0 (bản ổn định mới nhất).
+  - C4, Xiaomi 15T qua adb Tailscale: 9 / 9 test xanh. AAC 44,1 kHz stereo trong m4a của ffmpeg ra đúng 3,000 s ± 20 ms,
+    tức Android tự bỏ mẫu priming theo edit list (khác tệp AAC do MediaMuxer ghi ở Stage 1, không có edit list).
 
 ## Phát sinh
 

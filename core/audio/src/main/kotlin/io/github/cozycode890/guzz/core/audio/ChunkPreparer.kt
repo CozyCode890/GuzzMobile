@@ -203,6 +203,7 @@ class ChunkPreparer(
         const val CLEAN_PCM_FILE = "sach.pcm"
 
         private val json = Json { prettyPrint = true; encodeDefaults = true }
+        private val lenientJson = Json { ignoreUnknownKeys = true }
 
         fun writeChunkList(file: File, list: ChunkList) {
             val tmp = File(file.path + ".tmp")
@@ -212,7 +213,7 @@ class ChunkPreparer(
 
         /** Đọc `danh_sach_doan.json`; `null` khi chưa có hoặc hỏng (như `read_chunk_list` của desktop, chưa kiểm mã). */
         fun readChunkList(folder: File): ChunkList? = runCatching {
-            Json { ignoreUnknownKeys = true }.decodeFromString(
+            lenientJson.decodeFromString(
                 ChunkList.serializer(), File(folder, CHUNK_LIST_FILE).readText(Charsets.UTF_8),
             )
         }.getOrNull()
