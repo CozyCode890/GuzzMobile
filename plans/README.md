@@ -84,6 +84,14 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D48 | 2026-11-10 | `[CHUNKING] format` (Stage 2) | **Chỉ `flac`** | Đúng D41; Android không có bộ mã hoá MP3. |
 | D49 | 2026-11-10 | Màn hình thử của Stage 2 | **Tối giản, chỉ bản debug**, nhận thêm lệnh adb | Thử được trình chọn tệp và content:// URI. |
 | D50 | 2026-11-11 | Bài 2 giờ lúc tắt màn hình mất 16,6 phút, quá D45 (Stage 2) | **Tối ưu ngay rồi đo lại** (đọc mẫu nén và xử lý PCM chạy song song với bộ giải mã; đo bản không debuggable); vẫn quá thì hỏi lại | Nút thắt là đọc / nạp mẫu nén nối tiếp với xử lý PCM trên một luồng. |
+| D51 | 2026-11-11 | Thư viện HTTP (Stage 3) | **OkHttp**, test bằng MockWebServer | Đúng mặc định ở mục dưới; port được test HTTP giả của desktop. |
+| D52 | 2026-11-11 | Lưu dữ liệu hạn mức (Stage 3) | **Tệp JSON cùng cấu trúc `su_dung.json`** | Port và golden dễ; không dùng chung với app khác nên bỏ khoá tệp. |
+| D53 | 2026-11-11 | Log yêu cầu ở mức DEBUG (Stage 3) | **Có, như desktop** | Dò được lỗi 400; key ở header, có test kiểm không lọt. |
+| D54 | 2026-11-11 | Nhập key / cài đặt từ desktop (Stage 3) | **Không, nhập key tay** | Nhập / xuất cài đặt để Stage 8. |
+| D55 | 2026-11-11 | Sao lưu dữ liệu app (Stage 3) | **`allowBackup="false"` toàn app** | Key không lên Drive; sao lưu đầy đủ từng giết FGS (Stage 1). |
+| D56 | 2026-11-11 | Màn hình của Stage 3 | **Trang Google AI thật** (key, Kiểm tra kết nối, chọn model) **+ gửi thử ở màn hình thử bản debug** | Stage 4 cần trang nhập key thật. |
+| D57 | 2026-11-11 | Gửi thật lên Gemini (Stage 3) | **Khoảng 4 yêu cầu, hỏi trước khi gửi** | Tài liệu hôm nay ghi định dạng `*-transcribe` khác desktop. |
+| D58 | 2026-11-11 | Model mặc định (Stage 3) | **Giữ như desktop**, kiểm bằng `list_models`, model mất ghi vào Phát sinh Stage 8 | Model 404 tự bị khoá rồi đổi model như desktop. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

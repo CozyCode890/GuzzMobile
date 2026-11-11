@@ -7,11 +7,11 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** chưa mở stage mới. Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42),
-Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 3 ([stage-03-gemini-client.md](plans/stage-03-gemini-client.md)): Stage 4 (MVP)
-cần cả Stage 2 lẫn Stage 3. Đọc mục "Phát sinh" của Stage 3 và 4 khi plan; số đo của Stage 2 ở "Nhật ký" của
-[stage-02-audio-core.md](plans/stage-02-audio-core.md). Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
+**Stage hiện tại:** Stage 3, đã plan chi tiết ngày 2026-11-11, chưa bắt đầu làm. Stage 2 xong ngày 2026-11-11, Stage 1
+xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** làm Stage 3 theo mục "Kế hoạch chi tiết" của
+[stage-03-gemini-client.md](plans/stage-03-gemini-client.md), bắt đầu từ A1; phần A–C chạy hết trên PC. Bước D4 gửi thật
+lên Gemini: hỏi người dùng ngay trước khi gửi (D57). Stage 4 (MVP) cần cả Stage 2 lẫn Stage 3. Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
 song được. Stage 1 đã chuyển phần đo chưa xong sang mục "Phát sinh" của Stage 2, 4, 5, 6: phép đo thành bước kiểm trên
 code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
 
@@ -20,7 +20,7 @@ code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-resul
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
-| 3 | Client Gemini, hạn mức, đổi model | ⬜ | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
+| 3 | Client Gemini, hạn mức, đổi model | 📝 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |

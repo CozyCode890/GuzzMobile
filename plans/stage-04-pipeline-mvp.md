@@ -102,3 +102,6 @@ _(viết ở session của stage này)_
   - bài 2 giờ tốn khoảng 660 MB tạm (`goc.pcm` 230 MB, `sach.pcm` tới 230 MB, FLAC khoảng 200 MB): dọn `goc.pcm` /
     `sach.pcm` khi không cần cho Stage 5 nữa;
   - đo lại tốc độ trên bản release (không debuggable) khi có service thật.
+- (Từ plan Stage 3, 2026-11-11) Ca "bản chép lời rỗng thì thử model khác cho đoạn đó, và không cache kết quả rỗng"
+  (`test_empty_transcript_retries_with_another_model`, `test_empty_result_is_not_cached` của desktop) thuộc pipeline:
+  dùng tham số `initial_skip` của `ChunkDispatcher.send` (Stage 3 port sẵn) và port hai test này ở stage này.
