@@ -1,6 +1,6 @@
 # Stage 2 — Lõi âm thanh tối giản
 
-**Trạng thái:** 🔨 đang làm từ 2026-11-10 · **Cần xong trước:** 1
+**Trạng thái:** ✅ 2026-11-11 · **Cần xong trước:** 1
 
 ## Mục tiêu
 
@@ -48,12 +48,14 @@ Kết quả phải khớp bản Python.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Golden test khớp Python: điểm cắt đoạn lệch không quá 1 khối 50 ms; TimeMap khớp (trên tín hiệu tổng hợp: khớp
-  hẳn; trên bản ghi thật: theo dung sai ở bước B9).
-- [ ] Bài 2 giờ chạy trên máy thật lúc màn hình tắt: từ tệp gốc tới các đoạn FLAC **≤ 10 phút, PSS đỉnh ≤ 300 MB** (D45).
-- [ ] Video có 2 luồng âm thanh: chọn đúng luồng.
-- [ ] Phần chuyển từ Stage 1 (D40): giải mã được video MP4; thời lượng PCM lệch ≤ 0,1 s so với ffmpeg; SNR so với ffmpeg
-  đã đo và ghi lại.
+- [x] Golden test khớp Python: điểm cắt đoạn lệch không quá 1 khối 50 ms; TimeMap khớp (trên tín hiệu tổng hợp: khớp
+  hẳn; trên bản ghi thật: theo dung sai ở bước B9). Tổng hợp khớp tuyệt đối; B1–B5 và PCM giải mã trên máy (L1_120m, V1):
+  0 mốc lệch > 10 ms, điểm cắt lệch ≤ 0,001 s.
+- [x] Bài 2 giờ chạy trên máy thật lúc màn hình tắt: từ tệp gốc tới các đoạn FLAC **≤ 10 phút, PSS đỉnh ≤ 300 MB** (D45).
+  346 s (5,8 phút), PSS 114 MB, sau khi tối ưu theo D50.
+- [x] Video có 2 luồng âm thanh: chọn đúng luồng (test thiết bị C4).
+- [x] Phần chuyển từ Stage 1 (D40): giải mã được video MP4; thời lượng PCM lệch ≤ 0,1 s so với ffmpeg; SNR so với ffmpeg
+  đã đo và ghi lại. 5 tệp lệch ≤ 0,017 s so với ffmpeg giải mã; SNR 70,4 dB (m4a), 51,6 dB (mp4).
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -251,10 +253,10 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
 ### E. Đóng stage
 
-- [ ] **E1. Tài liệu:** CLAUDE.md thêm lệnh chạy golden trên bản ghi thật, test trên máy, mở màn hình thử bằng adb;
+- [x] **E1. Tài liệu:** CLAUDE.md thêm lệnh chạy golden trên bản ghi thật, test trên máy, mở màn hình thử bằng adb;
   README §3 sửa dòng `:core:audio` / `:core:media` (resampler và PCM 16-bit chuyển sang `:core:audio`).
   **Kiểm:** chạy lại từng lệnh đã chép, lệnh nào cũng chạy được.
-- [ ] **E2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 2 → ✅ trong CLAUDE.md, "Việc tiếp theo" → plan Stage 3
+- [x] **E2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 2 → ✅ trong CLAUDE.md, "Việc tiếp theo" → plan Stage 3
   (hoặc Stage 4 nếu Stage 3 đã xong); commit, push.
   **Kiểm:** `git ls-files | Select-String '\.(flac|m4a|aac|mp3|ogg|mp4|pcm|f32)$'` chỉ ra tệp trong `testdata/`;
   `git status -sb` báo `## main...origin/main`.
@@ -372,6 +374,11 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
       **D45 đạt** (≤ 10 phút, PSS ≤ 300 MB). `goc.pcm` của bản mới trùng MD5 với bản cũ (thứ tự xử lý giữ nguyên). Trước
       đây 92,5 s "nạp vào" phần lớn là chờ: codec chỉ nhận mẫu mới khi luồng callback rảnh khỏi xử lý PCM. Đạt ngưỡng
       nên không đo bản không debuggable như D50 dự tính; bản release đo lại ở Stage 4 / 9.
+    - C4 chạy lại với bộ giải mã 3 luồng: 9 / 9 xanh. `connectedDebugAndroidTest` bị HyperOS huỷ việc cài APK test
+      (`INSTALL_FAILED_USER_RESTRICTED`, gói mới qua adb không dây) cả khi máy mở khoá; `adb install -r -t` tay rồi
+      `am instrument` thì được. Lệnh đã chép vào CLAUDE.md.
+    - E1: lệnh của Stage 2 trong CLAUDE.md đều đã chạy trong lúc làm (golden thật, benchmark, test thiết bị, màn hình thử,
+      so ffmpeg). Đóng stage ngày 2026-11-11.
     - Màn hình thử đặt tên thư mục kết quả theo tên tệp bỏ đuôi, nên `L1.mp3` và `L1.ogg` ghi chung `debug-audio/L1/`
       (đã chép kết quả ra riêng ngay sau mỗi lần chạy). Stage 4 đặt thư mục tạm theo mã băm nên không gặp lại.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa

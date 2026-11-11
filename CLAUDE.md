@@ -7,11 +7,11 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 2 (đang làm từ 2026-11-10). Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày
-2026-11-01.
-**Việc tiếp theo:** làm tiếp Stage 2 theo mục "Kế hoạch chi tiết" của
-[stage-02-audio-core.md](plans/stage-02-audio-core.md): bước nào đã `[x]` là xong, xem "Nhật ký" của tệp đó để biết làm
-khác kế hoạch ở đâu. Phần B chạy hết trên PC, chưa cần điện thoại. Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
+**Stage hiện tại:** chưa mở stage mới. Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42),
+Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** plan chi tiết Stage 3 ([stage-03-gemini-client.md](plans/stage-03-gemini-client.md)): Stage 4 (MVP)
+cần cả Stage 2 lẫn Stage 3. Đọc mục "Phát sinh" của Stage 3 và 4 khi plan; số đo của Stage 2 ở "Nhật ký" của
+[stage-02-audio-core.md](plans/stage-02-audio-core.md). Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
 song được. Stage 1 đã chuyển phần đo chưa xong sang mục "Phát sinh" của Stage 2, 4, 5, 6: phép đo thành bước kiểm trên
 code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
 
@@ -19,7 +19,7 @@ code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-resul
 | --- | --- | --- | --- |
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
-| 2 | Lõi âm thanh tối giản | 🔨 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
+| 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ⬜ | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
@@ -110,6 +110,12 @@ $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchma
 
 # Test trên máy của :core:media (giải mã, chọn luồng, FLAC), điện thoại nối adb
 .\gradlew :core:media:connectedDebugAndroidTest
+# HyperOS hay huỷ việc cài APK test (gói mới) qua adb không dây: INSTALL_FAILED_USER_RESTRICTED. Khi đó build APK test,
+# cài tay (máy mở khoá, bấm đồng ý nếu hỏi) rồi chạy thẳng, xong gỡ:
+.\gradlew :core:media:assembleDebugAndroidTest
+adb install -r -t core\media\build\outputs\apk\androidTest\debug\media-debug-androidTest.apk
+adb shell am instrument -w io.github.cozycode890.guzz.core.media.test/androidx.test.runner.AndroidJUnitRunner
+adb uninstall io.github.cozycode890.guzz.core.media.test
 
 # Màn hình thử lõi âm thanh (chỉ bản debug, D49): tệp adb push vào files/input/ rồi chạy, chờ xong, in kết quả.
 # -ScreenOff tắt màn hình ngay sau khi bắt đầu; -PullPcm kéo goc.pcm về để so với ffmpeg / Python.
@@ -161,6 +167,9 @@ D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_ffmpeg.py --pcm <go
 - App Claude giữ biến môi trường từ lúc mở: đổi `JAVA_HOME` / `ANDROID_HOME` / `PATH` xong phải khởi động lại app.
 - GitHub CLI `gh` đã đăng nhập tài khoản CozyCode890 (SSH). Repo desktop: `CozyCode890/Guzz` (public).
 - Máy thật: Xiaomi 15T, Android 16, HyperOS 3.0, đã bật Gỡ lỗi USB (chi tiết ở D22).
+- adb không dây qua Tailscale: `adb connect 100.71.61.23:5555`, rồi `$env:ANDROID_SERIAL = '100.71.61.23:5555'`. Máy
+  khởi động lại thì cổng 5555 đóng: người dùng cắm USB và chạy `adb tcpip 5555`. Guzz (debug) đã được đặt pin "No
+  restrictions" (2026-11-11); thiếu cài đặt này HyperOS tắt wake lock khi màn hình tắt và việc nền đứng im.
 - Python và runtime của Guzz desktop (dùng cho golden test): `D:\Guzz\runtime\python\python.exe`; pyannote:
   `D:\Guzz\runtime\nguoi_noi\python.exe`; ffmpeg: `D:\Guzz\runtime\ffmpeg\ffmpeg.exe`.
 - `D:\GuzzMobile` là git repo, nhánh `main`, remote `origin` = `CozyCode890/GuzzMobile` (private, SSH).

@@ -93,3 +93,12 @@ _(viết ở session của stage này)_
     `danh_sach_doan.json`, chưa có khoá `ma`); bài 2 giờ chiếm khoảng 660 MB tạm, cần chính sách dọn;
   - màn hình thử và foreground service chỉ có ở bản debug của Stage 2 (D49): thay bằng màn hình Hàng đợi và service
     thật.
+- (Từ Stage 2, 2026-11-11) Đo trên Xiaomi 15T, xem Nhật ký Stage 2:
+  - khi app chưa được đặt pin "No restrictions", HyperOS tắt partial wake lock của FGS lúc màn hình tắt ("DISABLED,
+    reason: Process Priority") và việc giải mã đứng im → hướng dẫn cài đặt (Stage 6) phải có bước này, và service nên
+    phát hiện bị đứng (không tiến độ trong N giây) để báo người dùng;
+  - FGS chạy chậm hơn nhiều khi người dùng đang dùng app khác (giải mã ×19 → ×6) và khi tắt màn hình nếu luồng bị
+    chặn; giữ kiểu 3 luồng của `AudioDecoder` cho mọi bước nặng;
+  - bài 2 giờ tốn khoảng 660 MB tạm (`goc.pcm` 230 MB, `sach.pcm` tới 230 MB, FLAC khoảng 200 MB): dọn `goc.pcm` /
+    `sach.pcm` khi không cần cho Stage 5 nữa;
+  - đo lại tốc độ trên bản release (không debuggable) khi có service thật.
