@@ -235,7 +235,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
   `--ez auto_run true`. Kết quả ghi `files/debug-audio/<tên bài>/ket_qua.json`, có cả log.
   **Kiểm:** `.\gradlew installSideloadDebug`, chạy bằng adb một tệp ngắn ra đủ `goc.pcm`, `sach.pcm`, `doan_*.flac`,
   `danh_sach_doan.json`, `ket_qua.json`; bấm Dừng giữa chừng thì không có `danh_sach_doan.json`.
-- [ ] **D2. Đo trên máy** (lệnh adb, màn hình tắt). Đẩy lên `files/input/`: `L1_120m.m4a` (cắt 120 phút đầu của `L1.m4a`
+- [x] **D2. Đo trên máy** (lệnh adb, màn hình tắt). Đẩy lên `files/input/`: `L1_120m.m4a` (cắt 120 phút đầu của `L1.m4a`
   bằng `ffmpeg -t 7200 -c copy`), `A1.aac`, `L1.mp3`, `L1.ogg`, `V1.mp4` (tệp ở `$env:GUZZ_SPIKE_DATA\media\`).
   **Kiểm:** bảng trong Nhật ký: × thời gian thực, PSS đỉnh, thời gian từng bước. `L1_120m` ≤ 10 phút và PSS ≤ 300 MB
   (D45). Mọi tệp: thời lượng `goc.pcm` lệch ≤ 0,1 s so với `ffmpeg -i`.
