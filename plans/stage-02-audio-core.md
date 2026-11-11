@@ -316,6 +316,20 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     -PullPcm "$env:GUZZ_SPIKE_DATA\out\stage-02"`, sau đó A1.aac, L1.mp3, L1.ogg, V1.mp4 (đã `adb push` sẵn vào
     `files/input/`), D3, D4, E. Ghi điều này vào hướng dẫn cài đặt (Stage 4 / 6). Tiến trình treo đang còn trên máy:
     gửi Dừng bằng `AudioDebugStopReceiver` hoặc `adb shell am force-stop io.github.cozycode890.guzz.debug`.
+  - **2026-11-11, chạy tiếp D2–D3.** Người dùng đặt pin "No restrictions" cho Guzz (debug) (app vào danh sách miễn của
+    `deviceidle`) và chạy lại `adb tcpip 5555` qua USB (máy đã khởi động lại, cổng 5555 đóng). Từ đó wake lock giữ được,
+    giải mã chạy tiếp lúc màn hình tắt.
+    - `L1_120m.m4a` (lần 1, KHÔNG sạch): người dùng dùng điện thoại giữa chừng (màn hình bật lại, máy cắm sạc). 712 s cả
+      chuỗi (×10,1), trong đó giải mã 672 s; chuẩn hoá 5,7 s, cắt lặng 12,3 s, ghi `sach.pcm` 8,0 s, ghi 9 đoạn FLAC
+      14,5 s; PSS đỉnh 128 MB. Giải mã khoảng ×19 lúc máy để yên, tụt còn khoảng ×6 lúc người dùng dùng máy (service
+      FGS chạy ở nhóm CPU thấp hơn app đang mở). Cần đo lại lúc máy để yên cho D45.
+    - D3, `L1_120m`: `goc.pcm` của máy dài đúng bằng ffmpeg tự giải mã (7199,659 s), trễ 0 mẫu, **SNR 70,4 dB**. Dòng
+      "Duration" của container là 7200,010 s, lệch −0,351 s cho cả máy lẫn ffmpeg, vì tệp cắt bằng `-c copy`: Kiểm của D2
+      so với độ dài ffmpeg giải mã (cũng là thứ desktop dùng làm `thoi_luong_goc`). `real_golden.py --pcm … --compare`
+      trên chính `goc.pcm` đó: TimeMap 0 / 2 126 mốc lệch, 9 / 9 đoạn, điểm cắt lệch 0,000 s.
+    - Sửa `real_golden.py`: trước đây dùng `config.Config()`, mà dataclass này có mặc định cũ (700 / 16 / 300) khác
+      `config.default.txt` (1000 / 20 / 400, cũng là mặc định của app); nay đọc `config.default.txt`. Chạy lại B1–B5 với
+      mặc định đúng: vẫn 0 mốc lệch, điểm cắt lệch ≤ 0,001 s (bảng B9 ở trên đo với 700 / 16 / 300).
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
     `spikes/media/compare_pcm.py`, để script của Stage 1 vẫn chạy lại được như cũ.
 

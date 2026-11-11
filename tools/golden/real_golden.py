@@ -54,7 +54,9 @@ def exact_gain(y: np.ndarray, target: float) -> float | None:
 
 
 def run(y: np.ndarray, source: str) -> dict:
-    cfg = config.Config()  # mặc định của desktop (khớp config.default.txt ở các mục Stage 2 dùng)
+    # Mặc định của config.default.txt (cũng là mặc định của app). KHÔNG dùng config.Config(): dataclass đó có mặc định
+    # cũ (min_silence_len 700, silence_thresh_offset 16, keep_silence 300), khác config.default.txt (1000, 20, 400).
+    cfg = config.load_config(str(_common.desktop_dir() / "config.default.txt"))
     t0 = time.monotonic()
     d = audio_processing.measure_dbfs(y)
     gain = float(np.float32(10.0 ** ((cfg.target_dbfs - d) / 20.0))) if d != float("-inf") else None
@@ -80,6 +82,28 @@ def run(y: np.ndarray, source: str) -> dict:
     )
 
 
+def compare(desktop: dict, phone: dict) -> None:
+    """So danh_sach_doan.json của điện thoại với desktop theo dung sai của bước B9 (như RealRecordingGoldenTest)."""
+    tm_d = audio_processing.TimeMap([tuple(s) for s in desktop["time_map"]], desktop["orig_duration"])
+    tm_p = audio_processing.TimeMap([tuple(s) for s in phone["ban_do_thoi_gian"]], phone["thoi_luong_goc"])
+    kept_diff = abs(tm_d.clean_duration - tm_p.clean_duration)
+    edges_d = [t for s in desktop["time_map"] for t in s]
+    edges_p = [t for s in phone["ban_do_thoi_gian"] for t in s]
+    arr_d, arr_p = np.array(edges_d), np.array(edges_p)
+    unmatched = sum(1 for e in edges_d if np.min(np.abs(arr_p - e)) > 0.010) + \
+        sum(1 for e in edges_p if np.min(np.abs(arr_d - e)) > 0.010)
+    ratio = 1 - unmatched / (len(edges_d) + len(edges_p))
+    cuts_d = [tm_d.to_original(p / SR) for p in desktop["points"]]
+    cuts_p = [tm_p.to_original(t) for t in [0.0] + [c["ket_thuc_giay"] for c in phone["doan"]]]
+    same_count = len(cuts_d) == len(cuts_p)
+    max_cut = max(abs(a - b) for a, b in zip(cuts_d, cuts_p)) if same_count else float("nan")
+    ok = phone["thoi_luong_goc"] == desktop["orig_duration"] and kept_diff <= 0.1 and ratio >= 0.999 \
+        and same_count and max_cut <= 0.050
+    print(f"so với điện thoại: thời lượng gốc {phone['thoi_luong_goc']} / {desktop['orig_duration']}; giữ lại lệch "
+          f"{kept_diff:.3f} s; mốc TimeMap khớp {ratio * 100:.4f}% ({unmatched} lệch / {len(edges_d)} + {len(edges_p)}); "
+          f"{len(cuts_p) - 1} / {len(cuts_d) - 1} đoạn; điểm cắt lệch tối đa {max_cut:.3f} s → {'ĐẠT' if ok else 'TRƯỢT'}")
+
+
 def write(name: str, data: dict) -> Path:
     out = data_dir() / "golden-stage-02"
     out.mkdir(parents=True, exist_ok=True)
@@ -94,6 +118,7 @@ def main() -> None:
     ap.add_argument("codes", nargs="*", help="mã bài (mặc định B1–B5)")
     ap.add_argument("--pcm", help="tệp PCM 16-bit LE mono 16 kHz không header (goc.pcm lấy từ điện thoại)")
     ap.add_argument("--name", help="tên JSON ra khi dùng --pcm")
+    ap.add_argument("--compare", help="danh_sach_doan.json của điện thoại: so với kết quả desktop theo dung sai B9")
     args = ap.parse_args()
 
     if args.pcm:
@@ -103,6 +128,8 @@ def main() -> None:
         data = run(y, os.path.basename(args.pcm))
         path = write(args.name, data)
         print(f"{args.name}: {len(data['kept'])} khoảng giữ lại, {len(data['points']) - 1} đoạn → {path}")
+        if args.compare:
+            compare(data, json.loads(Path(args.compare).read_text(encoding="utf-8")))
         return
 
     for code in args.codes or CODES:

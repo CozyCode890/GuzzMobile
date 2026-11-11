@@ -68,7 +68,9 @@ def main() -> None:
     declared = ffmpeg_duration(src)
     if args.duration_only:
         n = args.samples
-        print(f"{src.name}: máy {n / SR:.3f} s, ffmpeg Duration {declared:.3f} s, lệch {n / SR - declared:+.3f} s")
+        decoded = len(ffmpeg_pcm(src, args.track)) / SR
+        print(f"{src.name}: máy {n / SR:.3f} s, ffmpeg giải mã {decoded:.3f} s (lệch {n / SR - decoded:+.3f} s), "
+              f"ffmpeg Duration {declared:.3f} s (lệch {n / SR - declared:+.3f} s)")
         return
 
     out = np.fromfile(args.pcm, dtype="<i2").astype(np.float64) / 32768.0

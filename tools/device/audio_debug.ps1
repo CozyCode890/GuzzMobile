@@ -53,9 +53,10 @@ if ($Pull -or $PullPcm) {
 if ($r.ket_qua -ne 'ok') {
     Write-Host "${Path}: LỖI $($r.loi)"
 } else {
-    Write-Host ("{0}: {1:N1} phút âm thanh ({2}, {3} Hz × {4}) → {5} đoạn trong {6:N1} s (×{7:N1}); giải mã {8:N1} s, " +
+    $line = ("{0}: {1:N1} phút âm thanh ({2}, {3} Hz × {4}) → {5} đoạn trong {6:N1} s (×{7:N1}); giải mã {8:N1} s, " +
         "cắt đoạn {9:N1} s; PSS đỉnh {10} MB; màn hình bật lúc đầu / cuối: {11} / {12}") -f $Path, ($r.giay_am_thanh / 60),
         $r.bo_giai_ma, $r.tan_so_goc, $r.so_kenh_goc, $r.so_doan, $r.giay_xu_ly, $r.x_thoi_gian_thuc, ($r.ms_giai_ma / 1000),
         ($r.ms_cat_doan / 1000), $r.ram.pss_dinh_mb, $r.man_hinh_bat_luc_dau, $r.man_hinh_bat_luc_cuoi
+    Write-Host $line
     Write-Host "  từng bước (ms): $($r.ms_tung_buoc | ConvertTo-Json -Compress)"
 }
