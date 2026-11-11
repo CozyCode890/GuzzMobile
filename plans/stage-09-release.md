@@ -74,3 +74,6 @@ _(viết ở session của stage này)_
 - (Từ Stage 1, 2026-11-10) `android:allowBackup="false"`: sao lưu đầy đủ làm hệ thống giết process đang chạy FGS (xem
   Phát sinh của Stage 4). → Đã làm ở Stage 3 (A3, D55), kèm `dataExtractionRules` chặn chuyển máy; Stage 9 chỉ cần
   kiểm lại trên bản release.
+- (Từ plan Stage 4, 2026-11-11) Đo lại tốc độ xử lý âm thanh trên bản release (không debuggable), chạy qua service hàng
+  đợi thật (Phát sinh Stage 2 chuyển sang Stage 4, người dùng không muốn bước đo riêng ở Stage 4 nên dời tới đây). Mốc so:
+  bài 2 giờ trên bản debug mất 346 s, PSS 114 MB (Stage 2, D45 / D50).

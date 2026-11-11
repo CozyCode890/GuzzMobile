@@ -92,14 +92,24 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D56 | 2026-11-11 | Màn hình của Stage 3 | **Trang Google AI thật** (key, Kiểm tra kết nối, chọn model) **+ gửi thử ở màn hình thử bản debug** | Stage 4 cần trang nhập key thật. |
 | D57 | 2026-11-11 | Gửi thật lên Gemini (Stage 3) | **Khoảng 4 yêu cầu, hỏi trước khi gửi** | Tài liệu hôm nay ghi định dạng `*-transcribe` khác desktop. |
 | D58 | 2026-11-11 | Model mặc định (Stage 3) | **Giữ như desktop**, kiểm bằng `list_models`, model mất ghi vào Phát sinh Stage 8 | Model 404 tự bị khoá rồi đổi model như desktop. |
+| D59 | 2026-11-11 | Nơi lưu bản chép lời (Stage 4) | **Thư mục chọn một lần qua SAF** (gợi ý `Documents/Guzz`); cạnh tệp nguồn → Stage 6 | Một cách ghi cho cả hai flavor, không cần quyền đặc biệt; trùng tên xử lý đúng như desktop. |
+| D60 | 2026-11-11 | Chạy lần lượt hay song song (Stage 4) | **Lần lượt từng tệp, như desktop** | Hạn mức theo phút dùng chung; RAM, pin, chỗ trống tạm thấp. |
+| D61 | 2026-11-11 | Xem bản chép lời (Stage 4) | **Xem trong app + nút Mở bằng app khác** | Xem nhanh không cần app khác; sửa bằng trình soạn thảo trên máy. |
+| D62 | 2026-11-11 | Nút chia sẻ (Stage 4) | **Có, chia sẻ tệp .txt** | Gửi như tệp đính kèm; dán chữ thì chép ở màn hình xem. |
+| D63 | 2026-11-11 | Lưu hàng đợi (Stage 4) | **Tệp JSON**, thay cho Room | Danh sách nhỏ; logic ở module JVM test trên PC; không KSP / sinh mã. |
+| D64 | 2026-11-11 | Bị hệ thống giết giữa chừng (Stage 4) | **Tự làm tiếp** khi mở app và khi service được khởi động lại; đã bấm Dừng thì không | Bài chạy đêm vẫn xong; cache từng đoạn nên không gửi lại. |
+| D65 | 2026-11-11 | Gửi thật lên Gemini (Stage 4) | **B5 + B4, tổng ≤ 15 yêu cầu**, hỏi trước mỗi lần gửi | B5 cho chạy liền lúc tắt màn hình, B4 cho Dừng / giết app. |
+| D66 | 2026-11-11 | Dọn thư mục tạm (Stage 4) | **Cắt đoạn xong xoá PCM; tệp xong xoá thư mục tạm; tệp lỗi / dừng giữ tới khi bỏ khỏi danh sách** | Bài 2 giờ còn khoảng 200 MB tạm thay vì 660 MB; khác `config.default.txt` desktop (giữ tạm). |
+| D67 | 2026-11-11 | Tiêu chí service sống ≥ 60 phút khi B5 chỉ chạy 10–15 phút (Stage 4) | **Bản debug: lệnh adb có tham số chờ giữa các đoạn** | Vẫn 6 yêu cầu; mỗi lần gửi sau quãng chờ thử luôn mạng trong Doze. |
+| D68 | 2026-11-11 | `[VIDEO] save_extracted` (Stage 4) | **Để Stage 8** | Cần công tắc trên giao diện và một bài video gửi thật để thử. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
 - minSdk 26 (Android 8.0). targetSdk lấy bản mới nhất lúc làm. Chỉ đóng gói ABI `arm64-v8a`; bản debug thêm `x86_64` để chạy trên emulator.
 - Giải mã âm thanh/video bằng MediaExtractor + MediaCodec của Android, **không** đóng gói FFmpeg: ffmpeg-kit đã ngừng
   phát triển, và FFmpeg làm APK nặng thêm nhiều.
-- Thư viện: OkHttp + kotlinx.serialization để gọi API, coroutines để chạy bất đồng bộ, Room cho hàng đợi bền,
-  foreground service để chạy nền.
+- Thư viện: OkHttp + kotlinx.serialization để gọi API, coroutines để chạy bất đồng bộ, foreground service để chạy nền.
+  Hàng đợi bền lưu bằng tệp JSON, không dùng Room (D63).
 
 ## 3. Kiến trúc dự kiến
 
@@ -113,8 +123,9 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
                       QuotaTracker, đổi model dự phòng                             JVM thuần
 :core:speaker         port speaker.py: làm mượt, gán người nói, đặt tên, định dạng JVM thuần
 :core:diarization     bọc sherpa-onnx, nạp model từ assets                         Android (JNI)
-:core:pipeline        xử lý một tệp, cache để làm tiếp, ghép bản chép lời          JVM thuần (nhận interface)
-:feature:queue        hàng đợi (Room) + foreground service                         Android
+:core:pipeline        xử lý một tệp, cache để làm tiếp, ghép bản chép lời;
+                      hàng đợi (lưu JSON, D63) và cách chạy lần lượt              JVM thuần (nhận interface)
+:feature:queue        foreground service, thông báo, SAF, QueueController          Android
 :feature:automation   intent nhận lệnh / phát sự kiện; (Stage 10) plugin Tasker    Android
 ```
 
@@ -135,6 +146,7 @@ sherpa-onnx, service, intent) mới nằm ở module Android. Stage 0 có thể 
 | `quota.py` (chỉ còn dùng trong app, không chung tệp với app khác) | `:core:gemini` | 3 |
 | `transcribe.py`: `ChunkDispatcher` (đổi model dự phòng) | `:core:gemini` | 3 |
 | `transcribe.py`: `transcribe_single_file`, cache, `assemble_transcript`, `format_header` | `:core:pipeline` | 4 |
+| `gui/threads.py`: `TranscribeThread` (hàng đợi lần lượt, dừng hàng đợi theo loại lỗi) | `:core:pipeline` + `:feature:queue` (service) | 4 |
 | `config.py`, `config.default.txt` | `:core:common` Settings + DataStore | khung ở 0, mỗi stage thêm mục của mình |
 | `speaker.py` | `:core:speaker` | 5 |
 | `diarization.py`, `diarization_worker.py` (subprocess pyannote, token Hugging Face) | `:core:diarization`: sherpa-onnx chạy ngay trong app, không cần token | 5 |

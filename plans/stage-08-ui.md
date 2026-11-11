@@ -81,3 +81,12 @@ _(viết ở session của stage này)_
   thử lại trên vài đoạn trước khi đổi mặc định (đổi mặc định khác desktop thì hỏi người dùng).
 - (Từ Stage 3, 2026-11-11) Ô nhập tên model đã chặn chuỗi không phải tên model (`isValidModelName`) sau khi API key bị
   dán nhầm vào ô model lúc thử; giao diện đầy đủ nên đặt ô key và ô model cách xa nhau, ghi rõ nhãn.
+- (Từ plan Stage 4, 2026-11-11) `[VIDEO] save_extracted` (D68, trước là D47): lưu tiếng tách từ video cạnh bản chép lời
+  (`<tên>.am_thanh.flac` như desktop). Pipeline Stage 4 xoá `goc.pcm` ngay sau khi cắt đoạn (D66), nên khi bật mục này
+  phải mã hoá `goc.pcm` ra FLAC trong thư mục tạm trước khi xoá, hoặc giải mã lại nếu các đoạn lấy từ cache. Thử trên máy
+  cần một bài video gửi Gemini thật (hỏi người dùng trước).
+- (Từ plan Stage 4, 2026-11-11) Cài đặt Stage 4 thêm mà chưa có giao diện: `[OUTPUT]` `filename_template`, `extension`,
+  `on_conflict`, `encoding`, `newline`, `add_header`, `mark_chunks`; `[VIDEO] skip_silent`; `[QUEUE] on_file_error`,
+  `notify_when_done`; `[SYSTEM] delete_temp_when_done`. Stage 4 chỉ có model, cắt lặng, thư mục lưu.
+- (Từ plan Stage 4, 2026-11-11) Cân nhắc tuỳ chọn "chỉ gửi khi có Wi-Fi" (bài 2 giờ tải lên khoảng 200 MB FLAC, số đo
+  Stage 2), cùng chỗ với tuỳ chọn tiết kiệm dữ liệu bằng Opus ở trên. Hỏi người dùng trước khi làm.

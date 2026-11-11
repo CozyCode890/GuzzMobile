@@ -97,3 +97,7 @@ _(viết ở session của stage này)_
 - (Từ plan Stage 2, 2026-11-10) Stage 2 để lại trong thư mục tạm `goc.pcm` (âm thanh gốc) và `sach.pcm` (đã chuẩn hoá và
   cắt lặng), cả hai là PCM 16-bit 16 kHz mono, đọc theo khối bằng `Pcm16File` của `:core:audio`. Tách giọng chia phần đọc
   thẳng từ đây, không cần giải mã lại.
+- (Từ plan Stage 4, 2026-11-11) D66: pipeline của Stage 4 xoá `goc.pcm` / `sach.pcm` ngay sau khi cắt đoạn (thư mục tạm
+  chỉ còn `doan_*.flac` + `danh_sach_doan.json`). Khi bật tách giọng, phải giữ PCM cần cho tách giọng tới lúc có
+  `nguoi_noi.<mã>.json` (như `need_clean` của desktop), hoặc giải mã lại khi các đoạn lấy từ cache; mã băm người nói theo
+  `speaker_hash` của desktop. Hỏi người dùng nếu đổi chính sách dọn của D66.

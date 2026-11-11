@@ -7,13 +7,12 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 4, chưa plan chi tiết. Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1
-xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 4 (MVP: pipeline + hàng đợi nền, [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md)),
-một session riêng, hỏi người dùng các "Câu hỏi cần chốt". Stage 2 và 3 đã xong nên Stage 4 làm được ngay; đọc kỹ mục
-"Phát sinh" của Stage 4 (việc Stage 1, 2, 3 để lại: chạy nền lúc tắt màn hình, cache, cách dùng client Gemini, ca bản
-chép lời rỗng). Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
-[stage-01-results.md](plans/stage-01-results.md).
+**Stage hiện tại:** Stage 4, đã plan chi tiết ngày 2026-11-11 (D59–D68), chưa làm. Stage 3 xong ngày 2026-11-11, Stage 2
+xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** làm Stage 4 (MVP: pipeline + hàng đợi nền) theo mục "Kế hoạch chi tiết" của
+[stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md), bắt đầu từ A1. Bước A–C chạy hết trên PC; D–E thử trên máy
+bằng Gemini giả của bản debug; chỉ bước F gửi thật (D65: B5 + B4, tổng ≤ 15 yêu cầu). Gửi bất cứ thứ gì lên Google thì
+hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -21,7 +20,7 @@ chép lời rỗng). Gửi bất cứ thứ gì lên Google thì hỏi người 
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
-| 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
+| 4 | Pipeline + hàng đợi nền — **MVP** | 📝 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ⬜ | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |

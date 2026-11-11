@@ -99,3 +99,9 @@ _(viết ở session của stage này)_
   xem Nhật ký Stage 2, D4). Test thiết bị của `:core:media` chỉ thử đường dẫn: khi nhận content:// từ app khác (Chia sẻ
   tới Guzz, intent có URI), thêm test thiết bị đọc qua một ContentProvider thật (vd MediaStore Downloads hoặc FileProvider
   trả độ dài không rõ).
+- (Từ plan Stage 4, 2026-11-11) Stage 4 lưu bản chép lời vào thư mục chọn qua SAF (D59). **Lưu cạnh tệp nguồn** (như
+  `output_dir` rỗng của desktop) làm ở đây: chỉ khi có quyền "Truy cập mọi tệp" và nguồn là đường dẫn tuyệt đối; nguồn
+  content:// thì lùi về thư mục SAF. Extra `output_dir` của lệnh TRANSCRIBE cũng theo quy tắc này.
+- (Từ plan Stage 4, 2026-11-11) Cửa vào hàng đợi là `QueueController` của `:feature:queue` (thêm, Bắt đầu, Dừng, trạng
+  thái). Bản debug của Stage 4 có receiver adb + `tools/device/queue_debug.ps1` để thử hàng đợi lúc tắt màn hình: receiver
+  thật của stage này thay thế hoặc dùng lại phần đọc extra của nó.
