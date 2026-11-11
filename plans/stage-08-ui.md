@@ -68,3 +68,16 @@ _(viết ở session của stage này)_
   liệu di động": OGG-Opus 32 kbps chỉ 3 MB / 10 phút nhưng mã hoá mất 46 s (FLAC 4–6 s), và phải thử xem bản chép lời có
   kém đi không trước khi đưa ra (`spikes/formats/gemini_compare.py`, bước F3 cũ của Stage 1; gửi Gemini thì hỏi người
   dùng trước).
+
+- (Từ Stage 3, 2026-11-11) Trang Google AI của Stage 3 chỉ có key, Kiểm tra kết nối, model chính. Còn lại: các mục
+  `[GOOGLE_AI]` khác (`transcribe_mode`, `languages`, `vocabulary`, `store_on_server`, `token_rate_limit`,
+  `timeout_seconds`, `chunk_retries`, `delete_remote_file`), cả `[FALLBACK]` và `[QUOTAS]` (lưu ở `QUOTAS.lines`), sửa
+  prompt (mặc định `DefaultPrompt` = `prompt.txt` desktop). Trang Hạn mức đọc `QuotaTracker.snapshot()` /
+  `revision()` (sổ của app ở `AppContainer.quotaTracker`, tệp `files/quota/su_dung.json`), có nút Mở khoá
+  (`unlock`), Quên hạn mức đã học (`forget_quota`), Đặt lại bộ đếm, Xoá lịch sử.
+- (Từ Stage 3, 2026-11-11) Gửi thật (D4): `gemini-3.5-transcribe` không có `languages` cho chữ rất thưa trên đoạn lớp
+  học ồn lẫn Việt / Anh (smart 170 ký tự chỉ câu tiếng Anh; mốc từng từ 86 ký tự), `gemini-3.5-flash-lite` cùng đoạn
+  562 ký tự. Khi làm trang Google AI đầy đủ: cân nhắc gợi ý điền `languages = vi-VN, en-US` cho model `*-transcribe`, và
+  thử lại trên vài đoạn trước khi đổi mặc định (đổi mặc định khác desktop thì hỏi người dùng).
+- (Từ Stage 3, 2026-11-11) Ô nhập tên model đã chặn chuỗi không phải tên model (`isValidModelName`) sau khi API key bị
+  dán nhầm vào ô model lúc thử; giao diện đầy đủ nên đặt ô key và ô model cách xa nhau, ghi rõ nhãn.

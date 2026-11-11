@@ -472,7 +472,11 @@ def gen_config(out) -> None:
             "valid_methods": list(config.valid_diarization_methods(model)),
             "quota_for": {m: list(cfg.quota_for(m)) for m in chain + ["khong-khai-bao"]},
         })
+    # Prompt mặc định: bản mẫu prompt.txt ở thư mục desktop, đọc như config._read_prompt_file.
+    with open(desktop / "prompt.txt", "r", encoding="utf-8-sig") as f:
+        default_prompt = f.read().strip()
     _common.write_json(out / "config.json", {
+        "default_prompt": default_prompt,
         "default_model_quotas": {m: list(q) for m, q in default_cfg.model_quotas.items()},
         "default_model": default_cfg.model,
         "default_fallback_models": list(default_cfg.fallback_models),

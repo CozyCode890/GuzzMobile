@@ -27,6 +27,11 @@ class GeminiConfigGoldenTest {
     }
 
     @Test
+    fun `prompt mặc định trùng prompt_txt của desktop`() {
+        assertEquals(golden.getValue("default_prompt").str, DefaultPrompt.text)
+    }
+
+    @Test
     fun `model và chuỗi dự phòng mặc định trùng config_default_txt`() {
         assertEquals(golden.getValue("default_model").str, GeminiConfig().model)
         assertEquals(golden.getValue("default_fallback_models").jsonArray.map { it.str }, GeminiConfig().fallbackModels)

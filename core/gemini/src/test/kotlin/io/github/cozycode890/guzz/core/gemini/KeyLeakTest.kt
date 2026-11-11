@@ -53,6 +53,17 @@ class KeyLeakTest {
     }
 
     @Test
+    fun `key dán nhầm vào ô model không phải tên model hợp lệ`() {
+        for (name in listOf("gemini-3.5-flash-lite", "gemini-3.5-transcribe", "gemini-2.5-flash-preview-09-2025", "my_model.v2")) {
+            assertTrue(isValidModelName(name), name)
+        }
+        // Key kiểu cũ và kiểu mới (có chữ hoa), chuỗi có khoảng trắng, chuỗi rỗng.
+        for (name in listOf(key, "AQ.FAKE-0123456789_abcdefXYZ", "Gemini-3", "gemini 3", "", "-gemini", "models/gemini-3")) {
+            assertFalse(isValidModelName(name), name)
+        }
+    }
+
+    @Test
     fun `mask_api_key chỉ giữ 4 ký tự đầu và cuối`() {
         assertEquals("FAKE…NOPQ", maskApiKey(key))
     }

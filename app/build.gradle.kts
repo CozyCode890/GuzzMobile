@@ -11,6 +11,7 @@ android {
         applicationId = "io.github.cozycode890.guzz"
         versionCode = 1
         versionName = "0.1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -38,4 +39,8 @@ dependencies {
     implementation(project(":core:media"))
     implementation(project(":core:gemini"))
     implementation(libs.androidx.activity.compose)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.junit4)
 }

@@ -1,6 +1,6 @@
 # Stage 3 — Client Gemini, hạn mức, đổi model
 
-**Trạng thái:** 🔨 đang làm từ 2026-11-11 (plan chi tiết 2026-11-11) · **Cần xong trước:** 0 (làm song song được với Stage 1–2)
+**Trạng thái:** ✅ xong 2026-11-11 (plan chi tiết và làm cùng ngày) · **Cần xong trước:** 0 (làm song song được với Stage 1–2)
 
 ## Mục tiêu
 
@@ -47,10 +47,10 @@ lỗi đã ghi trong nhật ký ngày 17/09.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Test port từ desktop đều qua (danh sách ở bước C1–C2, B4–B5), golden khớp desktop.
-- [ ] Chạy lại chuỗi lỗi 17/09: hành vi giống hệt desktop.
-- [ ] Không có key trong log (kể cả ở mức DEBUG).
-- [ ] Gửi thật được một đoạn từ máy (D57): model đa năng và model `*-transcribe`.
+- [x] Test port từ desktop đều qua (danh sách ở bước C1–C2, B4–B5), golden khớp desktop.
+- [x] Chạy lại chuỗi lỗi 17/09: hành vi giống hệt desktop.
+- [x] Không có key trong log (kể cả ở mức DEBUG).
+- [x] Gửi thật được một đoạn từ máy (D57): model đa năng và model `*-transcribe`.
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -193,17 +193,17 @@ Script chạy chính `google_ai.py`, `quota.py`, `config.py` của desktop trên
 
 ### D. Android và gửi thật
 
-- [ ] **D1. `ApiKeyStore` bản Keystore** ở `:app`: lưu, đọc, xoá; khoá AES-GCM trong Android Keystore.
+- [x] **D1. `ApiKeyStore` bản Keystore** ở `:app`: lưu, đọc, xoá; khoá AES-GCM trong Android Keystore.
   **Kiểm:** test thiết bị (`:app`): lưu rồi đọc ra đúng; xoá rồi đọc ra rỗng; tệp trên đĩa không chứa key dạng chữ.
-- [ ] **D2. Trang Google AI** (D56, Compose, vi / en): nhập key (hiện dạng che), Lưu / Xoá, Kiểm tra kết nối
+- [x] **D2. Trang Google AI** (D56, Compose, vi / en): nhập key (hiện dạng che), Lưu / Xoá, Kiểm tra kết nối
   (`list_models` → số model hoặc lỗi theo loại), chọn model chính (danh sách lấy từ `list_models`, nhập tay được). Mở từ
   màn hình chính.
   **Kiểm:** trên máy: nhập key sai → báo lỗi cấu hình; key đúng → thấy danh sách model; đổi model → `GOOGLE_AI.model` đổi.
-- [ ] **D3. Gửi thử ở màn hình thử (bản debug):** nút + lệnh adb gửi `doan_001.flac` của một thư mục đã cắt (Stage 2) qua
+- [x] **D3. Gửi thử ở màn hình thử (bản debug):** nút + lệnh adb gửi `doan_001.flac` của một thư mục đã cắt (Stage 2) qua
   `ChunkDispatcher`; ghi kết quả (model, chữ, số từ có mốc, token, thời gian, sự kiện tracker) ra JSON.
   **Kiểm:** chạy bằng adb khi chưa lưu key hoặc key sai → JSON ghi lỗi loại `cau_hinh`, không gửi gì thêm; phần gửi
   thành công kiểm ở D4.
-- [ ] **D4. Gửi thật (D57), hỏi người dùng ngay trước khi gửi:** đoạn 1 phút (cắt bằng Stage 2 từ một bài thử):
+- [x] **D4. Gửi thật (D57), hỏi người dùng ngay trước khi gửi:** đoạn 1 phút (cắt bằng Stage 2 từ một bài thử):
   1. `list_models`: ghi model nào trong chuỗi mặc định không còn (D58);
   2. model chính (`gemini-3.5-flash-lite`) với prompt mặc định;
   3. `gemini-3.5-transcribe`, smart;
@@ -214,9 +214,9 @@ Script chạy chính `google_ai.py`, `quota.py`, `config.py` của desktop trên
 
 ### E. Đóng stage
 
-- [ ] **E1. Tài liệu:** CLAUDE.md thêm lệnh (golden Gemini, gửi thử bằng adb); README §3 nếu module khác dự kiến.
+- [x] **E1. Tài liệu:** CLAUDE.md thêm lệnh (golden Gemini, gửi thử bằng adb); README §3 nếu module khác dự kiến.
   **Kiểm:** chạy lại từng lệnh đã chép.
-- [ ] **E2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 3 → ✅; "Việc tiếp theo" → plan Stage 4; commit, push.
+- [x] **E2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 3 → ✅; "Việc tiếp theo" → plan Stage 4; commit, push.
   **Kiểm:** `git status -sb` báo `## main...origin/main`; `git grep` không thấy key nào (chuỗi `AIza`).
 
 ## Nhật ký
@@ -246,6 +246,37 @@ Script chạy chính `google_ai.py`, `quota.py`, `config.py` của desktop trên
     phút chờ rồi gửi lại, 404 khoá vĩnh viễn, chạm hạn mức ngày khai báo) trên `Client` + `ChunkDispatcher` thật của
     desktop với đồng hồ giả; Kotlin phải ra cùng thứ tự yêu cầu HTTP, cùng thời gian chờ, cùng sổ hạn mức. Hai test
     desktop vẫn giữ tên và khẳng định trong `ReplayGoldenTest`.
+- **2026-11-11, D xong** (Xiaomi 15T qua USB).
+  - D1: `KeystoreApiKeyStore` (AES-GCM 256, khoá `guzz_api_key` trong Android Keystore, bản mã ở
+    `files/secrets/api_key.bin`; mất khoá thì coi như chưa có key và xoá tệp). Test thiết bị 4 ca xanh. HyperOS lại huỷ
+    cài APK test qua `connectedSideloadDebugAndroidTest` (`INSTALL_FAILED_USER_RESTRICTED`) và bước dọn của Gradle gỡ
+    luôn app: cài tay cả hai APK (máy mở khoá, bấm đồng ý) rồi `am instrument`, như lệnh trong CLAUDE.md.
+  - D2: `GoogleAiActivity` mở từ nút "Google AI" ở màn hình chính. Kiểm trên máy: key đúng → 62 model; key bịa → "Key
+    sai hoặc không có quyền" (`cau_hinh`, HTTP 400 API_KEY_INVALID); chọn model trong danh sách → log "đổi model chính".
+  - D3: gửi thử nằm trong màn hình thử của Stage 2 (`GeminiDebug`, nút + adb, `tools/device/gemini_debug.ps1`), ghi
+    `files/debug-gemini/<bài>_<model>_<chế độ>.json` gồm cả các lần gọi HTTP (phương thức, đường dẫn, mã; không header).
+    Chạy khi chưa lưu key → `cau_hinh`, không có lần gọi HTTP nào. Prompt mặc định: `prompt.txt` của desktop đóng gói
+    làm resource của `:core:gemini` (`DefaultPrompt`, golden so với desktop).
+  - **Sự cố lúc thử:** khi chưa tìm thấy trang Google AI, API key bị dán vào ô "Model" của màn hình thử và bấm Gửi. App
+    không gửi gì (chưa có key) nhưng chuỗi đó vào logcat, `guzz.log` và tên tệp kết quả. Đã dọn trên máy (xoá
+    `debug-gemini`, `guzz.log*`, `adb logcat -c`), báo người dùng nên thu hồi key. Sửa: `isValidModelName` (chữ thường,
+    số, `.`, `_`, `-`) chặn ở ô model của cả trang Google AI lẫn màn hình thử, chuỗi sai không được lưu hay ghi log; có
+    test trong `KeyLeakTest`.
+  - D4 (người dùng đồng ý 4 yêu cầu + thử key bịa), đoạn `B1_1m` = phút 10–11 của bài B1 (47,9 giây sau cắt lặng), dữ
+    liệu ở `D:\GuzzMobileData\stage-03`:
+    1. `list_models`: 62 model, đủ 4 model của chuỗi dự phòng mặc định (kể cả `gemini-3.5-flash` mà trang tài liệu không
+       liệt kê) → D58 không có gì cho Phát sinh Stage 8.
+    2. `gemini-3.5-flash-lite` + prompt mặc định: 562 ký tự (Việt + Anh), 1317 token, 9,0 s.
+    3. `gemini-3.5-transcribe` smart: 170 ký tự, 1199 token, 7,1 s.
+    4. `gemini-3.5-transcribe` mốc từng từ: 86 ký tự, 15 từ có mốc (`word_info`, `start_offset` / `end_offset` đọc đúng),
+       1199 token, 8,0 s.
+
+    Cả 4 trả 200 ngay với định dạng yêu cầu của desktop (`{"type": "audio", "uri", "mime_type"}`, `mode` là object):
+    không phải đổi theo tài liệu mới. Bước "upload, finalize" không có `Content-Type` vẫn được. Mỗi lần gửi: 2 POST
+    tải lên, 1 POST Interactions, 1 DELETE trả 200 (tệp đã xoá). Tracker: flash-lite 1 yêu cầu / 1317 token,
+    transcribe 2 yêu cầu / 2398 token, không sự kiện lỗi. `guzz.log`, logcat và JSON kết quả không chứa key.
+    Chất lượng: `*-transcribe` không có `languages` cho chữ rất thưa trên đoạn lớp học ồn, lẫn Việt / Anh (smart chỉ ra
+    câu tiếng Anh) → Phát sinh Stage 8.
 
 ## Phát sinh
 

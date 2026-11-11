@@ -47,6 +47,15 @@ internal fun pyExtension(path: String): String {
     return name.substring(dot)
 }
 
+private val MODEL_NAME = Regex("[a-z0-9][a-z0-9._-]{0,79}")
+
+/**
+ * Tên model hợp lệ: chữ thường, số, `.`, `_`, `-` (như `gemini-3.5-flash-lite`). Kiểm ở mọi chỗ người dùng gõ tên
+ * model, vì API key (có chữ hoa) dán nhầm vào ô model sẽ bị lưu dạng chữ vào cài đặt và ghi ra log; tên sai thì không
+ * được ghi lại nguyên văn ở đâu cả.
+ */
+fun isValidModelName(name: String): Boolean = MODEL_NAME.matches(name)
+
 /** Model chuyên chép lời (`gemini-3.5-transcribe`…): chỉ nhận âm thanh, không nhận prompt hay tệp kèm. */
 fun isTranscribeModel(model: String?): Boolean = "transcribe" in model.orEmpty().lowercase()
 

@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="main_tagline">Turn audio and video into text</string>
+    <string name="main_open_google_ai">Google AI</string>
+
+    <string name="google_ai_title">Google AI</string>
+    <string name="google_ai_key_saved">API key saved: %1$s</string>
+    <string name="google_ai_key_none">No API key yet. Create one at aistudio.google.com and paste it here.</string>
+    <string name="google_ai_key_label">New API key</string>
+    <string name="google_ai_save">Save</string>
+    <string name="google_ai_delete">Delete key</string>
+    <string name="google_ai_check">Test connection</string>
+    <string name="google_ai_checking">Testing…</string>
+    <string name="google_ai_check_ok">Connected: the key can use %1$d models.</string>
+    <string name="google_ai_error_config">Wrong key or no permission.</string>
+    <string name="google_ai_error_network">Cannot reach Google AI (network).</string>
+    <string name="google_ai_error_quota">Quota exhausted.</string>
+    <string name="google_ai_error_overload">Google AI is overloaded, try again later.</string>
+    <string name="google_ai_error_other">Error calling Google AI.</string>
+    <string name="google_ai_model_current">Main model: %1$s</string>
+    <string name="google_ai_model_label">Model name</string>
+    <string name="google_ai_model_use">Use</string>
+    <string name="google_ai_model_pick">Pick from the key\'s models:</string>
+    <string name="google_ai_model_invalid">A model name has only lowercase letters, digits, dots, underscores and dashes (e.g. gemini-3.5-flash-lite). Enter API keys in the API key box above.</string>
 </resources>

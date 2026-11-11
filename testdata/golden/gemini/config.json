@@ -13932,6 +13932,7 @@
       20
     ]
   },
+  "default_prompt": "Transcribe this audio recording of a university lecture.\n- Write down everything that is said, in the language it is spoken (Vietnamese, English, or a mix of both). Do not translate.\n- Add punctuation and paragraph breaks so the text is easy to read.\n- Do not add a title, summary, timestamps, speaker labels, or any comments of your own.\n- If a part cannot be heard clearly, write [không nghe rõ].\n- If there is no speech at all, return an empty response.\nReturn only the transcript as plain text.",
   "meta": {
     "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
     "guzz_desktop_dirty": true,

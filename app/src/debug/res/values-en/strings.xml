@@ -8,4 +8,10 @@
     <string name="debug_audio_stop">Stop</string>
     <string name="debug_audio_notification">Processing audio</string>
     <string name="debug_audio_channel">Audio core test</string>
+
+    <string name="debug_gemini_title">Gemini test send (doan_001.flac)</string>
+    <string name="debug_gemini_folder">Recording folder in debug-audio</string>
+    <string name="debug_gemini_model">Model (empty = main model)</string>
+    <string name="debug_gemini_send">Send</string>
+    <string name="debug_gemini_list_models">list_models</string>
 </resources>

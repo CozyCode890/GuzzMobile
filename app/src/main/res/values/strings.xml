@@ -7,4 +7,28 @@
     <string name="main_tagline">Chuyển âm thanh và video thành văn bản</string>
     <!-- <versionName> · <flavor> · <buildType> -->
     <string name="build_info" translatable="false">%1$s · %2$s · %3$s</string>
+    <string name="main_open_google_ai">Google AI</string>
+
+    <!-- Trang Google AI (Stage 3, D56). -->
+    <string name="google_ai_title">Google AI</string>
+    <!-- %1$s: key đã che, 4 ký tự đầu … 4 ký tự cuối -->
+    <string name="google_ai_key_saved">Đã lưu API key: %1$s</string>
+    <string name="google_ai_key_none">Chưa có API key. Tạo key ở aistudio.google.com rồi dán vào đây.</string>
+    <string name="google_ai_key_label">API key mới</string>
+    <string name="google_ai_save">Lưu</string>
+    <string name="google_ai_delete">Xoá key</string>
+    <string name="google_ai_check">Kiểm tra kết nối</string>
+    <string name="google_ai_checking">Đang kiểm tra…</string>
+    <string name="google_ai_check_ok">Kết nối được: key dùng được %1$d model.</string>
+    <string name="google_ai_error_config">Key sai hoặc không có quyền.</string>
+    <string name="google_ai_error_network">Không kết nối được tới Google AI (mạng).</string>
+    <string name="google_ai_error_quota">Đã hết hạn mức.</string>
+    <string name="google_ai_error_overload">Google AI đang quá tải, thử lại sau.</string>
+    <string name="google_ai_error_other">Lỗi khi gọi Google AI.</string>
+    <!-- %1$s: tên model -->
+    <string name="google_ai_model_current">Model chính: %1$s</string>
+    <string name="google_ai_model_label">Tên model</string>
+    <string name="google_ai_model_use">Dùng</string>
+    <string name="google_ai_model_pick">Chọn từ danh sách model của key:</string>
+    <string name="google_ai_model_invalid">Tên model chỉ gồm chữ thường, số, dấu chấm, gạch dưới, gạch ngang (vd gemini-3.5-flash-lite). API key thì nhập ở ô API key phía trên.</string>
 </resources>

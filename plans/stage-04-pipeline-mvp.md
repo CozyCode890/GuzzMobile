@@ -105,3 +105,11 @@ _(viết ở session của stage này)_
 - (Từ plan Stage 3, 2026-11-11) Ca "bản chép lời rỗng thì thử model khác cho đoạn đó, và không cache kết quả rỗng"
   (`test_empty_transcript_retries_with_another_model`, `test_empty_result_is_not_cached` của desktop) thuộc pipeline:
   dùng tham số `initial_skip` của `ChunkDispatcher.send` (Stage 3 port sẵn) và port hai test này ở stage này.
+- (Từ Stage 3, 2026-11-11) Dùng client Gemini trong pipeline: `ChunkDispatcher(GeminiConfig.load(settings),
+  container.geminiClient()!!)` mỗi tệp (đọc lại cài đặt mỗi tệp như desktop); chưa có key thì báo lỗi `cau_hinh` và dừng
+  hàng đợi trước khi xử lý âm thanh. Dispatcher tự kiểm ràng buộc model ↔ cách nhận diện (`ConstraintException`, dừng
+  hàng đợi). `send` cần số giây của đoạn (`ket_thuc_giay - bat_dau_giay`) cho bộ giãn nhịp; prompt khi tắt nhận diện
+  người nói là `DefaultPrompt.text` cho model đa năng, `null` cho `*-transcribe` (như `prompt_for` của
+  `transcribe_chunks`). Lỗi có `stopQueue` thì dừng cả hàng đợi, còn lại báo tệp lỗi. Nút Dừng = huỷ coroutine (client
+  vẫn xoá tệp đã tải lên). Màn hình thử của bản debug có thêm phần gửi thử Gemini (`GeminiDebug`): thay hoặc giữ cùng
+  lúc với màn hình thử âm thanh.

@@ -4,9 +4,14 @@ import android.content.Context
 import io.github.cozycode890.guzz.core.common.log.RotatingFileSink
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
+import io.github.cozycode890.guzz.core.gemini.ApiKeyStore
+import io.github.cozycode890.guzz.core.gemini.GeminiClient
+import io.github.cozycode890.guzz.core.gemini.QuotaTracker
+import io.github.cozycode890.guzz.core.gemini.RateLimiters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
 import java.io.File
 
 /**
@@ -31,6 +36,24 @@ class AppContainer(context: Context) {
         maxBytes = SettingKeys.LOG_SIZE_MB.default * BYTES_PER_MB,
         backupCount = SettingKeys.OLD_LOG_COUNT.default,
     )
+
+    /** API key Google AI, mã hoá bằng khoá trong Android Keystore (D54, D55). */
+    val apiKeyStore: ApiKeyStore = KeystoreApiKeyStore(File(context.filesDir, "secrets/api_key.bin"))
+
+    /** Sổ hạn mức của cả app (D52): đọc tệp lần đầu khi cần, không ở lúc mở app. */
+    val quotaTracker: QuotaTracker by lazy { QuotaTracker(File(context.filesDir, "quota/${QuotaTracker.FILENAME}")) }
+
+    /** Mỗi model một bộ giãn nhịp, dùng chung mọi client trong app (như `model_rate_limiter` của desktop). */
+    val rateLimiters = RateLimiters()
+
+    /** Một OkHttpClient cho cả app (dùng chung pool kết nối). */
+    val httpClient: OkHttpClient by lazy { GeminiClient.defaultHttpClient() }
+
+    /** Client Gemini với key đã lưu; `null` khi chưa có key. */
+    fun geminiClient(apiKey: String? = apiKeyStore.read(), http: OkHttpClient = httpClient): GeminiClient? =
+        apiKey?.takeIf { it.isNotBlank() }?.let {
+            GeminiClient(it, quotaTracker, rateLimiters, http)
+        }
 
     companion object {
         const val BYTES_PER_MB = 1024L * 1024L

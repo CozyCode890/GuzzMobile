@@ -27,6 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".GoogleAiActivity"
+            android:exported="false"
+            android:label="@string/google_ai_title"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

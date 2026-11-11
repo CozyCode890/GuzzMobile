@@ -7,20 +7,20 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 3, đã plan chi tiết ngày 2026-11-11, đang làm (từ 2026-11-11). Stage 2 xong ngày 2026-11-11, Stage 1
+**Stage hiện tại:** Stage 4, chưa plan chi tiết. Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1
 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** làm Stage 3 theo mục "Kế hoạch chi tiết" của
-[stage-03-gemini-client.md](plans/stage-03-gemini-client.md), bắt đầu từ A1; phần A–C chạy hết trên PC. Bước D4 gửi thật
-lên Gemini: hỏi người dùng ngay trước khi gửi (D57). Stage 4 (MVP) cần cả Stage 2 lẫn Stage 3. Stage 3 (client Gemini, chỉ cần Stage 0) plan và làm song
-song được. Stage 1 đã chuyển phần đo chưa xong sang mục "Phát sinh" của Stage 2, 4, 5, 6: phép đo thành bước kiểm trên
-code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
+**Việc tiếp theo:** plan chi tiết Stage 4 (MVP: pipeline + hàng đợi nền, [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md)),
+một session riêng, hỏi người dùng các "Câu hỏi cần chốt". Stage 2 và 3 đã xong nên Stage 4 làm được ngay; đọc kỹ mục
+"Phát sinh" của Stage 4 (việc Stage 1, 2, 3 để lại: chạy nền lúc tắt màn hình, cache, cách dùng client Gemini, ca bản
+chép lời rỗng). Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
+[stage-01-results.md](plans/stage-01-results.md).
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
-| 3 | Client Gemini, hạn mức, đổi model | 🔨 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
+| 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
@@ -104,6 +104,23 @@ adb logcat -d -s Guzz
 # Kotlin; thiếu dữ liệu thì test tự bỏ qua. --rerun vì Gradle không biết dữ liệu ngoài repo đã đổi.
 D:\Guzz\runtime\python\python.exe -B -s tools\golden\real_golden.py
 .\gradlew :core:audio:test --tests "*RealRecordingGoldenTest" --rerun -i
+
+# Client Gemini (Stage 3): test JVM (golden, HTTP giả bằng MockWebServer, chuỗi lỗi 17/09); tạo lại riêng golden Gemini
+.\gradlew :core:gemini:test
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_gemini.py
+
+# Test thiết bị của :app (lưu key bằng Keystore). HyperOS huỷ cài APK test qua Gradle (và Gradle gỡ luôn app): cài tay
+# cả hai APK lúc máy mở khoá rồi chạy thẳng
+.\gradlew assembleSideloadDebug :app:assembleSideloadDebugAndroidTest
+adb install -r -t app\build\outputs\apk\sideload\debug\app-sideload-debug.apk
+adb install -r -t app\build\outputs\apk\androidTest\sideload\debug\app-sideload-debug-androidTest.apk
+adb shell am instrument -w io.github.cozycode890.guzz.debug.test/androidx.test.runner.AndroidJUnitRunner
+adb uninstall io.github.cozycode890.guzz.debug.test
+
+# Gửi thử Gemini từ bản debug (GỬI THẬT lên Google: hỏi người dùng trước). Key nhập trên máy ở trang Google AI (nút ở
+# màn hình chính); thư mục bài là kết quả của audio_debug.ps1. Kết quả: files/debug-gemini/*.json
+.\tools\device\gemini_debug.ps1 -ListModels
+.\tools\device\gemini_debug.ps1 -Folder <bài> -Model gemini-3.5-transcribe -Mode words   # smart|verbatim|words|diarize
 
 # Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
 $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i
