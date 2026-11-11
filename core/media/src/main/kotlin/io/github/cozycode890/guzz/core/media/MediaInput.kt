@@ -36,7 +36,10 @@ sealed class MediaInput {
                 is Content -> {
                     afd = context.contentResolver.openAssetFileDescriptor(uri, "r")
                         ?: throw MediaReadException("Không mở được $uri")
-                    extractor.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
+                    // Không dùng setDataSource(fd, startOffset, declaredLength): provider của trình chọn tệp trả
+                    // declaredLength = UNKNOWN_LENGTH (−1), extractor nhận độ dài âm thì báo "Failed to instantiate
+                    // extractor" (gặp ở D4 với Download). Bản nhận AssetFileDescriptor tự xử lý trường hợp đó.
+                    extractor.setDataSource(afd)
                 }
             }
         } catch (e: MediaReadException) {

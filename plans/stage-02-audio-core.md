@@ -245,7 +245,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
 
   **Kiểm:** SNR ghi vào Nhật ký; dưới 30 dB thì tìm nguyên nhân (cách trộn kênh, độ trễ) trước khi đóng stage. So với
   Python đạt dung sai B9.
-- [ ] **D4. content:// URI:** `adb push` `A1.aac` vào `/sdcard/Download/`, chọn bằng màn hình thử.
+- [x] **D4. content:// URI:** `adb push` `A1.aac` vào `/sdcard/Download/`, chọn bằng màn hình thử.
   **Kiểm:** kết quả giống hệt chạy cùng tệp bằng đường dẫn (cùng TimeMap, cùng số đoạn).
 
 ### E. Đóng stage
@@ -345,6 +345,11 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
       bitrate (A1: 6 833,8 s, thật 7 199,7 s); OGG −0,367 s; m4a cắt bằng `-c copy` −0,351 s; mp3 −0,004 s; mp4 −0,046 s.
     - D3, `V1.mp4`: trễ 0 mẫu, **SNR 51,6 dB**, cùng độ dài với ffmpeg; `real_golden.py --compare` 0 / 942 mốc lệch, 5 / 5
       đoạn, điểm cắt lệch 0,000 s.
+    - D4: lần đầu chọn `Download/V1.mp4` bằng trình chọn tệp báo `MediaReadException: … Failed to instantiate
+      extractor`. Lỗi của `MediaInput`: provider trả `declaredLength` = −1 (không rõ độ dài) mà code truyền thẳng vào
+      `setDataSource(fd, offset, length)`. Sửa bằng `setDataSource(AssetFileDescriptor)` (API 24+). Chạy lại: `goc.pcm`
+      trùng MD5 với lần chạy bằng đường dẫn, `ban_do_thoi_gian` và 5 đoạn giống hệt, chỉ khác `nguon`. Test thiết bị
+      (C4) chỉ thử đường dẫn nên không bắt được lỗi này; Stage 6 (nhận content:// từ app khác) phải có test cho URI.
     - Màn hình thử đặt tên thư mục kết quả theo tên tệp bỏ đuôi, nên `L1.mp3` và `L1.ogg` ghi chung `debug-audio/L1/`
       (đã chép kết quả ra riêng ngay sau mỗi lần chạy). Stage 4 đặt thư mục tạm theo mã băm nên không gặp lại.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
