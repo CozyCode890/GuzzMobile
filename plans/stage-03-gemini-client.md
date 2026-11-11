@@ -1,6 +1,6 @@
 # Stage 3 — Client Gemini, hạn mức, đổi model
 
-**Trạng thái:** 📝 đã plan chi tiết 2026-11-11 · **Cần xong trước:** 0 (làm song song được với Stage 1–2)
+**Trạng thái:** 🔨 đang làm từ 2026-11-11 (plan chi tiết 2026-11-11) · **Cần xong trước:** 0 (làm song song được với Stage 1–2)
 
 ## Mục tiêu
 
@@ -132,14 +132,14 @@ PC, chưa cần điện thoại.
 
 ### A. Khung
 
-- [ ] **A1. Module `:core:gemini`** (plugin `guzz.jvm.library`): OkHttp, kotlinx.serialization, coroutines; test thêm
+- [x] **A1. Module `:core:gemini`** (plugin `guzz.jvm.library`): OkHttp, kotlinx.serialization, coroutines; test thêm
   `mockwebserver3`, `kotlinx-coroutines-test`. `:app` phụ thuộc vào nó. Phiên bản thêm vào `libs.versions.toml`.
   **Kiểm:** `.\gradlew projects` có `:core:gemini`; `.\gradlew assembleSideloadDebug test lint` xanh.
-- [ ] **A2. Cài đặt** `[GOOGLE_AI]`, `[FALLBACK]`, `[QUOTAS]`, `[SPEAKERS]` (mục "Mặc định kỹ thuật"), chặn trên / dưới
+- [x] **A2. Cài đặt** `[GOOGLE_AI]`, `[FALLBACK]`, `[QUOTAS]`, `[SPEAKERS]` (mục "Mặc định kỹ thuật"), chặn trên / dưới
   theo `config.py`.
   **Kiểm:** `DesktopDefaultsTest` xanh với các mục mới; golden: `QUOTAS.lines` mặc định đọc ra đúng `model_quotas` của
   desktop.
-- [ ] **A3. Tắt sao lưu (D55):** `android:allowBackup="false"` trong manifest chính; bỏ mục Phát sinh từ Stage 0 về sao
+- [x] **A3. Tắt sao lưu (D55):** `android:allowBackup="false"` trong manifest chính; bỏ mục Phát sinh từ Stage 0 về sao
   lưu (đã giải quyết).
   **Kiểm:** manifest đã gộp của cả hai flavor có `allowBackup="false"`; `.\gradlew lint` xanh.
 
@@ -148,46 +148,46 @@ PC, chưa cần điện thoại.
 Script chạy chính `google_ai.py`, `quota.py`, `config.py` của desktop trên các đầu vào dựng sẵn, ghi
 `testdata/golden/gemini/*.json`.
 
-- [ ] **B1. Lỗi:** `ErrorKind`, `GoogleAIException` (`kind`, `httpStatus`, `retryAfter`, `violations`, `isDaily`,
+- [x] **B1. Lỗi:** `ErrorKind`, `GoogleAIException` (`kind`, `httpStatus`, `retryAfter`, `violations`, `isDaily`,
   `stopQueue`, `isRetryable`), `QuotaViolation` (`isToken`, `unit`), `parseViolations`, `errorFromHttp`, `toSeconds`.
   Golden: các thân lỗi lấy nguyên từ `tests/test_google_ai.py` (gồm lỗi thật 17/09) cộng vài ca dựng thêm (Retry-After
   header, thân không phải JSON, 404 không nhắc "model", 408, 500…).
   **Kiểm:** `ErrorGoldenTest`: loại lỗi, thông điệp, thời gian chờ, danh sách vi phạm trùng desktop.
-- [ ] **B2. Yêu cầu / phản hồi:** `buildRequest` (model đa năng / `*-transcribe`; smart / verbatim; ngôn ngữ; từ vựng; tách
+- [x] **B2. Yêu cầu / phản hồi:** `buildRequest` (model đa năng / `*-transcribe`; smart / verbatim; ngôn ngữ; từ vựng; tách
   người nói; mốc từng từ; tệp kèm; bản đồ người nói chèn vào prompt; `store`), `extractText`, `extractWords`,
   `checkStatus`, `parseInputTokens`, `guessMime`, `isTranscribeModel`, `maskApiKey`.
   **Kiểm:** golden trên một ma trận cài đặt → JSON yêu cầu trùng desktop (so như cây JSON); các phản hồi mẫu → chữ, từ,
   lỗi trùng desktop.
-- [ ] **B3. Giờ Thái Bình Dương:** `pacificDate`, `nextDailyReset`, `formatCountdown`, `formatLocalTime` (múi giờ máy
+- [x] **B3. Giờ Thái Bình Dương:** `pacificDate`, `nextDailyReset`, `formatCountdown`, `formatLocalTime` (múi giờ máy
   truyền vào).
   **Kiểm:** golden trên khoảng 200 mốc quanh các lần đổi giờ 2025–2030; port `TestPacificTime`.
-- [ ] **B4. `RateLimiter`.**
+- [x] **B4. `RateLimiter`.**
   **Kiểm:** port đủ `TestRateLimiter` (7 ca) với đồng hồ giả.
-- [ ] **B5. `QuotaTracker`** (D52): đếm yêu cầu / token theo ngày Thái Bình Dương, khoá / mở khoá / hết khoá, học hạn mức,
+- [x] **B5. `QuotaTracker`** (D52): đếm yêu cầu / token theo ngày Thái Bình Dương, khoá / mở khoá / hết khoá, học hạn mức,
   hạn mức khai báo / đã học / mặc định, đang chờ, lịch sử 300 sự kiện, ghi tệp `.tmp` rồi đổi tên.
   **Kiểm:** port `TestQuotaTracker` (5 ca); golden: cùng một chuỗi thao tác (đồng hồ giả) trên tracker desktop và
   Kotlin cho tệp JSON giống nhau (so như cây JSON).
-- [ ] **B6. Chuỗi model và ràng buộc:** port `model_chain`, `quota_for`, `valid_diarization_methods`,
+- [x] **B6. Chuỗi model và ràng buộc:** port `model_chain`, `quota_for`, `valid_diarization_methods`,
   `model_matches_method`, `constraint_error`.
   **Kiểm:** golden trên ma trận (model chính × cách nhận diện × bật / tắt tự đổi model × danh sách dự phòng).
 
 ### C. Client và dispatcher (test HTTP giả bằng MockWebServer)
 
-- [ ] **C1. `GeminiClient`** (OkHttp): `upload` (resumable: start → upload, finalize), `waitFileReady`, `deleteFile`,
+- [x] **C1. `GeminiClient`** (OkHttp): `upload` (resumable: start → upload, finalize), `waitFileReady`, `deleteFile`,
   `listModels`, `transcribeRaw` (chờ hạn mức trước khi tải lên, thử lại theo `chunk_retries` / `max_attempts`, chờ đúng
   thời gian Google yêu cầu, xoá tệp trên Google sau khi xong), log DEBUG như desktop (D53).
   **Kiểm:** port `TestRequest`, `TestErrorClassification`, `TestTranscribe`, `TestSpeakersAndAttachments` của
   `tests/test_google_ai.py` (bỏ `TestApiKey`: mobile không đọc tệp key); MockWebServer kiểm đúng đường dẫn, header
   `x-goog-api-key`, thân yêu cầu.
-- [ ] **C2. `ChunkDispatcher`** (port `transcribe.ChunkDispatcher` + `tracker_for`).
+- [x] **C2. `ChunkDispatcher`** (port `transcribe.ChunkDispatcher` + `tracker_for`).
   **Kiểm:** port các ca của `TestAutoSwitchModel` thuộc phạm vi dispatcher (khoá theo ngày rồi đổi model, bộ lọc chặn một
   đoạn, quá tải khoá ngắn, tắt khoá quá tải, bộ lọc chặn mọi model, mọi model khoá lâu → dừng hàng đợi, khoá ngắn → chờ,
   chạm hạn mức ngày → khoá trước khi gửi, model không hợp cách nhận diện); ca "bản chép lời rỗng" là của pipeline →
   Phát sinh Stage 4.
-- [ ] **C3. Chuỗi lỗi 17/09:** port `TestReplayRealLog` (`test_daily_quota_then_high_demand_moves_to_flash_lite`,
+- [x] **C3. Chuỗi lỗi 17/09:** port `TestReplayRealLog` (`test_daily_quota_then_high_demand_moves_to_flash_lite`,
   `test_input_blocked_does_not_stop_file`) chạy qua client thật + dispatcher, chỉ HTTP là giả.
   **Kiểm:** cùng thứ tự yêu cầu HTTP, cùng model cuối cùng, cùng sự kiện trong tracker như desktop.
-- [ ] **C4. Không lộ key:** mọi test của C1–C3 chạy với log mức DEBUG ghi vào bộ nhớ; thêm test quét toàn bộ log và thông
+- [x] **C4. Không lộ key:** mọi test của C1–C3 chạy với log mức DEBUG ghi vào bộ nhớ; thêm test quét toàn bộ log và thông
   điệp lỗi không chứa key.
   **Kiểm:** test xanh; cố ý cho thông điệp lỗi của Google chứa key (giả) thì vẫn không lọt (che bằng `maskApiKey`).
 
@@ -224,10 +224,32 @@ Script chạy chính `google_ai.py`, `quota.py`, `config.py` của desktop trên
 - **2026-11-11, plan.** Đọc `google_ai.py`, `quota.py`, `transcribe.ChunkDispatcher`, các mục `[GOOGLE_AI]` /
   `[FALLBACK]` / `[QUOTAS]`, danh sách test của desktop; kiểm tài liệu Google hôm nay (mục "Thông tin bên ngoài"). Hỏi
   người dùng 8 câu trắc nghiệm, cả 8 chọn Recommended (D51–D58).
+- **2026-11-11, A–C xong** (chạy hết trên PC). `:core:gemini` có `GeminiErrors`, `Interactions`, `GeminiConfig`,
+  `PacificTime`, `RateLimiter`, `QuotaTracker`, `GeminiClient`, `ChunkDispatcher`, `ApiKeyStore`; `.\gradlew test` 857
+  ca ở `:core:gemini` xanh; thử đỏ (`MAX_EVENTS` = 299) thì golden tracker đỏ. Khác kế hoạch / chi tiết đáng nhớ:
+  - A2: `TIMEOUT_SECONDS`, `CHUNK_RETRIES` chặn dưới 0 (desktop không chặn) để số âm không lọt vào OkHttp. Dòng
+    `QUOTAS.lines` hỏng thì bỏ qua dòng đó (desktop ném lỗi cả cấu hình).
+  - A3: thêm `android:dataExtractionRules` loại mọi thư mục: từ Android 12, `allowBackup="false"` không chặn chuyển máy
+    (device-to-device), mà D55 muốn key không đi sang máy khác. Thêm quyền `INTERNET` (trước giờ app chưa gọi mạng).
+  - B: một script `tools/golden/gen_gemini.py` ra 6 tệp `testdata/golden/gemini/*.json` (khoảng 830 KB). Câu chữ của app
+    (thông điệp lỗi do app đặt, chi tiết khoá "Đã gửi 2/2 yêu cầu…") viết có dấu ở bản Kotlin, desktop không dấu: test
+    so phần do Google trả về nguyên văn, phần của app so sau khi bỏ dấu. Tệp hạn mức Kotlin bỏ trường `null` (desktop
+    ghi `null`), golden coi null như không có; đọc lại vẫn ra đúng.
+  - C1: key chỉ ở header; mọi thông điệp lỗi / log DEBUG ra khỏi client đều thay key bằng `maskApiKey` (C4). Bước
+    "upload, finalize" gửi thân không có `Content-Type` (urllib của desktop tự thêm
+    `application/x-www-form-urlencoded`): kiểm ở D4. Hạn giờ: OkHttp không đặt hạn đọc / ghi (mặc định 10 giây quá
+    ngắn), mỗi lần gọi đặt `Call.timeout()` cho cả lần gọi (60 giây cho Files API, `timeout_seconds` cho Interactions).
+    Bấm Dừng (huỷ coroutine) vẫn xoá tệp đã tải lên (`NonCancellable`), như khối `finally` của desktop.
+  - C2: kiểm ràng buộc model ↔ cách nhận diện ngay khi tạo `ChunkDispatcher` (ném `ConstraintException`), thay vì ở
+    đầu `transcribe_chunks`, để pipeline Stage 4 không quên.
+  - C3: thay vì chỉ port hai test `TestReplayRealLog`, golden `replay.json` chạy 5 kịch bản (2 của desktop + 429 theo
+    phút chờ rồi gửi lại, 404 khoá vĩnh viễn, chạm hạn mức ngày khai báo) trên `Client` + `ChunkDispatcher` thật của
+    desktop với đồng hồ giả; Kotlin phải ra cùng thứ tự yêu cầu HTTP, cùng thời gian chờ, cùng sổ hạn mức. Hai test
+    desktop vẫn giữ tên và khẳng định trong `ReplayGoldenTest`.
 
 ## Phát sinh
 
 - (Từ Stage 0, 2026-10-31) Manifest của `:app` chưa khai báo `android:allowBackup` / `dataExtractionRules`, tức Android
   mặc định sao lưu dữ liệu app (gồm DataStore `files/datastore/settings.preferences_pb`) lên Google Drive và chuyển sang
   máy mới. Khi bắt đầu lưu API key, chốt chính sách sao lưu: ít nhất loại key ra khỏi bản sao lưu và chuyển máy.
-  → Đã chốt lúc plan: D55, tắt sao lưu toàn app (bước A3).
+  → Đã chốt lúc plan: D55, tắt sao lưu toàn app. Đã làm ở A3 (kèm `dataExtractionRules`).

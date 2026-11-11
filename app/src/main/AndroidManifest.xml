@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Gọi Google AI Studio (Stage 3). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        D55: không sao lưu dữ liệu app (API key đã mã hoá, tệp hạn mức, cài đặt) lên Drive, không chép sang máy mới.
+        Từ Android 12, allowBackup="false" chỉ tắt sao lưu đám mây; chuyển máy (device-to-device) phải chặn bằng
+        dataExtractionRules. Khoá Keystore không đi theo nên key chép sang máy mới cũng không giải mã được.
+    -->
     <application
         android:name=".GuzzApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"

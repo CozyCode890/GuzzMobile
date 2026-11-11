@@ -1,0 +1,749 @@
+{
+  "check_status": [
+    {
+      "name": "completed",
+      "ok": true,
+      "response": {
+        "status": "completed",
+        "steps": []
+      }
+    },
+    {
+      "name": "no_status",
+      "ok": true,
+      "response": {
+        "steps": []
+      }
+    },
+    {
+      "name": "upper_completed",
+      "ok": true,
+      "response": {
+        "status": "COMPLETED"
+      }
+    },
+    {
+      "name": "incomplete_with_text",
+      "ok": true,
+      "response": {
+        "errors": [
+          {
+            "message": "max tokens"
+          }
+        ],
+        "status": "incomplete",
+        "steps": [
+          {
+            "content": [
+              {
+                "text": "Có chữ",
+                "type": "text"
+              }
+            ],
+            "type": "model_output"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "khac",
+      "message": "Google AI bao viec go chu 'incomplete'",
+      "name": "incomplete_without_text",
+      "ok": false,
+      "response": {
+        "status": "incomplete",
+        "steps": [
+          {
+            "content": [
+              {
+                "text": "   ",
+                "type": "text"
+              }
+            ],
+            "type": "model_output"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "khac",
+      "message": "Google AI bao viec go chu 'failed': hong",
+      "name": "failed",
+      "ok": false,
+      "response": {
+        "errors": [
+          {
+            "message": "hong"
+          }
+        ],
+        "status": "failed"
+      }
+    },
+    {
+      "kind": "khac",
+      "message": "Google AI bao viec go chu 'failed': 13; chuoi loi; 7",
+      "name": "failed_code_only",
+      "ok": false,
+      "response": {
+        "errors": [
+          {
+            "code": 13
+          },
+          "chuoi loi",
+          7
+        ],
+        "status": "failed"
+      }
+    },
+    {
+      "kind": "tam_thoi",
+      "message": "Google AI bao viec go chu 'in_progress'",
+      "name": "in_progress",
+      "ok": false,
+      "response": {
+        "status": "in_progress"
+      }
+    },
+    {
+      "kind": "tam_thoi",
+      "message": "Google AI bao viec go chu 'queued'",
+      "name": "queued",
+      "ok": false,
+      "response": {
+        "status": "queued"
+      }
+    },
+    {
+      "kind": "bi_chan",
+      "message": "Google AI bao viec go chu 'failed': Response was blocked: PROHIBITED_CONTENT",
+      "name": "blocked_in_details",
+      "ok": false,
+      "response": {
+        "errors": [
+          {
+            "message": "Response was blocked: PROHIBITED_CONTENT"
+          }
+        ],
+        "status": "failed"
+      }
+    },
+    {
+      "kind": "khac",
+      "message": "Google AI bao viec go chu 'cancelled'",
+      "name": "cancelled",
+      "ok": false,
+      "response": {
+        "status": "cancelled"
+      }
+    }
+  ],
+  "http": [
+    {
+      "body": "{\"error\": {\"code\": 429, \"status\": \"RESOURCE_EXHAUSTED\", \"message\": \"quota\", \"details\": [{\"@type\": \"type.googleapis.com/google.rpc.RetryInfo\", \"retryDelay\": \"37s\"}]}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429 RESOURCE_EXHAUSTED: quota",
+        "retry_after": 37.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "429_retry_info"
+    },
+    {
+      "body": "{\"error\": {\"code\": 429, \"status\": \"RESOURCE_EXHAUSTED\", \"message\": \"You exceeded your current quota, please check your plan and billing details.\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 10000, model: gemini-3.5-transcribe\\nPlease retry in 55.981490556s.\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429 RESOURCE_EXHAUSTED: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 10000, model: gemini-3.5-transcribe\nPlease retry in 55.981490556s.",
+        "retry_after": 55.981490556,
+        "stop_queue": false,
+        "violations": [
+          {
+            "is_token": true,
+            "limit": 10000,
+            "metric": "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count",
+            "model": "gemini-3.5-transcribe",
+            "quota_id": "",
+            "unit": ""
+          }
+        ]
+      },
+      "headers": {},
+      "name": "429_real_token_2026_09_17"
+    },
+    {
+      "body": "{\"error\": {\"code\": 429, \"message\": \"You exceeded your current quota, please check your plan and billing details.\\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\\nPlease retry in 27.888016836s.\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s.",
+        "retry_after": 27.888016836,
+        "stop_queue": false,
+        "violations": [
+          {
+            "is_token": false,
+            "limit": 25,
+            "metric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "model": "gemini-3.5-transcribe",
+            "quota_id": "",
+            "unit": ""
+          }
+        ]
+      },
+      "headers": {},
+      "name": "429_real_daily_2026_09_17"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"RESOURCE_EXHAUSTED\", \"message\": \"quota\", \"details\": [{\"@type\": \"type.googleapis.com/google.rpc.QuotaFailure\", \"violations\": [{\"quotaMetric\": \"generativelanguage.googleapis.com/generate_content_free_tier_requests\", \"quotaId\": \"GenerateRequestsPerDayPerProjectPerModel-FreeTier\", \"quotaDimensions\": {\"model\": \"gemini-3.8-flash\", \"location\": \"global\"}, \"quotaValue\": \"20\"}]}]}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429 RESOURCE_EXHAUSTED: quota",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": [
+          {
+            "is_token": false,
+            "limit": 20,
+            "metric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+            "model": "gemini-3.8-flash",
+            "quota_id": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+            "unit": "ngay"
+          }
+        ]
+      },
+      "headers": {},
+      "name": "429_quota_failure_per_day"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"RESOURCE_EXHAUSTED\", \"message\": \"x\", \"details\": [{\"violations\": [{\"quotaMetric\": \"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\", \"quotaId\": \"GenerateContentInputTokensPerModelPerMinute-FreeTier\", \"quotaValue\": 250000}]}, \"not a dict\", {\"violations\": [{\"quotaDimensions\": {\"model\": \"m\"}}, {\"quotaId\": \"OnlyId\", \"quotaValue\": \"abc\"}]}, {\"@type\": \"type.googleapis.com/google.rpc.RetryInfo\", \"retryDelay\": {\"seconds\": 5, \"nanos\": 500000000}}]}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429 RESOURCE_EXHAUSTED: x",
+        "retry_after": 5.5,
+        "stop_queue": false,
+        "violations": [
+          {
+            "is_token": true,
+            "limit": 250000,
+            "metric": "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count",
+            "model": "",
+            "quota_id": "GenerateContentInputTokensPerModelPerMinute-FreeTier",
+            "unit": "phut"
+          },
+          {
+            "is_token": false,
+            "limit": 0,
+            "metric": "",
+            "model": "",
+            "quota_id": "OnlyId",
+            "unit": ""
+          }
+        ]
+      },
+      "headers": {},
+      "name": "429_quota_failure_per_minute_tokens"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"slow down\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429: slow down",
+        "retry_after": 120.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {
+        "Retry-After": "120"
+      },
+      "name": "429_retry_after_header"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"Please retry in 3.5 s, thanks\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429: Please retry in 3.5 s, thanks",
+        "retry_after": 3.5,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {
+        "Retry-After": "2"
+      },
+      "name": "429_retry_in_message_and_header"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"* Quota exceeded for metric: a/requests, limit: 5, model: gemini-3.5-flash.\\n* Quota exceeded for metric: a/input_token_count , limit: 250000\\n* QUOTA EXCEEDED FOR METRIC: b/requests_per_day, limit: 20, model: gemini-3.8-flash\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429: * Quota exceeded for metric: a/requests, limit: 5, model: gemini-3.5-flash.\n* Quota exceeded for metric: a/input_token_count , limit: 250000\n* QUOTA EXCEEDED FOR METRIC: b/requests_per_day, limit: 20, model: gemini-3.8-flash",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": [
+          {
+            "is_token": false,
+            "limit": 5,
+            "metric": "a/requests",
+            "model": "gemini-3.5-flash",
+            "quota_id": "",
+            "unit": ""
+          },
+          {
+            "is_token": true,
+            "limit": 250000,
+            "metric": "a/input_token_count",
+            "model": "",
+            "quota_id": "",
+            "unit": ""
+          },
+          {
+            "is_token": false,
+            "limit": 20,
+            "metric": "b/requests_per_day",
+            "model": "gemini-3.8-flash",
+            "quota_id": "",
+            "unit": "ngay"
+          }
+        ]
+      },
+      "headers": {},
+      "name": "429_several_violations_in_message"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"INVALID_ARGUMENT\", \"message\": \"API key not valid.\", \"details\": [{\"reason\": \"API_KEY_INVALID\"}]}}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400 INVALID_ARGUMENT API_KEY_INVALID: API key not valid.",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_api_key_invalid"
+    },
+    {
+      "body": "{\"error\": {\"code\": 400, \"message\": \"Input blocked: This request was blocked by Gemini's filters. They can occasionally trigger by mistake on safe coding, security, or biology-related queries. Please try rephrasing your prompt.\"}}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "bi_chan",
+        "message": "HTTP 400: Input blocked: This request was blocked by Gemini's filters. They can occasionally trigger by mistake on safe coding, security, or biology-related queries. Please try rephrasing your prompt.",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_input_blocked_real"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"PROHIBITED_CONTENT\", \"message\": \"nope\"}}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "bi_chan",
+        "message": "HTTP 400 PROHIBITED_CONTENT: nope",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_prohibited_content_status"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"INVALID_ARGUMENT\", \"message\": \"Bad mime type\"}}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400 INVALID_ARGUMENT: Bad mime type",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_other"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"Unauthorized\"}}",
+      "code": 401,
+      "expected": {
+        "http_status": 401,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 401: Unauthorized",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "401"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"Permission denied\"}}",
+      "code": 403,
+      "expected": {
+        "http_status": 403,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 403: Permission denied",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "403"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"models/gemini-9 is not found for API version v1beta\"}}",
+      "code": 404,
+      "expected": {
+        "http_status": 404,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "model",
+        "message": "HTTP 404: models/gemini-9 is not found for API version v1beta",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "404_model"
+    },
+    {
+      "body": "{\"error\": {\"status\": \"NOT_FOUND\", \"message\": \"Requested entity was not found.\"}}",
+      "code": 404,
+      "expected": {
+        "http_status": 404,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 404 NOT_FOUND: Requested entity was not found.",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "404_not_model"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"timeout\"}}",
+      "code": 408,
+      "expected": {
+        "http_status": 408,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "tam_thoi",
+        "message": "HTTP 408: timeout",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "408"
+    },
+    {
+      "body": "{\"error\": {\"code\": 500, \"message\": \"gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.\"}}",
+      "code": 500,
+      "expected": {
+        "http_status": 500,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "qua_tai",
+        "message": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "500_high_demand_real"
+    },
+    {
+      "body": "<html>Service Unavailable</html>",
+      "code": 503,
+      "expected": {
+        "http_status": 503,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "qua_tai",
+        "message": "HTTP 503: <html>Service Unavailable</html>",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "503_html"
+    },
+    {
+      "body": "",
+      "code": 500,
+      "expected": {
+        "http_status": 500,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "qua_tai",
+        "message": "HTTP 500",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "500_empty_body"
+    },
+    {
+      "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ở giữa yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "code": 502,
+      "expected": {
+        "http_status": 502,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "qua_tai",
+        "message": "HTTP 502: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ở giữa yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "502_long_non_json"
+    },
+    {
+      "body": "",
+      "code": 302,
+      "expected": {
+        "http_status": 302,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "khac",
+        "message": "HTTP 302",
+        "retry_after": 0.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "302"
+    },
+    {
+      "body": "{\"error\": \"boom\"}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400: boom",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_error_is_string"
+    },
+    {
+      "body": "{\"error\": null}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400: None",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_error_is_null"
+    },
+    {
+      "body": "[1, 2]",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_body_is_list"
+    },
+    {
+      "body": "{\"message\": \"top level\", \"status\": \"FAILED_PRECONDITION\"}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400 FAILED_PRECONDITION: top level",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_body_without_error_key"
+    },
+    {
+      "body": "{\"error\": {\"message\": 42, \"status\": 7}}",
+      "code": 400,
+      "expected": {
+        "http_status": 400,
+        "is_daily": false,
+        "is_retryable": false,
+        "kind": "cau_hinh",
+        "message": "HTTP 400 7: 42",
+        "retry_after": 0.0,
+        "stop_queue": true,
+        "violations": []
+      },
+      "headers": {},
+      "name": "400_message_is_number"
+    },
+    {
+      "body": "{\"error\": {\"message\": \"Hết hạn mức — thử lại sau. Please retry in 10s.\"}}",
+      "code": 429,
+      "expected": {
+        "http_status": 429,
+        "is_daily": false,
+        "is_retryable": true,
+        "kind": "han_muc",
+        "message": "HTTP 429: Hết hạn mức — thử lại sau. Please retry in 10s.",
+        "retry_after": 10.0,
+        "stop_queue": false,
+        "violations": []
+      },
+      "headers": {},
+      "name": "429_unicode_message"
+    }
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_gemini.py"
+  },
+  "to_seconds": [
+    {
+      "expected": 30.0,
+      "raw": "30s"
+    },
+    {
+      "expected": 1.5,
+      "raw": "1.5s"
+    },
+    {
+      "expected": 30.0,
+      "raw": 30
+    },
+    {
+      "expected": 2.5,
+      "raw": 2.5
+    },
+    {
+      "expected": 7.0,
+      "raw": "  7 s "
+    },
+    {
+      "expected": 5.0,
+      "raw": "-5s"
+    },
+    {
+      "expected": 0.0,
+      "raw": "1.2.3"
+    },
+    {
+      "expected": 0.0,
+      "raw": ""
+    },
+    {
+      "expected": 0.0,
+      "raw": "abc"
+    },
+    {
+      "expected": 0.0,
+      "raw": null
+    },
+    {
+      "expected": 1.5,
+      "raw": {
+        "nanos": 500000000,
+        "seconds": 1
+      }
+    },
+    {
+      "expected": 2.0,
+      "raw": {
+        "seconds": "2"
+      }
+    },
+    {
+      "expected": 0.0,
+      "raw": {
+        "seconds": "x"
+      }
+    },
+    {
+      "expected": 1.0,
+      "raw": {
+        "nanos": 1000000000.0
+      }
+    },
+    {
+      "expected": 0.0,
+      "raw": {}
+    },
+    {
+      "expected": 0.1,
+      "raw": "0.100s"
+    },
+    {
+      "expected": 13.0,
+      "raw": "1e-3s"
+    }
+  ]
+}

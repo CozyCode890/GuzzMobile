@@ -1,0 +1,7271 @@
+{
+  "cfg": {
+    "auto_switch_model": true,
+    "chunk_retries": 4,
+    "delete_remote_file": true,
+    "diarization_enabled": false,
+    "diarization_method": "pyannote",
+    "fallback_models": [
+      "gemini-3.5-flash-lite",
+      "gemini-3.5-flash",
+      "gemini-3.8-flash",
+      "gemini-3.5-transcribe"
+    ],
+    "languages": [],
+    "max_all_locked_wait_min": 20.0,
+    "model": "gemini-3.5-flash",
+    "model_quotas": {
+      "a": [
+        0,
+        5,
+        0
+      ],
+      "m": [
+        250000,
+        15,
+        500
+      ]
+    },
+    "overload_lock_minutes": 10.0,
+    "proactive_daily_lock": true,
+    "retries_before_switch": 2,
+    "return_to_main_model": true,
+    "store_on_server": false,
+    "switch_wait_threshold_sec": 0,
+    "timeout_seconds": 600,
+    "token_rate_limit": 10000,
+    "transcribe_mode": "smart",
+    "vocabulary": []
+  },
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_gemini.py"
+  },
+  "runs": [
+    {
+      "file": {
+        "model": {
+          "b": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "e": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "khac": 305
+            },
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "khac",
+            "loi_cuoi": "lỗi 304",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1789714801.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "m": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "qua_tai": 2
+            },
+            "hoc_duoc": {
+              "rpd": 25
+            },
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789714801.0,
+            "loai_loi_cuoi": "qua_tai",
+            "loi_cuoi": "HTTP 503",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1789660830.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 30007,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 3
+          },
+          "o": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "q": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "t": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660830.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 1
+          },
+          "x": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          }
+        },
+        "ngay": "2026-09-18",
+        "su_kien": [
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 5"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 6"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 7"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 8"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 9"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 10"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 11"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 12"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 13"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 14"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 15"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 16"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 17"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 18"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 19"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 20"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 21"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 22"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 23"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 24"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 25"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 26"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 27"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 28"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 29"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 30"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 31"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 32"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 33"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 34"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 35"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 36"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 37"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 38"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 39"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 40"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 41"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 42"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 43"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 44"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 45"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 46"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 47"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 48"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 49"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 50"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 51"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 52"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 53"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 54"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 55"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 56"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 57"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 58"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 59"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 60"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 61"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 62"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 63"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 64"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 65"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 66"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 67"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 68"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 69"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 70"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 71"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 72"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 73"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 74"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 75"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 76"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 77"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 78"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 79"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 80"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 81"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 82"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 83"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 84"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 85"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 86"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 87"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 88"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 89"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 90"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 91"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 92"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 93"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 94"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 95"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 96"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 97"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 98"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 99"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 100"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 101"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 102"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 103"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 104"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 105"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 106"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 107"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 108"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 109"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 110"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 111"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 112"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 113"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 114"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 115"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 116"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 117"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 118"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 119"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 120"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 121"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 122"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 123"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 124"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 125"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 126"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 127"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 128"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 129"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 130"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 131"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 132"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 133"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 134"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 135"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 136"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 137"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 138"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 139"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 140"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 141"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 142"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 143"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 144"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 145"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 146"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 147"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 148"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 149"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 150"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 151"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 152"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 153"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 154"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 155"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 156"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 157"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 158"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 159"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 160"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 161"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 162"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 163"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 164"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 165"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 166"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 167"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 168"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 169"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 170"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 171"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 172"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 173"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 174"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 175"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 176"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 177"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 178"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 179"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 180"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 181"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 182"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 183"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 184"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 185"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 186"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 187"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 188"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 189"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 190"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 191"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 192"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 193"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 194"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 195"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 196"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 197"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 198"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 199"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 200"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 201"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 202"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 203"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 204"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 205"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 206"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 207"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 208"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 209"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 210"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 211"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 212"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 213"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 214"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 215"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 216"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 217"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 218"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 219"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 220"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 221"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 222"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 223"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 224"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 225"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 226"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 227"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 228"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 229"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 230"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 231"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 232"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 233"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 234"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 235"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 236"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 237"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 238"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 239"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 240"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 241"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 242"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 243"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 244"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 245"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 246"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 247"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 248"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 249"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 250"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 251"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 252"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 253"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 254"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 255"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 256"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 257"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 258"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 259"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 260"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 261"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 262"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 263"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 264"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 265"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 266"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 267"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 268"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 269"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 270"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 271"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 272"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 273"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 274"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 275"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 276"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 277"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 278"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 279"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 280"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 281"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 282"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 283"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 284"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 285"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 286"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 287"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 288"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 289"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 290"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 291"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 292"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 293"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 294"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 295"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 296"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 297"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 298"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 299"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 300"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 301"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 302"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 303"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1789714801.0,
+            "model": "e",
+            "noi_dung": "lỗi 304"
+          }
+        ]
+      },
+      "reads": [
+        {
+          "clock": 1789660830.04,
+          "event_count": 7,
+          "locked": [
+            "m",
+            "o",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1789714800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1789661430.0,
+                "qua_tai",
+                "HTTP 500"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789660830.04,
+          "event_count": 7,
+          "locked": [
+            "m",
+            "o",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1789714800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1789661430.0,
+                "qua_tai",
+                "HTTP 500"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789661431.04,
+          "event_count": 8,
+          "locked": [
+            "m",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1789714800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789661492.04,
+          "event_count": 10,
+          "locked": [
+            "m",
+            "q",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1789714800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1789661552.0,
+                "han_muc_phut",
+                "429 phút lần 2"
+              ],
+              "recent_minute_locks": 2,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789661492.04,
+          "event_count": 12,
+          "locked": [
+            "m",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1789714800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": {
+            "chi_tiet": "10000",
+            "den": 1789661531.04,
+            "ly_do": "tpm",
+            "model": "a",
+            "tu": 1789661492.04
+          }
+        },
+        {
+          "clock": 1789714801.0,
+          "event_count": 13,
+          "locked": [
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789714801.0,
+          "event_count": 300,
+          "locked": [],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1789714801.0,
+          "event_count": 300,
+          "locked": [],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        }
+      ],
+      "start": 1789660800.0
+    },
+    {
+      "file": {
+        "model": {
+          "b": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "e": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "khac": 305
+            },
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "khac",
+            "loi_cuoi": "lỗi 304",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1772956801.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "m": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "qua_tai": 2
+            },
+            "hoc_duoc": {
+              "rpd": 25
+            },
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1772956801.0,
+            "loai_loi_cuoi": "qua_tai",
+            "loi_cuoi": "HTTP 503",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1772951430.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 30007,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 3
+          },
+          "o": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "q": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          },
+          "t": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1772951430.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 1
+          },
+          "x": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          }
+        },
+        "ngay": "2026-03-08",
+        "su_kien": [
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 5"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 6"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 7"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 8"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 9"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 10"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 11"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 12"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 13"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 14"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 15"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 16"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 17"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 18"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 19"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 20"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 21"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 22"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 23"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 24"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 25"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 26"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 27"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 28"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 29"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 30"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 31"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 32"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 33"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 34"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 35"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 36"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 37"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 38"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 39"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 40"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 41"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 42"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 43"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 44"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 45"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 46"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 47"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 48"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 49"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 50"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 51"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 52"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 53"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 54"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 55"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 56"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 57"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 58"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 59"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 60"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 61"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 62"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 63"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 64"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 65"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 66"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 67"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 68"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 69"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 70"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 71"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 72"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 73"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 74"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 75"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 76"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 77"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 78"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 79"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 80"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 81"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 82"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 83"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 84"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 85"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 86"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 87"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 88"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 89"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 90"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 91"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 92"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 93"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 94"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 95"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 96"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 97"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 98"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 99"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 100"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 101"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 102"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 103"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 104"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 105"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 106"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 107"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 108"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 109"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 110"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 111"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 112"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 113"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 114"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 115"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 116"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 117"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 118"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 119"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 120"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 121"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 122"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 123"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 124"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 125"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 126"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 127"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 128"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 129"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 130"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 131"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 132"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 133"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 134"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 135"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 136"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 137"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 138"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 139"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 140"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 141"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 142"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 143"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 144"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 145"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 146"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 147"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 148"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 149"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 150"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 151"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 152"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 153"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 154"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 155"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 156"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 157"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 158"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 159"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 160"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 161"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 162"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 163"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 164"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 165"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 166"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 167"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 168"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 169"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 170"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 171"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 172"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 173"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 174"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 175"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 176"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 177"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 178"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 179"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 180"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 181"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 182"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 183"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 184"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 185"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 186"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 187"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 188"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 189"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 190"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 191"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 192"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 193"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 194"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 195"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 196"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 197"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 198"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 199"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 200"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 201"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 202"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 203"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 204"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 205"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 206"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 207"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 208"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 209"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 210"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 211"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 212"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 213"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 214"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 215"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 216"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 217"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 218"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 219"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 220"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 221"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 222"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 223"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 224"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 225"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 226"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 227"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 228"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 229"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 230"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 231"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 232"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 233"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 234"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 235"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 236"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 237"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 238"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 239"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 240"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 241"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 242"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 243"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 244"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 245"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 246"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 247"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 248"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 249"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 250"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 251"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 252"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 253"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 254"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 255"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 256"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 257"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 258"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 259"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 260"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 261"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 262"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 263"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 264"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 265"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 266"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 267"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 268"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 269"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 270"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 271"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 272"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 273"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 274"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 275"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 276"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 277"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 278"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 279"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 280"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 281"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 282"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 283"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 284"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 285"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 286"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 287"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 288"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 289"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 290"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 291"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 292"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 293"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 294"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 295"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 296"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 297"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 298"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 299"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 300"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 301"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 302"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 303"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "khac",
+            "luc": 1772956801.0,
+            "model": "e",
+            "noi_dung": "lỗi 304"
+          }
+        ]
+      },
+      "reads": [
+        {
+          "clock": 1772951430.04,
+          "event_count": 7,
+          "locked": [
+            "m",
+            "o",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1772956800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1772952030.0,
+                "qua_tai",
+                "HTTP 500"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772951430.04,
+          "event_count": 7,
+          "locked": [
+            "m",
+            "o",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1772956800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1772952030.0,
+                "qua_tai",
+                "HTTP 500"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772952031.04,
+          "event_count": 8,
+          "locked": [
+            "m",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1772956800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772952092.04,
+          "event_count": 10,
+          "locked": [
+            "m",
+            "q",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1772956800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                1772952152.0,
+                "han_muc_phut",
+                "429 phút lần 2"
+              ],
+              "recent_minute_locks": 2,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772952092.04,
+          "event_count": 12,
+          "locked": [
+            "m",
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                true,
+                1772956800.0,
+                "han_muc_ngay",
+                "429"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 2
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 1
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": {
+            "chi_tiet": "10000",
+            "den": 1772952131.04,
+            "ly_do": "tpm",
+            "model": "a",
+            "tu": 1772952092.04
+          }
+        },
+        {
+          "clock": 1772956801.0,
+          "event_count": 13,
+          "locked": [
+            "x"
+          ],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {
+                "tpm": 250000
+              },
+              "limit": [
+                250000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                true,
+                null,
+                "khong_ton_tai",
+                "404"
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772956801.0,
+          "event_count": 300,
+          "locked": [],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        },
+        {
+          "clock": 1772956801.0,
+          "event_count": 300,
+          "locked": [],
+          "models": {
+            "a": {
+              "learned": {},
+              "limit": [
+                0,
+                5,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "b": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "e": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "khong_co": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "m": {
+              "learned": {
+                "rpd": 25
+              },
+              "limit": [
+                250000,
+                15,
+                500
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "o": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "q": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "t": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            },
+            "x": {
+              "learned": {},
+              "limit": [
+                10000,
+                0,
+                0
+              ],
+              "lock_status": [
+                false,
+                null,
+                "",
+                ""
+              ],
+              "recent_minute_locks": 0,
+              "requests_today": 0
+            }
+          },
+          "waiting": null
+        }
+      ],
+      "start": 1772951400.0
+    }
+  ],
+  "steps": [
+    {
+      "model": "m",
+      "op": "record_request",
+      "tokens": 15000
+    },
+    {
+      "op": "advance",
+      "sec": 30.04
+    },
+    {
+      "model": "m",
+      "op": "record_request",
+      "tokens": 15000
+    },
+    {
+      "model": "t",
+      "op": "record_request",
+      "tokens": -5
+    },
+    {
+      "field": "rpd",
+      "model": "m",
+      "op": "learn_quota",
+      "value": 25
+    },
+    {
+      "field": "rpd",
+      "model": "m",
+      "op": "learn_quota",
+      "value": 25
+    },
+    {
+      "field": "tpm",
+      "model": "b",
+      "op": "learn_quota",
+      "value": 250000
+    },
+    {
+      "field": "xyz",
+      "model": "b",
+      "op": "learn_quota",
+      "value": 3
+    },
+    {
+      "field": "rpm",
+      "model": "b",
+      "op": "learn_quota",
+      "value": 0
+    },
+    {
+      "kind": "qua_tai",
+      "message": "HTTP 500: high demand xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "model": "m",
+      "op": "record_error"
+    },
+    {
+      "kind": "qua_tai",
+      "message": "HTTP 503",
+      "model": "m",
+      "op": "record_error"
+    },
+    {
+      "details": "429",
+      "model": "m",
+      "op": "lock",
+      "reason": "han_muc_ngay",
+      "until": "reset"
+    },
+    {
+      "details": "không rút ngắn",
+      "model": "m",
+      "op": "lock",
+      "reason": "qua_tai",
+      "until_in": 600
+    },
+    {
+      "details": "404",
+      "model": "x",
+      "op": "lock",
+      "reason": "khong_ton_tai",
+      "until": null
+    },
+    {
+      "details": "HTTP 500",
+      "model": "o",
+      "op": "lock",
+      "reason": "qua_tai",
+      "until_in": 600
+    },
+    {
+      "op": "read"
+    },
+    {
+      "op": "reopen"
+    },
+    {
+      "op": "read"
+    },
+    {
+      "op": "advance",
+      "sec": 601
+    },
+    {
+      "op": "read"
+    },
+    {
+      "details": "429 phút",
+      "model": "q",
+      "op": "lock",
+      "reason": "han_muc_phut",
+      "until_in": 60
+    },
+    {
+      "op": "advance",
+      "sec": 61
+    },
+    {
+      "details": "429 phút lần 2",
+      "model": "q",
+      "op": "lock",
+      "reason": "han_muc_phut",
+      "until_in": 60
+    },
+    {
+      "op": "read"
+    },
+    {
+      "model": "q",
+      "op": "unlock"
+    },
+    {
+      "model": "q",
+      "op": "unlock"
+    },
+    {
+      "from": "m",
+      "op": "record_model_switch",
+      "reason": "han_muc_ngay",
+      "to": "a"
+    },
+    {
+      "details": "10000",
+      "in": 39,
+      "model": "a",
+      "op": "set_waiting",
+      "reason": "tpm"
+    },
+    {
+      "op": "read"
+    },
+    {
+      "op": "clear_waiting"
+    },
+    {
+      "op": "advance_to_reset",
+      "plus": 1
+    },
+    {
+      "op": "read"
+    },
+    {
+      "model": "m",
+      "op": "record_request",
+      "tokens": 7
+    },
+    {
+      "model": "x",
+      "op": "unlock"
+    },
+    {
+      "count": 305,
+      "kind": "khac",
+      "model": "e",
+      "op": "errors"
+    },
+    {
+      "model": "m",
+      "op": "reset_counters"
+    },
+    {
+      "model": "b",
+      "op": "forget_quota"
+    },
+    {
+      "op": "read"
+    },
+    {
+      "op": "reopen"
+    },
+    {
+      "op": "read"
+    }
+  ]
+}

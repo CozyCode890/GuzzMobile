@@ -72,4 +72,5 @@ _(viết ở session của stage này)_
 - (Từ Stage 1, 2026-11-10) Giấy phép: AAR sherpa-onnx không kèm LICENSE / NOTICE của ONNX Runtime (MIT) → tự thêm vào màn
   hình giấy phép, cùng câu bản quyền MIT của segmentation-3.0. Model đã chọn không có CC-BY, không cần ghi công riêng.
 - (Từ Stage 1, 2026-11-10) `android:allowBackup="false"`: sao lưu đầy đủ làm hệ thống giết process đang chạy FGS (xem
-  Phát sinh của Stage 4).
+  Phát sinh của Stage 4). → Đã làm ở Stage 3 (A3, D55), kèm `dataExtractionRules` chặn chuyển máy; Stage 9 chỉ cần
+  kiểm lại trên bản release.

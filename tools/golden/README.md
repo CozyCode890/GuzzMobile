@@ -30,6 +30,7 @@ giờ).
 | --- | --- | --- |
 | `gen_chunker.py` | `chunker/find_split_points.json` + WAV | `:core:audio` `ChunkerGoldenTest` |
 | `gen_config_keys.py` | `config/default_config.json` (mọi mục của `config.default.txt`) | `:core:common` `DesktopDefaultsTest` |
+| `gen_gemini.py` | `gemini/{errors,requests,pacific,tracker,config,replay}.json` (google_ai.py, quota.py, config.py, `ChunkDispatcher`; HTTP giả, đồng hồ giả) | `:core:gemini` `*GoldenTest`, `QuotaTrackerTest`, `PacificTimeTest` |
 | `gen_wav_io.py` | `wav/known_samples.{wav,json}` | `:core:common` `GoldenTest` (kiểm chính công cụ đọc WAV) |
 
 ## Quy ước

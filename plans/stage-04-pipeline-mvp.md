@@ -81,7 +81,7 @@ _(viết ở session của stage này)_
 - (Từ Stage 1, 2026-11-10) Điều đã biết từ app spike:
   - FGS không giữ CPU thức lúc màn hình tắt → service giữ partial wake lock (`WAKE_LOCK`) trong lúc chạy;
   - `BackupManagerService` giết process app để sao lưu đầy đủ khi máy sạc và rảnh, dù đang có FGS → đặt
-    `android:allowBackup="false"` (khớp Phát sinh của Stage 3 về sao lưu API key);
+    `android:allowBackup="false"` (khớp Phát sinh của Stage 3 về sao lưu API key) → đã làm ở Stage 3 (A3, D55);
   - Android 16: job (kể cả WorkManager) chạy song song với FGS bị tính vào quota → không chạy việc dài bằng WorkManager
     cùng lúc với service.
   - Tham khảo `spikes/android/.../bench/BenchService.kt` và `automation/HeartbeatService.kt`.

@@ -7,7 +7,7 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 3, đã plan chi tiết ngày 2026-11-11, chưa bắt đầu làm. Stage 2 xong ngày 2026-11-11, Stage 1
+**Stage hiện tại:** Stage 3, đã plan chi tiết ngày 2026-11-11, đang làm (từ 2026-11-11). Stage 2 xong ngày 2026-11-11, Stage 1
 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
 **Việc tiếp theo:** làm Stage 3 theo mục "Kế hoạch chi tiết" của
 [stage-03-gemini-client.md](plans/stage-03-gemini-client.md), bắt đầu từ A1; phần A–C chạy hết trên PC. Bước D4 gửi thật
@@ -20,7 +20,7 @@ code thật (vừa làm vừa thử). Số đo của Stage 1 ở [stage-01-resul
 | 0 | Khởi tạo dự án | ✅ 2026-11-01 | [stage-00-setup.md](plans/stage-00-setup.md) |
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
-| 3 | Client Gemini, hạn mức, đổi model | 📝 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
+| 3 | Client Gemini, hạn mức, đổi model | 🔨 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ⬜ | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |

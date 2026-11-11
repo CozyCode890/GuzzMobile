@@ -1,0 +1,864 @@
+{
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_gemini.py"
+  },
+  "process_sec": 15.0,
+  "runs": [
+    {
+      "cfg": {
+        "auto_switch_model": true,
+        "chunk_retries": 4,
+        "delete_remote_file": true,
+        "diarization_enabled": false,
+        "diarization_method": "pyannote",
+        "fallback_models": [
+          "gemini-3.8-flash",
+          "gemini-3.5-flash-lite"
+        ],
+        "languages": [],
+        "max_all_locked_wait_min": 20.0,
+        "model": "gemini-3.5-transcribe",
+        "model_quotas": {
+          "gemini-3.5-flash": [
+            250000,
+            5,
+            20
+          ],
+          "gemini-3.5-flash-lite": [
+            250000,
+            15,
+            500
+          ],
+          "gemini-3.5-transcribe": [
+            10000,
+            3,
+            25
+          ],
+          "gemini-3.8-flash": [
+            250000,
+            5,
+            20
+          ]
+        },
+        "overload_lock_minutes": 10.0,
+        "proactive_daily_lock": true,
+        "retries_before_switch": 2,
+        "return_to_main_model": true,
+        "store_on_server": false,
+        "switch_wait_threshold_sec": 0,
+        "timeout_seconds": 600,
+        "token_rate_limit": 0,
+        "transcribe_mode": "smart",
+        "vocabulary": []
+      },
+      "chunks": 4,
+      "clock_end": 1789660920.0,
+      "error": null,
+      "final_model": "gemini-3.5-flash-lite",
+      "name": "daily_quota_then_high_demand",
+      "requests": [
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1"
+      ],
+      "results": [
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        }
+      ],
+      "script": {
+        "gemini-3.5-flash-lite": [
+          "ok"
+        ],
+        "gemini-3.5-transcribe": [
+          "ok",
+          [
+            429,
+            "You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s."
+          ]
+        ],
+        "gemini-3.8-flash": [
+          [
+            500,
+            "gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later."
+          ]
+        ]
+      },
+      "tracker": {
+        "model": {
+          "gemini-3.5-flash-lite": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660920.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 9000,
+            "token_tong": 9000,
+            "yeu_cau_hom_nay": 3,
+            "yeu_cau_tong": 3
+          },
+          "gemini-3.5-transcribe": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "HTTP 429: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s.",
+            "dem_loi": {
+              "han_muc_ngay": 1
+            },
+            "hoc_duoc": {
+              "rpd": 25
+            },
+            "khoa_den": 1789714800.0,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660815.0,
+            "loai_loi_cuoi": "han_muc_ngay",
+            "loi_cuoi": "HTTP 429: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s.",
+            "luc_khoa": 1789660830.0,
+            "luc_loi_cuoi": 1789660830.0,
+            "ly_do_khoa": "han_muc_ngay",
+            "token_hom_nay": 3000,
+            "token_tong": 3000,
+            "yeu_cau_hom_nay": 1,
+            "yeu_cau_tong": 1
+          },
+          "gemini-3.8-flash": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.",
+            "dem_loi": {
+              "qua_tai": 2
+            },
+            "hoc_duoc": {},
+            "khoa_den": 1789661475.0,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "qua_tai",
+            "loi_cuoi": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.",
+            "luc_khoa": 1789660875.0,
+            "luc_loi_cuoi": 1789660875.0,
+            "ly_do_khoa": "qua_tai",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          }
+        },
+        "ngay": "2026-09-17",
+        "su_kien": [
+          {
+            "loai": "hoc_han_muc",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "rpd = 25"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "han_muc_ngay",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "HTTP 429: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s."
+          },
+          {
+            "den": 1789714800.0,
+            "loai": "khoa",
+            "luc": 1789660830.0,
+            "ly_do": "han_muc_ngay",
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "HTTP 429: You exceeded your current quota, please check your plan and billing details.\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 25, model: gemini-3.5-transcribe\nPlease retry in 27.888016836s."
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660830.0,
+            "model": "gemini-3.8-flash",
+            "noi_dung": "han_muc_ngay",
+            "tu_model": "gemini-3.5-transcribe"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "qua_tai",
+            "luc": 1789660845.0,
+            "model": "gemini-3.8-flash",
+            "noi_dung": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later."
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "qua_tai",
+            "luc": 1789660875.0,
+            "model": "gemini-3.8-flash",
+            "noi_dung": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later."
+          },
+          {
+            "den": 1789661475.0,
+            "loai": "khoa",
+            "luc": 1789660875.0,
+            "ly_do": "qua_tai",
+            "model": "gemini-3.8-flash",
+            "noi_dung": "HTTP 500: gemini-3.8-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later."
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660875.0,
+            "model": "gemini-3.5-flash-lite",
+            "noi_dung": "qua_tai",
+            "tu_model": "gemini-3.8-flash"
+          }
+        ]
+      },
+      "waits": [
+        15
+      ]
+    },
+    {
+      "cfg": {
+        "auto_switch_model": true,
+        "chunk_retries": 4,
+        "delete_remote_file": true,
+        "diarization_enabled": false,
+        "diarization_method": "pyannote",
+        "fallback_models": [
+          "gemini-3.5-flash-lite"
+        ],
+        "languages": [],
+        "max_all_locked_wait_min": 20.0,
+        "model": "gemini-3.8-flash",
+        "model_quotas": {
+          "gemini-3.5-flash": [
+            250000,
+            5,
+            20
+          ],
+          "gemini-3.5-flash-lite": [
+            250000,
+            15,
+            500
+          ],
+          "gemini-3.5-transcribe": [
+            10000,
+            3,
+            25
+          ],
+          "gemini-3.8-flash": [
+            250000,
+            5,
+            20
+          ]
+        },
+        "overload_lock_minutes": 10.0,
+        "proactive_daily_lock": true,
+        "retries_before_switch": 2,
+        "return_to_main_model": true,
+        "store_on_server": false,
+        "switch_wait_threshold_sec": 0,
+        "timeout_seconds": 600,
+        "token_rate_limit": 0,
+        "transcribe_mode": "smart",
+        "vocabulary": []
+      },
+      "chunks": 4,
+      "clock_end": 1789660875.0,
+      "error": null,
+      "final_model": "gemini-3.8-flash",
+      "name": "input_blocked",
+      "requests": [
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.8-flash",
+        "delete files/f1"
+      ],
+      "results": [
+        {
+          "model": "gemini-3.8-flash",
+          "text": "gemini-3.8-flash: ok"
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        },
+        {
+          "model": "gemini-3.8-flash",
+          "text": "gemini-3.8-flash: ok"
+        },
+        {
+          "model": "gemini-3.8-flash",
+          "text": "gemini-3.8-flash: ok"
+        }
+      ],
+      "script": {
+        "gemini-3.5-flash-lite": [
+          "ok"
+        ],
+        "gemini-3.8-flash": [
+          "ok",
+          [
+            400,
+            "Input blocked: This request was blocked by Gemini's filters. They can occasionally trigger by mistake on safe coding, security, or biology-related queries. Please try rephrasing your prompt."
+          ],
+          "ok"
+        ]
+      },
+      "tracker": {
+        "model": {
+          "gemini-3.5-flash-lite": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660845.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 3000,
+            "token_tong": 3000,
+            "yeu_cau_hom_nay": 1,
+            "yeu_cau_tong": 1
+          },
+          "gemini-3.8-flash": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "bi_chan": 1
+            },
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660875.0,
+            "loai_loi_cuoi": "bi_chan",
+            "loi_cuoi": "HTTP 400: Input blocked: This request was blocked by Gemini's filters. They can occasionally trigger by mistake on safe coding, security, or biology-related queries. Please try rephrasing your prompt.",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1789660830.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 9000,
+            "token_tong": 9000,
+            "yeu_cau_hom_nay": 3,
+            "yeu_cau_tong": 3
+          }
+        },
+        "ngay": "2026-09-17",
+        "su_kien": [
+          {
+            "loai": "loi",
+            "loai_loi": "bi_chan",
+            "luc": 1789660830.0,
+            "model": "gemini-3.8-flash",
+            "noi_dung": "HTTP 400: Input blocked: This request was blocked by Gemini's filters. They can occasionally trigger by mistake on safe coding, security, or biology-related queries. Please try rephrasing your prompt."
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-flash-lite",
+            "noi_dung": "bi_chan",
+            "tu_model": "gemini-3.8-flash"
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660845.0,
+            "model": "gemini-3.8-flash",
+            "noi_dung": "uu_tien",
+            "tu_model": "gemini-3.5-flash-lite"
+          }
+        ]
+      },
+      "waits": []
+    },
+    {
+      "cfg": {
+        "auto_switch_model": true,
+        "chunk_retries": 4,
+        "delete_remote_file": true,
+        "diarization_enabled": true,
+        "diarization_method": "gemini",
+        "fallback_models": [
+          "gemini-3.5-flash",
+          "gemini-3.5-flash-lite",
+          "gemini-3.8-flash",
+          "gemini-3.5-transcribe"
+        ],
+        "languages": [],
+        "max_all_locked_wait_min": 20.0,
+        "model": "gemini-3.5-transcribe",
+        "model_quotas": {
+          "gemini-3.5-flash": [
+            250000,
+            5,
+            20
+          ],
+          "gemini-3.5-flash-lite": [
+            250000,
+            15,
+            500
+          ],
+          "gemini-3.5-transcribe": [
+            10000,
+            3,
+            25
+          ],
+          "gemini-3.8-flash": [
+            250000,
+            5,
+            20
+          ]
+        },
+        "overload_lock_minutes": 10.0,
+        "proactive_daily_lock": true,
+        "retries_before_switch": 2,
+        "return_to_main_model": true,
+        "store_on_server": false,
+        "switch_wait_threshold_sec": 0,
+        "timeout_seconds": 600,
+        "token_rate_limit": 0,
+        "transcribe_mode": "smart",
+        "vocabulary": []
+      },
+      "chunks": 3,
+      "clock_end": 1789660906.0,
+      "error": null,
+      "final_model": "gemini-3.5-transcribe",
+      "name": "minute_token_quota_retry",
+      "requests": [
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1"
+      ],
+      "results": [
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        },
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        },
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        }
+      ],
+      "script": {
+        "gemini-3.5-transcribe": [
+          "ok",
+          [
+            429,
+            "* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 10000, model: gemini-3.5-transcribe\nPlease retry in 20.5s."
+          ],
+          "ok"
+        ]
+      },
+      "tracker": {
+        "model": {
+          "gemini-3.5-transcribe": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {
+              "han_muc": 1
+            },
+            "hoc_duoc": {
+              "tpm": 10000
+            },
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660906.0,
+            "loai_loi_cuoi": "han_muc",
+            "loi_cuoi": "HTTP 429: * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 10000, model: gemini-3.5-transcribe\nPlease retry in 20.5s.",
+            "luc_khoa": null,
+            "luc_loi_cuoi": 1789660830.0,
+            "ly_do_khoa": "",
+            "token_hom_nay": 9000,
+            "token_tong": 9000,
+            "yeu_cau_hom_nay": 3,
+            "yeu_cau_tong": 3
+          }
+        },
+        "ngay": "2026-09-17",
+        "su_kien": [
+          {
+            "loai": "hoc_han_muc",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "tpm = 10000"
+          },
+          {
+            "loai": "loi",
+            "loai_loi": "han_muc",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "HTTP 429: * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 10000, model: gemini-3.5-transcribe\nPlease retry in 20.5s."
+          }
+        ]
+      },
+      "waits": [
+        22.5,
+        23.5
+      ]
+    },
+    {
+      "cfg": {
+        "auto_switch_model": true,
+        "chunk_retries": 4,
+        "delete_remote_file": true,
+        "diarization_enabled": false,
+        "diarization_method": "pyannote",
+        "fallback_models": [
+          "gemini-3.5-flash-lite"
+        ],
+        "languages": [],
+        "max_all_locked_wait_min": 20.0,
+        "model": "gemini-9-flash",
+        "model_quotas": {
+          "gemini-3.5-flash": [
+            250000,
+            5,
+            20
+          ],
+          "gemini-3.5-flash-lite": [
+            250000,
+            15,
+            500
+          ],
+          "gemini-3.5-transcribe": [
+            10000,
+            3,
+            25
+          ],
+          "gemini-3.8-flash": [
+            250000,
+            5,
+            20
+          ]
+        },
+        "overload_lock_minutes": 10.0,
+        "proactive_daily_lock": true,
+        "retries_before_switch": 2,
+        "return_to_main_model": true,
+        "store_on_server": false,
+        "switch_wait_threshold_sec": 0,
+        "timeout_seconds": 600,
+        "token_rate_limit": 0,
+        "transcribe_mode": "smart",
+        "vocabulary": []
+      },
+      "chunks": 2,
+      "clock_end": 1789660845.0,
+      "error": null,
+      "final_model": "gemini-3.5-flash-lite",
+      "name": "model_not_found",
+      "requests": [
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-9-flash",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash-lite",
+        "delete files/f1"
+      ],
+      "results": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "text": "gemini-3.5-flash-lite: ok"
+        }
+      ],
+      "script": {
+        "gemini-3.5-flash-lite": [
+          "ok"
+        ],
+        "gemini-9-flash": [
+          [
+            404,
+            "models/gemini-9-flash is not found for API version v1beta, or is not supported."
+          ]
+        ]
+      },
+      "tracker": {
+        "model": {
+          "gemini-3.5-flash-lite": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660845.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 6000,
+            "token_tong": 6000,
+            "yeu_cau_hom_nay": 2,
+            "yeu_cau_tong": 2
+          },
+          "gemini-9-flash": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "HTTP 404: models/gemini-9-flash is not found for API version v1beta, or is not supported.",
+            "dem_loi": {
+              "model": 1
+            },
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": true,
+            "lan_dung_cuoi": null,
+            "loai_loi_cuoi": "model",
+            "loi_cuoi": "HTTP 404: models/gemini-9-flash is not found for API version v1beta, or is not supported.",
+            "luc_khoa": 1789660815.0,
+            "luc_loi_cuoi": 1789660815.0,
+            "ly_do_khoa": "khong_ton_tai",
+            "token_hom_nay": 0,
+            "token_tong": 0,
+            "yeu_cau_hom_nay": 0,
+            "yeu_cau_tong": 0
+          }
+        },
+        "ngay": "2026-09-17",
+        "su_kien": [
+          {
+            "loai": "loi",
+            "loai_loi": "model",
+            "luc": 1789660815.0,
+            "model": "gemini-9-flash",
+            "noi_dung": "HTTP 404: models/gemini-9-flash is not found for API version v1beta, or is not supported."
+          },
+          {
+            "den": null,
+            "loai": "khoa",
+            "luc": 1789660815.0,
+            "ly_do": "khong_ton_tai",
+            "model": "gemini-9-flash",
+            "noi_dung": "HTTP 404: models/gemini-9-flash is not found for API version v1beta, or is not supported."
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660815.0,
+            "model": "gemini-3.5-flash-lite",
+            "noi_dung": "khong_ton_tai",
+            "tu_model": "gemini-9-flash"
+          }
+        ]
+      },
+      "waits": []
+    },
+    {
+      "cfg": {
+        "auto_switch_model": true,
+        "chunk_retries": 4,
+        "delete_remote_file": true,
+        "diarization_enabled": false,
+        "diarization_method": "pyannote",
+        "fallback_models": [
+          "gemini-3.5-flash",
+          "gemini-3.5-flash-lite",
+          "gemini-3.8-flash",
+          "gemini-3.5-transcribe"
+        ],
+        "languages": [],
+        "max_all_locked_wait_min": 20.0,
+        "model": "gemini-3.5-transcribe",
+        "model_quotas": {
+          "gemini-3.5-transcribe": [
+            0,
+            0,
+            2
+          ]
+        },
+        "overload_lock_minutes": 10.0,
+        "proactive_daily_lock": true,
+        "retries_before_switch": 2,
+        "return_to_main_model": true,
+        "store_on_server": false,
+        "switch_wait_threshold_sec": 0,
+        "timeout_seconds": 600,
+        "token_rate_limit": 0,
+        "transcribe_mode": "smart",
+        "vocabulary": []
+      },
+      "chunks": 3,
+      "clock_end": 1789660845.0,
+      "error": null,
+      "final_model": "gemini-3.5-flash",
+      "name": "reaching_daily_quota",
+      "requests": [
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-transcribe",
+        "delete files/f1",
+        "upload_start",
+        "upload_finalize",
+        "interaction gemini-3.5-flash",
+        "delete files/f1"
+      ],
+      "results": [
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        },
+        {
+          "model": "gemini-3.5-transcribe",
+          "text": "gemini-3.5-transcribe: ok"
+        },
+        {
+          "model": "gemini-3.5-flash",
+          "text": "gemini-3.5-flash: ok"
+        }
+      ],
+      "script": {
+        "gemini-3.5-flash": [
+          "ok"
+        ],
+        "gemini-3.5-transcribe": [
+          "ok"
+        ]
+      },
+      "tracker": {
+        "model": {
+          "gemini-3.5-flash": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": null,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660845.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": null,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "",
+            "token_hom_nay": 3000,
+            "token_tong": 3000,
+            "yeu_cau_hom_nay": 1,
+            "yeu_cau_tong": 1
+          },
+          "gemini-3.5-transcribe": {
+            "cac_lan_khoa_phut": [],
+            "chi_tiet_khoa": "Da gui 2/2 yeu cau trong ngay.",
+            "dem_loi": {},
+            "hoc_duoc": {},
+            "khoa_den": 1789714800.0,
+            "khoa_vinh_vien": false,
+            "lan_dung_cuoi": 1789660830.0,
+            "loai_loi_cuoi": "",
+            "loi_cuoi": "",
+            "luc_khoa": 1789660830.0,
+            "luc_loi_cuoi": null,
+            "ly_do_khoa": "cham_han_muc_ngay",
+            "token_hom_nay": 6000,
+            "token_tong": 6000,
+            "yeu_cau_hom_nay": 2,
+            "yeu_cau_tong": 2
+          }
+        },
+        "ngay": "2026-09-17",
+        "su_kien": [
+          {
+            "den": 1789714800.0,
+            "loai": "khoa",
+            "luc": 1789660830.0,
+            "ly_do": "cham_han_muc_ngay",
+            "model": "gemini-3.5-transcribe",
+            "noi_dung": "Da gui 2/2 yeu cau trong ngay."
+          },
+          {
+            "loai": "doi_model",
+            "luc": 1789660830.0,
+            "model": "gemini-3.5-flash",
+            "noi_dung": "cham_han_muc_ngay",
+            "tu_model": "gemini-3.5-transcribe"
+          }
+        ]
+      },
+      "waits": []
+    }
+  ],
+  "start": 1789660800.0
+}

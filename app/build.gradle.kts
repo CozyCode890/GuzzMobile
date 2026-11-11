@@ -36,5 +36,6 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:media"))
+    implementation(project(":core:gemini"))
     implementation(libs.androidx.activity.compose)
 }
