@@ -95,3 +95,7 @@ _(viết ở session của stage này)_
   - MacroDroid cũng phải được đặt pin "No restrictions", Autostart và quyền "Display over other apps", thiếu thì lỗi
     nằm ở phía gửi;
   - adb qua Tailscale: app VPN chạy trên máy có thể ảnh hưởng Doze và pin; đêm thử thì `adb disconnect`.
+- (Từ Stage 2, 2026-11-11) `MediaInput.Content` từng hỏng với URI của trình chọn tệp vì provider trả độ dài −1 (đã sửa,
+  xem Nhật ký Stage 2, D4). Test thiết bị của `:core:media` chỉ thử đường dẫn: khi nhận content:// từ app khác (Chia sẻ
+  tới Guzz, intent có URI), thêm test thiết bị đọc qua một ContentProvider thật (vd MediaStore Downloads hoặc FileProvider
+  trả độ dài không rõ).

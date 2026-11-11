@@ -350,6 +350,14 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
       `setDataSource(fd, offset, length)`. Sửa bằng `setDataSource(AssetFileDescriptor)` (API 24+). Chạy lại: `goc.pcm`
       trùng MD5 với lần chạy bằng đường dẫn, `ban_do_thoi_gian` và 5 đoạn giống hệt, chỉ khác `nguon`. Test thiết bị
       (C4) chỉ thử đường dẫn nên không bắt được lỗi này; Stage 6 (nhận content:// từ app khác) phải có test cho URI.
+    - **D45 chưa đạt.** `L1_120m.m4a`, máy để yên, màn hình tắt suốt (cắm sạc, nhiệt CPU 42 °C, trạng thái nhiệt 0):
+      **998 s = 16,6 phút** (×7,2), PSS đỉnh 136 MB. Giải mã 941 s; chuẩn hoá 5,1 s, cắt lặng 12,8 s, ghi `sach.pcm`
+      9,2 s, ghi 9 đoạn FLAC 29,8 s. Lúc màn hình bật giải mã nhanh gấp khoảng 2,5 lần (lần 1: ×19 lúc đầu).
+    - Đo chi tiết trong bước giải mã (thêm `feedMs` / `downmixMs` / `resampleMs` / `writeMs` vào `DecodeResult`),
+      `L1_20m.m4a`, màn hình tắt: giải mã 162 s, trong đó luồng callback dành **92,5 s cho nạp vào** (MediaExtractor
+      `readSampleData` + `queueInputBuffer`, khoảng 56 000 khung AAC), trộn kênh 12,5 s, resample 14,9 s, ghi 6,2 s.
+      Tức resampler không phải nút thắt; nút thắt là đọc / nạp mẫu nén, chạy nối tiếp với xử lý PCM trên cùng một luồng.
+      Thử chạy bench `decode` của app spike trên cùng tệp để so với Stage 1 nhưng bench không khởi động lúc máy khoá.
     - Màn hình thử đặt tên thư mục kết quả theo tên tệp bỏ đuôi, nên `L1.mp3` và `L1.ogg` ghi chung `debug-audio/L1/`
       (đã chép kết quả ra riêng ngay sau mỗi lần chạy). Stage 4 đặt thư mục tạm theo mã băm nên không gặp lại.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa

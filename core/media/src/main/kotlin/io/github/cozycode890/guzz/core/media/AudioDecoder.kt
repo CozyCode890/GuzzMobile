@@ -20,6 +20,11 @@ data class DecodeResult(
     val inputChannels: Int,
     val codecName: String,
     val mime: String,
+    /** Thời gian luồng callback dành cho từng việc (ms), để biết bước giải mã chậm ở đâu. */
+    val feedMs: Long = 0,
+    val downmixMs: Long = 0,
+    val resampleMs: Long = 0,
+    val writeMs: Long = 0,
 )
 
 /** Tiến độ (0..1 theo thời điểm mẫu / thời lượng) và điểm dừng; [checkCancelled] ném lỗi để dừng. */
@@ -58,6 +63,7 @@ class AudioDecoder(private val outRate: Int = 16_000) {
         val done = CountDownLatch(1)
         var error: Throwable? = null
         var inputDone = false
+        var feedNs = 0L
 
         fun fail(e: Throwable) {
             if (error == null) error = e
@@ -68,6 +74,7 @@ class AudioDecoder(private val outRate: Int = 16_000) {
             codec.setCallback(object : MediaCodec.Callback() {
                 override fun onInputBufferAvailable(c: MediaCodec, index: Int) {
                     if (inputDone || error != null) return
+                    val t = System.nanoTime()
                     try {
                         val n = extractor.readSampleData(c.getInputBuffer(index)!!, 0)
                         if (n < 0) {
@@ -80,6 +87,7 @@ class AudioDecoder(private val outRate: Int = 16_000) {
                     } catch (e: Throwable) {
                         fail(e)
                     }
+                    feedNs += System.nanoTime() - t
                 }
 
                 override fun onOutputBufferAvailable(c: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
@@ -124,7 +132,10 @@ class AudioDecoder(private val outRate: Int = 16_000) {
             out.delete()
             throw MediaReadException("Tệp không có dữ liệu âm thanh: ${track.describe()}")
         }
-        return DecodeResult(sink.samplesOut, outRate, sink.rate, sink.channels, codecName, track.mime)
+        return DecodeResult(
+            sink.samplesOut, outRate, sink.rate, sink.channels, codecName, track.mime,
+            feedNs / 1_000_000, sink.downmixNs / 1_000_000, sink.resampleNs / 1_000_000, sink.writeNs / 1_000_000,
+        )
     }
 
     /** PCM từ codec → mono → resample → int16 → tệp. Chỉ chạy trên luồng callback của codec. */
@@ -135,6 +146,9 @@ class AudioDecoder(private val outRate: Int = 16_000) {
         private var resampled = FloatArray(0)
         private var shorts = ShortArray(0)
         private var started = false
+        var downmixNs = 0L
+        var resampleNs = 0L
+        var writeNs = 0L
 
         val samplesOut: Long get() = writer.samplesWritten
 
@@ -156,6 +170,7 @@ class AudioDecoder(private val outRate: Int = 16_000) {
             val bytesPerFrame = channels * if (encoding == AudioFormat.ENCODING_PCM_FLOAT) 4 else 2
             val frames = size / bytesPerFrame
             if (mono.size < frames) mono = FloatArray(frames)
+            val t0 = System.nanoTime()
             val n = if (encoding == AudioFormat.ENCODING_PCM_FLOAT) {
                 Downmix.pcmFloat(buf, offset, size, channels, mono)
             } else {
@@ -164,7 +179,13 @@ class AudioDecoder(private val outRate: Int = 16_000) {
             val r = resampler ?: SincResampler(rate, outRate).also { resampler = it }
             val cap = r.maxOutput(n)
             if (resampled.size < cap) resampled = FloatArray(cap)
-            write(resampled, r.process(mono, 0, n, resampled))
+            val t1 = System.nanoTime()
+            val k = r.process(mono, 0, n, resampled)
+            val t2 = System.nanoTime()
+            write(resampled, k)
+            downmixNs += t1 - t0
+            resampleNs += t2 - t1
+            writeNs += System.nanoTime() - t2
         }
 
         private fun drainResampler() {

@@ -168,6 +168,8 @@ class AudioDebugService : Service() {
                 .put("giay_xu_ly", seconds)
                 .put("x_thoi_gian_thuc", audioSeconds / seconds)
                 .put("ms_giai_ma", r.decodeMs).put("ms_cat_doan", r.prepareMs)
+                .put("ms_trong_giai_ma", JSONObject().put("nap_vao", r.decode.feedMs).put("tron_kenh", r.decode.downmixMs)
+                    .put("resample", r.decode.resampleMs).put("ghi", r.decode.writeMs))
             val result = "%.0f s âm thanh → %d đoạn trong %.1f s (×%.1f), PSS đỉnh %d MB".format(
                 audioSeconds, r.chunks.chunks.size, seconds, audioSeconds / seconds, sampler.peakPssKb / 1024,
             )
