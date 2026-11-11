@@ -238,7 +238,7 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
   bằng `ffmpeg -t 7200 -c copy`), `A1.aac`, `L1.mp3`, `L1.ogg`, `V1.mp4` (tệp ở `$env:GUZZ_SPIKE_DATA\media\`).
   **Kiểm:** bảng trong Nhật ký: × thời gian thực, PSS đỉnh, thời gian từng bước. `L1_120m` ≤ 10 phút và PSS ≤ 300 MB
   (D45). Mọi tệp: thời lượng `goc.pcm` lệch ≤ 0,1 s so với `ffmpeg -i`.
-- [ ] **D3. So với ffmpeg và với Python trên dữ liệu thật.** `adb pull` `goc.pcm` của `L1_120m` và `V1`:
+- [x] **D3. So với ffmpeg và với Python trên dữ liệu thật.** `adb pull` `goc.pcm` của `L1_120m` và `V1`:
   - SNR so với `ffmpeg -ac 1 -ar 16000 -f s16le` (sửa `spikes/media/compare_pcm.py` cho đọc int16), căn độ trễ bằng
     tương quan chéo;
   - `real_golden.py --pcm` trên chính `goc.pcm` đó, so `danh_sach_doan.json` của máy theo dung sai B9.
@@ -330,6 +330,23 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
     - Sửa `real_golden.py`: trước đây dùng `config.Config()`, mà dataclass này có mặc định cũ (700 / 16 / 300) khác
       `config.default.txt` (1000 / 20 / 400, cũng là mặc định của app); nay đọc `config.default.txt`. Chạy lại B1–B5 với
       mặc định đúng: vẫn 0 mốc lệch, điểm cắt lệch ≤ 0,001 s (bảng B9 ở trên đo với 700 / 16 / 300).
+    - D2, 4 tệp còn lại (Xiaomi 15T, Android 16, người dùng có lúc dùng máy nên số giây chỉ để tham khảo; độ dài và độ
+      khớp mới là Kiểm). "Độ dài" so với độ dài ffmpeg tự giải mã cùng luồng (`compare_ffmpeg.py`):
+
+      | Tệp | Bộ giải mã | Gốc | Dài (phút) | Cả chuỗi (s) | × thời gian thực | Giải mã (s) | Cắt đoạn (s) | Đoạn | PSS đỉnh (MB) | Độ dài lệch ffmpeg (s) |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | `L1_120m.m4a` | `c2.android.aac.decoder` | 48 kHz × 2 | 120,0 | 712 | 10,1 | 672 | 40,5 | 9 | 128 | 0,000 |
+      | `A1.aac` (ADTS) | `c2.android.aac.decoder` | 44,1 kHz × 2 | 120,0 | 750 | 9,6 | 681 | 68,7 | 13 | 145 | 0,000 |
+      | `L1.mp3` | `c2.android.mp3.decoder` | 48 kHz × 1 | 135,5 | 606 | 13,4 | 555 | 51,1 | 10 | 141 | 0,000 |
+      | `L1.ogg` (Opus) | `c2.android.opus.decoder` | 48 kHz × 1 | 135,5 | 630 | 12,9 | 578 | 52,2 | 10 | 132 | +0,017 |
+      | `V1.mp4` (video) | `c2.android.aac.decoder` | 44,1 kHz × 1 | 59,7 | 249 | 14,4 | 227 | 22,4 | 5 | 125 | 0,000 |
+
+      Dòng "Duration" của container lệch nhiều hơn mà không phải lỗi của máy: ADTS không có thời lượng, ffmpeg ước từ
+      bitrate (A1: 6 833,8 s, thật 7 199,7 s); OGG −0,367 s; m4a cắt bằng `-c copy` −0,351 s; mp3 −0,004 s; mp4 −0,046 s.
+    - D3, `V1.mp4`: trễ 0 mẫu, **SNR 51,6 dB**, cùng độ dài với ffmpeg; `real_golden.py --compare` 0 / 942 mốc lệch, 5 / 5
+      đoạn, điểm cắt lệch 0,000 s.
+    - Màn hình thử đặt tên thư mục kết quả theo tên tệp bỏ đuôi, nên `L1.mp3` và `L1.ogg` ghi chung `debug-audio/L1/`
+      (đã chép kết quả ra riêng ngay sau mỗi lần chạy). Stage 4 đặt thư mục tạm theo mã băm nên không gặp lại.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
     `spikes/media/compare_pcm.py`, để script của Stage 1 vẫn chạy lại được như cũ.
 
