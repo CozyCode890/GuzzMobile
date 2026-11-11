@@ -83,6 +83,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D47 | 2026-11-10 | `[VIDEO] extract_first`, `extract_format`, `save_extracted` (Stage 2) | **Bỏ hai mục đầu; `save_extracted` → Stage 4** | Mobile luôn giải mã một lần ra PCM tạm. |
 | D48 | 2026-11-10 | `[CHUNKING] format` (Stage 2) | **Chỉ `flac`** | Đúng D41; Android không có bộ mã hoá MP3. |
 | D49 | 2026-11-10 | Màn hình thử của Stage 2 | **Tối giản, chỉ bản debug**, nhận thêm lệnh adb | Thử được trình chọn tệp và content:// URI. |
+| D50 | 2026-11-11 | Bài 2 giờ lúc tắt màn hình mất 16,6 phút, quá D45 (Stage 2) | **Tối ưu ngay rồi đo lại** (đọc mẫu nén và xử lý PCM chạy song song với bộ giải mã; đo bản không debuggable); vẫn quá thì hỏi lại | Nút thắt là đọc / nạp mẫu nén nối tiếp với xử lý PCM trên một luồng. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

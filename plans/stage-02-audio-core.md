@@ -75,6 +75,7 @@ Hỏi người dùng ngày 2026-11-10. Người dùng chọn phương án Recomm
 | D47 | Cài đặt [VIDEO] `extract_first`, `extract_format`, `save_extracted` | **Bỏ hai mục đầu; `save_extracted` để Stage 4** | Mobile luôn giải mã một lần ra PCM tạm, tức luôn "tách trước". `save_extracted` cần thư mục lưu kết quả. |
 | D48 | [CHUNKING] `format` | **Chỉ `flac`**; giá trị khác (nhập từ desktop) tự về `flac` | Đúng D41; Android không có bộ mã hoá MP3. |
 | D49 | Màn hình thử trên máy | **Màn hình tối giản chỉ trong bản debug**, nhận thêm lệnh adb | Thử được trình chọn tệp và content:// URI; Stage 4 thay bằng màn hình Hàng đợi. |
+| D50 | (2026-11-11, khi làm D2) Bài 2 giờ lúc tắt màn hình mất 16,6 phút, quá D45 | **Tối ưu ngay rồi đo lại**: tách đọc mẫu nén và xử lý PCM ra luồng riêng, chạy song song với bộ giải mã; đo thêm bản không debuggable. Vẫn quá 10 phút thì hỏi lại | Nút thắt là đọc / nạp mẫu nén (57% thời gian) chạy nối tiếp với xử lý PCM trên một luồng, không phải resampler. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -358,6 +359,19 @@ Thứ tự: A → B (JVM, test trên PC, không cần điện thoại) → C →
       `readSampleData` + `queueInputBuffer`, khoảng 56 000 khung AAC), trộn kênh 12,5 s, resample 14,9 s, ghi 6,2 s.
       Tức resampler không phải nút thắt; nút thắt là đọc / nạp mẫu nén, chạy nối tiếp với xử lý PCM trên cùng một luồng.
       Thử chạy bench `decode` của app spike trên cùng tệp để so với Stage 1 nhưng bench không khởi động lúc máy khoá.
+    - **D50, tối ưu bước giải mã:** `AudioDecoder` chạy 3 luồng nối bằng hàng đợi có giới hạn: luồng đọc
+      (MediaExtractor → mẫu nén đọc sẵn), luồng callback của codec (chỉ chép mẫu nén vào, chép PCM ra rồi trả buffer
+      ngay), luồng xử lý (trộn kênh, resample, ghi). Mảng PCM dùng lại qua một hàng đợi rỗi để GC không phải dọn hơn 1 GB.
+      Kết quả lúc tắt màn hình, máy để yên:
+
+      | Tệp | Trước (s) | Sau (s) | × thời gian thực | Giải mã (s) | Luồng đọc bận (s) | PSS đỉnh (MB) |
+      | --- | --- | --- | --- | --- | --- | --- |
+      | `L1_20m.m4a` | 171 | 58 | 20,8 | 49 | 7,5 | 130 |
+      | `L1_120m.m4a` | 998 | **346 (5,8 phút)** | 20,8 | 292 | 45 | **114** |
+
+      **D45 đạt** (≤ 10 phút, PSS ≤ 300 MB). `goc.pcm` của bản mới trùng MD5 với bản cũ (thứ tự xử lý giữ nguyên). Trước
+      đây 92,5 s "nạp vào" phần lớn là chờ: codec chỉ nhận mẫu mới khi luồng callback rảnh khỏi xử lý PCM. Đạt ngưỡng
+      nên không đo bản không debuggable như D50 dự tính; bản release đo lại ở Stage 4 / 9.
     - Màn hình thử đặt tên thư mục kết quả theo tên tệp bỏ đuôi, nên `L1.mp3` và `L1.ogg` ghi chung `debug-audio/L1/`
       (đã chép kết quả ra riêng ngay sau mỗi lần chạy). Stage 4 đặt thư mục tạm theo mã băm nên không gặp lại.
   - D3: so với ffmpeg bằng script mới `tools/device/compare_ffmpeg.py` (đọc int16, `-map 0:a:N`) thay vì sửa
