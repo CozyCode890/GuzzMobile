@@ -8,6 +8,8 @@ import io.github.cozycode890.guzz.core.gemini.ApiKeyStore
 import io.github.cozycode890.guzz.core.gemini.GeminiClient
 import io.github.cozycode890.guzz.core.gemini.QuotaTracker
 import io.github.cozycode890.guzz.core.gemini.RateLimiters
+import io.github.cozycode890.guzz.feature.queue.FakeTranscriber
+import io.github.cozycode890.guzz.feature.queue.QueueController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,7 +20,9 @@ import java.io.File
  * Các đối tượng dùng chung của app, dựng tay (D13): không thư viện DI, module JVM thuần chỉ nhận tham số qua
  * constructor. Sống cùng [GuzzApp].
  */
-class AppContainer(context: Context) {
+class AppContainer(appContext: Context) {
+    private val context: Context = appContext.applicationContext
+
     /** Scope sống cùng app, cho việc nền không gắn với màn hình nào. */
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -50,10 +54,34 @@ class AppContainer(context: Context) {
     val httpClient: OkHttpClient by lazy { GeminiClient.defaultHttpClient() }
 
     /** Client Gemini với key đã lưu; `null` khi chưa có key. */
-    fun geminiClient(apiKey: String? = apiKeyStore.read(), http: OkHttpClient = httpClient): GeminiClient? =
+    fun geminiClient(
+        apiKey: String? = apiKeyStore.read(),
+        http: OkHttpClient = httpClient,
+        timeoutSeconds: Int = SettingKeys.TIMEOUT_SECONDS.default,
+    ): GeminiClient? =
         apiKey?.takeIf { it.isNotBlank() }?.let {
-            GeminiClient(it, quotaTracker, rateLimiters, http)
+            GeminiClient(it, quotaTracker, rateLimiters, http, timeoutSeconds = timeoutSeconds.toDouble())
         }
+
+    /**
+     * Chỉ bản debug: có tệp này thì hàng đợi dùng Gemini giả ([FakeTranscriber]), không gọi mạng. Bật / tắt bằng lệnh adb
+     * (`queue_debug.ps1 -Fake on|off`). Bản release không bao giờ đọc tệp này.
+     */
+    val fakeGeminiFlag = File(context.filesDir, "debug/gemini_gia")
+
+    fun fakeGeminiEnabled(): Boolean = BuildConfig.DEBUG && fakeGeminiFlag.exists()
+
+    /** Hàng đợi của cả app (Stage 4). Client Gemini dựng lại mỗi tệp, đọc lại key và timeout như desktop. */
+    val queueController: QueueController by lazy {
+        QueueController(
+            context, settings, { quotaTracker },
+            clientFactory = { cfg ->
+                if (fakeGeminiEnabled()) FakeTranscriber() else geminiClient(timeoutSeconds = cfg.gemini.timeoutSeconds)
+            },
+            // Bản debug: chưa chọn thư mục SAF thì lệnh adb ghi vào files/output (D2).
+            fallbackOutput = if (BuildConfig.DEBUG) File(context.getExternalFilesDir(null) ?: context.filesDir, "output") else null,
+        )
+    }
 
     companion object {
         const val BYTES_PER_MB = 1024L * 1024L

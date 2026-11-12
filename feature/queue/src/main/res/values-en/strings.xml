@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="queue_channel_progress">Queue progress</string>
+    <string name="queue_channel_done">Queue finished</string>
+    <string name="queue_notification_title">Guzz is transcribing</string>
+    <string name="queue_notification_starting">Starting…</string>
+    <string name="queue_notification_stalled">Audio processing has not moved for over 60 seconds. Check Guzz battery settings: choose No restrictions.</string>
+    <string name="queue_stop">Stop</string>
+    <string name="queue_detail_audio">Processing audio: %1$s %2$d%%</string>
+    <string name="queue_detail_chunk">Chunk %1$d/%2$d · %3$s</string>
+    <string name="queue_detail_transcribe">Transcribing</string>
+    <string name="queue_detail_merge">Assembling the transcript</string>
+    <string name="queue_done_title">Guzz: queue finished</string>
+    <string name="queue_done_text">%1$d done, %2$d failed, %3$d skipped.</string>
+    <string name="queue_done_error">Queue stopped by an error: %1$s</string>
+    <string name="queue_timeout_title">Guzz: stopped by the system</string>
+    <string name="queue_timeout_text">Android ran out of background time. Open Guzz to continue from the current chunk.</string>
+</resources>

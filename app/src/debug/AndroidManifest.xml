@@ -15,6 +15,11 @@
             android:name=".debug.AudioDebugStopReceiver"
             android:exported="true" />
 
+        <!-- Lệnh adb cho hàng đợi thật (Stage 4, D2), xem KDoc và tools/device/queue_debug.ps1. -->
+        <receiver
+            android:name=".debug.QueueDebugReceiver"
+            android:exported="true" />
+
         <service
             android:name=".debug.AudioDebugService"
             android:exported="false"

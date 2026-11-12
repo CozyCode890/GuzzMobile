@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Nhịp log của service ghi trạng thái mạng (thử chạy trong Doze, Stage 4). -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+        <!-- Hàng đợi chạy nền: Android 15+ mediaProcessing, Android 10–14 dataSync (quyền ở manifest của :app). -->
+        <service
+            android:name=".QueueService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProcessing|dataSync" />
+    </application>
+
+</manifest>

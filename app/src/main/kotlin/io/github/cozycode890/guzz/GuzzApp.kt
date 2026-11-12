@@ -2,12 +2,16 @@ package io.github.cozycode890.guzz
 
 import android.app.Application
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
+import io.github.cozycode890.guzz.feature.queue.QueueController
+import io.github.cozycode890.guzz.feature.queue.QueueHost
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-class GuzzApp : Application() {
+class GuzzApp : Application(), QueueHost {
     lateinit var container: AppContainer
         private set
+
+    override val queueController: QueueController get() = container.queueController
 
     override fun onCreate() {
         super.onCreate()

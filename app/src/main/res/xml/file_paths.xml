@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thư mục FileProvider được cấp: files/output (bản chép lời của lệnh adb, bản debug). -->
+<paths>
+    <external-files-path name="output" path="output/" />
+</paths>

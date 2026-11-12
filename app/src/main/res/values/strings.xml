@@ -3,10 +3,6 @@
 <resources>
     <!-- Bản debug đè tên này ở src/debug (D10). -->
     <string name="app_name" translatable="false">Guzz</string>
-    <string name="main_title" translatable="false">Guzz</string>
-    <string name="main_tagline">Chuyển âm thanh và video thành văn bản</string>
-    <!-- <versionName> · <flavor> · <buildType> -->
-    <string name="build_info" translatable="false">%1$s · %2$s · %3$s</string>
     <string name="main_open_google_ai">Google AI</string>
 
     <!-- Trang Google AI (Stage 3, D56). -->
@@ -31,4 +27,39 @@
     <string name="google_ai_model_use">Dùng</string>
     <string name="google_ai_model_pick">Chọn từ danh sách model của key:</string>
     <string name="google_ai_model_invalid">Tên model chỉ gồm chữ thường, số, dấu chấm, gạch dưới, gạch ngang (vd gemini-3.5-flash-lite). API key thì nhập ở ô API key phía trên.</string>
+
+    <!-- Màn hình Hàng đợi (Stage 4, E1–E3). -->
+    <string name="queue_title">Hàng đợi</string>
+    <string name="queue_add">Thêm tệp</string>
+    <string name="queue_start">Bắt đầu</string>
+    <string name="queue_stop_button">Dừng</string>
+    <string name="queue_clear_done">Xoá tệp đã xong</string>
+    <string name="queue_menu_debug">Màn hình thử (debug)</string>
+    <string name="queue_empty">Chưa có tệp nào. Bấm Thêm tệp để chọn bài ghi âm hoặc video.</string>
+    <string name="queue_banner_fake">Gemini GIẢ đang bật (bản debug): không gửi gì lên Google.</string>
+    <string name="queue_banner_no_key">Chưa có API key của Google AI Studio.</string>
+    <string name="queue_banner_no_folder">Chưa chọn thư mục lưu bản chép lời.</string>
+    <string name="queue_banner_battery">Guzz chưa được miễn tối ưu pin: tắt màn hình lâu thì việc nền có thể bị dừng. Chọn Pin → Không hạn chế.</string>
+    <string name="queue_open_app_info">Mở cài đặt</string>
+    <string name="queue_choose_folder">Chọn thư mục</string>
+    <!-- %1$s: tên thư mục -->
+    <string name="queue_folder">Lưu vào: %1$s</string>
+    <string name="queue_folder_none">(chưa chọn)</string>
+    <string name="queue_trim_silence">Cắt khoảng lặng</string>
+    <string name="queue_problem_no_key">Chưa có API key. Nhập key ở trang Google AI (menu ⋮).</string>
+    <string name="queue_problem_nothing">Không có tệp nào để chạy.</string>
+    <string name="queue_view">Xem</string>
+    <string name="queue_open_with">Mở bằng app khác</string>
+    <string name="queue_share">Chia sẻ</string>
+    <string name="queue_rerun">Chạy lại</string>
+    <string name="queue_remove">Bỏ khỏi danh sách</string>
+    <string name="queue_status_waiting">Chờ</string>
+    <string name="queue_status_running">Đang chạy</string>
+    <string name="queue_status_done">Xong</string>
+    <string name="queue_status_error">Lỗi</string>
+    <string name="queue_status_stopped">Đã dừng</string>
+    <string name="queue_status_skipped">Bỏ qua</string>
+    <string name="transcript_title">Bản chép lời</string>
+    <!-- %1$s: lỗi -->
+    <string name="transcript_read_error">Không đọc được bản chép lời: %1$s</string>
 </resources>

@@ -37,6 +37,23 @@
         </activity>
 
         <activity
+            android:name=".TranscriptActivity"
+            android:exported="false"
+            android:label="@string/transcript_title" />
+
+        <!-- Mở / chia sẻ bản chép lời ghi bằng đường dẫn (thư mục ra của bản debug), và lối lùi khi app nhận không đọc
+             được URI SAF (Rủi ro của Stage 4). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
             android:name=".GoogleAiActivity"
             android:exported="false"
             android:label="@string/google_ai_title"
