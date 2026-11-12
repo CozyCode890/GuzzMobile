@@ -297,6 +297,12 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
     (JVM, thay cho `NoAudioException` của `:core:media`).
   - C4: thêm `StartProblem` (kiểm trước khi bắt đầu như `_start`), `prepareStop(resumeLater)` cho `onTimeout` (D64);
     tệp hàng đợi hỏng đổi tên thành `.hong` để xem lại.
+- **2026-11-12, D–E (chưa thử trên máy).** Đã viết `QueueController`, `QueueService`, `AndroidChunkSource`,
+  `SafOutputFolder`, `FakeTranscriber`, receiver adb + `tools/device/queue_debug.ps1`, màn hình Hàng đợi và màn hình xem
+  (commit `6d3824b`); build + lint xanh cả hai flavor. Chưa tick D1–E3: điện thoại không nối được adb, người dùng dừng
+  ở đây. Lần sau: nối máy, làm tiếp từ D2 (thử bằng Gemini giả), rồi kiểm A3 trên máy. Thêm so với kế hoạch:
+  `FileProvider` cho bản chép lời ghi bằng đường dẫn (thư mục `files/output` của lệnh adb); quyền
+  `ACCESS_NETWORK_STATE` cho nhịp log.
 
 ## Phát sinh
 
