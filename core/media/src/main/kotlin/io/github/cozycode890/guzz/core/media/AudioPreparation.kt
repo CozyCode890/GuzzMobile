@@ -31,8 +31,8 @@ data class PreparationResult(
 
 /**
  * Từ một tệp âm thanh / video ra các đoạn FLAC + `danh_sach_doan.json` trong [folder]: chọn luồng âm thanh, kiểm chỗ
- * trống (D44), giải mã ra `goc.pcm`, rồi [ChunkPreparer]. Phần "nguồn âm thanh" + `prepare_chunks` của transcribe.py,
- * chưa có cache theo mã băm (Stage 4).
+ * trống (D44), giải mã ra `goc.pcm`, rồi [ChunkPreparer]. Phần "nguồn âm thanh" + `prepare_chunks` của transcribe.py;
+ * dùng lại đoạn đã cắt (cache theo mã băm) là việc của `:core:pipeline`.
  */
 class AudioPreparation(private val context: Context) {
 
@@ -42,6 +42,7 @@ class AudioPreparation(private val context: Context) {
         settings: ChunkSettings,
         folder: File,
         listener: PreparationListener = object : PreparationListener {},
+        digest: String = "",
     ): PreparationResult {
         folder.mkdirs()
         File(folder, ChunkPreparer.CHUNK_LIST_FILE).delete()
@@ -57,7 +58,7 @@ class AudioPreparation(private val context: Context) {
         }
         val t1 = SystemClock.elapsedRealtime()
         val chunks = Pcm16File(raw).use { pcm ->
-            ChunkPreparer(settings, FlacEncoder()).prepare(pcm, SAMPLE_RATE, input.name, folder, listener)
+            ChunkPreparer(settings, FlacEncoder()).prepare(pcm, SAMPLE_RATE, input.name, folder, listener, digest)
         }
         val t2 = SystemClock.elapsedRealtime()
         return PreparationResult(tracks, track, decoded, chunks, t1 - t0, t2 - t1)

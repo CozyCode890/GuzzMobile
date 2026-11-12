@@ -1,0 +1,951 @@
+{
+  "encode": [
+    {
+      "base64": "",
+      "encoding": "utf-8",
+      "newline": "crlf",
+      "text": ""
+    },
+    {
+      "base64": "",
+      "encoding": "utf-8",
+      "newline": "lf",
+      "text": ""
+    },
+    {
+      "base64": "77u/",
+      "encoding": "utf-8-sig",
+      "newline": "crlf",
+      "text": ""
+    },
+    {
+      "base64": "77u/",
+      "encoding": "utf-8-sig",
+      "newline": "lf",
+      "text": ""
+    },
+    {
+      "base64": "TeG7mXQgZMOybmc=",
+      "encoding": "utf-8",
+      "newline": "crlf",
+      "text": "Một dòng"
+    },
+    {
+      "base64": "TeG7mXQgZMOybmc=",
+      "encoding": "utf-8",
+      "newline": "lf",
+      "text": "Một dòng"
+    },
+    {
+      "base64": "77u/TeG7mXQgZMOybmc=",
+      "encoding": "utf-8-sig",
+      "newline": "crlf",
+      "text": "Một dòng"
+    },
+    {
+      "base64": "77u/TeG7mXQgZMOybmc=",
+      "encoding": "utf-8-sig",
+      "newline": "lf",
+      "text": "Một dòng"
+    },
+    {
+      "base64": "SGFpDQoNCsSRb+G6oW4NCg==",
+      "encoding": "utf-8",
+      "newline": "crlf",
+      "text": "Hai\n\nđoạn\n"
+    },
+    {
+      "base64": "SGFpCgrEkW/huqFuCg==",
+      "encoding": "utf-8",
+      "newline": "lf",
+      "text": "Hai\n\nđoạn\n"
+    },
+    {
+      "base64": "77u/SGFpDQoNCsSRb+G6oW4NCg==",
+      "encoding": "utf-8-sig",
+      "newline": "crlf",
+      "text": "Hai\n\nđoạn\n"
+    },
+    {
+      "base64": "77u/SGFpCgrEkW/huqFuCg==",
+      "encoding": "utf-8-sig",
+      "newline": "lf",
+      "text": "Hai\n\nđoạn\n"
+    },
+    {
+      "base64": "xJDDoyBjw7MNCkNSTEYNCnbDoCBMRg0=",
+      "encoding": "utf-8",
+      "newline": "crlf",
+      "text": "Đã có\r\nCRLF\nvà LF\r"
+    },
+    {
+      "base64": "xJDDoyBjw7MNCkNSTEYKdsOgIExGDQ==",
+      "encoding": "utf-8",
+      "newline": "lf",
+      "text": "Đã có\r\nCRLF\nvà LF\r"
+    },
+    {
+      "base64": "77u/xJDDoyBjw7MNCkNSTEYNCnbDoCBMRg0=",
+      "encoding": "utf-8-sig",
+      "newline": "crlf",
+      "text": "Đã có\r\nCRLF\nvà LF\r"
+    },
+    {
+      "base64": "77u/xJDDoyBjw7MNCkNSTEYKdsOgIExGDQ==",
+      "encoding": "utf-8-sig",
+      "newline": "lf",
+      "text": "Đã có\r\nCRLF\nvà LF\r"
+    },
+    {
+      "base64": "eA0K",
+      "encoding": "utf-8",
+      "newline": "crlf",
+      "text": "x\n"
+    },
+    {
+      "base64": "eAo=",
+      "encoding": "utf-8",
+      "newline": "lf",
+      "text": "x\n"
+    },
+    {
+      "base64": "77u/eA0K",
+      "encoding": "utf-8-sig",
+      "newline": "crlf",
+      "text": "x\n"
+    },
+    {
+      "base64": "77u/eAo=",
+      "encoding": "utf-8-sig",
+      "newline": "lf",
+      "text": "x\n"
+    }
+  ],
+  "extension": ".txt",
+  "filenames": [
+    {
+      "error": null,
+      "name": "bai giang.txt",
+      "source": "bai giang.m4a",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "Bài giảng- tuần 1-.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "m4a.txt",
+      "source": "...m4a",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "spaced.txt",
+      "source": "  spaced  .wav",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "x.y.z.txt",
+      "source": "x.y.z.mp3",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "noext.txt",
+      "source": "noext",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "hidden.txt",
+      "source": ".hidden",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "a-b-c-d-e.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{name}"
+    },
+    {
+      "error": null,
+      "name": "bai giang_gemini-3.5-flash-lite.txt",
+      "source": "bai giang.m4a",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "Bài giảng- tuần 1-_gemini-3.5-flash-lite.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "m4a_gemini-3.5-flash-lite.txt",
+      "source": "...m4a",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "spaced  _gemini-3.5-flash-lite.txt",
+      "source": "  spaced  .wav",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "x.y.z_gemini-3.5-flash-lite.txt",
+      "source": "x.y.z.mp3",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "noext_gemini-3.5-flash-lite.txt",
+      "source": "noext",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "hidden_gemini-3.5-flash-lite.txt",
+      "source": ".hidden",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "a-b-c-d-e_gemini-3.5-flash-lite.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{name}_{model}"
+    },
+    {
+      "error": null,
+      "name": "bai giang 2026-03-05_0709.txt",
+      "source": "bai giang.m4a",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "Bài giảng- tuần 1- 2026-03-05_0709.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "m4a 2026-03-05_0709.txt",
+      "source": "...m4a",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "spaced   2026-03-05_0709.txt",
+      "source": "  spaced  .wav",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "x.y.z 2026-03-05_0709.txt",
+      "source": "x.y.z.mp3",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "noext 2026-03-05_0709.txt",
+      "source": "noext",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "hidden 2026-03-05_0709.txt",
+      "source": ".hidden",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "a-b-c-d-e 2026-03-05_0709.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{ten} {ngay_ghi}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 bai giang.txt",
+      "source": "bai giang.m4a",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 Bài giảng- tuần 1-.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 ...m4a.txt",
+      "source": "...m4a",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104   spaced.txt",
+      "source": "  spaced  .wav",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 x.y.z.txt",
+      "source": "x.y.z.mp3",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 noext.txt",
+      "source": "noext",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 .hidden.txt",
+      "source": ".hidden",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-11-12 2104 a-b-c-d-e.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{date} {time} {name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-bai giang.txt",
+      "source": "bai giang.m4a",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-Bài giảng- tuần 1-.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-...m4a.txt",
+      "source": "...m4a",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-  spaced.txt",
+      "source": "  spaced  .wav",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-x.y.z.txt",
+      "source": "x.y.z.mp3",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-noext.txt",
+      "source": "noext",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-.hidden.txt",
+      "source": ".hidden",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "2026-03-05_0709-a-b-c-d-e.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{recorded}-{name}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "bai giang.m4a",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "...m4a",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "  spaced  .wav",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "x.y.z.mp3",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "noext",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": ".hidden",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "{name}.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{{name}}"
+    },
+    {
+      "error": null,
+      "name": "bai giang.txt",
+      "source": "bai giang.m4a",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "Bài giảng- tuần 1-.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "m4a.txt",
+      "source": "...m4a",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "spaced  .txt",
+      "source": "  spaced  .wav",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "x.y.z.txt",
+      "source": "x.y.z.mp3",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "noext.txt",
+      "source": "noext",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "hidden.txt",
+      "source": ".hidden",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": "a-b-c-d-e.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{name}."
+    },
+    {
+      "error": null,
+      "name": " bai giang .txt",
+      "source": "bai giang.m4a",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " Bài giảng- tuần 1- .txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " ...m4a .txt",
+      "source": "...m4a",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": "   spaced   .txt",
+      "source": "  spaced  .wav",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " x.y.z .txt",
+      "source": "x.y.z.mp3",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " noext .txt",
+      "source": "noext",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " .hidden .txt",
+      "source": ".hidden",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": " a-b-c-d-e .txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": " . {name} . "
+    },
+    {
+      "error": null,
+      "name": "a-b-bai giang--.txt",
+      "source": "bai giang.m4a",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-Bài giảng- tuần 1---.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-...m4a--.txt",
+      "source": "...m4a",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-  spaced  --.txt",
+      "source": "  spaced  .wav",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-x.y.z--.txt",
+      "source": "x.y.z.mp3",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-noext--.txt",
+      "source": "noext",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-.hidden--.txt",
+      "source": ".hidden",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "a-b-a-b-c-d-e--.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "a/b:{name}*?"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "bai giang.m4a",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "...m4a",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "  spaced  .wav",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "x.y.z.mp3",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "noext",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": ".hidden",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": null,
+      "name": "gemini-3.5-flash-lite-2104h2026-11-12.txt",
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{model}/{gio}h{ngay}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "bai giang.m4a",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "...m4a",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "  spaced  .wav",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "x.y.z.mp3",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "noext",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": ".hidden",
+      "template": "{bad}"
+    },
+    {
+      "error": "KeyError",
+      "name": null,
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{bad}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "bai giang.m4a",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "...m4a",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "  spaced  .wav",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "x.y.z.mp3",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "noext",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": ".hidden",
+      "template": "{name"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{name"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "bai giang.m4a",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "...m4a",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "  spaced  .wav",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "x.y.z.mp3",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "noext",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": ".hidden",
+      "template": "{}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "bai giang.m4a",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "...m4a",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "  spaced  .wav",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "x.y.z.mp3",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "noext",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": ".hidden",
+      "template": "name}"
+    },
+    {
+      "error": "ValueError",
+      "name": null,
+      "source": "a<b>c|d\"e.ogg",
+      "template": "name}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "bai giang.m4a",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "Bài giảng: tuần 1?.mp4",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "...m4a",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "  spaced  .wav",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "x.y.z.mp3",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "noext",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": ".hidden",
+      "template": "{0}"
+    },
+    {
+      "error": "IndexError",
+      "name": null,
+      "source": "a<b>c|d\"e.ogg",
+      "template": "{0}"
+    }
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_pipeline.py"
+  },
+  "model": "gemini-3.5-flash-lite",
+  "now": "2026-11-12T21:04:05",
+  "recorded": "2026-03-05T07:09:41",
+  "sanitize": [
+    {
+      "input": "",
+      "output": "transcript"
+    },
+    {
+      "input": "   ",
+      "output": "transcript"
+    },
+    {
+      "input": "...",
+      "output": "transcript"
+    },
+    {
+      "input": " . . ",
+      "output": " "
+    },
+    {
+      "input": "a.b.",
+      "output": "a.b"
+    },
+    {
+      "input": "<>:\"/\\|?*",
+      "output": "---------"
+    },
+    {
+      "input": "  x  ",
+      "output": "x"
+    },
+    {
+      "input": "tên.txt..",
+      "output": "tên.txt"
+    },
+    {
+      "input": " nbsp ",
+      "output": "nbsp"
+    },
+    {
+      "input": "\tTab\n",
+      "output": "Tab"
+    }
+  ],
+  "unique": [
+    {
+      "existing": [],
+      "name": "bai giang.txt",
+      "result": "bai giang.txt"
+    },
+    {
+      "existing": [
+        "bai giang.txt"
+      ],
+      "name": "bai giang.txt",
+      "result": "bai giang (2).txt"
+    },
+    {
+      "existing": [
+        "bai giang.txt",
+        "bai giang (2).txt",
+        "bai giang (3).txt"
+      ],
+      "name": "bai giang.txt",
+      "result": "bai giang (4).txt"
+    },
+    {
+      "existing": [
+        "BAI GIANG.TXT"
+      ],
+      "name": "bai giang.txt",
+      "result": "bai giang (2).txt"
+    },
+    {
+      "existing": [
+        "bai giang.txt",
+        "bai giang (3).txt"
+      ],
+      "name": "bai giang.txt",
+      "result": "bai giang (2).txt"
+    },
+    {
+      "existing": [
+        "noext"
+      ],
+      "name": "noext",
+      "result": "noext (2)"
+    },
+    {
+      "existing": [
+        "a.b.md"
+      ],
+      "name": "a.b.md",
+      "result": "a.b (2).md"
+    }
+  ]
+}

@@ -106,4 +106,15 @@ class SettingKeysTest {
     fun `formatPythonG khớp Python`(value: Double, expected: String) {
         assertEquals(expected, formatPythonG(value))
     }
+
+    @Test
+    fun `mục OUTPUT chặn như load_config`() {
+        assertEquals(".md", SettingKeys.EXTENSION.sanitize(" MD "))
+        assertEquals(".txt", SettingKeys.EXTENSION.sanitize(""))
+        assertEquals(".srt", SettingKeys.EXTENSION.sanitize(".srt"))
+        assertEquals("{name}", SettingKeys.FILENAME_TEMPLATE.sanitize("   "))
+        assertEquals("{name}_{date}", SettingKeys.FILENAME_TEMPLATE.sanitize(" {name}_{date} "))
+        assertEquals("skip", SettingKeys.ON_CONFLICT.sanitize("SKIP"))
+        assertEquals("number", SettingKeys.ON_CONFLICT.sanitize("bo_qua"))
+    }
 }

@@ -39,9 +39,13 @@ data class ChunkInfo(
     @SerialName("ket_thuc_giay") val endSeconds: Double,
 )
 
-/** Nội dung `danh_sach_doan.json`, cùng khoá với desktop (chưa có `ma`: mã băm cache là việc của Stage 4). */
+/**
+ * Nội dung `danh_sach_doan.json`, cùng khoá với desktop. [digest] (`ma`) là mã của tệp nguồn + tham số âm thanh (Stage
+ * 4, `CacheKeys.audioHash`): khác mã thì không dùng lại các đoạn.
+ */
 @Serializable
 data class ChunkList(
+    @SerialName("ma") val digest: String = "",
     @SerialName("nguon") val source: String,
     @SerialName("tan_so_lay_mau") val sampleRate: Int,
     @SerialName("thoi_luong_goc") val originalDuration: Double,
@@ -70,7 +74,7 @@ interface PrepareListener {
 /**
  * Từ PCM thô của cả bài (`goc.pcm`) ra các đoạn gửi Gemini + `danh_sach_doan.json`.
  * Port của transcribe.py: `prepare_chunks`, phần làm sạch tối giản của `clean_audio` (D7: chỉ chuẩn hoá âm lượng và cắt
- * lặng) và chunker.py: `write_chunks`. Chưa có cache theo mã băm (Stage 4).
+ * lặng) và chunker.py: `write_chunks`. Dùng lại đoạn đã cắt (so khoá `ma`) là việc của `:core:pipeline`.
  *
  * Đọc lại nguồn nhiều lượt thay vì giữ tín hiệu trong RAM (D43), xem "Mặc định kỹ thuật" của Stage 2:
  * 1. đo dBFS → hệ số khuếch đại;
@@ -89,6 +93,7 @@ class ChunkPreparer(
      * @param raw PCM thô của cả bài, mono, [sampleRate] Hz.
      * @param sourceName đường dẫn / URI của tệp gốc, ghi vào khoá `nguon`.
      * @param folder thư mục tạm của bài; ghi `sach.pcm`, `doan_NNN.<đuôi>`, `danh_sach_doan.json` vào đây.
+     * @param digest mã ghi vào khoá `ma`, trong cùng lần ghi cuối (có tệp là có mã đúng).
      */
     fun prepare(
         raw: SampleSource,
@@ -96,6 +101,7 @@ class ChunkPreparer(
         sourceName: String,
         folder: File,
         listener: PrepareListener = PrepareListener.NONE,
+        digest: String = "",
     ): ChunkList {
         // Desktop: "Sau khi lam sach khong con doan nao co tieng." Chỉ xảy ra khi nguồn rỗng, vì cắt lặng không bao giờ bỏ
         // hết (cả bài là lặng thì giữ nguyên).
@@ -170,6 +176,7 @@ class ChunkPreparer(
         }
 
         val result = ChunkList(
+            digest = digest,
             source = sourceName,
             sampleRate = sampleRate,
             originalDuration = pyRound(trim.timeMap.origDuration, 3),
@@ -211,7 +218,7 @@ class ChunkPreparer(
             Pcm16Writer.moveReplacing(tmp, file)
         }
 
-        /** Đọc `danh_sach_doan.json`; `null` khi chưa có hoặc hỏng (như `read_chunk_list` của desktop, chưa kiểm mã). */
+        /** Đọc `danh_sach_doan.json`; `null` khi chưa có hoặc hỏng. Kiểm mã và tệp đoạn: `ChunkCache` của `:core:pipeline`. */
         fun readChunkList(folder: File): ChunkList? = runCatching {
             lenientJson.decodeFromString(
                 ChunkList.serializer(), File(folder, CHUNK_LIST_FILE).readText(Charsets.UTF_8),

@@ -1,0 +1,268 @@
+{
+  "audio_hash": [
+    {
+      "fingerprint": "/sdcard/B5.m4a|81234567|1789660800",
+      "hash": "c8e5d7ca64",
+      "params": [
+        16000,
+        -16.0,
+        true,
+        1000,
+        20,
+        400,
+        10.0,
+        20.0,
+        60.0,
+        "flac"
+      ],
+      "video_signature": null
+    },
+    {
+      "fingerprint": "/sdcard/B5.m4a|81234567|1789660800",
+      "hash": "1c91df03f8",
+      "params": [
+        16000,
+        -16.0,
+        true,
+        1000,
+        20,
+        400,
+        10.0,
+        20.0,
+        60.0,
+        "flac"
+      ],
+      "video_signature": [
+        "track",
+        "auto"
+      ]
+    },
+    {
+      "fingerprint": "content://p/document/7|99|1789660800",
+      "hash": "6a1fd0e39e",
+      "params": [
+        16000,
+        -18.5,
+        false,
+        700,
+        16,
+        300,
+        0.4,
+        3.0,
+        5.0,
+        "flac"
+      ],
+      "video_signature": [
+        "track",
+        "1"
+      ]
+    }
+  ],
+  "hash_cases": [
+    {
+      "dumps": "[\"bai giang.m4a\"]",
+      "hash": "3e6aee1710",
+      "parts": [
+        "bai giang.m4a"
+      ]
+    },
+    {
+      "dumps": "[\"Bài giảng tuần 1 – Đạo đức kinh doanh.m4a|123456789|1789660800\"]",
+      "hash": "b816c2df5a",
+      "parts": [
+        "Bài giảng tuần 1 – Đạo đức kinh doanh.m4a|123456789|1789660800"
+      ]
+    },
+    {
+      "dumps": "[10.0, 1e-05, -16.0, 0.1, 2.5, 100.0, 0.0, -0.0, 1e+16, 1.5e+16, 1e-07, 123456.789, 1e+22, 5e-324, 0.3]",
+      "hash": "3adafb11d9",
+      "parts": [
+        10.0,
+        1e-05,
+        -16.0,
+        0.1,
+        2.5,
+        100.0,
+        0.0,
+        -0.0,
+        1e+16,
+        1.5e+16,
+        1e-07,
+        123456.789,
+        1e+22,
+        5e-324,
+        0.3
+      ]
+    },
+    {
+      "dumps": "[16000, -16, 0, 1, 1000, 20, 400, 1099511627776]",
+      "hash": "bbb7330b87",
+      "parts": [
+        16000,
+        -16,
+        0,
+        1,
+        1000,
+        20,
+        400,
+        1099511627776
+      ]
+    },
+    {
+      "dumps": "[true, false, null]",
+      "hash": "7c8b21f1a1",
+      "parts": [
+        true,
+        false,
+        null
+      ]
+    },
+    {
+      "dumps": "[[1, [2, [3, \"ba\"]]], [], [\"a\", null, true]]",
+      "hash": "fa567c803d",
+      "parts": [
+        [
+          1,
+          [
+            2,
+            [
+              3,
+              "ba"
+            ]
+          ]
+        ],
+        [],
+        [
+          "a",
+          null,
+          true
+        ]
+      ]
+    },
+    {
+      "dumps": "[{\"B\": null, \"a\": [1, 2], \"b\": 1, \"ă\": \"x\"}]",
+      "hash": "d107c7cecb",
+      "parts": [
+        {
+          "B": null,
+          "a": [
+            1,
+            2
+          ],
+          "b": 1,
+          "ă": "x"
+        }
+      ]
+    },
+    {
+      "dumps": "[\"quote \\\" backslash \\\\ slash / newline \\n tab \\t cr \\r\", \"\\u0001\\u001f\", \"emoji 😀 và  \"]",
+      "hash": "fd81c78f3b",
+      "parts": [
+        "quote \" backslash \\ slash / newline \n tab \t cr \r",
+        "\u0001\u001f",
+        "emoji 😀 và  "
+      ]
+    },
+    {
+      "dumps": "[\"/storage/emulated/0/Android/data/io.github.cozycode890.guzz.debug/files/input/B5.m4a|81234567|1789660800\", 16000, -16.0, true, 1000, 20, 400, 10.0, 20.0, 60.0, \"flac\"]",
+      "hash": "23daa81892",
+      "parts": [
+        "/storage/emulated/0/Android/data/io.github.cozycode890.guzz.debug/files/input/B5.m4a|81234567|1789660800",
+        16000,
+        -16.0,
+        true,
+        1000,
+        20,
+        400,
+        10.0,
+        20.0,
+        60.0,
+        "flac"
+      ]
+    },
+    {
+      "dumps": "[\"content://com.android.providers.media.documents/document/audio%3A1000012345|81234567|0\", 16000, -16.0, false, 700, 16, 300, 0.4, 3.0, 5.0, \"flac\"]",
+      "hash": "d6868c40d6",
+      "parts": [
+        "content://com.android.providers.media.documents/document/audio%3A1000012345|81234567|0",
+        16000,
+        -16.0,
+        false,
+        700,
+        16,
+        300,
+        0.4,
+        3.0,
+        5.0,
+        "flac"
+      ]
+    }
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_pipeline.py"
+  },
+  "shared_keys": [
+    {
+      "audio_key": "0123456789",
+      "languages": [],
+      "model": "gemini-3.5-transcribe",
+      "prompt": null,
+      "result_file": "doan_003.b101070eaf.json",
+      "shared_key": "e8826703a6",
+      "transcribe_mode": "smart",
+      "vocabulary": []
+    },
+    {
+      "audio_key": "0123456789",
+      "languages": [
+        "vi",
+        "en"
+      ],
+      "model": "gemini-3.5-flash-lite",
+      "prompt": "Transcribe this audio.\nKeep Vietnamese diacritics.",
+      "result_file": "doan_003.c2b69cd988.json",
+      "shared_key": "bff43a58c6",
+      "transcribe_mode": "verbatim",
+      "vocabulary": [
+        "Đạo đức",
+        "ESG"
+      ]
+    }
+  ],
+  "temp_dirs": [
+    {
+      "dir": "bai giang_0270657f",
+      "fingerprint": "/sdcard/bai giang.m4a|1000|1789660800",
+      "name": "bai giang.m4a"
+    },
+    {
+      "dir": "Bài giảng tuần 1_3c4c1850",
+      "fingerprint": "content://x/document/1|5|0",
+      "name": "Bài giảng tuần 1.mp4"
+    },
+    {
+      "dir": "x.y.z_2fe1361f",
+      "fingerprint": "/a/x.y.z.mp4|1|2",
+      "name": "x.y.z.mp4"
+    },
+    {
+      "dir": "noext_1e92684e",
+      "fingerprint": "/a/noext|1|2",
+      "name": "noext"
+    },
+    {
+      "dir": ".hidden_7760a37e",
+      "fingerprint": "/a/.hidden|1|2",
+      "name": ".hidden"
+    },
+    {
+      "dir": "trailing_e9e00d35",
+      "fingerprint": "/a/trailing.|1|2",
+      "name": "trailing."
+    }
+  ]
+}

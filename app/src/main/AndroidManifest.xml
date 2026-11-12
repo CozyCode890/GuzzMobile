@@ -4,6 +4,14 @@
     <!-- Gọi Google AI Studio (Stage 3). -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Hàng đợi chạy nền (Stage 4): foreground service, Android 15+ loại mediaProcessing, Android 8–14 dataSync. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- FGS không giữ CPU thức khi màn hình tắt (Stage 1): service giữ partial wake lock trong lúc chạy. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <!--
         D55: không sao lưu dữ liệu app (API key đã mã hoá, tệp hạn mức, cài đặt) lên Drive, không chép sang máy mới.
         Từ Android 12, allowBackup="false" chỉ tắt sao lưu đám mây; chuyển máy (device-to-device) phải chặn bằng

@@ -1,0 +1,206 @@
+{
+  "assemble": [
+    {
+      "body": "Đoạn 1.\n\nĐoạn 2.\n\nĐoạn 3.",
+      "mark_chunks": false,
+      "texts": [
+        "Đoạn 1.",
+        "Đoạn 2.",
+        "Đoạn 3."
+      ]
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nĐoạn 1.\n\n----- Đoạn 2/3 -----\n\nĐoạn 2.\n\n----- Đoạn 3/3 -----\n\nĐoạn 3.",
+      "mark_chunks": true,
+      "texts": [
+        "Đoạn 1.",
+        "Đoạn 2.",
+        "Đoạn 3."
+      ]
+    },
+    {
+      "body": "Một\n\nBa\n\nBa tiếp",
+      "mark_chunks": false,
+      "texts": [
+        "Một",
+        "",
+        "Ba\n\nBa tiếp"
+      ]
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nMột\n\n----- Đoạn 2/3 -----\n\n----- Đoạn 3/3 -----\n\nBa\n\nBa tiếp",
+      "mark_chunks": true,
+      "texts": [
+        "Một",
+        "",
+        "Ba\n\nBa tiếp"
+      ]
+    },
+    {
+      "body": "",
+      "mark_chunks": false,
+      "texts": [
+        "",
+        ""
+      ]
+    },
+    {
+      "body": "----- Đoạn 1/2 -----\n\n----- Đoạn 2/2 -----",
+      "mark_chunks": true,
+      "texts": [
+        "",
+        ""
+      ]
+    }
+  ],
+  "count_models": {
+    "counts": [
+      [
+        "gemini-3.5-transcribe",
+        2
+      ],
+      [
+        "gemini-3.5-flash-lite",
+        3
+      ]
+    ],
+    "default_model": "gemini-3.5-flash-lite",
+    "models": [
+      "gemini-3.5-transcribe",
+      null,
+      "gemini-3.5-flash-lite",
+      "gemini-3.5-transcribe",
+      ""
+    ]
+  },
+  "default_model": "gemini-3.5-flash-lite",
+  "has_speech": [
+    {
+      "has_speech": true,
+      "map": null
+    },
+    {
+      "has_speech": false,
+      "map": ""
+    },
+    {
+      "has_speech": true,
+      "map": "00:00.0 - 00:05.0 Giảng viên"
+    },
+    {
+      "has_speech": false,
+      "map": "không có gạch"
+    },
+    {
+      "has_speech": false,
+      "map": "a -b"
+    },
+    {
+      "has_speech": true,
+      "map": "x - y\nz"
+    }
+  ],
+  "headers": [
+    {
+      "duration": 5069.7,
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.5-flash-lite · Thời lượng: 1:24:30\n------------------------------------------------------------",
+      "models": [],
+      "path": "bai giang.m4a"
+    },
+    {
+      "duration": 4733.2,
+      "header": "Tệp video: bai giang.mp4\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.5-flash-lite · Thời lượng: 1:18:53\n------------------------------------------------------------",
+      "models": [
+        [
+          "gemini-3.5-flash-lite",
+          5
+        ]
+      ],
+      "path": "bai giang.mp4"
+    },
+    {
+      "duration": 600.0,
+      "header": "Tệp video: Bài giảng.MKV\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.5-transcribe (1 đoạn), gemini-3.5-flash-lite (4 đoạn) · Thời lượng: 0:10:00\n------------------------------------------------------------",
+      "models": [
+        [
+          "gemini-3.5-transcribe",
+          1
+        ],
+        [
+          "gemini-3.5-flash-lite",
+          4
+        ]
+      ],
+      "path": "Bài giảng.MKV"
+    },
+    {
+      "duration": 0.4,
+      "header": "Tệp âm thanh: noext\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.5-flash · Thời lượng: 0:00:00\n------------------------------------------------------------",
+      "models": [
+        [
+          "gemini-3.5-flash",
+          2
+        ]
+      ],
+      "path": "noext"
+    }
+  ],
+  "hms": [
+    {
+      "hms": "0:00:00",
+      "sec": 0
+    },
+    {
+      "hms": "0:00:00",
+      "sec": 0.4
+    },
+    {
+      "hms": "0:00:00",
+      "sec": 0.5
+    },
+    {
+      "hms": "0:00:02",
+      "sec": 1.5
+    },
+    {
+      "hms": "0:00:02",
+      "sec": 2.5
+    },
+    {
+      "hms": "0:01:00",
+      "sec": 59.5
+    },
+    {
+      "hms": "0:01:00",
+      "sec": 60
+    },
+    {
+      "hms": "1:00:00",
+      "sec": 3599.5
+    },
+    {
+      "hms": "1:00:00",
+      "sec": 3600
+    },
+    {
+      "hms": "1:24:30",
+      "sec": 5069.7
+    },
+    {
+      "hms": "2:02:02",
+      "sec": 7322.49
+    },
+    {
+      "hms": "24:00:00",
+      "sec": 86399.5
+    }
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_pipeline.py"
+  },
+  "now": "2026-11-12T21:04:05"
+}

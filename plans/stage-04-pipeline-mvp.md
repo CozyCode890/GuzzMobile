@@ -1,6 +1,6 @@
 # Stage 4 — Pipeline + hàng đợi nền + UI tối thiểu (MVP)
 
-**Trạng thái:** 📝 đã plan chi tiết 2026-11-11 · **Cần xong trước:** 2, 3
+**Trạng thái:** 🔨 đang làm (từ 2026-11-11; plan chi tiết 2026-11-11) · **Cần xong trước:** 2, 3
 
 ## Mục tiêu
 
@@ -150,11 +150,11 @@ thật, hỏi trước) → G. Từ D trở đi bước nào cũng thử ngay tr
 
 ### A. Khung
 
-- [ ] **A1. Module** `:core:pipeline` (JVM) và `:feature:queue` (Android library) như "Mặc định kỹ thuật"; `:app` phụ
+- [x] **A1. Module** `:core:pipeline` (JVM) và `:feature:queue` (Android library) như "Mặc định kỹ thuật"; `:app` phụ
   thuộc `:feature:queue`. `FakeGemini` và harness MockWebServer của `:core:gemini` chuyển sang `testFixtures`.
   **Kiểm:** `.\gradlew projects` có hai module mới; `.\gradlew assembleSideloadDebug test lint` xanh; `:core:gemini`
   vẫn đủ 857 ca.
-- [ ] **A2. Cài đặt** (mục "Mặc định kỹ thuật") vào `SettingKeys`, chặn như `load_config`; `PipelineConfig.load(settings)`
+- [x] **A2. Cài đặt** (mục "Mặc định kỹ thuật") vào `SettingKeys`, chặn như `load_config`; `PipelineConfig.load(settings)`
   đọc lại mỗi tệp như desktop.
   **Kiểm:** `DesktopDefaultsTest` xanh với mục mới; mục `sameAsDesktop = false` có lý do trong KDoc.
 - [ ] **A3. Manifest:** quyền `FOREGROUND_SERVICE*`, `POST_NOTIFICATIONS`, `WAKE_LOCK` chuyển từ manifest debug sang
@@ -167,32 +167,32 @@ thật, hỏi trước) → G. Từ D trở đi bước nào cũng thử ngay tr
 Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầu vào dựng sẵn (giờ cố định), ghi
 `testdata/golden/pipeline/*.json`.
 
-- [ ] **B1. Mã băm cache:** `pyHash` (port `_hash`), `fingerprint`, tên thư mục tạm (`temp_dir_for`), `audioHash`, khoá
+- [x] **B1. Mã băm cache:** `pyHash` (port `_hash`), `fingerprint`, tên thư mục tạm (`temp_dir_for`), `audioHash`, khoá
   chung của kết quả đoạn (`shared_key` nhánh không người nói).
   **Kiểm:** golden: chuỗi JSON và mã trùng desktop trên ma trận đầu vào (chữ có dấu, số thực `10.0` / `1e-05` / `-16.0`,
   bool, `None`, tuple / list lồng); đổi một tham số âm thanh thì mã đổi.
-- [ ] **B2. Tên tệp và nội dung:** `outputFilename` (biến mới và tên cũ `{ten}` `{ngay_ghi}` `{ngay}` `{gio}`),
+- [x] **B2. Tên tệp và nội dung:** `outputFilename` (biến mới và tên cũ `{ten}` `{ngay_ghi}` `{ngay}` `{gio}`),
   `sanitizeFilename`, `uniqueName` (trên tập tên có sẵn, kiểu `unique_path`), `encodeText` (crlf / lf, utf-8 /
   utf-8-sig, như `write_text`).
   **Kiểm:** golden trên ma trận mẫu tên × tên nguồn (ký tự cấm, dấu chấm cuối, tên rỗng) × giờ cố định; bytes ghi ra trùng
   desktop.
-- [ ] **B3. Ghép:** `hms`, `formatHeader`, `assembleTranscript` (nhánh không người nói), `countModels`, `hasSpeech`.
+- [x] **B3. Ghép:** `hms`, `formatHeader`, `assembleTranscript` (nhánh không người nói), `countModels`, `hasSpeech`.
   **Kiểm:** golden: phần đầu (âm thanh / video, một / nhiều model) và thân (đánh dấu đoạn bật / tắt, đoạn rỗng bị bỏ) trùng
   desktop từng ký tự.
 
 ### C. Pipeline một tệp và hàng đợi (`:core:pipeline`, JVM)
 
-- [ ] **C1. Chuẩn bị đoạn có cache:** khoá `ma` trong `ChunkList`; `readChunkList(folder, digest)` như desktop (sai mã hoặc
+- [x] **C1. Chuẩn bị đoạn có cache:** khoá `ma` trong `ChunkList`; `readChunkList(folder, digest)` như desktop (sai mã hoặc
   thiếu tệp đoạn → `null`); có thì dùng lại, không thì gọi `ChunkSource`; xong thì xoá `goc.pcm` / `sach.pcm` (D66).
   **Kiểm:** test JVM: chạy hai lần cùng tham số → lần hai không gọi `ChunkSource`; đổi `chunk_minutes` hoặc xoá một
   `doan_*.flac` → làm lại; golden Stage 2 (`ChunkPreparerTest`, `ChunkerGoldenTest`) vẫn xanh.
-- [ ] **C2. `transcribeChunks`** (nhánh không người nói): đọc / ghi `doan_NNN.<mã>.json`, một `ChunkDispatcher` mỗi tệp,
+- [x] **C2. `transcribeChunks`** (nhánh không người nói): đọc / ghi `doan_NNN.<mã>.json`, một `ChunkDispatcher` mỗi tệp,
   prompt (`DefaultPrompt.text` cho model đa năng, `null` cho `*-transcribe`), bản chép lời rỗng thì thử model khác
   (`initialSkip`), không cache kết quả rỗng, log từng đoạn như desktop, thêm một dòng "dùng lại kết quả đã có" để kiểm
   được việc không gửi lại.
   **Kiểm:** test JVM với `FakeGemini`: đoạn đã có kết quả thì không gọi lại; port
   `test_empty_transcript_retries_with_another_model`, `test_empty_result_is_not_cached`.
-- [ ] **C3. `FilePipeline`** (port `transcribe_single_file`): kiểm key, ràng buộc model, người nói trước khi xử lý âm
+- [x] **C3. `FilePipeline`** (port `transcribe_single_file`): kiểm key, ràng buộc model, người nói trước khi xử lý âm
   thanh; trùng tên mà `on_conflict = skip` thì bỏ qua; không có luồng âm thanh + `skip_silent` thì bỏ qua (Phát sinh
   Stage 2); tiến độ như `ProgressTracker` (âm thanh 0–0,15, chép lời 0,15–0,98, ghép tới 1); ghi qua `OutputFolder`; xong
   thì xoá thư mục tạm nếu `delete_temp_when_done`; trả `FileResult`.
@@ -201,7 +201,7 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   `test_output_dir_and_template`, `test_resume_after_error_does_not_resend_done_chunks`); 9 ca `TestAutoSwitchModel`
   (2 ca dùng `method = gemini` chỉ để chuỗi còn một model thì đổi thành tắt tự đổi model, ghi trong KDoc); 2 ca
   `TestReplayRealLog` qua `GeminiClient` thật + MockWebServer. Tiến độ tăng dần và kết thúc ở 1,0.
-- [ ] **C4. Hàng đợi:** `QueueItem` (nguồn, tên hiển thị, thời lượng, trạng thái `cho` / `dang_chay` / `xong` / `loi` /
+- [x] **C4. Hàng đợi:** `QueueItem` (nguồn, tên hiển thị, thời lượng, trạng thái `cho` / `dang_chay` / `xong` / `loi` /
   `dung` / `bo_qua`, tiến độ, chi tiết, kết quả, lỗi và loại lỗi), `QueueStore` (D63; tiến độ ghi thưa, khi đổi bước
   hoặc đoạn), `QueueRunner` (port `TranscribeThread.run` và phần kiểm trước của `_start`: chưa có key, ràng buộc, mọi
   model khoá quá `max_all_locked_wait_min` thì không bắt đầu; lần lượt từng tệp (D60), thêm tệp lúc đang chạy được; lỗi
@@ -282,6 +282,21 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   chọn Recommended (D59–D68). Chuyển đi: lưu cạnh tệp nguồn → Phát sinh Stage 6; `save_extracted` (D68), chỉ gửi qua
   Wi-Fi → Phát sinh Stage 8; đo tốc độ bản release → Phát sinh Stage 9 (người dùng không muốn bước đo riêng); thư mục tạm
   không còn PCM (D66) → Phát sinh Stage 5.
+- **2026-11-12, A–C.** Xong A1, A2, B1–B3, C1–C4 trên PC: `:core:pipeline` 38 ca (9 golden, 16 ca port từ
+  `test_transcribe.py`, 4 ca cache / dừng, 9 ca hàng đợi), cả repo `test assembleSideloadDebug lint` xanh. Khác kế
+  hoạch / desktop:
+  - A1: `:core:gemini` đếm được 859 ca (kế hoạch ghi 857), không mất ca nào khi chuyển `FakeGemini`, `ClientHarness`,
+    `TestSupport` sang `testFixtures`.
+  - B2: mẫu tên tệp chỉ nhận `{biến}`, `{{`, `}}`; `{name!r}`, `{name:>12}`, `{name[0]}`, `{name.upper}` desktop nhận
+    (cái cuối còn ra địa chỉ bộ nhớ) còn mobile coi là mẫu sai. So tên trùng không phân biệt hoa thường (Windows và bộ
+    nhớ dùng chung của Android đều vậy).
+  - C1: chữ ký video trong mã âm thanh là `["track", <[VIDEO] audio_track>]` thay vì luồng đã chọn: chọn luồng phải mở tệp,
+    mà luồng chọn ra tất định theo tệp + cài đặt. `goc.pcm` / `sach.pcm` bị xoá cả khi dừng / lỗi giữa bước âm thanh
+    (D66 chỉ nói "cắt đoạn xong"): lần chạy lại không có danh sách đoạn thì giải mã lại từ đầu, PCM cũ vô dụng.
+  - C3: thêm `PipelineException` (mẫu tên sai, bật người nói, thư mục lưu hỏng; có `stopQueue`) và `NoAudioTrackException`
+    (JVM, thay cho `NoAudioException` của `:core:media`).
+  - C4: thêm `StartProblem` (kiểm trước khi bắt đầu như `_start`), `prepareStop(resumeLater)` cho `onTimeout` (D64);
+    tệp hàng đợi hỏng đổi tên thành `.hong` để xem lại.
 
 ## Phát sinh
 

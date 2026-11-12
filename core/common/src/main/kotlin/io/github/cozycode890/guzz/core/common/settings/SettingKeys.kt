@@ -7,7 +7,43 @@ package io.github.cozycode890.guzz.core.common.settings
  * và vào [all].
  */
 object SettingKeys {
+    // [OUTPUT] (Stage 4), chặn như load_config.
+
+    /**
+     * URI cây SAF của thư mục lưu bản chép lời (D59); rỗng = chưa chọn, app hỏi lúc bấm Bắt đầu. Desktop: rỗng = cạnh
+     * tệp nguồn, đường dẫn thường; mobile lưu cạnh tệp nguồn ở Stage 6, nên giá trị không chuyển qua lại được.
+     */
+    val OUTPUT_DIR = StringSetting("OUTPUT", "output_dir", default = "", sameAsDesktop = false, clean = String::trim)
+    val FILENAME_TEMPLATE = StringSetting(
+        "OUTPUT", "filename_template", default = "{name}", clean = { it.trim().ifEmpty { "{name}" } },
+    )
+
+    /** Như load_config: chữ thường, rỗng thì `.txt`, thiếu dấu chấm thì thêm. */
+    val EXTENSION = StringSetting(
+        "OUTPUT", "extension", default = ".txt",
+        clean = { v -> v.trim().lowercase().ifEmpty { ".txt" }.let { if (it.startsWith(".")) it else ".$it" } },
+    )
+    val ON_CONFLICT = ChoiceSetting(
+        "OUTPUT", "on_conflict", default = "number", choices = listOf("number", "overwrite", "skip"),
+    )
+    val ENCODING = ChoiceSetting("OUTPUT", "encoding", default = "utf-8", choices = listOf("utf-8", "utf-8-sig"))
+    val NEWLINE = ChoiceSetting("OUTPUT", "newline", default = "crlf", choices = listOf("crlf", "lf"))
+    val ADD_HEADER = BoolSetting("OUTPUT", "add_header", default = false)
+    val MARK_CHUNKS = BoolSetting("OUTPUT", "mark_chunks", default = false)
+
+    // [QUEUE] (Stage 4)
+    val ON_FILE_ERROR = ChoiceSetting(
+        "QUEUE", "on_file_error", default = "continue", choices = listOf("continue", "stop"),
+    )
+    val NOTIFY_WHEN_DONE = BoolSetting("QUEUE", "notify_when_done", default = true)
+
     // [SYSTEM]
+
+    /**
+     * Xoá thư mục tạm của tệp đã xong (D66). `config.default.txt` của desktop đặt `false` (dataclass mới mặc định
+     * `true`); điện thoại ít chỗ trống hơn PC và bài 2 giờ chiếm khoảng 200 MB tạm, nên mobile mặc định xoá.
+     */
+    val DELETE_TEMP_WHEN_DONE = BoolSetting("SYSTEM", "delete_temp_when_done", default = true, sameAsDesktop = false)
     val LOG_LEVEL = ChoiceSetting(
         "SYSTEM", "log_level", default = "INFO", choices = listOf("INFO", "DEBUG"), case = ChoiceSetting.Case.UPPER,
     )
@@ -28,6 +64,9 @@ object SettingKeys {
     // [VIDEO] (Stage 2). `extract_first`, `extract_format` của desktop không có trên mobile (D47): bài nào cũng được giải
     // mã một lần ra PCM tạm. Giá trị lạ của audio_track không làm hỏng gì: chọn luồng lùi về luồng đầu như desktop.
     val AUDIO_TRACK = StringSetting("VIDEO", "audio_track", default = "auto")
+
+    /** Video không có luồng âm thanh nào: bỏ qua tệp (true) hay báo lỗi (Stage 4, Phát sinh Stage 2). */
+    val SKIP_SILENT = BoolSetting("VIDEO", "skip_silent", default = true)
 
     // [CHUNKING] (Stage 2). Desktop báo lỗi khi chunk_minutes ≤ 0; mobile không được làm app chết vì cài đặt, nên kẹp.
     val CHUNK_MINUTES = DoubleSetting("CHUNKING", "chunk_minutes", default = 10.0, min = 0.1)
@@ -89,6 +128,17 @@ object SettingKeys {
     )
 
     val all: List<SettingKey<*>> = listOf(
+        OUTPUT_DIR,
+        FILENAME_TEMPLATE,
+        EXTENSION,
+        ON_CONFLICT,
+        ENCODING,
+        NEWLINE,
+        ADD_HEADER,
+        MARK_CHUNKS,
+        ON_FILE_ERROR,
+        NOTIFY_WHEN_DONE,
+        DELETE_TEMP_WHEN_DONE,
         LOG_LEVEL,
         LOG_SIZE_MB,
         OLD_LOG_COUNT,
@@ -98,6 +148,7 @@ object SettingKeys {
         SILENCE_THRESH_OFFSET,
         KEEP_SILENCE,
         AUDIO_TRACK,
+        SKIP_SILENT,
         CHUNK_MINUTES,
         SEARCH_SECONDS,
         MIN_LAST_CHUNK_SECONDS,

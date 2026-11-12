@@ -91,15 +91,20 @@ class DoubleSetting(
     override fun toConfigText(value: Double) = formatPythonG(value)
 }
 
+/**
+ * Chuỗi tự do. [clean] làm việc của `load_config` với mục đó (vd `.strip()`, rỗng thì lấy mặc định); mặc định giữ
+ * nguyên.
+ */
 class StringSetting(
     section: String,
     key: String,
     default: String,
     sameAsDesktop: Boolean = true,
+    private val clean: (String) -> String = { it },
 ) : SettingKey<String>(section, key, default, sameAsDesktop) {
     override val preferencesKey = stringPreferencesKey(id)
 
-    override fun sanitize(value: String) = value
+    override fun sanitize(value: String) = clean(value)
 
     override fun toConfigText(value: String) = value
 }
