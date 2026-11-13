@@ -123,17 +123,17 @@ adb uninstall io.github.cozycode890.guzz.debug.test
 
 # Máy ảo guzz_15t giống Xiaomi 15T (Stage 4, D70): tạo nếu chưa có, khởi động, cài APK debug, miễn tối ưu pin (D69),
 # đẩy tệp thử từ D:\GuzzMobileData\stage-04. Rồi đặt ANDROID_SERIAL như script in ra và dùng các script dưới đây.
-.	ools\device\emulator.ps1 -Push B1_1m.m4a,L1_20m.m4a
+.\tools\device\emulator.ps1 -Push B1_1m.m4a,L1_20m.m4a
 $env:ANDROID_SERIAL = 'emulator-5556'
 
 # Hàng đợi thật qua adb (Stage 4, bản debug): Gemini giả (không gọi mạng), thêm tệp ở files/input, chạy, chờ xong
-.	ools\device\queue_debug.ps1 -Fake on
-.	ools\device\queue_debug.ps1 -Add L1_20m.m4a -ChunkDelayMin 1 -Start -ScreenOff -Wait
-.	ools\device\queue_debug.ps1 -Stop ; .	ools\device\queue_debug.ps1 -Kill ; .	ools\device\queue_debug.ps1 -Status
+.\tools\device\queue_debug.ps1 -Fake on
+.\tools\device\queue_debug.ps1 -Add L1_20m.m4a -ChunkDelayMin 1 -Start -ScreenOff -Wait
+.\tools\device\queue_debug.ps1 -Stop ; .\tools\device\queue_debug.ps1 -Kill ; .\tools\device\queue_debug.ps1 -Status
 
 # Test và golden của pipeline (Stage 4)
 .\gradlew :core:pipeline:test
-D:\Guzzuntime\python\python.exe -B -s tools\golden\gen_pipeline.py
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_pipeline.py
 
 # Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
 $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i
