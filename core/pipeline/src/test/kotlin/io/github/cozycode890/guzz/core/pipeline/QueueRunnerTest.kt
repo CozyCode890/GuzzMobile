@@ -223,4 +223,20 @@ class QueueRunnerTest {
         env.cfg = env.cfg.copy(gemini = env.cfg.gemini.copy(diarizationEnabled = true, diarizationMethod = "pyannote"))
         assertIs<StartProblem.Constraint>(runBlocking { r.checkStart() })
     }
+
+    @Test
+    fun `bỏ mục cũ của cùng tệp thì không xoá thư mục tạm bản thêm lại đang dùng`() {
+        val env = Env(cfg = testConfig().copy(deleteTempWhenDone = false), client = FakeClient { _, _ -> text("x") })
+        val r = runner(env)
+        val old = r.add(listOf(item("a.wav"))).single()
+        runBlocking { r.run() }
+        val again = r.add(listOf(item("a.wav"))).single()
+        r.store.updateItem(again.id) { it.copy(status = ItemStatus.RUNNING, tempDir = r.state.value.items[0].tempDir) }
+        val temp = File(r.state.value.items[0].tempDir!!)
+        r.clearFinished()
+        assertTrue(temp.isDirectory)
+        assertEquals(listOf(again.id), r.state.value.items.map { it.id })
+        assertNull(r.remove(again.id)) // đang chạy: không bỏ được
+        assertTrue(old.id != again.id)
+    }
 }

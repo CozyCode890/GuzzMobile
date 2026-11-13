@@ -24,12 +24,16 @@ import java.io.File
  *
  * - `add`: `path` là tên tệp trong `files/input/` (adb push vào đó) hoặc đường dẫn tuyệt đối; `delay_min`: chờ giữa
  *   các đoạn (D67).
- * - `start`, `stop`, `clear` (bỏ mọi tệp không chạy), `status` (ghi `files/debug-queue/trang_thai.json`).
+ * - `start` (chỉ được khi app đã được miễn tối ưu pin, D69: Android 12+ không cho app ở nền khởi động foreground
+ *   service), `stop`, `clear` (bỏ mọi tệp không chạy), `status` (ghi `files/debug-queue/trang_thai.json`).
  * - `fake` với `--es value on|off`: Gemini giả (không gọi mạng).
  *
  * Lệnh nào cũng ghi lại `trang_thai.json` khi xong.
  */
 class QueueDebugReceiver : BroadcastReceiver() {
+    // encodeDefaults: ghi cả trạng thái "cho", running = false… để script đọc được.
+    private val statusJson = Json { encodeDefaults = true }
+
     override fun onReceive(context: Context, intent: Intent) {
         val app = context.applicationContext as GuzzApp
         val container = app.container
@@ -50,7 +54,15 @@ class QueueDebugReceiver : BroadcastReceiver() {
                         if (problem != null) {
                             GuzzLog.warning("Lệnh adb: không bắt đầu được: ${problem.message}")
                         } else {
-                            queue.start()
+                            try {
+                                queue.start()
+                            } catch (e: IllegalStateException) {
+                                // ForegroundServiceStartNotAllowedException (Android 12+) là IllegalStateException.
+                                GuzzLog.warning(
+                                    "Lệnh adb: Android không cho khởi động service từ nền (${e.javaClass.simpleName}). " +
+                                        "Miễn tối ưu pin cho Guzz (D69) rồi chạy lại.",
+                                )
+                            }
                         }
                     }
                     "stop" -> queue.stop()
@@ -79,7 +91,7 @@ class QueueDebugReceiver : BroadcastReceiver() {
             put("dang_chay_vong", active)
             put("gemini_gia", fake)
             put("pid", Process.myPid())
-            put("hang_doi", Json.encodeToJsonElement(QueueState.serializer(), state))
+            put("hang_doi", statusJson.encodeToJsonElement(QueueState.serializer(), state))
         }
         val tmp = File(dir, "trang_thai.json.tmp")
         tmp.writeText(json.toString(), Charsets.UTF_8)

@@ -102,6 +102,8 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D66 | 2026-11-11 | Dọn thư mục tạm (Stage 4) | **Cắt đoạn xong xoá PCM; tệp xong xoá thư mục tạm; tệp lỗi / dừng giữ tới khi bỏ khỏi danh sách** | Bài 2 giờ còn khoảng 200 MB tạm thay vì 660 MB; khác `config.default.txt` desktop (giữ tạm). |
 | D67 | 2026-11-11 | Tiêu chí service sống ≥ 60 phút khi B5 chỉ chạy 10–15 phút (Stage 4) | **Bản debug: lệnh adb có tham số chờ giữa các đoạn** | Vẫn 6 yêu cầu; mỗi lần gửi sau quãng chờ thử luôn mạng trong Doze. |
 | D68 | 2026-11-11 | `[VIDEO] save_extracted` (Stage 4) | **Để Stage 8** | Cần công tắc trên giao diện và một bài video gửi thật để thử. |
+| D69 | 2026-11-12 | Receiver ở nền không được khởi động FGS (Stage 4) | **Người dùng tự miễn tối ưu pin cho bản debug** (`deviceidle whitelist`) | "No restrictions" của HyperOS không đủ; MacroDroid (Stage 6) cũng cần. |
+| D70 | 2026-11-13 | Thử D–E của Stage 4 ở đâu | **Máy ảo `guzz_15t`** (API 36, 1280×2772, 520 dpi, RAM 4 GB); điện thoại thật chỉ ở đợt thử cuối | Đỡ phải nối adb với điện thoại; cùng bản Android. HyperOS chỉ thử được trên máy thật. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

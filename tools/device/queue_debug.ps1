@@ -66,7 +66,8 @@ if ($Add) {
     Send @('--es', 'cmd', 'add', '--es', 'path', $Add, '--ef', 'delay_min', [string]$ChunkDelayMin)
 }
 if ($Start) {
-    adb shell input keyevent KEYCODE_WAKEUP | Out-Null
+    # Android 12+ chỉ cho receiver ở nền khởi động foreground service khi app đã được miễn tối ưu pin (D69):
+    #   adb shell dumpsys deviceidle whitelist +io.github.cozycode890.guzz.debug
     Send @('--es', 'cmd', 'start')
 }
 if ($Stop) { Send @('--es', 'cmd', 'stop') }

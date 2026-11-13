@@ -7,12 +7,12 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 4, đã plan chi tiết ngày 2026-11-11 (D59–D68), chưa làm. Stage 3 xong ngày 2026-11-11, Stage 2
-xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** làm Stage 4 (MVP: pipeline + hàng đợi nền) theo mục "Kế hoạch chi tiết" của
-[stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md), bắt đầu từ A1. Bước A–C chạy hết trên PC; D–E thử trên máy
-bằng Gemini giả của bản debug; chỉ bước F gửi thật (D65: B5 + B4, tổng ≤ 15 yêu cầu). Gửi bất cứ thứ gì lên Google thì
-hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
+**Stage hiện tại:** Stage 4, đang làm (plan chi tiết 2026-11-11, D59–D70). Stage 3 xong ngày 2026-11-11, Stage 2 xong
+ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** Stage 4: A–C xong (PC), D–E đã viết, D2 đạt trên điện thoại. Thử tiếp D3 và E trên máy ảo `guzz_15t`
+(D70, `tools/device/emulator.ps1`), rồi đợt thử cuối trên Xiaomi 15T gồm F (gửi thật B5 + B4, tổng ≤ 15 yêu cầu, D65).
+Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
+[stage-01-results.md](plans/stage-01-results.md).
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -120,6 +120,20 @@ adb uninstall io.github.cozycode890.guzz.debug.test
 # màn hình chính); thư mục bài là kết quả của audio_debug.ps1. Kết quả: files/debug-gemini/*.json
 .\tools\device\gemini_debug.ps1 -ListModels
 .\tools\device\gemini_debug.ps1 -Folder <bài> -Model gemini-3.5-transcribe -Mode words   # smart|verbatim|words|diarize
+
+# Máy ảo guzz_15t giống Xiaomi 15T (Stage 4, D70): tạo nếu chưa có, khởi động, cài APK debug, miễn tối ưu pin (D69),
+# đẩy tệp thử từ D:\GuzzMobileData\stage-04. Rồi đặt ANDROID_SERIAL như script in ra và dùng các script dưới đây.
+.	ools\device\emulator.ps1 -Push B1_1m.m4a,L1_20m.m4a
+$env:ANDROID_SERIAL = 'emulator-5556'
+
+# Hàng đợi thật qua adb (Stage 4, bản debug): Gemini giả (không gọi mạng), thêm tệp ở files/input, chạy, chờ xong
+.	ools\device\queue_debug.ps1 -Fake on
+.	ools\device\queue_debug.ps1 -Add L1_20m.m4a -ChunkDelayMin 1 -Start -ScreenOff -Wait
+.	ools\device\queue_debug.ps1 -Stop ; .	ools\device\queue_debug.ps1 -Kill ; .	ools\device\queue_debug.ps1 -Status
+
+# Test và golden của pipeline (Stage 4)
+.\gradlew :core:pipeline:test
+D:\Guzzuntime\python\python.exe -B -s tools\golden\gen_pipeline.py
 
 # Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
 $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i

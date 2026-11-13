@@ -64,7 +64,8 @@ tạm → D66; chạy ≥ 60 phút → D67; `save_extracted` → D68.
 
 ## Quyết định
 
-Hỏi người dùng ngày 2026-11-11. Người dùng chọn phương án Recommended ở cả 10 câu. Mã số đánh tiếp bảng ở
+Hỏi người dùng ngày 2026-11-11. Người dùng chọn phương án Recommended ở cả 10 câu. D69–D70 hỏi thêm lúc làm (2026-11-12,
+2026-11-13), cũng chọn Recommended. Mã số đánh tiếp bảng ở
 [README §2](README.md#2-quyết-định-đã-chốt).
 
 | # | Câu hỏi | Chọn | Lý do |
@@ -79,6 +80,8 @@ Hỏi người dùng ngày 2026-11-11. Người dùng chọn phương án Recomm
 | D66 | Dọn thư mục tạm | **Cắt đoạn xong thì xoá ngay `goc.pcm` / `sach.pcm`; tệp xong thì xoá cả thư mục tạm; tệp lỗi / đã dừng giữ để làm tiếp, xoá khi bỏ khỏi danh sách** (`SYSTEM.delete_temp_when_done` mặc định `true`) | Bài 2 giờ chiếm khoảng 200 MB thay vì 660 MB trong lúc gửi; Stage 4 không cần PCM nữa. Câu hỏi ghi "như desktop", nhưng `config.default.txt` của desktop đặt `delete_temp_when_done = false` (dataclass mới mặc định `true`): mobile chọn xoá, đánh `sameAsDesktop = false`. Stage 5 cần âm thanh cho tách giọng thì tự quyết lại. |
 | D67 | Tiêu chí service sống liền ≥ 60 phút (Stage 1, D42) trong khi B5 chỉ chạy 10–15 phút | **Bản debug: lệnh adb thêm tệp có tham số chờ giữa các đoạn** (khoảng 10 phút), không phải cài đặt | Vẫn 6 yêu cầu mà service sống ≥ 60 phút; mỗi lần gửi sau một quãng chờ thử luôn mạng trong Doze. |
 | D68 | `[VIDEO] save_extracted` (D47 để cho stage này) | **Để Stage 8** | Cần công tắc trên giao diện, và thử trên máy cần gửi thêm một bài video. Vì D66 xoá `goc.pcm` sớm, Stage 8 phải mã hoá ra FLAC ngay sau khi cắt đoạn (hoặc giải mã lại). |
+| D69 | Android 12+ không cho receiver ở nền khởi động foreground service khi app chưa được miễn tối ưu pin ("No restrictions" của HyperOS không đưa app vào danh sách `deviceidle whitelist`) | **Người dùng tự miễn tối ưu pin cho bản debug** (`adb shell dumpsys deviceidle whitelist +io.github.cozycode890.guzz.debug`, hoàn tác `… -io.github.cozycode890.guzz.debug`); lệnh `start` của adb giữ qua receiver | Thử được lúc máy khoá và `START_STICKY` đúng điều kiện thật; MacroDroid (Stage 6) cũng cần bước này → Phát sinh Stage 6. |
+| D70 | Thử D–E trên đâu | **Máy ảo `guzz_15t`** (Android 16 / API 36, `google_apis` x86_64, 1280×2772, 520 dpi, RAM 4 GB, như Xiaomi 15T); điện thoại thật chỉ ở đợt thử cuối (F và các mục chỉ máy thật mới kiểm được) | Thử trên điện thoại bất tiện (phải nối adb, mang máy theo); máy ảo cùng bản Android nên hạn chế FGS và `onTimeout` sát thật. HyperOS (giết app nền, tắt wake lock) chỉ kiểm được trên máy thật. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -146,7 +149,13 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. Po
 assemble_transcript`). Test port từ desktop giữ tên ca kiểm tra để đối chiếu. Log giữ câu của desktop (viết có dấu).
 
 Thứ tự: A → B, C (JVM, chạy hết trên PC) → D (service, lệnh adb, thử trên máy bằng Gemini giả) → E (giao diện) → F (gửi
-thật, hỏi trước) → G. Từ D trở đi bước nào cũng thử ngay trên Xiaomi 15T, không có bước đo riêng.
+thật, hỏi trước) → G. D, E thử trên máy ảo `guzz_15t` (D70); F và các mục cần HyperOS thử trên Xiaomi 15T. Không có bước
+đo riêng.
+
+**Máy ảo (D70):** `tools/device/emulator.ps1` tạo AVD `guzz_15t` (lần đầu), khởi động, cài APK debug, miễn tối ưu pin
+(D69, máy ảo nên script tự chạy), đẩy tệp thử vào `files/input/`. Các script `queue_debug.ps1`, `audio_debug.ps1` dùng
+`$env:ANDROID_SERIAL = 'emulator-5556'` (cổng do script in ra). AVD `itc_test` có sẵn trên PC là của dự án khác: không
+đụng.
 
 ### A. Khung
 
@@ -225,7 +234,7 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   `-Start`, `-Stop`, `-Status`, `-Kill`, `-ScreenOff`, `-Fake`, `-Wait` (chờ hàng đợi xong rồi in trạng thái).
   **Kiểm:** Gemini giả bật: `-Add <tệp ngắn> -Start -Wait` → `files/output/<tên>.txt` có đủ "Đoạn i."; log không có lần
   gọi HTTP nào tới Google.
-- [ ] **D3. Thử chạy nền trên máy** (Gemini giả, chờ giữa đoạn vài chục giây cho đủ lâu):
+- [ ] **D3. Thử chạy nền trên máy ảo** (D70; Gemini giả, chờ giữa đoạn vài chục giây cho đủ lâu):
   1. `-ScreenOff`: chạy hết một bài 20 phút với màn hình tắt;
   2. `-Stop` lúc ở đoạn 2, `-Start` lại → đoạn 1 dùng lại kết quả;
   3. `-Kill` lúc ở đoạn 2 (`am kill`; không giết được process có FGS thì `kill -9` qua `run-as`) → xem service có tự lên
@@ -234,9 +243,10 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
      `L1_120m` (vẫn đang xử lý âm thanh ở phút thứ 2) → nhật ký có `onTimeout`, service dừng ≤ 1 s, `adb logcat -d -b
      crash` trống; mở app thì làm tiếp; hoàn tác bằng `device_config delete …`.
 
-  **Kiểm:** đủ 4 mục trên, log xác nhận; ghi Nhật ký `START_STICKY` có lên lại FGS được không.
+  **Kiểm:** đủ 4 mục trên, log xác nhận; ghi Nhật ký `START_STICKY` có lên lại FGS được không. Mục 1 và 3 làm lại trên
+  Xiaomi 15T ở F (HyperOS giết app / tắt wake lock khác máy ảo).
 
-### E. Giao diện (Compose, vi / en) — thử bằng Gemini giả
+### E. Giao diện (Compose, vi / en) — thử bằng Gemini giả trên máy ảo (D70)
 
 - [ ] **E1. Màn hình Hàng đợi** là màn hình chính: thêm tệp (`OpenMultipleDocuments`, quyền URI bền), danh sách (tên, thời
   lượng, trạng thái + chi tiết bước / đoạn / model, thanh tiến độ), Bắt đầu / Dừng, menu từng dòng (Xem, Mở bằng app
@@ -297,6 +307,16 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
     (JVM, thay cho `NoAudioException` của `:core:media`).
   - C4: thêm `StartProblem` (kiểm trước khi bắt đầu như `_start`), `prepareStop(resumeLater)` cho `onTimeout` (D64);
     tệp hàng đợi hỏng đổi tên thành `.hong` để xem lại.
+- **2026-11-12, thử trên Xiaomi 15T.** D2 đạt: `-Fake on`, `-Add B1_1m.m4a -Start -Wait` → `files/output/B1_1m.txt` là
+  "Đoạn 1.", log có "Gemini GIẢ", không dòng HTTP nào, thư mục tạm bị xoá. Gặp: `ForegroundServiceStartNotAllowedException`
+  khi receiver khởi động service (app chưa miễn tối ưu pin) → D69; `trang_thai.json` thiếu giá trị mặc định → ghi bằng
+  `encodeDefaults`. D3.1 (bài `L1_20m.m4a` cắt từ `L1_120m.m4a`, đặt ở `D:\GuzzMobileData\stage-04`) chạy được tới phần
+  giải mã lúc tắt màn hình thì người dùng phải ra ngoài; chuyển adb sang Wi-Fi 5555 (Tailscale trên điện thoại đang
+  tắt). Người dùng chọn thử D–E trên máy ảo (D70).
+- **2026-11-13, review.** Workflow review code D–E (6 hướng, mỗi phát hiện 3 người kiểm phản bác) chỉ chạy xong một phần
+  vì hết hạn mức 5 giờ. Một lỗi được cả 3 xác nhận: thư mục tạm chỉ theo nguồn, nên `remove()` / `clearFinished()` một
+  mục cũ (xong / lỗi) của cùng tệp xoá thư mục của bản đang chạy lại → sửa ở bước D1. Chạy lại review đủ 6 hướng khi có
+  hạn mức.
 - **2026-11-12, D–E (chưa thử trên máy).** Đã viết `QueueController`, `QueueService`, `AndroidChunkSource`,
   `SafOutputFolder`, `FakeTranscriber`, receiver adb + `tools/device/queue_debug.ps1`, màn hình Hàng đợi và màn hình xem
   (commit `6d3824b`); build + lint xanh cả hai flavor. Chưa tick D1–E3: điện thoại không nối được adb, người dùng dừng
@@ -305,6 +325,9 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   `ACCESS_NETWORK_STATE` cho nhịp log.
 
 ## Phát sinh
+
+- (2026-11-13) Chạy lại workflow review code D–E đủ 6 hướng (service, trạng thái hàng đợi, pipeline, SAF, giao diện,
+  công cụ debug); lần đầu bị cắt vì hết hạn mức. Làm trước bước G.
 
 - (Từ Stage 1, 2026-11-10) Hai phép thử chạy nền của Stage 1 chuyển sang đây, làm trên foreground service thật (D42):
   - **Chạy dài** (G4 cũ): màn hình tắt suốt lúc chạy, nhật ký ghi nhịp liền ≥ 60 phút, không hở quá 2 phút, service không

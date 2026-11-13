@@ -80,6 +80,11 @@ _(viết ở session của stage này)_
 
 ## Phát sinh
 
+- (Từ Stage 4, 2026-11-12, D69) Android 12+ không cho receiver ở nền khởi động foreground service khi app chưa được
+  miễn tối ưu pin; trên Xiaomi 15T, "No restrictions" của HyperOS không đưa app vào `deviceidle whitelist`
+  (`ForegroundServiceStartNotAllowedException`). Hướng dẫn cài đặt cho MacroDroid phải có bước "Tối ưu pin → Không tối
+  ưu" (hoặc nút xin `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` ở bản sideload), và receiver nên báo lỗi rõ khi bị chặn.
+
 - (Từ Stage 1, 2026-11-10) Phép thử MacroDroid của Stage 1 chuyển sang đây, rút gọn (D42). Thử trên receiver thật của
   Guzz, hoặc trên app spike (`spikes/android`) nếu muốn biết trước khi viết code:
   - tạo macro theo `spikes/README.md`, mục "Macro MacroDroid" (đổi tên package / class sang của Guzz);

@@ -76,8 +76,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val container = (application as GuzzApp).container
-        // D64: hàng đợi bị giết khi đang chạy dở thì mở app là làm tiếp.
-        container.queueController.resumeIfNeeded()
+        // D64: hàng đợi bị giết khi đang chạy dở thì mở app là làm tiếp. Chỉ lần tạo đầu, không phải mỗi lần xoay màn hình.
+        if (savedInstanceState == null) container.queueController.resumeIfNeeded()
         setContent {
             GuzzTheme {
                 QueueScreen(container)

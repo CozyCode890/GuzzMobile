@@ -202,8 +202,18 @@ class QueueRunner(
             removed = s.items.firstOrNull { it.id == id && it.status != ItemStatus.RUNNING }
             s.copy(items = s.items.filter { it !== removed })
         }
-        removed?.tempDir?.let { File(it).deleteRecursively() }
+        removed?.let(::deleteTempIfUnused)
         return removed
+    }
+
+    /**
+     * Thư mục tạm chỉ theo tệp nguồn, nên mục cũ (xong / lỗi) và mục thêm lại của cùng tệp dùng chung: còn mục nào trong
+     * danh sách dùng nó (vd đang chạy lại) thì không xoá.
+     */
+    private fun deleteTempIfUnused(item: QueueItem) {
+        val dir = item.tempDir ?: return
+        if (state.value.items.any { it.tempDir == dir || it.source == item.source }) return
+        File(dir).deleteRecursively()
     }
 
     /** Bỏ các tệp đã xong / bỏ qua. Trả về các mục đã bỏ. */
@@ -213,7 +223,7 @@ class QueueRunner(
             removed = s.items.filter { it.status == ItemStatus.DONE || it.status == ItemStatus.SKIPPED }
             s.copy(items = s.items - removed.toSet())
         }
-        removed.forEach { item -> item.tempDir?.let { File(it).deleteRecursively() } }
+        removed.forEach(::deleteTempIfUnused)
         return removed
     }
 
