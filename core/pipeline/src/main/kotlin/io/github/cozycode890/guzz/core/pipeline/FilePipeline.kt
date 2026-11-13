@@ -20,6 +20,7 @@ import io.github.cozycode890.guzz.core.gemini.isTranscribeModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -85,6 +86,7 @@ class FilePipeline(
      * khác (đọc tệp, giải mã…).
      *
      * @param chunkDelaySec chỉ bản debug (D67): chờ chừng đó giây trước mỗi đoạn phải gửi, trừ đoạn đầu.
+     * @param cacheSalt chỉ bản debug: khác rỗng khi dùng Gemini giả, để kết quả đoạn giả nằm dưới mã khác ([CacheKeys.sharedKey]).
      */
     suspend fun run(
         source: ChunkSource,
@@ -92,6 +94,7 @@ class FilePipeline(
         cfg: PipelineConfig,
         client: ChunkTranscriber?,
         chunkDelaySec: Double = 0.0,
+        cacheSalt: String = "",
         onProgress: (FileProgress) -> Unit = {},
     ): FileResult {
         val progress = ProgressTracker(onProgress)
@@ -149,7 +152,9 @@ class FilePipeline(
         currentCoroutineContext().ensureActive()
 
         // ---- (2) chép lời ----
-        val results = transcribeChunks(cfg.gemini, folder, chunkList.chunks, client, audioKey, chunkDelaySec, progress)
+        val results = transcribeChunks(
+            cfg.gemini, folder, chunkList.chunks, client, audioKey, chunkDelaySec, progress, cacheSalt,
+        )
         val models = Transcript.countModels(results, cfg.gemini.model)
         if (models.size > 1) {
             logger.info("Các model đã chép lời tệp này: " + models.entries.joinToString(", ") { "${it.key} ${it.value} đoạn" })
@@ -166,13 +171,16 @@ class FilePipeline(
         }
         if (body.isEmpty()) logger.warning("Bản chép lời không có chữ nào.")
         val bytes = OutputNaming.encodeText(content + if (content.isNotEmpty()) "\n" else "", cfg.encoding, cfg.newline)
-        val location = withContext(io) {
+        // Đã tới bước ghi thì làm cho xong (NonCancellable): bị Dừng giữa lúc ghi mà ném CancellationException thì tệp
+        // đã ghi nhưng mục bị coi là dừng, chạy lại sẽ ra thêm bản "(2)".
+        val location = withContext(io + NonCancellable) {
             val names = output.listNames()
             val name = if (cfg.onConflict == PipelineConfig.CONFLICT_NUMBER) OutputNaming.uniqueName(outName, names) else outName
-            name to output.write(name, bytes, overwrite = names.any { it.equals(name, ignoreCase = true) })
+            val written = name to output.write(name, bytes, overwrite = names.any { it.equals(name, ignoreCase = true) })
+            logger.info("HOÀN THÀNH: ${written.second}")
+            if (cfg.deleteTempWhenDone) folder.deleteRecursively()
+            written
         }
-        logger.info("HOÀN THÀNH: ${location.second}")
-        if (cfg.deleteTempWhenDone) withContext(io) { folder.deleteRecursively() }
         progress(Stage.MERGE, 1.0)
         return FileResult(
             outFile = location.second, outName = location.first, chunkCount = chunkList.chunks.size,
@@ -238,10 +246,11 @@ class FilePipeline(
         audioKey: String,
         chunkDelaySec: Double = 0.0,
         progress: ProgressTracker = ProgressTracker {},
+        cacheSalt: String = "",
     ): List<ChunkResult> {
         val dispatcher = ChunkDispatcher(cfg, client, sleep, logger)
         fun promptFor(model: String): String? = if (isTranscribeModel(model)) null else DefaultPrompt.text
-        val sharedKey = CacheKeys.sharedKey(audioKey, promptFor(cfg.model), cfg)
+        val sharedKey = CacheKeys.sharedKey(audioKey, promptFor(cfg.model), cfg, cacheSalt)
         val results = ArrayList<ChunkResult>()
         val total = chunks.size
         var sent = 0
@@ -312,7 +321,9 @@ class FilePipeline(
             }
             val result = ChunkResult(text, model = model)
             // Không nhớ kết quả rỗng của đoạn có tiếng nói: nhớ thì chạy lại cũng bỏ qua đoạn đó vĩnh viễn.
-            if (text.isNotEmpty()) withContext(io) { ChunkCache.writeResult(resultFile, result) }
+            // NonCancellable: Google đã trả lời (và đã tính vào hạn mức); bị Dừng lúc client đang xoá tệp tải lên thì vẫn
+            // phải lưu, không thì chạy lại sẽ gửi lại đoạn này.
+            if (text.isNotEmpty()) withContext(io + NonCancellable) { ChunkCache.writeResult(resultFile, result) }
             results += result
 
             val tokens = client.lastTokenCount

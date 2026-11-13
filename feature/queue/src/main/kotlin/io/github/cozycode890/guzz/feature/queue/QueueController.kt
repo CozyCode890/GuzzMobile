@@ -44,6 +44,7 @@ class QueueController(
     private val tracker: () -> QuotaTracker,
     private val clientFactory: (PipelineConfig) -> ChunkTranscriber?,
     private val fallbackOutput: File? = null,
+    private val cacheSalt: () -> String = { "" },
     private val logger: Logger = GuzzLog,
 ) {
     /** Gốc thư mục tạm (mục "Mặc định kỹ thuật"): không phải `cacheDir`, hệ thống không tự xoá; `adb pull` xem được. */
@@ -61,6 +62,7 @@ class QueueController(
             fallbackOutput != null -> DirectoryOutputFolder(fallbackOutput)
             else -> throw PipelineException("Chưa chọn thư mục lưu bản chép lời.", stopQueue = true)
         }
+        override fun cacheSalt() = this@QueueController.cacheSalt()
     }
 
     private val runner = QueueRunner(QueueStore(File(context.filesDir, "queue/${QueueStore.FILENAME}"), logger), env, pipeline, logger)
@@ -93,6 +95,10 @@ class QueueController(
                 QueueItem(source = uri.toString(), displayName = info.displayName, mimeType = info.mimeType, durationSec = duration(uri.toString()))
             } catch (e: Exception) {
                 logger.warning("Không thêm được $uri: ${e.message}")
+                // Không thêm được thì trả quyền vừa giữ, kẻo quyền bền tích lại mãi.
+                runCatching {
+                    context.contentResolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
                 null
             }
         }

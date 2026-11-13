@@ -80,6 +80,8 @@ class AppContainer(appContext: Context) {
             },
             // Bản debug: chưa chọn thư mục SAF thì lệnh adb ghi vào files/output (D2).
             fallbackOutput = if (BuildConfig.DEBUG) File(context.getExternalFilesDir(null) ?: context.filesDir, "output") else null,
+            // Kết quả đoạn của Gemini giả lưu dưới mã riêng: tắt giả rồi chạy thật thì không dùng lại "Đoạn i." giả.
+            cacheSalt = { if (fakeGeminiEnabled()) "gemini_gia" else "" },
         )
     }
 

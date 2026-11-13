@@ -24,6 +24,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+# adb in UTF-8: đọc đúng chữ có dấu trong trạng thái và log.
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
 $pkg = 'io.github.cozycode890.guzz.debug'
 $files = "/sdcard/Android/data/$pkg/files"
 $receiver = "$pkg/io.github.cozycode890.guzz.debug.QueueDebugReceiver"
@@ -63,7 +65,10 @@ function Show-Status($s) {
 if ($Fake) { Send @('--es', 'cmd', 'fake', '--es', 'value', $Fake) }
 if ($Clear) { Send @('--es', 'cmd', 'clear') }
 if ($Add) {
-    Send @('--es', 'cmd', 'add', '--es', 'path', $Add, '--ef', 'delay_min', [string]$ChunkDelayMin)
+    # Lệnh chạy qua shell của máy: bọc tên tệp trong nháy đơn để dấu cách / ký tự đặc biệt không tách tham số.
+    $quoted = "'" + ($Add -replace "'", "'\''") + "'"
+    $delay = $ChunkDelayMin.ToString([Globalization.CultureInfo]::InvariantCulture)
+    Send @('--es', 'cmd', 'add', '--es', 'path', $quoted, '--ef', 'delay_min', $delay)
 }
 if ($Start) {
     # Android 12+ chỉ cho receiver ở nền khởi động foreground service khi app đã được miễn tối ưu pin (D69):
@@ -94,7 +99,11 @@ if ($Wait) {
         if ($s) {
             $run = $s.hang_doi.items | Where-Object { $_.status -eq 'dang_chay' } | Select-Object -First 1
             if ($run) { Write-Host ("[{0:HH:mm:ss}] {1} {2:P0} {3}" -f (Get-Date), $run.displayName, $run.progress, $run.stage) }
-            if (-not $s.dang_chay_vong -and -not $s.hang_doi.running) { break }
+            if (-not $s.dang_chay_vong) {
+                # Cờ đang chạy còn bật mà không có vòng chạy: bị hệ thống dừng (onTimeout), chờ mở app để làm tiếp.
+                if ($s.hang_doi.running) { Write-Host 'Hàng đợi tạm ngưng (hệ thống dừng), mở app để làm tiếp.' }
+                break
+            }
         }
         if (((Get-Date) - $t0).TotalMinutes -gt $TimeoutMin) { throw "Quá $TimeoutMin phút" }
     }

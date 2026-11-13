@@ -341,6 +341,23 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
     Anh.
   - Lúc thử, một app của dự án khác (`itruyenchu`) bị cài vào `guzz_15t` khi `itc_test` tắt: đã gỡ, bật lại `itc_test` ở
     cổng 5554. Máy ảo của Guzz luôn ở cổng 5556.
+- **2026-11-13, review lần 2.** Chạy lại workflow review: đủ 6 hướng review, nhưng phần kiểm phản bác lại hết hạn mức ở
+  4 hướng (service, trạng thái, SAF, debug), nên tự đánh giá các phát hiện đó. Đã sửa (test `:core:pipeline` 41 ca,
+  `test assembleSideloadDebug assemblePlayDebug lint` xanh; CHƯA thử lại trên máy ảo):
+  - ghi kết quả đoạn và ghi bản chép lời trong `NonCancellable`: bấm Dừng lúc client đang xoá tệp tải lên không làm mất
+    kết quả đã trả tiền (chạy lại không gửi lại), Dừng lúc đang ghi tệp ra không sinh bản "(2)";
+  - kết quả của Gemini giả lưu dưới mã riêng (`cacheSalt`), tắt giả rồi chạy thật không dùng lại "Đoạn i." giả;
+  - không thêm lại tệp còn trong danh sách mà chưa xong (lỗi / đã dừng); lỗi `Throwable` không để tệp kẹt "đang chạy";
+    bấm Dừng ghi ngay cờ "không chạy";
+  - service: lệnh Bắt đầu tới instance mới khi vòng cũ chưa kết thúc vẫn gọi `startForeground`; `finish()` của vòng
+    cũ không tắt vòng mới; huỷ thông báo tiến độ sau khi dừng; Dừng tới service không chạy thì `stopSelf`;
+  - giao diện: không trả quyền thư mục lưu cũ (tệp đang chạy và bản chép lời đã ghi còn cần), dải báo đọc lại mỗi lần
+    quay về màn hình, `startAfterPick` sống qua lúc dựng lại màn hình, `FileProvider` lỗi không làm sập app; trả quyền
+    URI khi thêm tệp thất bại;
+  - debug: receiver chỉ nhận lệnh từ adb (`android.permission.DUMP`), `queue_debug.ps1` bọc tên tệp, `-Wait` dừng khi
+    hàng đợi tạm ngưng, in UTF-8.
+  Không sửa (ghi lại): ghi đè (`on_conflict = overwrite`) qua SAF cắt tệp cũ trước khi ghi, hỏng giữa chừng thì mất bản
+  cũ; mục bị bỏ đúng lúc vòng chạy vừa chọn nó vẫn được chạy.
 - **2026-11-13, review.** Workflow review code D–E (6 hướng, mỗi phát hiện 3 người kiểm phản bác) chỉ chạy xong một phần
   vì hết hạn mức 5 giờ. Một lỗi được cả 3 xác nhận: thư mục tạm chỉ theo nguồn, nên `remove()` / `clearFinished()` một
   mục cũ (xong / lỗi) của cùng tệp xoá thư mục của bản đang chạy lại → sửa ở bước D1. Chạy lại review đủ 6 hướng khi có

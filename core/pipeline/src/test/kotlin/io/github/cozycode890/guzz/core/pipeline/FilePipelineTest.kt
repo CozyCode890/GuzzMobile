@@ -159,9 +159,22 @@ class FilePipelineTest {
         }
         val client2 = FakeClient { i, _ -> text("sau $i") }
         val result = run(client2)
-        // Đoạn 1 đã lưu; đoạn 2 trả về lúc vừa bị huỷ vẫn được lưu hoặc gửi lại, không bao giờ gửi lại đoạn 1.
-        assertTrue(client2.calls.none { it.file == "doan_001.wav" })
+        // Đoạn 2 trả về đúng lúc bị huỷ (như Dừng lúc client đang xoá tệp tải lên): Google đã trả lời nên vẫn phải lưu,
+        // chạy lại không gửi lại đoạn 1 lẫn đoạn 2.
+        assertTrue(client2.calls.none { it.file == "doan_001.wav" || it.file == "doan_002.wav" })
         assertTrue(read(result.outFile!!).startsWith("lan 1"))
+    }
+
+    @Test
+    fun `kết quả của Gemini giả nằm dưới mã riêng, chạy thật không dùng lại`() {
+        cfg = cfg.copy(deleteTempWhenDone = false)
+        runBlocking { pipeline.run(source, out, cfg, FakeClient { i, _ -> text("giả $i") }, cacheSalt = "gemini_gia") }
+        val real = FakeClient { i, _ -> text("thật $i") }
+        val result = run(real)
+        assertEquals(result.chunkCount, real.calls.size)
+        assertTrue(read(result.outFile!!).startsWith("thật 1"))
+        // Mã khi không có salt vẫn đúng công thức của desktop (golden ở PipelineGoldenTest).
+        assertTrue(CacheKeys.sharedKey("k", null, cfg.gemini) != CacheKeys.sharedKey("k", null, cfg.gemini, "gemini_gia"))
     }
 
     // ---------------------------------------------------------------- TestAutoSwitchModel

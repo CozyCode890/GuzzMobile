@@ -137,6 +137,9 @@ interface QueueEnvironment {
 
     /** Thư mục lưu theo cài đặt; chưa chọn hoặc không dùng được thì ném [PipelineException] (dừng hàng đợi). */
     fun output(cfg: PipelineConfig, item: QueueItem): OutputFolder
+
+    /** Khác rỗng khi dùng Gemini giả (bản debug): kết quả đoạn giả lưu dưới mã riêng, không lẫn với kết quả thật. */
+    fun cacheSalt(): String = ""
 }
 
 /** Lý do không bắt đầu được hàng đợi. Port các bước kiểm của gui/pages/transcribe.py: `_start`. */
@@ -183,11 +186,15 @@ class QueueRunner(
         return s.running && s.items.any { it.status == ItemStatus.WAITING }
     }
 
-    /** Thêm tệp; tệp trùng nguồn với một tệp đang chờ / đang chạy thì bỏ qua. Trả về các mục đã thêm. */
+    /**
+     * Thêm tệp; tệp trùng nguồn với một mục chưa xong (chờ, đang chạy, lỗi, đã dừng) thì bỏ qua: mục đó Bắt đầu là chạy
+     * lại, thêm bản thứ hai thì cùng một tệp chạy hai lần (gửi lại mọi đoạn nếu bản đầu đã xoá thư mục tạm). Tệp đã xong
+     * thì thêm lại được.
+     */
     fun add(items: List<QueueItem>): List<QueueItem> {
         val added = ArrayList<QueueItem>()
         store.update { s ->
-            val pending = s.items.filter { it.status == ItemStatus.WAITING || it.status == ItemStatus.RUNNING }
+            val pending = s.items.filter { it.status.runnable || it.status == ItemStatus.RUNNING }
                 .mapTo(HashSet()) { it.source }
             for (item in items) if (pending.add(item.source)) added += item
             s.copy(items = s.items + added)
@@ -240,6 +247,8 @@ class QueueRunner(
     /** Đánh dấu cách dừng sắp tới: `true` = dừng vì hệ thống, giữ cờ đang chạy để làm tiếp (D64). Gọi trước khi huỷ. */
     fun prepareStop(resumeLater: Boolean) {
         resumeAfterStop = resumeLater
+        // Bấm Dừng: ghi ngay cờ "không chạy", để bị giết trước khi vòng chạy kịp ghi trạng thái thì cũng không tự chạy lại.
+        if (!resumeLater) store.update { it.copy(running = false) }
     }
 
     /** Đã bấm Dừng (hoặc chưa chạy): bỏ cờ đang chạy để không tự chạy lại. */
@@ -316,7 +325,7 @@ class QueueRunner(
                     val info = source.info()
                     store.updateItem(item.id) { it.copy(tempDir = pipeline.tempDirFor(info).path) }
                     val output = env.output(c, item)
-                    val result = pipeline.run(source, output, c, env.client(c), item.chunkDelaySec) { p ->
+                    val result = pipeline.run(source, output, c, env.client(c), item.chunkDelaySec, env.cacheSalt()) { p ->
                         onProgress(item.id, p)
                     }
                     store.updateItem(item.id) {
@@ -366,6 +375,11 @@ class QueueRunner(
                 store.updateItem(item.id) { it.copy(status = if (resume) ItemStatus.WAITING else ItemStatus.STOPPED) }
             }
             store.update { it.copy(running = resume) }
+            throw e
+        } catch (e: Throwable) {
+            // Lỗi không phải Exception (vd OutOfMemoryError): đừng để tệp kẹt ở "đang chạy" tới hết tiến trình.
+            current?.let { fail(it, "${e.javaClass.simpleName}: ${e.message}", "khac") }
+            store.update { it.copy(running = false) }
             throw e
         }
         store.update { it.copy(running = false) }

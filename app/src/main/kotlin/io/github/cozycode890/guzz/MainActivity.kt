@@ -69,6 +69,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.compose.runtime.saveable.rememberSaveable
 
 /** Màn hình chính (Stage 4, E1): Hàng đợi. */
 class MainActivity : ComponentActivity() {
@@ -78,10 +81,13 @@ class MainActivity : ComponentActivity() {
         val container = (application as GuzzApp).container
         setContent {
             GuzzTheme {
-                QueueScreen(container)
+                QueueScreen(container, resumes)
             }
         }
     }
+
+    /** Tăng mỗi lần màn hình hiện lại, để dải báo (key, tối ưu pin) đọc lại sau khi quay về từ trang khác. */
+    private val resumes = MutableStateFlow(0)
 
     /**
      * D64: hàng đợi bị giết / bị hệ thống dừng (`onTimeout`) khi đang chạy dở thì mở app là làm tiếp. Ở `onResume` chứ
@@ -90,6 +96,7 @@ class MainActivity : ComponentActivity() {
      */
     override fun onResume() {
         super.onResume()
+        resumes.value++
         (application as GuzzApp).container.queueController.resumeIfNeeded()
     }
 }
@@ -104,24 +111,26 @@ fun shareableUri(context: Context, location: String): Uri =
 
 /** Mở bản chép lời bằng app khác (D61). */
 fun openWithOtherApp(context: Context, location: String) {
-    val uri = shareableUri(context, location)
-    val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "text/plain")
-        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    runCatching { context.startActivity(Intent.createChooser(intent, null)) }
-        .onFailure { GuzzLog.warning("Không mở được $location bằng app khác: ${it.message}") }
+    runCatching {
+        val intent = Intent(Intent.ACTION_VIEW).setDataAndType(shareableUri(context, location), "text/plain")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        context.startActivity(Intent.createChooser(intent, null))
+    }.onFailure { GuzzLog.warning("Không mở được $location bằng app khác: ${it.message}") }
 }
 
 /** Chia sẻ tệp .txt (D62): `ACTION_SEND` kèm URI, cấp quyền đọc cho app nhận. */
 fun shareTranscript(context: Context, location: String, name: String?) {
-    val uri = shareableUri(context, location)
-    val intent = Intent(Intent.ACTION_SEND).setType("text/plain")
-        .putExtra(Intent.EXTRA_STREAM, uri)
-        .putExtra(Intent.EXTRA_TITLE, name)
-        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    // ClipData để quyền đọc đi theo cả qua màn hình chọn app.
-    intent.clipData = ClipData.newRawUri(name, uri)
-    runCatching { context.startActivity(Intent.createChooser(intent, null)) }
-        .onFailure { GuzzLog.warning("Không chia sẻ được $location: ${it.message}") }
+    runCatching {
+        // getUriForFile ném lỗi khi đường dẫn nằm ngoài thư mục đã khai cho FileProvider: bắt chung, không làm sập app.
+        val uri = shareableUri(context, location)
+        val intent = Intent(Intent.ACTION_SEND).setType("text/plain")
+            .putExtra(Intent.EXTRA_STREAM, uri)
+            .putExtra(Intent.EXTRA_TITLE, name)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        // ClipData để quyền đọc đi theo cả qua màn hình chọn app.
+        intent.clipData = ClipData.newRawUri(name, uri)
+        context.startActivity(Intent.createChooser(intent, null))
+    }.onFailure { GuzzLog.warning("Không chia sẻ được $location: ${it.message}") }
 }
 
 /** Gợi ý thư mục `Documents` cho trình chọn thư mục lưu (D59). */
@@ -130,7 +139,7 @@ private val DOCUMENTS_HINT: Uri = DocumentsContract.buildDocumentUri("com.androi
 private val SUGGESTED_MODELS = listOf("gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-3.5-transcribe")
 
 @Composable
-private fun QueueScreen(container: AppContainer) {
+private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val queue = container.queueController
@@ -142,13 +151,15 @@ private fun QueueScreen(container: AppContainer) {
     var hasKey by remember { mutableStateOf(true) }
     var message by remember { mutableStateOf<String?>(null) }
     var menuOpen by remember { mutableStateOf(false) }
-    var startAfterPick by remember { mutableStateOf(false) }
+    // Saveable: trình chọn thư mục / hộp xin quyền có thể làm màn hình này bị dựng lại.
+    var startAfterPick by rememberSaveable { mutableStateOf(false) }
+    val resumeTick by resumes.collectAsState()
     var refreshTick by remember { mutableStateOf(0) }
     val noKeyMessage = stringResource(R.string.queue_problem_no_key)
     val nothingMessage = stringResource(R.string.queue_problem_nothing)
     val invalidModelMessage = stringResource(R.string.google_ai_model_invalid)
 
-    LaunchedEffect(refreshTick) {
+    LaunchedEffect(refreshTick, resumeTick) {
         hasKey = withContext(Dispatchers.IO) { container.apiKeyStore.read() != null }
     }
 
@@ -170,13 +181,10 @@ private fun QueueScreen(container: AppContainer) {
         if (uri != null) {
             val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             runCatching { context.contentResolver.takePersistableUriPermission(uri, flags) }
-            val old = outputDir
+            // Không trả quyền thư mục cũ: tệp đang chạy và các bản chép lời đã ghi ở đó (Xem, Mở, Chia sẻ) vẫn cần nó.
             scope.launch {
                 container.settings.set(SettingKeys.OUTPUT_DIR, uri.toString())
                 GuzzLog.info("Chọn thư mục lưu bản chép lời: $uri")
-                if (!old.isNullOrBlank() && old != uri.toString()) {
-                    runCatching { context.contentResolver.releasePersistableUriPermission(Uri.parse(old), flags) }
-                }
                 if (startAfterPick) doStart()
                 startAfterPick = false
             }
@@ -253,7 +261,8 @@ private fun QueueScreen(container: AppContainer) {
                 }
             }
             val power = context.getSystemService(PowerManager::class.java)
-            if (!power.isIgnoringBatteryOptimizations(context.packageName)) {
+            val batteryExempt = remember(resumeTick) { power.isIgnoringBatteryOptimizations(context.packageName) }
+            if (!batteryExempt) {
                 Banner(stringResource(R.string.queue_banner_battery), stringResource(R.string.queue_open_app_info)) {
                     context.startActivity(
                         Intent(AndroidSettings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),

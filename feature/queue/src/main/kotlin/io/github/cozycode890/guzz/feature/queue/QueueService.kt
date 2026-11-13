@@ -62,9 +62,16 @@ class QueueService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
             controller.stop()
+            // Dừng gửi tới service không chạy (vd bấm nút trên thông báo cũ): không để service rỗng nằm lại.
+            if (!controller.active.value) stopSelf()
             return START_NOT_STICKY
         }
-        if (controller.active.value) return START_STICKY
+        if (controller.active.value) {
+            // Vòng chạy cũ chưa kịp kết thúc mà có lệnh Bắt đầu mới (instance service mới): startForegroundService bắt
+            // buộc gọi startForeground, không thì Android báo lỗi và giết app.
+            startInForeground(buildNotification(null))
+            return START_STICKY
+        }
         if (intent == null && !controller.shouldResume()) {
             // Hệ thống khởi động lại service nhưng không còn gì để làm.
             stopSelf()
@@ -91,10 +98,14 @@ class QueueService : Service() {
     }
 
     private fun finish(summary: QueueSummary?, error: Throwable?, notify: Boolean) {
+        if (notify) notifySummary(summary, error)
+        // Một vòng chạy mới đã bắt đầu trong lúc chờ tới đây: đừng tắt service và wake lock của nó.
+        if (controller.active.value) return
         watchers?.cancel()
         releaseWakeLock()
-        if (notify) notifySummary(summary, error)
         stopForeground(STOP_FOREGROUND_REMOVE)
+        // Luồng cập nhật thông báo có thể vừa đăng lại thông báo tiến độ ngay trước khi bị huỷ.
+        notificationManager().cancel(NOTIFICATION_ID)
         stopSelf()
     }
 
@@ -116,6 +127,7 @@ class QueueService : Service() {
         releaseWakeLock()
         notifyText(getString(R.string.queue_timeout_title), getString(R.string.queue_timeout_text))
         stopForeground(STOP_FOREGROUND_REMOVE)
+        notificationManager().cancel(NOTIFICATION_ID)
         stopSelf()
         GuzzLog.info("onTimeout: đã dừng service sau ${SystemClock.elapsedRealtime() - t0} ms.")
     }

@@ -51,9 +51,13 @@ object CacheKeys {
      * vẫn dùng lại được khi chạy tiếp.
      *
      * @param prompt prompt của model chính (`null` với model `*-transcribe`), như `prompt_for(cfg.model)`.
+     * @param salt thêm vào mã khi khác rỗng (chỉ mobile): Gemini giả của bản debug dùng mã riêng, để kết quả giả không bao
+     * giờ bị dùng lại khi gửi thật.
      */
-    fun sharedKey(audioKey: String, prompt: String?, cfg: GeminiConfig): String =
-        pyHash(audioKey, null, prompt, cfg.languages, cfg.vocabulary, cfg.transcribeMode, null, null)
+    fun sharedKey(audioKey: String, prompt: String?, cfg: GeminiConfig, salt: String = ""): String {
+        val key = pyHash(audioKey, null, prompt, cfg.languages, cfg.vocabulary, cfg.transcribeMode, null, null)
+        return if (salt.isEmpty()) key else pyHash(key, salt)
+    }
 
     /** `doan_003.flac` → `doan_003.<mã>.json`: kết quả chép lời của đoạn (không có bản đồ người nói: `map_text = None`). */
     fun resultFileName(chunkFile: String, sharedKey: String): String =

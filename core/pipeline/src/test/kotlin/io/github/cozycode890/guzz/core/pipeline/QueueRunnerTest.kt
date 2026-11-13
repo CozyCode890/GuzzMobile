@@ -239,4 +239,18 @@ class QueueRunnerTest {
         assertNull(r.remove(again.id)) // đang chạy: không bỏ được
         assertTrue(old.id != again.id)
     }
+
+    @Test
+    fun `thêm lại tệp còn lỗi hoặc đã dừng thì bỏ qua, tệp đã xong thì thêm được`() {
+        val env = Env(client = FakeClient { _, _ -> GoogleAIException("HTTP 500 lỗi tạm", ErrorKind.TEMPORARY, 500) })
+        val r = runner(env)
+        r.add(listOf(item("a.wav")))
+        runBlocking { r.run() }
+        assertEquals(listOf("a.wav" to ItemStatus.ERROR), r.status())
+        assertEquals(0, r.add(listOf(item("a.wav"))).size)
+        env.client = FakeClient { _, _ -> text("x") }
+        runBlocking { r.run() }
+        assertEquals(listOf("a.wav" to ItemStatus.DONE), r.status())
+        assertEquals(1, r.add(listOf(item("a.wav"))).size)
+    }
 }

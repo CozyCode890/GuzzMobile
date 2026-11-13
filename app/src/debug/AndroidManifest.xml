@@ -15,10 +15,12 @@
             android:name=".debug.AudioDebugStopReceiver"
             android:exported="true" />
 
-        <!-- Lệnh adb cho hàng đợi thật (Stage 4, D2), xem KDoc và tools/device/queue_debug.ps1. -->
+        <!-- Lệnh adb cho hàng đợi thật (Stage 4, D2), xem KDoc và tools/device/queue_debug.ps1. Chỉ người gửi có quyền
+             DUMP (adb shell có, app thường không xin được) mới gửi được: app khác trên máy không bật được việc gửi thật. -->
         <receiver
             android:name=".debug.QueueDebugReceiver"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="android.permission.DUMP" />
 
         <service
             android:name=".debug.AudioDebugService"
