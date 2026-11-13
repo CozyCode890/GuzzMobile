@@ -64,6 +64,9 @@ _(viết ở session của stage này)_
 
 ## Phát sinh
 
+- (Từ Stage 4, 2026-11-13) Tên bước xử lý âm thanh ("giải mã", "cắt lặng"…, từ `PrepareStep.label` / `AndroidChunkSource`)
+  và thông báo lỗi của pipeline / hàng đợi luôn tiếng Việt kể cả khi giao diện tiếng Anh: chuyển sang mã + `strings.xml`.
+
 - (Từ Stage 1, 2026-11-10) Đoạn gửi Gemini mặc định là FLAC (D41), 9,6 MB / 10 phút. Nếu muốn có tuỳ chọn "tiết kiệm dữ
   liệu di động": OGG-Opus 32 kbps chỉ 3 MB / 10 phút nhưng mã hoá mất 46 s (FLAC 4–6 s), và phải thử xem bản chép lời có
   kém đi không trước khi đưa ra (`spikes/formats/gemini_compare.py`, bước F3 cũ của Stage 1; gửi Gemini thì hỏi người

@@ -248,14 +248,14 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
 
 ### E. Giao diện (Compose, vi / en) — thử bằng Gemini giả trên máy ảo (D70)
 
-- [ ] **E1. Màn hình Hàng đợi** là màn hình chính: thêm tệp (`OpenMultipleDocuments`, quyền URI bền), danh sách (tên, thời
+- [x] **E1. Màn hình Hàng đợi** là màn hình chính: thêm tệp (`OpenMultipleDocuments`, quyền URI bền), danh sách (tên, thời
   lượng, trạng thái + chi tiết bước / đoạn / model, thanh tiến độ), Bắt đầu / Dừng, menu từng dòng (Xem, Mở bằng app
   khác, Chia sẻ, Chạy lại, Bỏ khỏi danh sách), Xoá tệp đã xong. Dải báo: chưa có key (nút sang trang Google AI), chưa
   chọn thư mục lưu, chưa miễn tối ưu pin (mở trang thông tin app), thiếu quyền thông báo (xin lúc bấm Bắt đầu lần đầu,
   API 33+). Trang Google AI và màn hình thử (debug) mở từ menu.
   **Kiểm:** trên máy: thêm 2 tệp bằng trình chọn tệp, Bắt đầu, thấy tiến độ từng đoạn; Dừng / Bắt đầu lại; Bỏ một tệp đã
   dừng thì thư mục tạm của nó bị xoá; vuốt app khỏi đa nhiệm rồi mở lại không mất danh sách.
-- [ ] **E2. Thư mục lưu và cài đặt nhanh:** chọn thư mục (`OpenDocumentTree`, gợi ý Documents; D59), model chính (danh
+- [x] **E2. Thư mục lưu và cài đặt nhanh:** chọn thư mục (`OpenDocumentTree`, gợi ý Documents; D59), model chính (danh
   sách như trang Google AI, nhập tay qua `isValidModelName`), cắt khoảng lặng. Chưa chọn thư mục mà bấm Bắt đầu thì mở
   trình chọn.
   **Kiểm:** trên máy: chọn `Documents/Guzz`; chạy cùng tệp hai lần → `<tên>.txt` và `<tên> (2).txt` thấy được trong app
@@ -326,6 +326,21 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
      Lỗi tìm ra: mở lại app khi màn hình chính còn trong ngăn xếp thì không tự làm tiếp (`resumeIfNeeded` chỉ ở
      `onCreate`) → chuyển sang `onResume`, thử lại đạt. Đã hoàn tác `device_config` (`get` trả `null`).
   Mục 1 và 3 làm lại trên Xiaomi 15T ở đợt thử cuối (HyperOS).
+- **2026-11-13, E trên máy ảo** (giao diện tiếng Anh vì máy ảo để locale en; Gemini giả). Đạt:
+  - E1: bỏ tệp đã dừng → thư mục tạm bị xoá; thêm 2 tệp bằng trình chọn tệp (`Download`, chọn nhiều), có thời lượng;
+    Bắt đầu → tiến độ từng bước; Dừng / Bắt đầu bằng nút; vuốt app khỏi đa nhiệm (tiến trình bị tắt) rồi mở lại → danh
+    sách còn nguyên.
+  - E2: chưa chọn thư mục mà bấm Bắt đầu → mở trình chọn ở `Documents`, tạo `Guzz`, cho phép → tự chạy; cùng tệp hai lần
+    → `L1_20m.txt`, `L1_20m (2).txt`, không thêm đuôi; xoá `Documents/Guzz` rồi Bắt đầu → tệp báo lỗi "Không mở được thư
+    mục lưu bản chép lời (…/Documents/Guzz): … Chọn lại thư mục lưu.", hàng đợi dừng, `logcat -b crash` trống; chip model
+    và công tắc cắt lặng đổi cài đặt.
+  - E3 (chưa tick): màn hình xem đọc đúng, chọn / chép chữ được; Mở bằng app khác → HTML Viewer đọc được URI SAF; Chia
+    sẻ → bảng chia sẻ hiện đúng tệp `L1_20m (2).txt`. Còn gửi hẳn sang Drive (máy ảo chưa đăng nhập Google) → đợt thử
+    trên Xiaomi 15T.
+  - Ghi nhận cho Stage 8: tên bước ("giải mã") và thông báo lỗi của pipeline luôn tiếng Việt kể cả khi giao diện tiếng
+    Anh.
+  - Lúc thử, một app của dự án khác (`itruyenchu`) bị cài vào `guzz_15t` khi `itc_test` tắt: đã gỡ, bật lại `itc_test` ở
+    cổng 5554. Máy ảo của Guzz luôn ở cổng 5556.
 - **2026-11-13, review.** Workflow review code D–E (6 hướng, mỗi phát hiện 3 người kiểm phản bác) chỉ chạy xong một phần
   vì hết hạn mức 5 giờ. Một lỗi được cả 3 xác nhận: thư mục tạm chỉ theo nguồn, nên `remove()` / `clearFinished()` một
   mục cũ (xong / lỗi) của cùng tệp xoá thư mục của bản đang chạy lại → sửa ở bước D1. Chạy lại review đủ 6 hướng khi có
