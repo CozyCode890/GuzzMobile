@@ -222,19 +222,19 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
 
 ### D. Service và lệnh adb (thử bằng Gemini giả, không gửi gì lên Google)
 
-- [ ] **D1. `QueueService` + `QueueController`** ở `:feature:queue`: bản Android của `ChunkSource` (bọc `AudioPreparation`,
+- [x] **D1. `QueueService` + `QueueController`** ở `:feature:queue`: bản Android của `ChunkSource` (bọc `AudioPreparation`,
   vân tay content:// qua `OpenableColumns.SIZE` / `COLUMN_LAST_MODIFIED`), FGS, wake lock, thông báo tiến độ + nút Dừng,
   thông báo tổng kết, nhịp log 60 s, báo đứng ở bước âm thanh, `onTimeout`, `START_STICKY` và tự chạy lại lúc mở app
   (D64). `AppContainer` dựng client Gemini mỗi tệp (`GeminiConfig.load` + `geminiClient()`), bản debug thay bằng Gemini
   giả khi bật.
   **Kiểm:** `.\gradlew assembleSideloadDebug lint` xanh; chạy thật ở D3.
-- [ ] **D2. Lệnh adb (chỉ bản debug):** receiver exported nhận `add` (tệp trong `files/input/` hoặc đường dẫn tuyệt đối;
+- [x] **D2. Lệnh adb (chỉ bản debug):** receiver exported nhận `add` (tệp trong `files/input/` hoặc đường dẫn tuyệt đối;
   tham số chờ giữa các đoạn của D67; ra thư mục SAF đã chọn hoặc `files/output/` của app), `start`, `stop`, `status` (ghi
   `files/debug-queue/trang_thai.json`), `fake on|off`. Script `tools/device/queue_debug.ps1`: `-Add`, `-ChunkDelayMin`,
   `-Start`, `-Stop`, `-Status`, `-Kill`, `-ScreenOff`, `-Fake`, `-Wait` (chờ hàng đợi xong rồi in trạng thái).
   **Kiểm:** Gemini giả bật: `-Add <tệp ngắn> -Start -Wait` → `files/output/<tên>.txt` có đủ "Đoạn i."; log không có lần
   gọi HTTP nào tới Google.
-- [ ] **D3. Thử chạy nền trên máy ảo** (D70; Gemini giả, chờ giữa đoạn vài chục giây cho đủ lâu):
+- [x] **D3. Thử chạy nền trên máy ảo** (D70; Gemini giả, chờ giữa đoạn vài chục giây cho đủ lâu):
   1. `-ScreenOff`: chạy hết một bài 20 phút với màn hình tắt;
   2. `-Stop` lúc ở đoạn 2, `-Start` lại → đoạn 1 dùng lại kết quả;
   3. `-Kill` lúc ở đoạn 2 (`am kill`; không giết được process có FGS thì `kill -9` qua `run-as`) → xem service có tự lên
@@ -313,6 +313,19 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   `encodeDefaults`. D3.1 (bài `L1_20m.m4a` cắt từ `L1_120m.m4a`, đặt ở `D:\GuzzMobileData\stage-04`) chạy được tới phần
   giải mã lúc tắt màn hình thì người dùng phải ra ngoài; chuyển adb sang Wi-Fi 5555 (Tailscale trên điện thoại đang
   tắt). Người dùng chọn thử D–E trên máy ảo (D70).
+- **2026-11-13, D3 trên máy ảo `guzz_15t`** (Gemini giả, `L1_20m.m4a`, chờ 1 phút giữa đoạn). Đạt cả 4 mục:
+  1. tắt màn hình suốt: xử lý âm thanh 173 s, 2 đoạn, nhịp log mỗi 60 s ("màn hình tắt"), bản chép lời "Đoạn 1. / Đoạn
+     2.", thư mục tạm bị xoá;
+  2. Dừng lúc chờ đoạn 2 rồi Bắt đầu: "Các đoạn âm thanh đã có sẵn", "Đoạn 1/2: dùng lại kết quả đã có", chỉ gửi đoạn
+     2;
+  3. `kill -9` lúc chờ đoạn 2: **`START_STICKY` lên lại FGS được** (app đã miễn tối ưu pin, D69) sau khoảng 3 s, log
+     "Hệ thống khởi động lại service hàng đợi (START_STICKY…)", đoạn 1 dùng lại. Thêm: `am force-stop` (không tự lên
+     lại) rồi mở app → "tự làm tiếp", đoạn 1 dùng lại;
+  4. `onTimeout` (`media_processing_fgs_timeout_duration` = 120000, bài `L1_120m.m4a`): ở phút thứ 2 có "FGS
+     (mediaProcessing) timed out", service dừng sau 16 ms, `logcat -b crash` trống, tệp về `cho`, cờ đang chạy giữ.
+     Lỗi tìm ra: mở lại app khi màn hình chính còn trong ngăn xếp thì không tự làm tiếp (`resumeIfNeeded` chỉ ở
+     `onCreate`) → chuyển sang `onResume`, thử lại đạt. Đã hoàn tác `device_config` (`get` trả `null`).
+  Mục 1 và 3 làm lại trên Xiaomi 15T ở đợt thử cuối (HyperOS).
 - **2026-11-13, review.** Workflow review code D–E (6 hướng, mỗi phát hiện 3 người kiểm phản bác) chỉ chạy xong một phần
   vì hết hạn mức 5 giờ. Một lỗi được cả 3 xác nhận: thư mục tạm chỉ theo nguồn, nên `remove()` / `clearFinished()` một
   mục cũ (xong / lỗi) của cùng tệp xoá thư mục của bản đang chạy lại → sửa ở bước D1. Chạy lại review đủ 6 hướng khi có

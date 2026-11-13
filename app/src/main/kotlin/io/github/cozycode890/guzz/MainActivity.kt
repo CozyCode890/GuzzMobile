@@ -76,13 +76,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val container = (application as GuzzApp).container
-        // D64: hàng đợi bị giết khi đang chạy dở thì mở app là làm tiếp. Chỉ lần tạo đầu, không phải mỗi lần xoay màn hình.
-        if (savedInstanceState == null) container.queueController.resumeIfNeeded()
         setContent {
             GuzzTheme {
                 QueueScreen(container)
             }
         }
+    }
+
+    /**
+     * D64: hàng đợi bị giết / bị hệ thống dừng (`onTimeout`) khi đang chạy dở thì mở app là làm tiếp. Ở `onResume` chứ
+     * không ở `onCreate`: sau `onTimeout` màn hình này thường vẫn còn, mở lại app chỉ gọi `onResume`. Gọi nhiều lần không
+     * sao: chỉ chạy khi cờ đang chạy còn bật và chưa có vòng chạy nào.
+     */
+    override fun onResume() {
+        super.onResume()
+        (application as GuzzApp).container.queueController.resumeIfNeeded()
     }
 }
 
