@@ -98,7 +98,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D62 | 2026-11-11 | Nút chia sẻ (Stage 4) | **Có, chia sẻ tệp .txt** | Gửi như tệp đính kèm; dán chữ thì chép ở màn hình xem. |
 | D63 | 2026-11-11 | Lưu hàng đợi (Stage 4) | **Tệp JSON**, thay cho Room | Danh sách nhỏ; logic ở module JVM test trên PC; không KSP / sinh mã. |
 | D64 | 2026-11-11 | Bị hệ thống giết giữa chừng (Stage 4) | **Tự làm tiếp** khi mở app và khi service được khởi động lại; đã bấm Dừng thì không | Bài chạy đêm vẫn xong; cache từng đoạn nên không gửi lại. |
-| D65 | 2026-11-11 | Gửi thật lên Gemini (Stage 4) | **B5 + B4, tổng ≤ 15 yêu cầu**, hỏi trước mỗi lần gửi | B5 cho chạy liền lúc tắt màn hình, B4 cho Dừng / giết app. |
+| D65 | 2026-11-11 | Gửi thật lên Gemini (Stage 4) | **B5 + B4, tổng ≤ 15 yêu cầu** (2026-11-14 nới lên ≤ 20: B5 ra 9 đoạn, B4 khoảng 8), hỏi trước mỗi lần gửi | B5 cho chạy liền lúc tắt màn hình, B4 cho Dừng / giết app. |
 | D66 | 2026-11-11 | Dọn thư mục tạm (Stage 4) | **Cắt đoạn xong xoá PCM; tệp xong xoá thư mục tạm; tệp lỗi / dừng giữ tới khi bỏ khỏi danh sách** | Bài 2 giờ còn khoảng 200 MB tạm thay vì 660 MB; khác `config.default.txt` desktop (giữ tạm). |
 | D67 | 2026-11-11 | Tiêu chí service sống ≥ 60 phút khi B5 chỉ chạy 10–15 phút (Stage 4) | **Bản debug: lệnh adb có tham số chờ giữa các đoạn** | Vẫn 6 yêu cầu; mỗi lần gửi sau quãng chờ thử luôn mạng trong Doze. |
 | D68 | 2026-11-11 | `[VIDEO] save_extracted` (Stage 4) | **Để Stage 8** | Cần công tắc trên giao diện và một bài video gửi thật để thử. |

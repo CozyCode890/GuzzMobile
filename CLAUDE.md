@@ -10,7 +10,7 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 **Stage hiện tại:** Stage 4, đang làm (plan chi tiết 2026-11-11, D59–D70). Stage 3 xong ngày 2026-11-11, Stage 2 xong
 ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
 **Việc tiếp theo:** Stage 4: A–C xong (PC), D–E đã viết, D2 đạt trên điện thoại. Thử tiếp D3 và E trên máy ảo `guzz_15t`
-(D70, `tools/device/emulator.ps1`), rồi đợt thử cuối trên Xiaomi 15T gồm F (gửi thật B5 + B4, tổng ≤ 15 yêu cầu, D65).
+(D70, `tools/device/emulator.ps1`), rồi đợt thử cuối trên Xiaomi 15T gồm F (gửi thật B5 + B4, tổng ≤ 20 yêu cầu, D65).
 Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
 [stage-01-results.md](plans/stage-01-results.md).
 

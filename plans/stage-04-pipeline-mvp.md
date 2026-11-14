@@ -48,13 +48,13 @@ không gửi lại các đoạn đã chép xong. Bản này chưa có nhận di�
 
 ## Tiêu chí hoàn thành
 
-- [ ] Test pipeline trên âm thanh tổng hợp với Gemini giả (16 ca port từ `test_transcribe.py`, bước C2–C3); golden B1–B3
+- [x] Test pipeline trên âm thanh tổng hợp với Gemini giả (16 ca port từ `test_transcribe.py`, bước C2–C3); golden B1–B3
   khớp desktop.
-- [ ] Chạy thật bài B5 (84,5 phút) trên máy thật, tắt màn hình suốt lúc chạy; service sống liền ≥ 60 phút (D67), nhịp
+- [x] Chạy thật bài B5 (84,5 phút) trên máy thật, tắt màn hình suốt lúc chạy; service sống liền ≥ 60 phút (D67), nhịp
   log không hở quá 2 phút, không bị giết.
-- [ ] Bấm Dừng giữa chừng rồi Bắt đầu lại: các đoạn đã chép không bị gửi lại (xem trong log).
-- [ ] Giết app giữa chừng: tự làm tiếp (D64), các đoạn đã chép không bị gửi lại.
-- [ ] `onTimeout` (Phát sinh từ Stage 1): service dừng trong ≤ 1 s, không crash, mở app thì làm tiếp.
+- [x] Bấm Dừng giữa chừng rồi Bắt đầu lại: các đoạn đã chép không bị gửi lại (xem trong log).
+- [x] Giết app giữa chừng: tự làm tiếp (D64), các đoạn đã chép không bị gửi lại.
+- [x] `onTimeout` (Phát sinh từ Stage 1): service dừng trong ≤ 1 s, không crash, mở app thì làm tiếp.
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -76,7 +76,7 @@ Hỏi người dùng ngày 2026-11-11. Người dùng chọn phương án Recomm
 | D62 | Nút chia sẻ | **Có, chia sẻ tệp .txt** (`ACTION_SEND` kèm URI) | Gửi Zalo / Drive / email như tệp đính kèm; muốn dán chữ thì chọn và chép ở màn hình xem. |
 | D63 | Lưu hàng đợi | **Tệp JSON** (`files/queue/hang_doi.json`, ghi `.tmp` rồi đổi tên), thay cho Room mà README dự kiến | Danh sách nhỏ (vài chục tệp); logic hàng đợi ở module JVM, test trên PC; không thêm KSP / sinh mã (cùng tinh thần D13, D52). |
 | D64 | Bị hệ thống giết giữa chừng | **Tự làm tiếp**: hàng đợi đang chạy dở thì tự chạy lại khi mở app và khi hệ thống khởi động lại service (`START_STICKY`, nếu Android cho); đã bấm Dừng thì không tự chạy | Bài chạy đêm bị giết thì sáng ra vẫn xong; cache từng đoạn nên không gửi lại. |
-| D65 | Gửi thật lên Gemini | **B5 + B4, tổng ≤ 15 yêu cầu**, model mặc định `gemini-3.5-flash-lite`; vẫn hỏi người dùng ngay trước mỗi lần gửi | B5 (84,5 phút, khoảng 6 đoạn) cho phép thử chạy liền lúc tắt màn hình; B4 (78,9 phút, khoảng 5 đoạn) cho Dừng / Bắt đầu lại và giết app. |
+| D65 | Gửi thật lên Gemini | **B5 + B4, tổng ≤ 15 yêu cầu** (2026-11-14 người dùng nới lên ≤ 20, xem Nhật ký F1), model mặc định `gemini-3.5-flash-lite`; vẫn hỏi người dùng ngay trước mỗi lần gửi | B5 (84,5 phút, khoảng 6 đoạn) cho phép thử chạy liền lúc tắt màn hình; B4 (78,9 phút, khoảng 5 đoạn) cho Dừng / Bắt đầu lại và giết app. |
 | D66 | Dọn thư mục tạm | **Cắt đoạn xong thì xoá ngay `goc.pcm` / `sach.pcm`; tệp xong thì xoá cả thư mục tạm; tệp lỗi / đã dừng giữ để làm tiếp, xoá khi bỏ khỏi danh sách** (`SYSTEM.delete_temp_when_done` mặc định `true`) | Bài 2 giờ chiếm khoảng 200 MB thay vì 660 MB trong lúc gửi; Stage 4 không cần PCM nữa. Câu hỏi ghi "như desktop", nhưng `config.default.txt` của desktop đặt `delete_temp_when_done = false` (dataclass mới mặc định `true`): mobile chọn xoá, đánh `sameAsDesktop = false`. Stage 5 cần âm thanh cho tách giọng thì tự quyết lại. |
 | D67 | Tiêu chí service sống liền ≥ 60 phút (Stage 1, D42) trong khi B5 chỉ chạy 10–15 phút | **Bản debug: lệnh adb thêm tệp có tham số chờ giữa các đoạn** (khoảng 10 phút), không phải cài đặt | Vẫn 6 yêu cầu mà service sống ≥ 60 phút; mỗi lần gửi sau một quãng chờ thử luôn mạng trong Doze. |
 | D68 | `[VIDEO] save_extracted` (D47 để cho stage này) | **Để Stage 8** | Cần công tắc trên giao diện, và thử trên máy cần gửi thêm một bài video. Vì D66 xoá `goc.pcm` sớm, Stage 8 phải mã hoá ra FLAC ngay sau khi cắt đoạn (hoặc giải mã lại). |
@@ -166,7 +166,7 @@ thật, hỏi trước) → G. D, E thử trên máy ảo `guzz_15t` (D70); F v�
 - [x] **A2. Cài đặt** (mục "Mặc định kỹ thuật") vào `SettingKeys`, chặn như `load_config`; `PipelineConfig.load(settings)`
   đọc lại mỗi tệp như desktop.
   **Kiểm:** `DesktopDefaultsTest` xanh với mục mới; mục `sameAsDesktop = false` có lý do trong KDoc.
-- [ ] **A3. Manifest:** quyền `FOREGROUND_SERVICE*`, `POST_NOTIFICATIONS`, `WAKE_LOCK` chuyển từ manifest debug sang
+- [x] **A3. Manifest:** quyền `FOREGROUND_SERVICE*`, `POST_NOTIFICATIONS`, `WAKE_LOCK` chuyển từ manifest debug sang
   manifest chính; khai báo `QueueService` (`mediaProcessing|dataSync`, không exported).
   **Kiểm:** manifest đã gộp của cả hai flavor có quyền + service; `.\gradlew lint` xanh; `audio_debug.ps1` chạy một tệp
   ngắn vẫn ra `ket_qua.json`.
@@ -271,10 +271,10 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   -ScreenOff` (D67), rút cáp / `adb disconnect` để máy vào Doze, chờ khoảng 75 phút, nối lại, kéo log.
   **Kiểm:** bản chép lời B5 trong thư mục đã chọn, đủ 6 đoạn có chữ; nhịp log liền ≥ 60 phút, không hở quá 2 phút; một
   PID suốt lúc chạy (service không bị giết); log ghi Doze / mạng ở các lần gửi; ≤ 7 yêu cầu Interactions.
-- [ ] **F2. B4, Dừng và giết app:** bấm Dừng trên thông báo lúc đang ở đoạn 2–3, Bắt đầu lại; rồi `-Kill` lúc đang ở đoạn
+- [x] **F2. B4, Dừng và giết app:** bấm Dừng trên thông báo lúc đang ở đoạn 2–3, Bắt đầu lại; rồi `-Kill` lúc đang ở đoạn
   4 → tự làm tiếp (D64).
   **Kiểm:** log: mỗi `doan_NNN` chỉ một lần gửi thành công, đoạn đã xong chỉ có dòng "dùng lại kết quả"; bản chép lời đủ
-  5 đoạn; thư mục tạm của B4 bị xoá khi xong (D66); tổng cả stage ≤ 15 yêu cầu (đếm trong log và sổ hạn mức).
+  đủ đoạn (khoảng 8 với đoạn 10 phút); thư mục tạm của B4 bị xoá khi xong (D66); tổng cả stage ≤ 20 yêu cầu (đếm trong log và sổ hạn mức).
 
 ### G. Đóng stage
 
@@ -347,13 +347,29 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   - D3.3 trên HyperOS: `kill -9` lúc chờ đoạn 2 → **HyperOS không khởi động lại service** (`START_STICKY`) trong 3 phút,
     khác máy ảo. Trạng thái giữ đúng (`cho`, cờ đang chạy); mở app → "Hàng đợi đang chạy dở lúc app bị tắt: tự làm
     tiếp", đoạn 1 dùng lại. D64 đạt nhờ đường mở app; hướng dẫn cài đặt (Stage 6) nên nói rõ điều này.
+- **2026-11-14, F2 (gửi thật B4) và A3.** Người dùng chọn nới mức D65 lên ≤ 20 rồi chạy B4, chờ 2 phút giữa các đoạn.
+  B4 (78,9 phút) sau cắt lặng còn 35:55, nên chỉ **4 đoạn** (kế hoạch ghi khoảng 5–8). Đạt:
+  - Dừng lúc chờ đoạn 3 → `dung`; Bắt đầu → "Các đoạn âm thanh đã có sẵn", đoạn 1–2 "dùng lại kết quả đã có, không
+    gửi lại", gửi đoạn 3;
+  - `-Kill` lúc chờ đoạn 4 → Guzz đang mở trên màn hình nên Android dựng lại `MainActivity` ngay, `onResume` → "Hàng đợi
+    đang chạy dở lúc app bị tắt: tự làm tiếp" (PID mới), đoạn 1–3 dùng lại, gửi đoạn 4, ra `B4.txt` (80 dòng);
+  - mỗi `doan_NNN` chỉ gửi thành công một lần; thư mục tạm `files/tmp` trống sau khi xong (D66);
+  - cả stage: sổ hạn mức ghi **13 yêu cầu** thành công + 1 lỗi 503 = 14 lần gọi, dưới cả mức 15 ban đầu.
+  Khác kế hoạch: cài lại app qua adb nên **chưa có quyền thông báo** (app chỉ xin quyền khi bấm Bắt đầu trên giao diện),
+  service vẫn chạy nhưng không có thông báo, nên lần Dừng của F2 đi qua lệnh adb `-Stop` (cùng `controller.stop()`).
+  Bù lại: cấp quyền (`pm grant … POST_NOTIFICATIONS`), chạy `L1_20m` bằng Gemini giả, mở thông báo trên HyperOS, bấm
+  "Stop" → "Người dùng bấm Dừng", mục `dung`, thông báo tiến độ biến mất. Ghi cho Stage 6: tệp thêm qua intent khi app
+  chưa có quyền thông báo thì chạy không có thông báo, hướng dẫn cài đặt nên có bước cấp quyền này.
+  A3 trên máy: `audio_debug.ps1 -Path B1_1m.m4a` ra `debug-audio/B1_1m/ket_qua.json` (1 đoạn, ×19,6); manifest đã gộp
+  của `sideloadDebug` và `playDebug` có đủ quyền và `QueueService`.
 - **2026-11-14, F1 (gửi thật B5).** Người dùng đồng ý gửi; `gemini-3.5-flash-lite`, chờ 10 phút giữa các đoạn, ra
   `files/output/B5.txt` (cài lại app nên chưa chọn thư mục SAF). Đạt: service chạy 17:26–18:54 (88 phút), một PID suốt
   (21631), nhịp log mỗi phút không hở lần nào, màn hình tắt liền 71 phút (17:38–18:49; người dùng bật màn hình lúc đầu
   và lúc cuối), 9/9 đoạn có chữ (43,5 kB), mạng có ở mọi nhịp. Khác kế hoạch:
   - B5 cắt thành **9 đoạn** chứ không phải 6: con số 6 lấy từ danh sách đoạn của Stage 1 (đoạn dài hơn), còn
     `chunk_minutes` mặc định là 10 như desktop. Số yêu cầu là **10** (9 đoạn + 1 lần thử lại vì HTTP 503 "high demand"
-    ở đoạn 6, client tự thử lại sau 32 s), vượt mức ≤ 7 của F1;
+    ở đoạn 6, client tự thử lại sau 32 s), vượt mức ≤ 7 của F1. B4 với đoạn 10 phút ra khoảng 8 đoạn, tổng sẽ khoảng
+    18 > 15: hỏi người dùng, chọn nới mức của D65 lên ≤ 20 (giữ cài đặt mặc định, không đổi `chunk_minutes`);
   - máy cắm sạc suốt lượt chạy (pin 12% lúc bắt đầu), nên **không vào Doze**: chưa kiểm được Gemini có gọi được trong
     Doze hay không. Ghi lại để thử khi có dịp (máy không sạc, màn hình tắt lâu);
   - bản chép lời có 36 chỗ "[không nghe rõ]", nhiều chỗ ở đầu dòng: đó là nội dung model trả về (bài giảng tiếng Anh lẫn

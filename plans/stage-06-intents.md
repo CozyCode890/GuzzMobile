@@ -85,6 +85,12 @@ _(viết ở session của stage này)_
   (`ForegroundServiceStartNotAllowedException`). Hướng dẫn cài đặt cho MacroDroid phải có bước "Tối ưu pin → Không tối
   ưu" (hoặc nút xin `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` ở bản sideload), và receiver nên báo lỗi rõ khi bị chặn.
 
+- (Từ Stage 4, 2026-11-14, F2) Trên Xiaomi 15T: (1) `kill -9` service lúc màn hình tắt thì HyperOS **không** khởi động
+  lại (`START_STICKY` không có tác dụng), hàng đợi chỉ làm tiếp khi mở app (D64); lệnh TRANSCRIBE tới sau đó cũng nên gọi
+  `resumeIfNeeded()`. (2) App chưa có quyền thông báo (cài qua adb, hoặc người dùng chưa bấm Bắt đầu lần nào) thì service
+  vẫn chạy nhưng không có thông báo, không có nút Dừng: hướng dẫn cài đặt cho MacroDroid cần bước cấp quyền thông báo, và
+  receiver nên ghi log khi thiếu quyền.
+
 - (Từ Stage 1, 2026-11-10) Phép thử MacroDroid của Stage 1 chuyển sang đây, rút gọn (D42). Thử trên receiver thật của
   Guzz, hoặc trên app spike (`spikes/android`) nếu muốn biết trước khi viết code:
   - tạo macro theo `spikes/README.md`, mục "Macro MacroDroid" (đổi tên package / class sang của Guzz);
