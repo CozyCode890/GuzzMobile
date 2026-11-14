@@ -275,6 +275,8 @@ def main() -> None:
     ap.add_argument("--piece-minutes", type=float, default=0, help="> 0: chia phần (B8)")
     ap.add_argument("--overlap-seconds", type=float, default=60)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--pieces-out", action="store_true",
+                    help="Chia phần: ghi thêm <out>.pieces.json (lượt + embedding từng phần) cho Stage 5 B2 / C3")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -316,6 +318,11 @@ def main() -> None:
                            "turns": [(s + off, e + off, l) for s, e, l in excl], "emb": emb})
             del samples
         segs, log = link_pieces(pieces, args.threshold)
+        if args.pieces_out:
+            c.write_json(out.with_suffix(".pieces.json"), [
+                {"a": p["a"], "b": p["b"], "turns": [[round(s, 3), round(e, 3), l] for s, e, l in p["turns"]],
+                 "emb": {str(l): (None if v is None else [float(x) for x in v]) for l, v in p["emb"].items()}}
+                for p in pieces])
     else:
         raw = diarize(sd, read_audio(audio_path), audio_path.name)
         ov_total, speech_total = overlap_seconds(raw)

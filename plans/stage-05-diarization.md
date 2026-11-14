@@ -1,6 +1,6 @@
 # Stage 5 — Tách giọng trên máy
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-14) · **Cần xong trước:** 4 (và kết quả Stage 1)
+**Trạng thái:** 🔨 đang làm (từ 2026-11-14) · **Cần xong trước:** 4 (và kết quả Stage 1)
 
 ## Mục tiêu
 
@@ -159,10 +159,10 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### C. `:core:speaker` (JVM, chạy hết trên PC)
 
-- [ ] **C1. Port `speaker.py`** đủ các hàm ở mục Phạm vi (kể cả `smooth`, `rename_speakers`, `speakers_in_chunk`,
+- [x] **C1. Port `speaker.py`** đủ các hàm ở mục Phạm vi (kể cả `smooth`, `rename_speakers`, `speakers_in_chunk`,
   `hh_mm_ss`) và 11 ca của `tests/test_speaker.py`.
   **Kiểm:** 11 ca port xanh, tên ca giữ như desktop.
-- [ ] **C2. Golden `speaker.py`:** `tools/golden/gen_speaker.py` sinh lượt nói tổng hợp (seed cố định: nhiều người, lượt
+- [x] **C2. Golden `speaker.py`:** `tools/golden/gen_speaker.py` sinh lượt nói tổng hợp (seed cố định: nhiều người, lượt
   kẹp giữa, người phụ thưa, lượt chạm biên đoạn, mốc từng từ có / không có nhãn) và ghi kết quả của `process_turns`,
   `build_name_map`, `minutes_per_speaker`, `split_turns_by_chunk`, `speaker_map_text`, `parse_prompt_paragraphs`,
   `assign_speakers` + `smooth` + `merge_spans`, `format_paragraph` vào `testdata/golden/speaker/`. Thêm test bản ghi

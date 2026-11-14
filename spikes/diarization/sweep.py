@@ -7,6 +7,7 @@ Chạy các phép đo B3–B8 của Stage 1 trên B1–B5, rồi chấm bằng e
     ... sweep.py B6 --shift 0.25 --embs <emb> --threshold 0.6
     ... sweep.py B7 --shift 0.25 --embs <emb> --threshold 0.6
     ... sweep.py B8 --shift 0.25 --embs <emb> --threshold 0.6
+    ... sweep.py S5B1 --embs campplus-zhen --jobs 3 --threads 4      (Stage 5 B1: ngưỡng, chia phần 20 phút)
 
 Mỗi lần chạy sherpa-onnx là một process riêng (run_sherpa.py), để RAM đỉnh đo đúng từng lần. JSON đã có thì bỏ qua, nên
 bị ngắt thì chạy lại lệnh cũ là làm tiếp. Kết quả: $D/out/pc/<bước>/<cấu hình>/<mã>.json; bảng chấm của từng cấu hình ở
@@ -45,6 +46,7 @@ SHORT = {
     "wespeaker_en_voxceleb_resnet34_LM": "wespeaker-r34",
 }
 THRESHOLDS = (0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+S5_THRESHOLDS = (1.0, 1.2, 0.9, 1.1, 1.3, 0.8, 1.4)
 EVAL_PYTHON = Path(os.environ.get("GUZZ_DESKTOP_DIR") or c.DEFAULT_DESKTOP_DIR) / "runtime" / "nguoi_noi" / "python.exe"
 
 
@@ -109,6 +111,15 @@ def plan(args) -> list[tuple[str, list[dict]]]:
             groups.append((name, [job(k, name, e, ["--shift", str(args.shift), "--threshold", str(args.threshold),
                                                     "--piece-minutes", str(p), "--overlap-seconds", "60"])
                                   for k in CODES]))
+    elif args.step == "S5B1":
+        # Stage 5 B1: chạy giống trên máy (chia phần P = 20 phút, O = 60 s), một ngưỡng cho cả phân cụm trong phần lẫn
+        # nối người nói. Ghi thêm .pieces.json để B2 (luật min–max) và golden C3 dùng lại.
+        for e in args.embs:
+            for t in args.thresholds or S5_THRESHOLDS:
+                name = f"{emb_short(e)}_shift{args.shift}_t{t}_p20"
+                groups.append((name, [job(k, name, e, ["--shift", str(args.shift), "--threshold", str(t),
+                                                       "--piece-minutes", "20", "--overlap-seconds", "60",
+                                                       "--pieces-out"]) for k in CODES]))
     else:
         raise SystemExit(f"Bước không biết: {args.step}")
     return groups
@@ -151,7 +162,7 @@ def evaluate(step: str, name: str, jobs: list[dict], remap: bool) -> None:
 def main() -> None:
     c.utf8_console()
     ap = argparse.ArgumentParser(description="Chạy B3–B8 trên B1–B5 rồi chấm")
-    ap.add_argument("step", choices=["B3", "B4", "B5", "B6", "B7", "B8"])
+    ap.add_argument("step", choices=["B3", "B4", "B5", "B6", "B7", "B8", "S5B1"])
     ap.add_argument("--shift", type=float, default=0.1)
     ap.add_argument("--embs", nargs="*", default=[])
     ap.add_argument("--threshold", type=float, default=0.5)
