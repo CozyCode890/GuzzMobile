@@ -356,6 +356,9 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
     URI khi thêm tệp thất bại;
   - debug: receiver chỉ nhận lệnh từ adb (`android.permission.DUMP`), `queue_debug.ps1` bọc tên tệp, `-Wait` dừng khi
     hàng đợi tạm ngưng, in UTF-8.
+  Thử lại trên máy ảo (2026-11-14, Gemini giả, ghi ra `Documents/Guzz` qua SAF): lệnh adb qua receiver có quyền DUMP
+  chạy được; Dừng lúc chờ đoạn 2 → `dung`, thêm lại cùng tệp → "Bỏ qua … đã có trong hàng đợi", Bắt đầu → đoạn 1 dùng
+  lại; `kill -9` lúc chờ đoạn 2 → START_STICKY lên lại, đoạn 1 dùng lại, ra `L1_20m (2).txt`; `logcat -b crash` trống.
   Không sửa (ghi lại): ghi đè (`on_conflict = overwrite`) qua SAF cắt tệp cũ trước khi ghi, hỏng giữa chừng thì mất bản
   cũ; mục bị bỏ đúng lúc vòng chạy vừa chọn nó vẫn được chạy.
 - **2026-11-13, review.** Workflow review code D–E (6 hướng, mỗi phát hiện 3 người kiểm phản bác) chỉ chạy xong một phần
