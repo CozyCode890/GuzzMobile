@@ -267,7 +267,7 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
 
 ### F. Gửi thật (D65; hỏi người dùng ngay trước mỗi lần gửi)
 
-- [ ] **F1. B5, tắt màn hình suốt:** `adb push` B5 vào `files/input/`, `queue_debug.ps1 -Add B5 -ChunkDelayMin 10 -Start
+- [x] **F1. B5, tắt màn hình suốt:** `adb push` B5 vào `files/input/`, `queue_debug.ps1 -Add B5 -ChunkDelayMin 10 -Start
   -ScreenOff` (D67), rút cáp / `adb disconnect` để máy vào Doze, chờ khoảng 75 phút, nối lại, kéo log.
   **Kiểm:** bản chép lời B5 trong thư mục đã chọn, đủ 6 đoạn có chữ; nhịp log liền ≥ 60 phút, không hở quá 2 phút; một
   PID suốt lúc chạy (service không bị giết); log ghi Doze / mạng ở các lần gửi; ≤ 7 yêu cầu Interactions.
@@ -347,6 +347,17 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   - D3.3 trên HyperOS: `kill -9` lúc chờ đoạn 2 → **HyperOS không khởi động lại service** (`START_STICKY`) trong 3 phút,
     khác máy ảo. Trạng thái giữ đúng (`cho`, cờ đang chạy); mở app → "Hàng đợi đang chạy dở lúc app bị tắt: tự làm
     tiếp", đoạn 1 dùng lại. D64 đạt nhờ đường mở app; hướng dẫn cài đặt (Stage 6) nên nói rõ điều này.
+- **2026-11-14, F1 (gửi thật B5).** Người dùng đồng ý gửi; `gemini-3.5-flash-lite`, chờ 10 phút giữa các đoạn, ra
+  `files/output/B5.txt` (cài lại app nên chưa chọn thư mục SAF). Đạt: service chạy 17:26–18:54 (88 phút), một PID suốt
+  (21631), nhịp log mỗi phút không hở lần nào, màn hình tắt liền 71 phút (17:38–18:49; người dùng bật màn hình lúc đầu
+  và lúc cuối), 9/9 đoạn có chữ (43,5 kB), mạng có ở mọi nhịp. Khác kế hoạch:
+  - B5 cắt thành **9 đoạn** chứ không phải 6: con số 6 lấy từ danh sách đoạn của Stage 1 (đoạn dài hơn), còn
+    `chunk_minutes` mặc định là 10 như desktop. Số yêu cầu là **10** (9 đoạn + 1 lần thử lại vì HTTP 503 "high demand"
+    ở đoạn 6, client tự thử lại sau 32 s), vượt mức ≤ 7 của F1;
+  - máy cắm sạc suốt lượt chạy (pin 12% lúc bắt đầu), nên **không vào Doze**: chưa kiểm được Gemini có gọi được trong
+    Doze hay không. Ghi lại để thử khi có dịp (máy không sạc, màn hình tắt lâu);
+  - bản chép lời có 36 chỗ "[không nghe rõ]", nhiều chỗ ở đầu dòng: đó là nội dung model trả về (bài giảng tiếng Anh lẫn
+    điểm danh tên Việt), không phải lỗi ghép.
 - **2026-11-13, review lần 2.** Chạy lại workflow review: đủ 6 hướng review, nhưng phần kiểm phản bác lại hết hạn mức ở
   4 hướng (service, trạng thái, SAF, debug), nên tự đánh giá các phát hiện đó. Đã sửa (test `:core:pipeline` 41 ca,
   `test assembleSideloadDebug assemblePlayDebug lint` xanh; CHƯA thử lại trên máy ảo):
