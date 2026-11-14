@@ -104,6 +104,15 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D68 | 2026-11-11 | `[VIDEO] save_extracted` (Stage 4) | **Để Stage 8** | Cần công tắc trên giao diện và một bài video gửi thật để thử. |
 | D69 | 2026-11-12 | Receiver ở nền không được khởi động FGS (Stage 4) | **Người dùng tự miễn tối ưu pin cho bản debug** (`deviceidle whitelist`) | "No restrictions" của HyperOS không đủ; MacroDroid (Stage 6) cũng cần. |
 | D70 | 2026-11-13 | Thử D–E của Stage 4 ở đâu | **Máy ảo `guzz_15t`** (API 36, 1280×2772, 520 dpi, RAM 4 GB); điện thoại thật chỉ ở đợt thử cuối | Đỡ phải nối adb với điện thoại; cùng bản Android. HyperOS chỉ thử được trên máy thật. |
+| D71 | 2026-11-14 | Tên các cách nhận diện (Stage 5) | **"Tách giọng trên máy + Prompt", "Gemini tự nhận diện", "Kết hợp (trên máy + Gemini)"**; giá trị cài đặt giữ `pyannote` / `gemini` / `hybrid` | Nói đúng việc chạy ở đâu; giữ giá trị để dùng lại ràng buộc và test của desktop. |
+| D72 | 2026-11-14 | Không biết số người (Stage 5) | **Ngưỡng phân cụm; ra ngoài [min, max] thì phân cụm lại với số cụm = min / max** | Giữ cài đặt min–max của desktop, tốn thêm tối đa một lần phân cụm. |
+| D73 | 2026-11-14 | Cách Kết hợp: song song hay tuần tự (Stage 5) | **Tuần tự như desktop** | Một đường chạy, Dừng / làm tiếp đơn giản. |
+| D74 | 2026-11-14 | Chọn model embedding (Stage 5) | **Không: chỉ CAM++ zh_en advanced** trong APK | APK nhỏ, ít thứ phải thử. |
+| D75 | 2026-11-14 | PCM tạm khi tách giọng (Stage 5, đổi D66) | **Giữ PCM cần cho tách giọng tới lúc có kết quả rồi xoá**; đoạn từ cache mà thiếu PCM thì giải mã lại | Không giải mã hai lần; chỗ trống chỉ tăng lúc tách giọng. |
+| D76 | 2026-11-14 | Giao diện người nói (Stage 5) | **Trang Người nói rút gọn**; ngưỡng, mẫu đoạn văn, prompt → Stage 8 | Đủ dùng hằng ngày. |
+| D77 | 2026-11-14 | Gửi thật lên Gemini (Stage 5) | **B4 × 3 cách, ≤ 15 yêu cầu**, hỏi trước mỗi lần gửi | 4 đoạn, 4 người, có kết quả desktop để so. |
+| D78 | 2026-11-14 | Âm thanh gốc / sạch, int8 (Stage 5) | **Theo số đo trên PC**: giữ mặc định desktop (sạch, fp32) trừ khi cách kia DER TB thấp hơn ≥ 1 điểm và không bài nào trượt thêm D29 | Không đổi mặc định vì chênh lệch nhỏ. |
+| D79 | 2026-11-14 | Lấy AAR sherpa-onnx và model khi build (Stage 5) | **Task Gradle tự tải, kiểm SHA-256**, cache ngoài repo | Repo nhẹ; tệp tải về không đổi lén được. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
