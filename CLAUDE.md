@@ -7,11 +7,10 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 4, đang làm (plan chi tiết 2026-11-11, D59–D70). Stage 3 xong ngày 2026-11-11, Stage 2 xong
-ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** Stage 4: A–C xong (PC), D–E đã viết, D2 đạt trên điện thoại. Thử tiếp D3 và E trên máy ảo `guzz_15t`
-(D70, `tools/device/emulator.ps1`), rồi đợt thử cuối trên Xiaomi 15T gồm F (gửi thật B5 + B4, tổng ≤ 20 yêu cầu, D65).
-Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
+**Stage hiện tại:** Stage 5, chưa plan chi tiết. Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11,
+Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** plan chi tiết Stage 5 (tách giọng trên máy), session riêng. Thử trên máy ảo `guzz_15t` trước (D70),
+điện thoại chỉ cho đợt thử cuối. Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở
 [stage-01-results.md](plans/stage-01-results.md).
 
 | Stage | Tên | Trạng thái | Tệp |
@@ -20,7 +19,7 @@ Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay trước k
 | 1 | Spike kỹ thuật | ✅ 2026-11-10 | [stage-01-spike.md](plans/stage-01-spike.md) |
 | 2 | Lõi âm thanh tối giản | ✅ 2026-11-11 | [stage-02-audio-core.md](plans/stage-02-audio-core.md) |
 | 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
-| 4 | Pipeline + hàng đợi nền — **MVP** | 🔨 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
+| 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ⬜ | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ⬜ | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |

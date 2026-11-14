@@ -1,6 +1,6 @@
 # Stage 4 — Pipeline + hàng đợi nền + UI tối thiểu (MVP)
 
-**Trạng thái:** 🔨 đang làm (từ 2026-11-11; plan chi tiết 2026-11-11) · **Cần xong trước:** 2, 3
+**Trạng thái:** ✅ xong 2026-11-14 (plan chi tiết 2026-11-11) · **Cần xong trước:** 2, 3
 
 ## Mục tiêu
 
@@ -260,7 +260,7 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   trình chọn.
   **Kiểm:** trên máy: chọn `Documents/Guzz`; chạy cùng tệp hai lần → `<tên>.txt` và `<tên> (2).txt` thấy được trong app
   Files, tên không bị thêm đuôi; xoá thư mục đã chọn bằng app Files rồi Bắt đầu → báo lỗi rõ, app không chết.
-- [ ] **E3. Xem và chia sẻ** (D61, D62): màn hình xem (đọc qua URI, bỏ BOM, đoạn văn chọn chép được, cuộn mượt với bản
+- [x] **E3. Xem và chia sẻ** (D61, D62): màn hình xem (đọc qua URI, bỏ BOM, đoạn văn chọn chép được, cuộn mượt với bản
   chép lời 2 giờ), Mở bằng app khác (`ACTION_VIEW`), Chia sẻ (`ACTION_SEND` + `EXTRA_STREAM`, cấp quyền đọc).
   **Kiểm:** trên máy: mở bản chép lời của E2 trong app; Mở bằng app khác mở được bằng một trình soạn thảo; chia sẻ sang
   một app (vd Drive) nhận đúng tệp, đúng tên. App nhận không đọc được URI SAF thì đổi sang `FileProvider`, ghi Nhật ký.
@@ -278,10 +278,10 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
 
 ### G. Đóng stage
 
-- [ ] **G1. Tài liệu:** CLAUDE.md thêm lệnh (test `:core:pipeline`, golden pipeline, `queue_debug.ps1`); README §3–4 đã
+- [x] **G1. Tài liệu:** CLAUDE.md thêm lệnh (test `:core:pipeline`, golden pipeline, `queue_debug.ps1`); README §3–4 đã
   sửa lúc plan (không Room, hàng đợi JVM ở `:core:pipeline`), chỉ sửa thêm nếu module khác dự kiến.
   **Kiểm:** chạy lại từng lệnh đã chép.
-- [ ] **G2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 4 → ✅; "Việc tiếp theo" → plan Stage 5; commit, push.
+- [x] **G2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 4 → ✅; "Việc tiếp theo" → plan Stage 5; commit, push.
   **Kiểm:** `git status -sb` báo `## main...origin/main`; `git grep AIza` không ra gì; repo không có bản ghi thật.
 
 ## Nhật ký
@@ -347,6 +347,14 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
   - D3.3 trên HyperOS: `kill -9` lúc chờ đoạn 2 → **HyperOS không khởi động lại service** (`START_STICKY`) trong 3 phút,
     khác máy ảo. Trạng thái giữ đúng (`cho`, cờ đang chạy); mở app → "Hàng đợi đang chạy dở lúc app bị tắt: tự làm
     tiếp", đoạn 1 dùng lại. D64 đạt nhờ đường mở app; hướng dẫn cài đặt (Stage 6) nên nói rõ điều này.
+- **2026-11-14, E3 trên Xiaomi 15T, đóng stage.** Người dùng đồng ý chia sẻ sang Drive của họ. Dùng bản chép lời ngắn
+  do Gemini giả tạo (`B1_1m (2).txt`, chữ "Đoạn 1.") thay cho B4 để không đưa bài thật lên Drive. Đạt: Xem → màn hình
+  xem đọc đúng (bản ghi bằng đường dẫn, qua `FileProvider`); Mở bằng app khác → Mi Text Viewer (WPS) mở được; Chia sẻ →
+  bảng chia sẻ hiện `B1_1m (2).txt`, chọn Drive → "Upload to Drive" đúng tên, Upload → tệp có trên Drive lúc 19:13.
+  Drive hỏi quyền thông báo, chọn "Không cho phép". G1: chạy lại `gen_pipeline.py` (golden không đổi),
+  `test assembleSideloadDebug assemblePlayDebug lint` xanh; các lệnh `queue_debug.ps1`, `emulator.ps1`,
+  `audio_debug.ps1` đã chạy trong đợt thử. Chưa kiểm (ghi sang Phát sinh Stage 6): gọi Gemini trong Doze lúc máy không
+  sạc.
 - **2026-11-14, F2 (gửi thật B4) và A3.** Người dùng chọn nới mức D65 lên ≤ 20 rồi chạy B4, chờ 2 phút giữa các đoạn.
   B4 (78,9 phút) sau cắt lặng còn 35:55, nên chỉ **4 đoạn** (kế hoạch ghi khoảng 5–8). Đạt:
   - Dừng lúc chờ đoạn 3 → `dung`; Bắt đầu → "Các đoạn âm thanh đã có sẵn", đoạn 1–2 "dùng lại kết quả đã có, không
@@ -409,6 +417,7 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
 
 - (2026-11-13) Chạy lại workflow review code D–E đủ 6 hướng (service, trạng thái hàng đợi, pipeline, SAF, giao diện,
   công cụ debug); lần đầu bị cắt vì hết hạn mức. Làm trước bước G.
+  → Đã làm 2026-11-13 (review lần 2, xem Nhật ký).
 
 - (Từ Stage 1, 2026-11-10) Hai phép thử chạy nền của Stage 1 chuyển sang đây, làm trên foreground service thật (D42):
   - **Chạy dài** (G4 cũ): màn hình tắt suốt lúc chạy, nhật ký ghi nhịp liền ≥ 60 phút, không hở quá 2 phút, service không

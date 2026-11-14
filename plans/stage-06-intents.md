@@ -85,6 +85,9 @@ _(viết ở session của stage này)_
   (`ForegroundServiceStartNotAllowedException`). Hướng dẫn cài đặt cho MacroDroid phải có bước "Tối ưu pin → Không tối
   ưu" (hoặc nút xin `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` ở bản sideload), và receiver nên báo lỗi rõ khi bị chặn.
 
+- (Từ Stage 4, 2026-11-14, F1) F1 chạy lúc máy cắm sạc nên không vào Doze: chưa biết HyperOS có chặn mạng của FGS
+  trong Doze không. Đêm thử MacroDroid (rút cáp, Doze) chạy kèm một bài gửi thật ngắn, xem nhịp log ghi "Doze có" mà
+  vẫn gửi được.
 - (Từ Stage 4, 2026-11-14, F2) Trên Xiaomi 15T: (1) `kill -9` service lúc màn hình tắt thì HyperOS **không** khởi động
   lại (`START_STICKY` không có tác dụng), hàng đợi chỉ làm tiếp khi mở app (D64); lệnh TRANSCRIBE tới sau đó cũng nên gọi
   `resumeIfNeeded()`. (2) App chưa có quyền thông báo (cài qua adb, hoặc người dùng chưa bấm Bắt đầu lần nào) thì service
