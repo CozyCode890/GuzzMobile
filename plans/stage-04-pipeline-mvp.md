@@ -341,6 +341,12 @@ Script chạy chính `transcribe.py`, `config.py` của desktop trên các đầ
     Anh.
   - Lúc thử, một app của dự án khác (`itruyenchu`) bị cài vào `guzz_15t` khi `itc_test` tắt: đã gỡ, bật lại `itc_test` ở
     cổng 5554. Máy ảo của Guzz luôn ở cổng 5556.
+- **2026-11-14, Xiaomi 15T (đợt thử cuối, phần Gemini giả).** Guzz (debug) đã bị gỡ khỏi máy (cả app spike): cài lại
+  qua USB (HyperOS phải bấm đồng ý), miễn tối ưu pin lại (D69), người dùng đặt pin "Không hạn chế" và nhập key mới.
+  - D3.1 trên HyperOS: `L1_20m.m4a` lúc tắt màn hình, xử lý âm thanh 58 s, đủ 2 đoạn (màn hình được bật lại ở phút cuối).
+  - D3.3 trên HyperOS: `kill -9` lúc chờ đoạn 2 → **HyperOS không khởi động lại service** (`START_STICKY`) trong 3 phút,
+    khác máy ảo. Trạng thái giữ đúng (`cho`, cờ đang chạy); mở app → "Hàng đợi đang chạy dở lúc app bị tắt: tự làm
+    tiếp", đoạn 1 dùng lại. D64 đạt nhờ đường mở app; hướng dẫn cài đặt (Stage 6) nên nói rõ điều này.
 - **2026-11-13, review lần 2.** Chạy lại workflow review: đủ 6 hướng review, nhưng phần kiểm phản bác lại hết hạn mức ở
   4 hướng (service, trạng thái, SAF, debug), nên tự đánh giá các phát hiện đó. Đã sửa (test `:core:pipeline` 41 ca,
   `test assembleSideloadDebug assemblePlayDebug lint` xanh; CHƯA thử lại trên máy ảo):
