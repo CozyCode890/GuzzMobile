@@ -49,9 +49,9 @@ hay token Hugging Face.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Golden test `speaker.py` khớp.
+- [x] Golden test `speaker.py` khớp.
 - [ ] Bài giảng thật: số người và thời gian nói của giảng viên gần với desktop (ngưỡng D29).
-- [ ] Dừng giữa lúc đang tách giọng, rồi chạy lại thì dùng lại được kết quả đã cache.
+- [x] Dừng giữa lúc đang tách giọng, rồi chạy lại thì dùng lại được kết quả đã cache.
 - [ ] Bài 2 giờ chia phần trên Xiaomi 15T: tách giọng ≤ 30 phút, PSS ≤ 1 GB, ≤ 45 °C, ≤ 10% pin (D30).
 
 ## Câu hỏi cần chốt khi plan chi tiết
