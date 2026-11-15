@@ -7,13 +7,14 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 7 (làm sạch âm thanh đầy đủ), chưa plan chi tiết. Stage 5 (tách giọng trên máy) xong ngày
-2026-11-15 (D71–D82; tiêu chí "bài giảng thật gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3
-xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày
-2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 7 trong một session riêng (hỏi các "Câu hỏi cần chốt" bằng trắc nghiệm). Stage 6
-(Intent cho MacroDroid) làm sau. Thử trên máy ảo `guzz_15t` trước (D70). Gửi bất cứ thứ gì lên Google thì hỏi người dùng
-ngay trước khi gửi.
+**Stage hiện tại:** Stage 7 (làm sạch âm thanh đầy đủ), đã plan chi tiết (2026-11-15, D83–D90). Stage 5 (tách giọng
+trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày
+2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn,
+D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** làm Stage 7 theo "Kế hoạch chi tiết": A (cài đặt, preset, mã cache), B (FFT, Butterworth, lọc,
+STFT; golden từng hàm), C (từng bước làm sạch, golden SNR ≥ 60 dB), rồi D–G. Thử trên máy ảo `guzz_15t` trước (D70),
+Xiaomi 15T để đo bài 1 giờ và làm tệp nghe thử. Stage 6 (Intent cho MacroDroid) làm sau. Gửi bất cứ thứ gì lên Google
+thì hỏi người dùng ngay trước khi gửi.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -24,7 +25,7 @@ ngay trước khi gửi.
 | 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ✅ 2026-11-15 | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
-| 7 | Làm sạch âm thanh đầy đủ | ⬜ | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
+| 7 | Làm sạch âm thanh đầy đủ | 📝 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ⬜ | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |

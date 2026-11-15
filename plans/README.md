@@ -116,6 +116,14 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D80 | 2026-11-15 | Ngưỡng phân cụm khi không biết số người không đạt D29 (Stage 5 B1, D39) | **Ngưỡng 1,1 + ưu tiên nhập số người**: biết số người thì luật min = max = N | 1,1 giữ được người hỏi (1,2 trở lên gần như luôn ra 1 người); biết số người đạt 3/5 bài như Stage 1. |
 | D81 | 2026-11-15 | Chia phần tăng DER TB 2,6 điểm so với nguyên bài (Stage 5 B4) | **Giữ P = 20 phút** | Đạt D29 nhiều bài hơn; nguyên bài 2 giờ hết RAM trên điện thoại. |
 | D82 | 2026-11-15 | Tách giọng trượt D29 ở B4 với cả 3 cách (Stage 5 G2) | **Đóng Stage 5, ghi trượt B4**; cải thiện bài nhiều người để sau. Stage kế: 7 | B4 trượt ở mọi cấu hình; bài ít người đạt; 3 cách chạy đúng trên máy thật. |
+| D83 | 2026-11-15 | FFT cho khử ồn (Stage 7) | **Tự viết FFT Kotlin** radix-2 | JVM thuần, golden chạy trên PC, không thêm thư viện / JNI. |
+| D84 | 2026-11-15 | Hệ số Butterworth (Stage 7) | **Port `scipy.signal.butter`** sang Kotlin | Tần số nào cũng được; golden so với scipy. |
+| D85 | 2026-11-15 | Sai số so với Python (Stage 7) | **SNR ≥ 60 dB**, mốc cắt lệch ≤ 1 khối | Không nghe ra khác biệt. |
+| D86 | 2026-11-15 | Nhiều luồng khi khử ồn (Stage 7) | **Một luồng**, đo rồi mới tính | Mát máy, ít pin. |
+| D87 | 2026-11-15 | Preset âm thanh mặc định (Stage 7) | **Như desktop: Giảng viên đi lại** | Trùng `config.default.txt`. |
+| D88 | 2026-11-15 | Ngưỡng tốc độ làm sạch đủ (Stage 7) | Bài 1 giờ, Xiaomi 15T, màn hình tắt: **thêm ≤ 10 phút, PSS ≤ 400 MB** | Vẫn ngắn hơn thời gian chép lời. |
+| D89 | 2026-11-15 | Giao diện âm thanh (Stage 7) | **Trang Âm thanh rút gọn** (preset, bật / tắt bước, lưu âm thanh sạch); ô số → Stage 8 | Đủ dùng hằng ngày. |
+| D90 | 2026-11-15 | Nghe thử (Stage 7) | **Cặp tệp A/B**, người dùng nghe | Tiêu chí nghe cần tai người. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
