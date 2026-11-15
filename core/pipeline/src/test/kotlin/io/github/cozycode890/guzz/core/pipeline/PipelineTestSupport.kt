@@ -103,7 +103,15 @@ class SyntheticSource(
 }
 
 /** Một lần gọi client giả: tệp, prompt và tham số như `FakeClient.calls` của test desktop. */
-data class Call(val file: String, val prompt: String?, val model: String, val maxAttempts: Int)
+data class Call(
+    val file: String,
+    val prompt: String?,
+    val model: String,
+    val maxAttempts: Int,
+    val options: TranscribeOptions = TranscribeOptions(),
+    /** Nội dung tệp bản đồ người nói gửi kèm (`ban_do` của test desktop). */
+    val map: String? = null,
+)
 
 /**
  * Client giả như `FakeClient` của tests/test_transcribe.py: [reply] (số thứ tự lần gọi, model) trả về Interaction
@@ -123,7 +131,7 @@ class FakeClient(
         options: TranscribeOptions,
     ): JsonObject {
         val model = options.model ?: cfg.model
-        calls += Call(audio.name, prompt, model, options.maxAttempts)
+        calls += Call(audio.name, prompt, model, options.maxAttempts, options, options.attachment?.readText(Charsets.UTF_8))
         return when (val r = reply(calls.size, model)) {
             is Exception -> throw r
             else -> r as JsonObject
@@ -157,3 +165,37 @@ fun testConfig() = PipelineConfig(
         tokenRateLimit = 0,
     ),
 )
+
+/** `[(chữ, nhãn, bắt đầu, kết thúc)]` → Interaction có `word_info`, như `words()` của test desktop. */
+fun words(items: List<Triple<String, String?, Pair<Double, Double>>>): JsonObject = buildJsonObject {
+    put("status", "completed")
+    putJsonArray("steps") {
+        add(
+            buildJsonObject {
+                put("type", "model_output")
+                put(
+                    "content",
+                    buildJsonArray {
+                        add(
+                            buildJsonObject {
+                                put("type", "text")
+                                put("text", items.joinToString(" ") { it.first })
+                                putJsonArray("annotations") {
+                                    for ((w, spk, ab) in items) add(
+                                        buildJsonObject {
+                                            put("type", "word_info")
+                                            put("text", w)
+                                            put("speaker", spk)
+                                            put("start_offset", "${ab.first}s")
+                                            put("end_offset", "${ab.second}s")
+                                        },
+                                    )
+                                }
+                            },
+                        )
+                    },
+                )
+            },
+        )
+    }
+}

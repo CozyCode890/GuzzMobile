@@ -177,44 +177,44 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### D. `:core:diarization` (sherpa-onnx trên máy)
 
-- [ ] **D1. Tách giọng một phần:** đọc PCM 16 kHz của phần [a, b) bằng `Pcm16File`, chạy `OfflineSpeakerDiarization`
+- [x] **D1. Tách giọng một phần:** đọc PCM 16 kHz của phần [a, b) bằng `Pcm16File`, chạy `OfflineSpeakerDiarization`
   (cấu hình "Mặc định kỹ thuật" + B3), tính embedding trung bình từng nhãn (≤ 30 s tiếng nói), báo tiến độ qua lớp
   callback viết rõ, trả lượt nói theo giây toàn bài.
   **Kiểm:** test thiết bị trên máy ảo với một bài thử công khai của sherpa-onnx (tải bằng task của A1, không commit): JSON
   trùng `run_sherpa.py` trên PC cùng tệp (mốc ±2 ms, cùng nhãn), như D2 của Stage 1.
-- [ ] **D2. Process `:diarize`:** service bound trong process riêng, `Messenger`: yêu cầu (đường PCM, các phần, cấu hình,
+- [x] **D2. Process `:diarize`:** service bound trong process riêng, `Messenger`: yêu cầu (đường PCM, các phần, cấu hình,
   thư mục ra), tiến độ, xong / lỗi. Ghi `nguoi_noi.<mã>.phan_NN.json` từng phần (ghi `.tmp` rồi đổi tên); phần đã có
   thì bỏ qua. Process chính mất liên lạc (process `:diarize` chết) thì báo lỗi rõ, không treo.
   **Kiểm:** test thiết bị: chạy 3 phần, giết `:diarize` giữa phần 2 → process chính sống, phần 1 còn tệp; chạy lại chỉ
   làm phần 2–3; `logcat -b crash` trống.
-- [ ] **D3. Bản Android của `SpeakerDiarizer`:** chia phần, gọi `:diarize`, nối người nói (C3), ghi
+- [x] **D3. Bản Android của `SpeakerDiarizer`:** chia phần, gọi `:diarize`, nối người nói (C3), ghi
   `nguoi_noi.<mã>.json`; Dừng (huỷ coroutine) thì giết `:diarize` và trả về ngay.
   **Kiểm:** test thiết bị: huỷ giữa chừng → `:diarize` mất trong ≤ 1 s, coroutine kết thúc; chạy lại dùng phần đã có.
 
 ### E. Pipeline (`:core:pipeline`, JVM, `SpeakerDiarizer` giả)
 
-- [ ] **E1. Cấu hình và cache:** đọc cài đặt người nói vào `PipelineConfig`; port `speaker_hash`; luật giữ PCM (D75):
+- [x] **E1. Cấu hình và cache:** đọc cài đặt người nói vào `PipelineConfig`; port `speaker_hash`; luật giữ PCM (D75):
   bật tách giọng trên máy mà chưa có `nguoi_noi.<mã>.json` thì giữ `sach.pcm` hoặc `goc.pcm` (theo `run_on`) tới lúc có
   kết quả rồi xoá; các đoạn lấy từ cache mà thiếu PCM thì giải mã lại.
   **Kiểm:** golden `speaker_hash` so với desktop (thêm vào `gen_pipeline.py`); test: chạy xong thư mục tạm không còn PCM;
   dừng giữa lúc tách giọng → PCM còn; chạy lại khi đã có `nguoi_noi.<mã>.json` thì không giữ PCM.
-- [ ] **E2. Bước tách giọng:** port `diarize_speakers` và phần người nói của `transcribe_single_file` (`remap_timestamps`
+- [x] **E2. Bước tách giọng:** port `diarize_speakers` và phần người nói của `transcribe_single_file` (`remap_timestamps`
   khi chạy trên âm thanh gốc, `process_turns`, `build_name_map`, log "Bản đồ người nói", "Dùng lại kết quả nhận diện
   người nói đã có"); bỏ chặn "chưa có trên điện thoại" của Stage 4; tiến độ có bước tách giọng như `ProgressTracker`
   desktop khi `has_pyannote`.
   **Kiểm:** test với bản giả: thứ tự gọi, log, tiến độ tăng dần; lỗi của bản giả → tệp lỗi, không dừng cả hàng đợi.
-- [ ] **E3. Chép lời có người nói:** phần người nói của `transcribe_chunks`: bản đồ từng đoạn, prompt có `{speakers}`
+- [x] **E3. Chép lời có người nói:** phần người nói của `transcribe_chunks`: bản đồ từng đoạn, prompt có `{speakers}`
   (bản Kotlin của `prompt_diarization.txt`), `TIMESTAMP_INSTRUCTIONS`, gửi bản đồ bằng tệp hoặc chữ, `diarize` /
   `word_timestamps` cho model `*-transcribe`, tên tệp kết quả theo `_hash(shared_key, map_text)`, thử lại khi rỗng theo
   `has_speech(map_text)`, cảnh báo bỏ từ vựng / chế độ smart.
   **Kiểm:** port 4 ca của `test_transcribe.py` (`test_pyannote_sends_map_and_maps_times_to_original`,
   `test_pyannote_inlines_map_when_text_delivery`, `test_gemini_names_speakers_per_chunk`,
   `test_hybrid_assigns_names_from_pyannote`) với Gemini giả; golden tên tệp kết quả so với desktop.
-- [ ] **E4. Ghép:** `assemble_transcript` đủ 3 cách, phút nói trong đầu bản chép lời, `full_speaker_map` →
+- [x] **E4. Ghép:** `assemble_transcript` đủ 3 cách, phút nói trong đầu bản chép lời, `full_speaker_map` →
   `<tên>.nguoi_noi.txt` khi `save_speaker_map` (qua `OutputFolder`, cùng luật trùng tên).
   **Kiểm:** golden: desktop `assemble_transcript` + `format_header` trên cùng kết quả đoạn và lượt nói (3 cách, có / không
   mốc thời gian, `mark_chunks`) khớp bản Kotlin từng ký tự.
-- [ ] **E5. Ràng buộc model ↔ cách:** port `closest_alternative_method` (và phần tự chuyển của `gui/model_ui.py`): đổi
+- [x] **E5. Ràng buộc model ↔ cách:** port `closest_alternative_method` (và phần tự chuyển của `gui/model_ui.py`): đổi
   model thì tự chuyển cách nhận diện, trả câu báo cho giao diện.
   **Kiểm:** test: mọi cặp model ↔ cách của desktop ra cùng kết quả (golden trong `gen_pipeline.py`).
 
@@ -281,6 +281,18 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   - Spike: `linking.py` (nối người nói, luật max, bỏ chồng lấn; chỉ cần numpy + scipy) để golden chạy bằng Python của
     desktop; `run_sherpa.py` thêm `--min-speakers / --max-speakers / --pieces-in / --pieces-out`, `sweep.py` thêm
     S5B1–S5B4.
+- **2026-11-15, D–E.**
+  - D1–D3 đạt trên máy ảo `guzz_15t` (`DiarizationDeviceTest`, tệp thử 4 người nói 57 s): sherpa-onnx trên máy trùng
+    `run_sherpa.py` trên PC (ngưỡng 1,1 và số cụm 4; kết quả PC ở `testdata/golden/diarization/`); giết `:diarize`
+    giữa phần 2 → `DiarizeProcessDiedException`, phần 1 còn tệp, chạy lại chỉ làm phần 2–4 (P = 20 s, O = 2 s ra 4
+    phần, không phải 3); huỷ coroutine → `:diarize` mất trong ≤ 1 s; `logcat -b crash` trống. Lỗi gặp và sửa:
+    linkToDeath và `onServiceDisconnected` cùng báo process chết trên hai luồng → resume hai lần, nay có cờ chỉ resume
+    một lần.
+  - Process `:diarize` ghi phần vừa xong ra tệp tạm, process chính đọc rồi ghi `phan_NN[.kN].json` (không gửi
+    embedding qua binder). Phần chạy lại với số cụm cố định (luật min–max) có tệp riêng `.kN`.
+  - E: thiếu PCM khi có đoạn trong cache thì xử lý âm thanh lại cả bài (như `need_clean` của desktop), không giải mã
+    riêng cho tách giọng. Prompt người nói (`prompt_diarization.txt`) đóng gói trong `:core:gemini` cạnh `prompt.txt`.
+    Bản đồ người nói cả bài `<tên>.nguoi_noi.txt` ghi cạnh bản chép lời, cùng tên gốc, có thì ghi đè như desktop.
 
 ## Phát sinh
 

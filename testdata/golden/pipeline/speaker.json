@@ -1,0 +1,604 @@
+{
+  "alternatives": [
+    {
+      "closest": "hybrid",
+      "method": "pyannote",
+      "model": "gemini-3.5-transcribe"
+    },
+    {
+      "closest": "gemini",
+      "method": "gemini",
+      "model": "gemini-3.5-transcribe"
+    },
+    {
+      "closest": "hybrid",
+      "method": "hybrid",
+      "model": "gemini-3.5-transcribe"
+    },
+    {
+      "closest": "pyannote",
+      "method": "pyannote",
+      "model": "gemini-3.8-flash"
+    },
+    {
+      "closest": "pyannote",
+      "method": "gemini",
+      "model": "gemini-3.8-flash"
+    },
+    {
+      "closest": "pyannote",
+      "method": "hybrid",
+      "model": "gemini-3.8-flash"
+    },
+    {
+      "closest": "pyannote",
+      "method": "pyannote",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "closest": "pyannote",
+      "method": "gemini",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "closest": "pyannote",
+      "method": "hybrid",
+      "model": "gemini-3.5-flash-lite"
+    },
+    {
+      "closest": "hybrid",
+      "method": "pyannote",
+      "model": "my-transcribe-x"
+    },
+    {
+      "closest": "gemini",
+      "method": "gemini",
+      "model": "my-transcribe-x"
+    },
+    {
+      "closest": "hybrid",
+      "method": "hybrid",
+      "model": "my-transcribe-x"
+    }
+  ],
+  "assemble": [
+    {
+      "body": "Một.\n\nBa\n\nbốn",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\n------------------------------------------------------------",
+      "mark_chunks": false,
+      "method": null,
+      "minutes": [],
+      "smooth": true,
+      "template": "[{time}] {speaker}: {text}",
+      "timestamps": true
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nMột.\n\n----- Đoạn 2/3 -----\n\n----- Đoạn 3/3 -----\n\nBa\n\nbốn",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\n------------------------------------------------------------",
+      "mark_chunks": true,
+      "method": null,
+      "minutes": [],
+      "smooth": false,
+      "template": "{speaker} ({time}): {text}",
+      "timestamps": false
+    },
+    {
+      "body": "[00:00:02] Giảng viên: Mở đầu.\n\n[00:00:22] Người hỏi 1: Hỏi?\n\nNgười hỏi 1: Tiếp câu hỏi\n\nKhông có tên nào ở đây\n\nđoạn hai\n\n[00:02:54] Người hỏi 2: Em hỏi.\n\n[00:03:20] Giảng viên: Trả lời dài.",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (2.9 phút), Người hỏi 1 (0.2 phút), Người hỏi 2 (0.1 phút)\n------------------------------------------------------------",
+      "mark_chunks": false,
+      "method": "pyannote",
+      "minutes": [
+        [
+          "Giảng viên",
+          2.9
+        ],
+        [
+          "Người hỏi 1",
+          0.2
+        ],
+        [
+          "Người hỏi 2",
+          0.1
+        ]
+      ],
+      "smooth": true,
+      "template": "[{time}] {speaker}: {text}",
+      "timestamps": true
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nGiảng viên: Mở đầu.\n\nNgười hỏi 1: Hỏi?\n\nNgười hỏi 1: Tiếp câu hỏi\n\n----- Đoạn 2/3 -----\n\nKhông có tên nào ở đây\n\nđoạn hai\n\n----- Đoạn 3/3 -----\n\nNgười hỏi 2: Em hỏi.\n\nGiảng viên: Trả lời dài.",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (2.9 phút), Người hỏi 1 (0.2 phút), Người hỏi 2 (0.1 phút)\n------------------------------------------------------------",
+      "mark_chunks": true,
+      "method": "pyannote",
+      "minutes": [
+        [
+          "Giảng viên",
+          2.9
+        ],
+        [
+          "Người hỏi 1",
+          0.2
+        ],
+        [
+          "Người hỏi 2",
+          0.1
+        ]
+      ],
+      "smooth": false,
+      "template": "{speaker} ({time}): {text}",
+      "timestamps": false
+    },
+    {
+      "body": "[00:00:01] Người hỏi 1: Hỏi gì?\n\n[00:00:03] Giảng viên: Trả lời\n\nkhông mốc\n\n[00:01:52] x\n\n[00:01:58] y",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (0.5 phút), Người hỏi 1 (0 phút)\n------------------------------------------------------------",
+      "mark_chunks": false,
+      "method": "gemini",
+      "minutes": [
+        [
+          "Giảng viên",
+          0.5
+        ],
+        [
+          "Người hỏi 1",
+          0.0
+        ]
+      ],
+      "smooth": true,
+      "template": "[{time}] {speaker}: {text}",
+      "timestamps": true
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nNgười hỏi 1: Hỏi gì?\n\nGiảng viên: Trả lời\n\n----- Đoạn 2/3 -----\n\nkhông mốc\n\n----- Đoạn 3/3 -----\n\nx\n\ny",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (0.5 phút), Người hỏi 1 (0 phút)\n------------------------------------------------------------",
+      "mark_chunks": true,
+      "method": "gemini",
+      "minutes": [
+        [
+          "Giảng viên",
+          0.5
+        ],
+        [
+          "Người hỏi 1",
+          0.0
+        ]
+      ],
+      "smooth": false,
+      "template": "{speaker} ({time}): {text}",
+      "timestamps": false
+    },
+    {
+      "body": "[00:00:01] Giảng viên: một\n\n[00:00:22] Người hỏi 1: hai\n\n[00:00:26] Giảng viên: ba bốn\n\n[00:01:43] Giảng viên: năm sáu\n\nchỉ chữ",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (2.9 phút), Người hỏi 1 (0.2 phút), ? (0.1 phút)\n------------------------------------------------------------",
+      "mark_chunks": false,
+      "method": "hybrid",
+      "minutes": [
+        [
+          "Giảng viên",
+          2.9
+        ],
+        [
+          "Người hỏi 1",
+          0.2
+        ],
+        [
+          "?",
+          0.1
+        ]
+      ],
+      "smooth": true,
+      "template": "[{time}] {speaker}: {text}",
+      "timestamps": true
+    },
+    {
+      "body": "----- Đoạn 1/3 -----\n\nGiảng viên: một\n\nNgười hỏi 1: hai\n\nGiảng viên: ba bốn\n\n----- Đoạn 2/3 -----\n\nNgười hỏi 2: năm\n\nGiảng viên: sáu\n\n----- Đoạn 3/3 -----\n\nchỉ chữ",
+      "header": "Tệp âm thanh: bai giang.m4a\nChuyển lúc: 2026-11-12 21:04 · Model: gemini-3.8-flash · Thời lượng: 0:03:30\nNgười nói: Giảng viên (2.9 phút), Người hỏi 1 (0.2 phút), Người hỏi 2 (0.1 phút)\n------------------------------------------------------------",
+      "mark_chunks": true,
+      "method": "hybrid",
+      "minutes": [
+        [
+          "Giảng viên",
+          2.9
+        ],
+        [
+          "Người hỏi 1",
+          0.2
+        ],
+        [
+          "Người hỏi 2",
+          0.1
+        ]
+      ],
+      "smooth": false,
+      "template": "{speaker} ({time}): {text}",
+      "timestamps": false
+    }
+  ],
+  "chunks": [
+    {
+      "bat_dau_giay": 0.0,
+      "file": "doan_001.flac",
+      "ket_thuc_giay": 50.0
+    },
+    {
+      "bat_dau_giay": 50.0,
+      "file": "doan_002.flac",
+      "ket_thuc_giay": 100.0
+    },
+    {
+      "bat_dau_giay": 100.0,
+      "file": "doan_003.flac",
+      "ket_thuc_giay": 187.75
+    }
+  ],
+  "diarization_prompt": "Transcribe this audio recording of a university lecture and label who is speaking.\nYou are also given a SPEAKER MAP made by a speaker diarization tool. Each line of the map is a time range, measured from the start of THIS audio clip, followed by the speaker talking during that range.\nSpeakers in this clip: {speakers}.\n- Write down everything that is said, in the language it is spoken (Vietnamese, English, or a mix of both). Do not translate.\n- Start a new paragraph whenever the speaker changes. Begin that paragraph with the speaker name exactly as written in the speaker map, followed by a colon, for example \"Giảng viên: ...\".\n- Use the speaker map to decide who is speaking. Only override it when your ears clearly tell you the map is wrong for a short moment.\n- Use only the speaker names from the speaker map. Do not invent new names.\n- A long speech by one speaker may be split into several paragraphs; each paragraph still starts with the speaker name.\n- Add punctuation so the text is easy to read.\n- Do not add a title, summary, or any comments of your own.\n- If a part cannot be heard clearly, write [không nghe rõ].\n- If there is no speech at all, return an empty response.\nReturn only the transcript as plain text.",
+  "full_speaker_map": "[00:00:01 - 00:00:21] Giảng viên\n[00:00:21 - 00:00:34] Người hỏi 1\n[00:00:34 - 00:01:42] Giảng viên\n[00:01:43 - 00:01:47] Người hỏi 2\n[00:01:47 - 00:03:20] Giảng viên\n",
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_pipeline.py"
+  },
+  "name_map": {
+    "SPEAKER_00": "Người hỏi 1",
+    "SPEAKER_01": "Giảng viên",
+    "SPEAKER_02": "Người hỏi 2"
+  },
+  "orig_duration": 210.0,
+  "results": {
+    "None": [
+      {
+        "tu": [],
+        "van_ban": "Một."
+      },
+      {
+        "tu": [],
+        "van_ban": ""
+      },
+      {
+        "tu": [],
+        "van_ban": "Ba\n\nbốn"
+      }
+    ],
+    "gemini": [
+      {
+        "tu": [
+          {
+            "bat_dau": 0.0,
+            "ket_thuc": 0.5,
+            "nguoi_noi": "spk_1",
+            "tu": "Hỏi"
+          },
+          {
+            "bat_dau": 0.5,
+            "ket_thuc": 1.0,
+            "nguoi_noi": "spk_1",
+            "tu": "gì"
+          },
+          {
+            "bat_dau": 1.0,
+            "ket_thuc": 1.1,
+            "nguoi_noi": "spk_1",
+            "tu": "?"
+          },
+          {
+            "bat_dau": 1.5,
+            "ket_thuc": 2.0,
+            "nguoi_noi": "spk_2",
+            "tu": "Trả"
+          },
+          {
+            "bat_dau": 2.0,
+            "ket_thuc": 30.0,
+            "nguoi_noi": "spk_2",
+            "tu": "lời"
+          }
+        ],
+        "van_ban": "a b c"
+      },
+      {
+        "tu": [],
+        "van_ban": "không mốc"
+      },
+      {
+        "tu": [
+          {
+            "bat_dau": 0.0,
+            "ket_thuc": 2.0,
+            "nguoi_noi": null,
+            "tu": "x"
+          },
+          {
+            "bat_dau": 6.0,
+            "ket_thuc": 7.0,
+            "nguoi_noi": null,
+            "tu": "y"
+          }
+        ],
+        "van_ban": "x"
+      }
+    ],
+    "hybrid": [
+      {
+        "tu": [
+          {
+            "bat_dau": 0.0,
+            "ket_thuc": 1.0,
+            "nguoi_noi": null,
+            "tu": "một"
+          },
+          {
+            "bat_dau": 21.0,
+            "ket_thuc": 22.0,
+            "nguoi_noi": null,
+            "tu": "hai"
+          },
+          {
+            "bat_dau": 25.0,
+            "ket_thuc": 49.0,
+            "nguoi_noi": null,
+            "tu": "ba"
+          }
+        ],
+        "van_ban": "a"
+      },
+      {
+        "tu": [
+          {
+            "bat_dau": 0.0,
+            "ket_thuc": 30.0,
+            "nguoi_noi": null,
+            "tu": "bốn"
+          },
+          {
+            "bat_dau": 41.5,
+            "ket_thuc": 44.0,
+            "nguoi_noi": null,
+            "tu": "năm"
+          },
+          {
+            "bat_dau": 45.0,
+            "ket_thuc": 46.0,
+            "nguoi_noi": null,
+            "tu": "sáu"
+          }
+        ],
+        "van_ban": "b"
+      },
+      {
+        "tu": [],
+        "van_ban": "chỉ chữ"
+      }
+    ],
+    "pyannote": [
+      {
+        "tu": [],
+        "van_ban": "[00:01] Giảng viên: Mở đầu.\n\n[00:21] **Người hỏi 1:** Hỏi?\nTiếp câu hỏi\n[00:40] Giảng viên:"
+      },
+      {
+        "tu": [],
+        "van_ban": "Không có tên nào ở đây\n\nđoạn hai"
+      },
+      {
+        "tu": [],
+        "van_ban": "(01:02) Người hỏi 2: Em hỏi.\n[1:00:00] Giảng viên: Trả lời dài."
+      }
+    ]
+  },
+  "shared_keys": [
+    {
+      "map_delivery": "file",
+      "map_text": null,
+      "method": null,
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.026dc0ff6d.json",
+      "shared_key": "5657169aca",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "file",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": null,
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.6ecb2d4aa0.json",
+      "shared_key": "5657169aca",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "text",
+      "map_text": null,
+      "method": null,
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.026dc0ff6d.json",
+      "shared_key": "5657169aca",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "text",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": null,
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.6ecb2d4aa0.json",
+      "shared_key": "5657169aca",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "file",
+      "map_text": null,
+      "method": "pyannote",
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.b2efff67e2.json",
+      "shared_key": "7b0ee611e5",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "file",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "pyannote",
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.5091e4edac.json",
+      "shared_key": "7b0ee611e5",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "text",
+      "map_text": null,
+      "method": "pyannote",
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.682572aa3b.json",
+      "shared_key": "6e1e18047b",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "text",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "pyannote",
+      "model": "gemini-3.8-flash",
+      "result_file": "doan_002.89fb6324cc.json",
+      "shared_key": "6e1e18047b",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "file",
+      "map_text": null,
+      "method": "gemini",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.d2148758df.json",
+      "shared_key": "da8f61313f",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "file",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "gemini",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.dbf3b84341.json",
+      "shared_key": "da8f61313f",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "text",
+      "map_text": null,
+      "method": "gemini",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.d2148758df.json",
+      "shared_key": "da8f61313f",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "text",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "gemini",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.dbf3b84341.json",
+      "shared_key": "da8f61313f",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "file",
+      "map_text": null,
+      "method": "hybrid",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.8cd075ec15.json",
+      "shared_key": "dfa2ea04b4",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "file",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "hybrid",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.e00fa3e41c.json",
+      "shared_key": "dfa2ea04b4",
+      "timestamps": true
+    },
+    {
+      "map_delivery": "text",
+      "map_text": null,
+      "method": "hybrid",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.8cd075ec15.json",
+      "shared_key": "dfa2ea04b4",
+      "timestamps": false
+    },
+    {
+      "map_delivery": "text",
+      "map_text": "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n00:00.0 - 00:05.0  Giảng viên\n",
+      "method": "hybrid",
+      "model": "gemini-3.5-transcribe",
+      "result_file": "doan_002.e00fa3e41c.json",
+      "shared_key": "dfa2ea04b4",
+      "timestamps": false
+    }
+  ],
+  "speaker_hash": [
+    {
+      "audio_key": "0123456789",
+      "hash": "c256880b7c",
+      "max": 6,
+      "min": 1,
+      "model": "sherpa-onnx 2.0.1: segmentation-3.0 + campplus_zh_en_advanced, shift 0.1, on 0.2, off 0.5, t 1.1, P 20.0, O 60.0",
+      "num": 0,
+      "run_on": "clean"
+    },
+    {
+      "audio_key": "abcdef0123",
+      "hash": "9e4631ed8d",
+      "max": 6,
+      "min": 1,
+      "model": "x",
+      "num": 3,
+      "run_on": "original"
+    },
+    {
+      "audio_key": "abcdef0123",
+      "hash": "aa1691be0a",
+      "max": 0,
+      "min": 0,
+      "model": "x",
+      "num": 0,
+      "run_on": "clean"
+    }
+  ],
+  "time_map": [
+    [
+      1.5,
+      30.0
+    ],
+    [
+      31.0,
+      70.25
+    ],
+    [
+      80.0,
+      200.0
+    ]
+  ],
+  "turns": [
+    [
+      0.0,
+      20.0,
+      "SPEAKER_01"
+    ],
+    [
+      20.0,
+      31.5,
+      "SPEAKER_00"
+    ],
+    [
+      31.5,
+      90.0,
+      "SPEAKER_01"
+    ],
+    [
+      91.0,
+      95.0,
+      "SPEAKER_02"
+    ],
+    [
+      95.0,
+      187.75,
+      "SPEAKER_01"
+    ]
+  ]
+}

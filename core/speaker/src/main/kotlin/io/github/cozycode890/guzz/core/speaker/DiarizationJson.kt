@@ -31,7 +31,7 @@ data class DiarizationJson(
     val model: String,
     @SerialName("thiet_bi") val device: String = "cpu",
     @SerialName("thoi_luong_giay") val durationSec: Double,
-    @SerialName("giay_xu_ly") val processingSec: Double,
+    @SerialName("giay_xu_ly") val processingSec: Double = 0.0,
     @SerialName("so_nguoi") val numSpeakers: Int,
     @SerialName("doan") val turns: List<TurnJson>,
     val sherpa: JsonElement? = null,

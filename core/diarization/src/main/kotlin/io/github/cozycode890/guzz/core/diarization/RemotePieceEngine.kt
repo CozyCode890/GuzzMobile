@@ -20,8 +20,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import java.io.Closeable
 import java.io.File
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import java.util.concurrent.atomic.AtomicBoolean
 
 /** Process `:diarize` chết giữa chừng (hết RAM, bị hệ thống giết…): báo lỗi rõ thay vì treo. */
 class DiarizeProcessDiedException(message: String) : Exception(message)
@@ -70,25 +69,33 @@ class RemotePieceEngine(private val context: Context) : PieceEngine, Closeable {
         val out = File(pcm.parentFile, "diarize_${a}_$numClusters.tmp.json")
         out.delete()
         suspendCancellableCoroutine { cont ->
+            // Xong, lỗi, process chết (linkToDeath và onServiceDisconnected đều báo, trên hai luồng khác nhau): chỉ
+            // resume một lần.
+            val finished = AtomicBoolean(false)
+            fun finish(r: Result<Unit>) {
+                if (finished.compareAndSet(false, true)) cont.resumeWith(r)
+            }
             val reply = Messenger(Handler(thread.looper) { msg ->
                 remotePid = msg.data?.getInt(DiarizeService.KEY_PID, 0)?.takeIf { it > 0 } ?: remotePid
                 when (msg.what) {
                     DiarizeService.MSG_PROGRESS -> onProgress(msg.arg1, msg.arg2)
-                    DiarizeService.MSG_DONE -> if (cont.isActive) cont.resume(Unit)
-                    DiarizeService.MSG_ERROR -> if (cont.isActive) {
-                        cont.resumeWithException(IllegalStateException(msg.data.getString(DiarizeService.KEY_ERROR)))
-                    }
+                    DiarizeService.MSG_DONE -> finish(Result.success(Unit))
+                    DiarizeService.MSG_ERROR ->
+                        finish(Result.failure(IllegalStateException(msg.data.getString(DiarizeService.KEY_ERROR))))
                 }
                 true
             })
             onDeath = {
-                if (cont.isActive) {
-                    cont.resumeWithException(
+                finish(
+                    Result.failure(
                         DiarizeProcessDiedException("Process tách giọng bị dừng giữa chừng (hết RAM hoặc bị hệ thống giết)"),
-                    )
-                }
+                    ),
+                )
             }
-            cont.invokeOnCancellation { kill() }
+            cont.invokeOnCancellation {
+                finished.set(true)
+                kill()
+            }
             messenger.send(Message.obtain(null, DiarizeService.MSG_RUN).apply {
                 replyTo = reply
                 data = Bundle().apply {

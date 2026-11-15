@@ -49,3 +49,6 @@ fun pyFixed(x: Double, digits: Int): String {
     val negative = x < 0 || (x == 0.0 && 1.0 / x < 0)
     return if (negative && !s.startsWith("-")) "-$s" else s
 }
+
+/** `f"{x:g}"` của Python (6 chữ số có nghĩa, bỏ số 0 thừa), vd số phút theo người nói `12.5`, `3`. */
+fun pyFormatG(x: Double): String = io.github.cozycode890.guzz.core.common.settings.formatPythonG(x)

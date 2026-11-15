@@ -138,10 +138,10 @@ class FilePipelineTest {
     }
 
     @Test
-    fun `chưa có key hoặc bật người nói thì dừng hàng đợi trước khi xử lý âm thanh`() {
+    fun `chưa có key hoặc thiếu bộ tách giọng thì dừng hàng đợi trước khi xử lý âm thanh`() {
         val e = assertFailsWith<GoogleAIException> { run(null) }
         assertTrue(e.stopQueue)
-        cfg = cfg.copy(gemini = cfg.gemini.copy(diarizationEnabled = true, diarizationMethod = "gemini"))
+        cfg = cfg.copy(gemini = cfg.gemini.copy(diarizationEnabled = true, diarizationMethod = "hybrid"))
         val e2 = assertFailsWith<PipelineException> { run(FakeClient { _, _ -> text("x") }) }
         assertTrue(e2.stopQueue)
         assertEquals(0, source.prepareCalls)

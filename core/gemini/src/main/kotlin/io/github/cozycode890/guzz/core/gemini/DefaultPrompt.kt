@@ -8,10 +8,18 @@ package io.github.cozycode890.guzz.core.gemini
  * Golden `GeminiConfigGoldenTest` so với `prompt.txt` của desktop, nên desktop đổi prompt thì test đỏ.
  */
 object DefaultPrompt {
-    val text: String by lazy {
-        val stream = DefaultPrompt::class.java.getResourceAsStream("prompt.txt")
-            ?: error("Thiếu resource prompt.txt trong :core:gemini")
-        stream.use { it.readBytes().toString(Charsets.UTF_8) }
+    val text: String by lazy { read("prompt.txt") }
+
+    /**
+     * Prompt của cách "Tách giọng trên máy + Prompt" (`pyannote`): `prompt_diarization.txt` của desktop, có biến
+     * `{speakers}`. Port của config.py: `Config.read_diarization_prompt`.
+     */
+    val diarization: String by lazy { read("prompt_diarization.txt") }
+
+    private fun read(name: String): String {
+        val stream = DefaultPrompt::class.java.getResourceAsStream(name)
+            ?: error("Thiếu resource $name trong :core:gemini")
+        return stream.use { it.readBytes().toString(Charsets.UTF_8) }
             .removePrefix("﻿")
             .replace("\r\n", "\n")
             .replace('\r', '\n')

@@ -5,6 +5,8 @@ Chạy chính transcribe.py, config.py của desktop trên các đầu vào dự
   hash.json        _hash (chuỗi json.dumps và mã), temp_dir_for, mã âm thanh / khoá chung / tên tệp kết quả đoạn
   naming.json      output_filename, sanitize_filename, unique_path, write_text (bytes ghi ra)
   transcript.json  hms, format_header, assemble_transcript (nhánh không người nói), count_models, has_speech
+  speaker.json     (Stage 5) speaker_hash, shared_key + tên tệp kết quả theo cách nhận diện, prompt người nói,
+                   assemble_transcript + format_header đủ 3 cách, full_speaker_map, closest_alternative_method
 
 Test Kotlin: io.github.cozycode890.guzz.core.pipeline.*GoldenTest.
 """
@@ -25,6 +27,7 @@ import _common  # noqa: E402
 
 _common.use_desktop_modules()
 import config  # noqa: E402
+import speaker  # noqa: E402
 import transcribe  # noqa: E402
 from audio_processing import TimeMap  # noqa: E402
 
@@ -224,10 +227,120 @@ def transcript_json() -> dict:
             "assemble": assembled, "count_models": count_models, "has_speech": speech}
 
 
+# ---------------------------------------------------------------- speaker.json (Stage 5)
+
+SPEAKER_HASH_CASES = [
+    # (audio_key, run_on, diarization_model, num, min, max)
+    ("0123456789", "clean", "sherpa-onnx 2.0.1: segmentation-3.0 + campplus_zh_en_advanced, shift 0.1, on 0.2, "
+                            "off 0.5, t 1.1, P 20.0, O 60.0", 0, 1, 6),
+    ("abcdef0123", "original", "x", 3, 1, 6),
+    ("abcdef0123", "clean", "x", 0, 0, 0),
+]
+
+MAP_TEXTS = [None, "SPEAKER MAP\nTimes are mm:ss.s measured from the start of this audio clip.\n\n"
+                   "00:00.0 - 00:05.0  Giảng viên\n"]
+
+
+def _cfg(**kw) -> config.Config:
+    c = config.Config(model="gemini-3.8-flash")
+    for k, v in kw.items():
+        setattr(c, k, v)
+    return c
+
+
+def speaker_json() -> dict:
+    hashes = []
+    for audio_key, run_on, model, num, mn, mx in SPEAKER_HASH_CASES:
+        cfg = _cfg(diarization_source=run_on, diarization_model=model, diarization_num_speakers=num,
+                   diarization_min_speakers=mn, diarization_max_speakers=mx)
+        hashes.append({"audio_key": audio_key, "run_on": run_on, "model": model, "num": num, "min": mn, "max": mx,
+                       "hash": transcribe.speaker_hash(cfg, audio_key)})
+
+    prompt = _cfg().read_diarization_prompt()
+    shared = []
+    for method in (None, "pyannote", "gemini", "hybrid"):
+        for delivery, ts in (("file", True), ("text", False)):
+            model = "gemini-3.8-flash" if method in (None, "pyannote") else "gemini-3.5-transcribe"
+            cfg = _cfg(model=model, diarization_enabled=method is not None, diarization_method=method or "pyannote",
+                       diarization_map_delivery=delivery, diarization_timestamps=ts, languages=("vi",),
+                       vocabulary=("ESG",), transcribe_mode="verbatim")
+            plain = None if config.is_transcribe_model(model) else cfg.read_prompt()
+            key = transcribe._hash("0123456789", config.hash_value(method),
+                                   prompt if method == "pyannote" else plain if method is None else None,
+                                   cfg.languages, cfg.vocabulary, cfg.transcribe_mode,
+                                   config.hash_value(delivery) if method == "pyannote" else None,
+                                   ts if method == "pyannote" else None)
+            for m in MAP_TEXTS:
+                shared.append({"method": method, "model": model, "map_delivery": delivery, "timestamps": ts,
+                               "map_text": m, "shared_key": key,
+                               "result_file": f"doan_002.{transcribe._hash(key, m)}.json"})
+
+    # assemble_transcript + format_header: 3 đoạn, cắt lặng, đủ 3 cách.
+    tmap = TimeMap([(1.5, 30.0), (31.0, 70.25), (80.0, 200.0)], 210.0)
+    chunks = [{"file": f"doan_{i:03d}.flac", "bat_dau_giay": a, "ket_thuc_giay": b}
+              for i, (a, b) in enumerate([(0.0, 50.0), (50.0, 100.0), (100.0, 187.75)], 1)]
+    turns = [speaker.SpeakerTurn(0.0, 20.0, "SPEAKER_01"), speaker.SpeakerTurn(20.0, 31.5, "SPEAKER_00"),
+             speaker.SpeakerTurn(31.5, 90.0, "SPEAKER_01"), speaker.SpeakerTurn(91.0, 95.0, "SPEAKER_02"),
+             speaker.SpeakerTurn(95.0, 187.75, "SPEAKER_01")]
+    name_map = {"SPEAKER_01": "Giảng viên", "SPEAKER_00": "Người hỏi 1", "SPEAKER_02": "Người hỏi 2"}
+
+    def wd(items):
+        return [{"tu": t, "nguoi_noi": s, "bat_dau": a, "ket_thuc": b} for t, s, a, b in items]
+
+    results_by_method = {
+        None: [{"van_ban": "Một.", "tu": []}, {"van_ban": "", "tu": []}, {"van_ban": "Ba\n\nbốn", "tu": []}],
+        "pyannote": [
+            {"van_ban": "[00:01] Giảng viên: Mở đầu.\n\n[00:21] **Người hỏi 1:** Hỏi?\nTiếp câu hỏi\n[00:40] Giảng viên:",
+             "tu": []},
+            {"van_ban": "Không có tên nào ở đây\n\nđoạn hai", "tu": []},
+            {"van_ban": "(01:02) Người hỏi 2: Em hỏi.\n[1:00:00] Giảng viên: Trả lời dài.", "tu": []},
+        ],
+        "gemini": [
+            {"van_ban": "a b c", "tu": wd([("Hỏi", "spk_1", 0.0, 0.5), ("gì", "spk_1", 0.5, 1.0), ("?", "spk_1", 1.0, 1.1),
+                                          ("Trả", "spk_2", 1.5, 2.0), ("lời", "spk_2", 2.0, 30.0)])},
+            {"van_ban": "không mốc", "tu": []},
+            {"van_ban": "x", "tu": wd([("x", None, 0.0, 2.0), ("y", None, 6.0, 7.0)])},
+        ],
+        "hybrid": [
+            {"van_ban": "a", "tu": wd([("một", None, 0.0, 1.0), ("hai", None, 21.0, 22.0), ("ba", None, 25.0, 49.0)])},
+            {"van_ban": "b", "tu": wd([("bốn", None, 0.0, 30.0), ("năm", None, 41.5, 44.0), ("sáu", None, 45.0, 46.0)])},
+            {"van_ban": "chỉ chữ", "tu": []},
+        ],
+    }
+    assembles = []
+    for method, results in results_by_method.items():
+        for mark, ts, template, smooth in ((False, True, "[{time}] {speaker}: {text}", True),
+                                           (True, False, "{speaker} ({time}): {text}", False)):
+            cfg = _cfg(diarization_enabled=method is not None, diarization_method=method or "pyannote",
+                       mark_chunks=mark, diarization_timestamps=ts, diarization_paragraph_template=template,
+                       diarization_smooth=smooth, diarization_density_min_sec=5.0)
+            body, minutes = transcribe.assemble_transcript(cfg, chunks, results, turns,
+                                                           name_map if method == "pyannote" else {}, tmap)
+            with mock.patch.object(transcribe, "datetime", _FixedDatetime):
+                header = transcribe.format_header(cfg, "/x/bai giang.m4a", tmap.orig_duration, minutes,
+                                                  {"gemini-3.8-flash": 3})
+            assembles.append({"method": method, "mark_chunks": mark, "timestamps": ts, "template": template,
+                              "smooth": smooth, "body": body, "minutes": [[k, v] for k, v in minutes.items()],
+                              "header": header})
+
+    full_map = transcribe.full_speaker_map(turns, name_map, tmap)
+
+    models = ["gemini-3.5-transcribe", "gemini-3.8-flash", "gemini-3.5-flash-lite", "my-transcribe-x"]
+    alternatives = [{"model": m, "method": meth, "closest": config.closest_alternative_method(m, meth)}
+                    for m in models for meth in ("pyannote", "gemini", "hybrid")]
+    return {
+        "speaker_hash": hashes, "shared_keys": shared, "diarization_prompt": prompt,
+        "time_map": [list(s) for s in tmap.segments], "orig_duration": tmap.orig_duration,
+        "chunks": chunks, "turns": [[t.start, t.end, t.speaker] for t in turns], "name_map": name_map,
+        "results": {str(k): v for k, v in results_by_method.items()}, "assemble": assembles,
+        "full_speaker_map": full_map, "alternatives": alternatives,
+    }
+
+
 def main() -> None:
     out = _common.output_dir("pipeline")
     for name, data in (("hash.json", hash_json()), ("naming.json", naming_json()),
-                       ("transcript.json", transcript_json())):
+                       ("transcript.json", transcript_json()), ("speaker.json", speaker_json())):
         _common.write_json(out / name, data, SCRIPT)
         print(f"{name}: xong")
 

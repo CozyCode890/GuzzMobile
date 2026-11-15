@@ -58,6 +58,8 @@ androidComponents {
     onVariants { variant ->
         variant.sources.assets?.addGeneratedSourceDirectory(copyModels, CopyAssets::outputDir)
         variant.androidTest?.sources?.assets?.addGeneratedSourceDirectory(copyTestWav, CopyAssets::outputDir)
+        // Kết quả run_sherpa.py trên PC cho cùng tệp thử (bước D1): so với bản trên máy.
+        variant.androidTest?.sources?.assets?.addStaticSourceDirectory(rootProject.file("testdata/golden/diarization").path)
     }
 }
 
@@ -70,4 +72,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

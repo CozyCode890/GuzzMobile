@@ -61,10 +61,10 @@ object Transcript {
     private val NOW_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     /**
-     * Phần đầu bản chép lời (`[OUTPUT] add_header`). Port của transcribe.py: `format_header` (chưa có dòng "Người nói",
-     * Stage 5).
+     * Phần đầu bản chép lời (`[OUTPUT] add_header`). Port của transcribe.py: `format_header`.
      *
      * @param models {model: số đoạn}; rỗng thì ghi [defaultModel].
+     * @param minutes {tên: phút nói}, rỗng thì không có dòng "Người nói".
      */
     fun formatHeader(
         isVideo: Boolean,
@@ -73,17 +73,20 @@ object Transcript {
         origDuration: Double,
         models: Map<String, Int>,
         defaultModel: String,
+        minutes: Map<String, Double> = emptyMap(),
     ): String {
         val modelName = when {
             models.size > 1 -> models.entries.joinToString(", ") { (m, n) -> "$m ($n đoạn)" }
             models.isNotEmpty() -> models.keys.first()
             else -> defaultModel
         }
-        return listOf(
+        val lines = arrayListOf(
             "Tệp ${if (isVideo) "video" else "âm thanh"}: $displayName",
             "Chuyển lúc: ${now.format(NOW_FORMAT)} · Model: $modelName · Thời lượng: ${hms(origDuration)}",
-            "-".repeat(60),
-        ).joinToString("\n")
+        )
+        if (minutes.isNotEmpty()) lines += SpeakerTranscript.minutesLine(minutes)
+        lines += "-".repeat(60)
+        return lines.joinToString("\n")
     }
 
     /** Đuôi video mặc định của desktop (`[VIDEO] extensions`), dùng khi provider không cho MIME. */

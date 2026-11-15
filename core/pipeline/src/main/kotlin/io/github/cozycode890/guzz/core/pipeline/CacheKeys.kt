@@ -1,6 +1,7 @@
 package io.github.cozycode890.guzz.core.pipeline
 
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.gemini.DiarizationMethod
 import io.github.cozycode890.guzz.core.gemini.GeminiConfig
 
 /**
@@ -46,20 +47,54 @@ object CacheKeys {
     }
 
     /**
-     * Khoá chung cho kết quả mọi đoạn của một tệp khi tắt nhận diện người nói. Port của transcribe.py:
-     * `transcribe_chunks` (`shared_key`, nhánh `method is None`). Không có tên model: đoạn đã xong bằng model dự phòng
-     * vẫn dùng lại được khi chạy tiếp.
+     * Khoá chung cho kết quả mọi đoạn của một tệp. Port của transcribe.py: `transcribe_chunks` (`shared_key`). Không có
+     * tên model: đoạn đã xong bằng model dự phòng vẫn dùng lại được khi chạy tiếp.
      *
-     * @param prompt prompt của model chính (`null` với model `*-transcribe`), như `prompt_for(cfg.model)`.
+     * @param method cách nhận diện người nói (`null` = tắt).
+     * @param prompt prompt của model chính khi tắt nhận diện (`null` với model `*-transcribe`), như `prompt_for(cfg.model)`.
+     * @param speakerPrompt prompt của cách `pyannote` (chưa thay `{speakers}`).
      * @param salt thêm vào mã khi khác rỗng (chỉ mobile): Gemini giả của bản debug dùng mã riêng, để kết quả giả không bao
      * giờ bị dùng lại khi gửi thật.
      */
-    fun sharedKey(audioKey: String, prompt: String?, cfg: GeminiConfig, salt: String = ""): String {
-        val key = pyHash(audioKey, null, prompt, cfg.languages, cfg.vocabulary, cfg.transcribeMode, null, null)
+    fun sharedKey(
+        audioKey: String,
+        prompt: String?,
+        cfg: GeminiConfig,
+        salt: String = "",
+        method: String? = null,
+        speakerPrompt: String? = null,
+        mapDelivery: String = "file",
+        timestamps: Boolean = true,
+    ): String {
+        val pyannote = method == DiarizationMethod.PYANNOTE
+        val key = pyHash(
+            audioKey, hashValue(method),
+            if (pyannote) speakerPrompt else if (method == null) prompt else null,
+            cfg.languages, cfg.vocabulary, cfg.transcribeMode,
+            if (pyannote) hashValue(mapDelivery) else null,
+            if (pyannote) timestamps else null,
+        )
         return if (salt.isEmpty()) key else pyHash(key, salt)
     }
 
-    /** `doan_003.flac` → `doan_003.<mã>.json`: kết quả chép lời của đoạn (không có bản đồ người nói: `map_text = None`). */
-    fun resultFileName(chunkFile: String, sharedKey: String): String =
-        "${pySplitext(chunkFile).first}.${pyHash(sharedKey, null)}.json"
+    /**
+     * `doan_003.flac` → `doan_003.<mã>.json`: kết quả chép lời của đoạn; mã gồm cả bản đồ người nói của đoạn (cách
+     * `pyannote`), nên lượt nói đổi thì gửi lại. Port của transcribe.py: `transcribe_chunks` (`result_file`).
+     */
+    fun resultFileName(chunkFile: String, sharedKey: String, mapText: String? = null): String =
+        "${pySplitext(chunkFile).first}.${pyHash(sharedKey, mapText)}.json"
+
+    /**
+     * Mã của kết quả tách giọng `nguoi_noi.<mã>.json`. Port của transcribe.py: `speaker_hash`. [model] là
+     * `DiarizationSettings.signature` (model + ngưỡng + chia phần), thay cho tên model pyannote của desktop.
+     */
+    fun speakerHash(audioKey: String, runOn: String, model: String, num: Int, min: Int, max: Int): String =
+        pyHash(audioKey, hashValue(runOn), model, num, min, max)
+
+    /** Port của config.py: `hash_value` (giá trị cũ của bản tiếng Việt, để mã cache không đổi). */
+    fun hashValue(value: String?): String? = HASH_VALUES[value] ?: value
+
+    private val HASH_VALUES = mapOf(
+        DiarizationMethod.HYBRID to "ket_hop", "text" to "van_ban", "clean" to "da_lam_sach", "original" to "goc",
+    )
 }

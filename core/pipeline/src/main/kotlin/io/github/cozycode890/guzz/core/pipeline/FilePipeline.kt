@@ -17,6 +17,14 @@ import io.github.cozycode890.guzz.core.gemini.constraintError
 import io.github.cozycode890.guzz.core.gemini.coroutineSleep
 import io.github.cozycode890.guzz.core.gemini.extractText
 import io.github.cozycode890.guzz.core.gemini.isTranscribeModel
+import io.github.cozycode890.guzz.core.gemini.DiarizationMethod
+import io.github.cozycode890.guzz.core.gemini.extractWords
+import io.github.cozycode890.guzz.core.common.audio.TimeMap
+import io.github.cozycode890.guzz.core.speaker.DiarizeRequest
+import io.github.cozycode890.guzz.core.speaker.SpeakerDiarizer
+import io.github.cozycode890.guzz.core.speaker.SpeakerTurn
+import io.github.cozycode890.guzz.core.speaker.Speakers
+import io.github.cozycode890.guzz.core.speaker.loadSpeakerTurns
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +40,7 @@ import java.time.ZoneId
 import java.util.Locale
 
 /** Các bước của một tệp (mã như desktop: `lam_sach`, `go_chu`, `noi_lai`). */
-enum class Stage(val code: String) { CLEAN("lam_sach"), TRANSCRIBE("go_chu"), MERGE("noi_lai") }
+enum class Stage(val code: String) { CLEAN("lam_sach"), DIARIZE("nguoi_noi"), TRANSCRIBE("go_chu"), MERGE("noi_lai") }
 
 /**
  * Tiến độ một tệp: [fraction] là của cả tệp (0..1). [step] là bước con của xử lý âm thanh; [chunk] / [total] / [model]
@@ -47,7 +55,7 @@ data class FileProgress(
     val model: String? = null,
 )
 
-/** Kết quả một tệp. Port của transcribe.py: `FileResult` (chưa có số phút theo người nói, Stage 5). */
+/** Kết quả một tệp. Port của transcribe.py: `FileResult`. */
 data class FileResult(
     val outFile: String? = null,
     val outName: String? = null,
@@ -56,11 +64,13 @@ data class FileResult(
     val charCount: Int = 0,
     val origDuration: Double = 0.0,
     val models: Map<String, Int> = emptyMap(),
+    /** {tên: phút nói}, rỗng khi tắt nhận diện người nói. */
+    val minutesPerSpeaker: Map<String, Double> = emptyMap(),
 )
 
 /**
  * Chuyển một tệp thành bản chép lời. Port của transcribe.py: `transcribe_single_file` + `prepare_chunks` (phần cache) +
- * `transcribe_chunks`, nhánh tắt nhận diện người nói.
+ * `diarize_speakers` + `transcribe_chunks` + `assemble_transcript`, đủ 3 cách nhận diện người nói.
  *
  * Làm lại một tệp vừa lỗi / dừng giữa chừng: tham số âm thanh không đổi thì dùng lại các đoạn đã cắt (`ma` trong
  * `danh_sach_doan.json`), đoạn nào đã có `doan_NNN.<mã>.json` thì không gửi lại.
@@ -68,6 +78,7 @@ data class FileResult(
  * @param tempRoot gốc thư mục tạm; mỗi tệp một thư mục con `<tên>_<mã vân tay>` (không nằm trong `cacheDir` vì hệ thống
  * có thể xoá thư mục đó lúc đang làm dở).
  * @param sleep hàm chờ của bộ đổi model (chờ model mở khoá) và của chờ giữa các đoạn (bản debug, D67).
+ * @param diarizer tách giọng trên máy (cách `pyannote` và `hybrid`); `null` thì hai cách đó báo lỗi.
  */
 class FilePipeline(
     private val tempRoot: File,
@@ -76,6 +87,7 @@ class FilePipeline(
     private val now: () -> LocalDateTime = LocalDateTime::now,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val io: CoroutineDispatcher = Dispatchers.IO,
+    private val diarizer: SpeakerDiarizer? = null,
 ) {
     fun tempDirFor(info: SourceInfo): File = File(tempRoot, CacheKeys.tempDirName(info.displayName, fingerprint(info)))
 
@@ -97,7 +109,9 @@ class FilePipeline(
         cacheSalt: String = "",
         onProgress: (FileProgress) -> Unit = {},
     ): FileResult {
-        val progress = ProgressTracker(onProgress)
+        val method = cfg.gemini.currentDiarizationMethod()
+        val onDevice = method == DiarizationMethod.PYANNOTE || method == DiarizationMethod.HYBRID
+        val progress = ProgressTracker(onProgress, hasDiarization = onDevice)
         val info = withContext(io) { source.info() }
         val startedAt = now()
         val recordedAt = if (info.modifiedMillis > 0) {
@@ -114,7 +128,10 @@ class FilePipeline(
         logger.info("Tệp    : ${info.displayName} (${info.id})")
         logger.info("Kết quả: ${output.label}/$outName")
         val chain = cfg.gemini.modelChain()
-        logger.info("Model  : ${cfg.gemini.model}" + if (chain.size > 1) " (dự phòng: ${chain.drop(1).joinToString(", ")})" else "")
+        logger.info(
+            "Model  : ${cfg.gemini.model}" + (if (chain.size > 1) " (dự phòng: ${chain.drop(1).joinToString(", ")})" else "") +
+                (if (method != null) " | người nói: $method" else ""),
+        )
 
         val existing = withContext(io) { output.listNames() }
         if (cfg.onConflict == PipelineConfig.CONFLICT_SKIP && existing.any { it.equals(outName, ignoreCase = true) }) {
@@ -126,11 +143,8 @@ class FilePipeline(
         }
         // Báo sớm, trước khi mất vài phút xử lý âm thanh.
         constraintError(cfg.gemini)?.let { throw ConstraintException(it) }
-        if (cfg.gemini.diarizationEnabled) {
-            throw PipelineException(
-                "Nhận diện người nói chưa có trên điện thoại (Stage 5). Tắt [SPEAKERS] enabled rồi chạy lại.",
-                stopQueue = true,
-            )
+        if (onDevice && diarizer == null) {
+            throw PipelineException("Bản này không có tách giọng trên máy.", stopQueue = true)
         }
 
         val folder = tempDirFor(info)
@@ -140,10 +154,22 @@ class FilePipeline(
             if (isVideo) listOf("track", cfg.audioTrack) else null,
         )
 
+        val sp = cfg.speakers
+        val speakerKey = CacheKeys.speakerHash(
+            audioKey, sp.runOn, sp.diarization.signature, sp.numSpeakers, sp.minSpeakers, sp.maxSpeakers,
+        )
+        val speakersJson = File(folder, "nguoi_noi.$speakerKey.json")
+        // D75: chưa có kết quả tách giọng thì giữ PCM mà tách giọng cần tới lúc có, rồi xoá ngay.
+        val keepPcm = if (onDevice && !nonEmpty(speakersJson)) {
+            if (sp.runOnOriginal) ChunkCache.RAW_PCM_FILE else ChunkPreparer.CLEAN_PCM_FILE
+        } else {
+            null
+        }
+
         // ---- (1) xử lý âm thanh + cắt đoạn ----
         progress(Stage.CLEAN, 0.0)
         val chunkList = try {
-            prepareChunks(source, folder, audioKey, cfg, progress)
+            prepareChunks(source, folder, audioKey, cfg, progress, keepPcm)
         } catch (e: NoAudioTrackException) {
             if (!cfg.skipSilent) throw e
             logger.warning("${e.message} Bỏ qua tệp này.")
@@ -151,22 +177,46 @@ class FilePipeline(
         }
         currentCoroutineContext().ensureActive()
 
-        // ---- (2) chép lời ----
+        val timeMap = chunkList.toTimeMap()
+
+        // ---- (2) tách giọng trên máy ----
+        var turns: List<SpeakerTurn> = emptyList()
+        var nameMap: Map<String, String> = emptyMap()
+        if (onDevice) {
+            turns = diarizeSpeakers(sp, folder, speakersJson, keepPcm, timeMap, progress)
+            if (turns.isEmpty()) logger.warning("Tách giọng không nghe thấy ai nói trong tệp này.")
+            if (method == DiarizationMethod.PYANNOTE) {
+                val (processed, changed) = Speakers.processTurns(turns, sp.options)
+                turns = processed
+                nameMap = Speakers.buildNameMap(turns, sp.options, primary = Speakers.findMainSpeaker(turns))
+                logger.info(
+                    "Bản đồ người nói: ${turns.size} lượt" +
+                        (if (changed > 0) " (làm mượt đổi nhãn $changed lượt)" else "") + ". " +
+                        SpeakerTranscript.minutesLog(Speakers.minutesPerSpeaker(turns, nameMap)),
+                )
+            }
+        }
+        currentCoroutineContext().ensureActive()
+
+        // ---- (3) chép lời ----
         val results = transcribeChunks(
             cfg.gemini, folder, chunkList.chunks, client, audioKey, chunkDelaySec, progress, cacheSalt,
+            method, sp, turns, nameMap,
         )
         val models = Transcript.countModels(results, cfg.gemini.model)
         if (models.size > 1) {
             logger.info("Các model đã chép lời tệp này: " + models.entries.joinToString(", ") { "${it.key} ${it.value} đoạn" })
         }
 
-        // ---- (3) ghép, đặt tên, ghi ----
+        // ---- (4) ghép, đặt tên, ghi ----
         progress(Stage.MERGE, 0.0)
-        val body = Transcript.assemble(results, cfg.markChunks)
+        val (body, minutes) = SpeakerTranscript.assemble(
+            method, sp, cfg.markChunks, chunkList.chunks, results, turns, nameMap, timeMap,
+        )
         var content = body
         if (cfg.addHeader) {
             content = Transcript.formatHeader(
-                isVideo, info.displayName, now(), chunkList.originalDuration, models, cfg.gemini.model,
+                isVideo, info.displayName, now(), chunkList.originalDuration, models, cfg.gemini.model, minutes,
             ) + if (body.isNotEmpty()) "\n\n" + body else ""
         }
         if (body.isEmpty()) logger.warning("Bản chép lời không có chữ nào.")
@@ -177,6 +227,18 @@ class FilePipeline(
             val names = output.listNames()
             val name = if (cfg.onConflict == PipelineConfig.CONFLICT_NUMBER) OutputNaming.uniqueName(outName, names) else outName
             val written = name to output.write(name, bytes, overwrite = names.any { it.equals(name, ignoreCase = true) })
+            if (sp.saveSpeakerMap && turns.isNotEmpty()) {
+                val mapNames = nameMap.ifEmpty {
+                    Speakers.buildNameMap(turns, sp.options, primary = Speakers.findMainSpeaker(turns))
+                }
+                // Như desktop: cạnh bản chép lời, cùng tên gốc, có thì ghi đè.
+                val mapName = pySplitext(name).first + ".nguoi_noi.txt"
+                val mapBytes = OutputNaming.encodeText(
+                    SpeakerTranscript.fullSpeakerMap(turns, mapNames, timeMap), cfg.encoding, cfg.newline,
+                )
+                output.write(mapName, mapBytes, overwrite = names.any { it.equals(mapName, ignoreCase = true) })
+            }
+            if (minutes.isNotEmpty()) logger.info("Thời gian nói: " + SpeakerTranscript.minutesLog(minutes))
             logger.info("HOÀN THÀNH: ${written.second}")
             if (cfg.deleteTempWhenDone) folder.deleteRecursively()
             written
@@ -185,6 +247,7 @@ class FilePipeline(
         return FileResult(
             outFile = location.second, outName = location.first, chunkCount = chunkList.chunks.size,
             charCount = body.length, origDuration = chunkList.originalDuration, models = models,
+            minutesPerSpeaker = minutes,
         )
     }
 
@@ -192,8 +255,8 @@ class FilePipeline(
 
     /**
      * Port của transcribe.py: `prepare_chunks` (phần cache): danh sách đoạn đúng mã và đủ tệp thì dùng lại, không thì
-     * gọi [ChunkSource]. Xong (hoặc dừng / lỗi) thì xoá `goc.pcm`, `sach.pcm` (D66): Stage 4 không cần PCM nữa, lần chạy
-     * lại không có danh sách đoạn thì giải mã lại từ đầu.
+     * gọi [ChunkSource]. Xong (hoặc dừng / lỗi) thì xoá `goc.pcm`, `sach.pcm` (D66), trừ [keepPcm] mà tách giọng còn
+     * cần (D75). Có danh sách đoạn mà thiếu [keepPcm] thì giải mã lại, như `need_clean` của desktop.
      */
     private suspend fun prepareChunks(
         source: ChunkSource,
@@ -201,8 +264,11 @@ class FilePipeline(
         digest: String,
         cfg: PipelineConfig,
         progress: ProgressTracker,
+        keepPcm: String? = null,
     ): ChunkList {
-        val existing = withContext(io) { ChunkCache.read(folder, digest) }
+        val existing = withContext(io) {
+            ChunkCache.read(folder, digest)?.takeIf { keepPcm == null || nonEmpty(File(folder, keepPcm)) }
+        }
         if (existing != null) {
             logger.info("Các đoạn âm thanh đã có sẵn (${existing.chunks.size} đoạn), bỏ qua bước xử lý âm thanh.")
             progress(Stage.CLEAN, 1.0)
@@ -221,7 +287,7 @@ class FilePipeline(
                     },
                 )
             } finally {
-                ChunkCache.deletePcm(folder)
+                ChunkCache.deletePcm(folder, keep = keepPcm)
             }
         }
         progress(Stage.CLEAN, 1.0)
@@ -231,12 +297,50 @@ class FilePipeline(
         return list
     }
 
-    // ------------------------------------------------------------------ (2) chép lời từng đoạn
+    // ------------------------------------------------------------------ (2) tách giọng
 
     /**
-     * Port của transcribe.py: `transcribe_chunks`, nhánh tắt nhận diện người nói: một [ChunkDispatcher] cho cả tệp,
-     * prompt mặc định cho model đa năng (`null` cho `*-transcribe`), bản chép lời rỗng thì thử model khác cho đoạn đó và
-     * không lưu kết quả rỗng. Thêm so với desktop: dòng log "dùng lại kết quả đã có" để kiểm được việc không gửi lại.
+     * Lượt nói cả bài, mốc trên âm thanh ĐÃ LÀM SẠCH. Port của transcribe.py: `diarize_speakers`. Xong thì xoá PCM đã giữ
+     * cho tách giọng (D75); Dừng giữa chừng thì PCM còn, chạy lại tách giọng tiếp từ phần đã xong.
+     */
+    private suspend fun diarizeSpeakers(
+        sp: SpeakerConfig,
+        folder: File,
+        json: File,
+        keepPcm: String?,
+        timeMap: TimeMap,
+        progress: ProgressTracker,
+    ): List<SpeakerTurn> {
+        if (nonEmpty(json)) {
+            logger.info("Dùng lại kết quả nhận diện người nói đã có.")
+        } else {
+            val pcm = File(folder, keepPcm ?: error("thiếu PCM cho tách giọng"))
+            logger.info(
+                "Nhận diện người nói bằng ${sp.diarization.signature.substringBefore(", shift")} " +
+                    "(âm thanh ${if (sp.runOnOriginal) "gốc" else "đã làm sạch"})...",
+            )
+            progress(Stage.DIARIZE, 0.0)
+            val started = System.nanoTime()
+            val result = diarizer!!.diarize(DiarizeRequest(pcm, json, sp.bounds)) { progress(Stage.DIARIZE, it) }
+            logger.info(
+                "Tách giọng xong sau ${seconds(started)} giây: ${result.turns.size} lượt nói, ${result.numSpeakers} người nói.",
+            )
+            withContext(io) { pcm.delete() }
+        }
+        progress(Stage.DIARIZE, 1.0)
+        var turns = withContext(io) { loadSpeakerTurns(json) }
+        if (sp.runOnOriginal) turns = Speakers.remapTimestamps(turns, timeMap::toClean)
+        return turns
+    }
+
+    // ------------------------------------------------------------------ (3) chép lời từng đoạn
+
+    /**
+     * Port của transcribe.py: `transcribe_chunks`: một [ChunkDispatcher] cho cả tệp, prompt mặc định cho model đa năng
+     * (`null` cho `*-transcribe`), bản chép lời rỗng thì thử model khác cho đoạn đó và không lưu kết quả rỗng. Cách
+     * `pyannote`: bản đồ người nói của từng đoạn gửi kèm (tệp hoặc chữ) và prompt người nói; `gemini` / `hybrid`: yêu cầu
+     * tách giọng / mốc từng từ của model `*-transcribe`. Thêm so với desktop: dòng log "dùng lại kết quả đã có" để kiểm
+     * được việc không gửi lại.
      */
     internal suspend fun transcribeChunks(
         cfg: GeminiConfig,
@@ -245,18 +349,50 @@ class FilePipeline(
         client: ChunkTranscriber,
         audioKey: String,
         chunkDelaySec: Double = 0.0,
-        progress: ProgressTracker = ProgressTracker {},
+        progress: ProgressTracker = ProgressTracker({}),
         cacheSalt: String = "",
+        method: String? = null,
+        sp: SpeakerConfig = SpeakerConfig(),
+        turns: List<SpeakerTurn> = emptyList(),
+        nameMap: Map<String, String> = emptyMap(),
     ): List<ChunkResult> {
+        constraintError(cfg)?.let { throw ConstraintException(it) }
         val dispatcher = ChunkDispatcher(cfg, client, sleep, logger)
         fun promptFor(model: String): String? = if (isTranscribeModel(model)) null else DefaultPrompt.text
-        val sharedKey = CacheKeys.sharedKey(audioKey, promptFor(cfg.model), cfg, cacheSalt)
+        val speakerPrompt = if (method == DiarizationMethod.PYANNOTE) DefaultPrompt.diarization else null
+        if (method == DiarizationMethod.GEMINI || method == DiarizationMethod.HYBRID) {
+            if (cfg.vocabulary.isNotEmpty()) {
+                logger.warning("Từ vựng chuyên ngành bị bỏ qua: Google không cho dùng cùng tách người nói / mốc từng từ.")
+            }
+            if (cfg.transcribeMode == "smart") logger.info("Chế độ smart không đi cùng tách người nói / mốc từng từ, dùng verbatim.")
+        }
+        val sharedKey = CacheKeys.sharedKey(
+            audioKey, promptFor(cfg.model), cfg, cacheSalt, method, speakerPrompt, sp.mapDelivery, sp.timestamps,
+        )
         val results = ArrayList<ChunkResult>()
         val total = chunks.size
         var sent = 0
         for ((index, d) in chunks.withIndex()) {
             val i = index + 1
-            val resultFile = File(folder, CacheKeys.resultFileName(d.file, sharedKey))
+            var mapText: String? = null
+            var chunkPrompt: String? = null
+            var attachment: File? = null
+            var attachedText: String? = null
+            if (method == DiarizationMethod.PYANNOTE) {
+                val chunkTurns = Speakers.splitTurnsByChunk(turns, d.startSeconds, d.endSeconds)
+                mapText = Speakers.speakerMapText(chunkTurns, nameMap)
+                val names = Speakers.speakersInChunk(chunkTurns, nameMap)
+                    .ifEmpty { nameMap.values.distinct() }.ifEmpty { listOf("Speaker 1") }
+                chunkPrompt = SpeakerTranscript.chunkPrompt(speakerPrompt!!, names, sp.timestamps)
+                if (sp.mapDelivery == SpeakerConfig.DELIVERY_FILE) {
+                    val f = File(folder, "${pySplitext(d.file).first}.nguoi_noi.txt")
+                    withContext(io) { f.writeText(mapText, Charsets.UTF_8) }
+                    attachment = f
+                } else {
+                    attachedText = mapText
+                }
+            }
+            val resultFile = File(folder, CacheKeys.resultFileName(d.file, sharedKey, mapText))
             val cached = withContext(io) { ChunkCache.readResult(resultFile) }
             if (cached != null) {
                 logger.info("Đoạn $i/$total: dùng lại kết quả đã có (${cached.model ?: cfg.model}), không gửi lại.")
@@ -283,14 +419,22 @@ class FilePipeline(
                 }
                 progress(Stage.TRANSCRIBE, (i - 1).toDouble() / total, chunk = i, total = total, model = model)
             }
-            val optionsFor: (String) -> Pair<String?, TranscribeOptions> = { model -> promptFor(model) to TranscribeOptions() }
+            val optionsFor: (String) -> Pair<String?, TranscribeOptions> = { model ->
+                when (method) {
+                    DiarizationMethod.PYANNOTE ->
+                        chunkPrompt to TranscribeOptions(attachment = attachment, attachedText = attachedText)
+                    DiarizationMethod.GEMINI -> null to TranscribeOptions(diarize = true, wordTimestamps = true)
+                    DiarizationMethod.HYBRID -> null to TranscribeOptions(wordTimestamps = true)
+                    else -> promptFor(model) to TranscribeOptions()
+                }
+            }
             val started = System.nanoTime()
             val chunkFile = File(folder, d.file)
             var (response, model) = dispatcher.send(chunkFile, seconds, optionsFor, onModel)
             var text = extractText(response).pyStrip()
             // Đoạn im lặng đã bị cắt từ trước, nên bản chép lời rỗng gần như chắc chắn là model trả về hỏng (Google vẫn
             // tính token). Bỏ qua âm thầm = mất hẳn mấy phút bài giảng, nên thử lại model khác.
-            if (text.isEmpty() && Transcript.hasSpeech(null)) {
+            if (text.isEmpty() && Transcript.hasSpeech(mapText)) {
                 // Còn model khác thì bỏ qua model vừa hỏng; chỉ còn một model thì thử lại chính nó (bỏ qua hết sẽ thành
                 // "mọi model đều hỏng" và làm hỏng cả tệp).
                 val others = dispatcher.availableModels().filter { it != model }
@@ -319,19 +463,30 @@ class FilePipeline(
                     logger.warning("Đoạn $i/$total: thử lại cũng không được (${e.message}). Đoạn này sẽ trống.")
                 }
             }
-            val result = ChunkResult(text, model = model)
+            val words = if (method == DiarizationMethod.GEMINI || method == DiarizationMethod.HYBRID) {
+                extractWords(response)
+            } else {
+                emptyList()
+            }
+            val result = ChunkResult(text, SpeakerTranscript.wordsToJson(words), model = model)
             // Không nhớ kết quả rỗng của đoạn có tiếng nói: nhớ thì chạy lại cũng bỏ qua đoạn đó vĩnh viễn.
             // NonCancellable: Google đã trả lời (và đã tính vào hạn mức); bị Dừng lúc client đang xoá tệp tải lên thì vẫn
             // phải lưu, không thì chạy lại sẽ gửi lại đoạn này.
-            if (text.isNotEmpty()) withContext(io + NonCancellable) { ChunkCache.writeResult(resultFile, result) }
+            if (text.isNotEmpty() || !Transcript.hasSpeech(mapText)) {
+                withContext(io + NonCancellable) { ChunkCache.writeResult(resultFile, result) }
+            }
             results += result
 
             val tokens = client.lastTokenCount
             if (text.isNotEmpty()) {
                 logger.info(
                     "Đoạn $i/$total xong sau ${seconds(started)} giây bằng $model, ${text.length} ký tự" +
+                        (if (words.isNotEmpty()) ", ${words.size} từ có mốc" else "") +
                         (if (tokens > 0) ", $tokens token đầu vào" else "") + ".",
                 )
+                if ((method == DiarizationMethod.GEMINI || method == DiarizationMethod.HYBRID) && words.isEmpty()) {
+                    logger.warning("Đoạn $i/$total không có mốc thời gian từng từ: đoạn này sẽ không có tên người nói.")
+                }
             } else {
                 logger.warning("Đoạn $i/$total không có chữ nào (đoạn không ai nói, hoặc model không nghe ra).")
             }
@@ -340,15 +495,17 @@ class FilePipeline(
         return results
     }
 
+    private fun nonEmpty(f: File) = f.isFile && f.length() > 0
+
     private fun seconds(startedNanos: Long) =
         "%.0f".format(Locale.ROOT, (System.nanoTime() - startedNanos) / 1e9)
 }
 
 /**
- * Đổi tiến độ trong từng bước (0..1) thành tiến độ cả tệp. Port của transcribe.py: `ProgressTracker` (nhánh không có
- * pyannote): âm thanh 0–0,15, chép lời 0,15–0,98, ghép 0,98–1.
+ * Đổi tiến độ trong từng bước (0..1) thành tiến độ cả tệp. Port của transcribe.py: `ProgressTracker`: âm thanh 0–0,15,
+ * (tách giọng 0,15–0,35), chép lời tới 0,98, ghép 0,98–1.
  */
-class ProgressTracker(private val report: (FileProgress) -> Unit) {
+class ProgressTracker(private val report: (FileProgress) -> Unit, private val hasDiarization: Boolean = false) {
     operator fun invoke(
         stage: Stage,
         fraction: Double,
@@ -359,7 +516,8 @@ class ProgressTracker(private val report: (FileProgress) -> Unit) {
     ) {
         val (a, b) = when (stage) {
             Stage.CLEAN -> 0.0 to 0.15
-            Stage.TRANSCRIBE -> 0.15 to 0.98
+            Stage.DIARIZE -> 0.15 to 0.35
+            Stage.TRANSCRIBE -> (if (hasDiarization) 0.35 else 0.15) to 0.98
             Stage.MERGE -> 0.98 to 1.0
         }
         report(FileProgress(stage, a + (b - a) * fraction.coerceIn(0.0, 1.0), step, chunk, total, model))
@@ -384,9 +542,11 @@ object ChunkCache {
         return list
     }
 
-    fun deletePcm(folder: File) {
-        File(folder, RAW_PCM_FILE).delete()
-        File(folder, ChunkPreparer.CLEAN_PCM_FILE).delete()
+    /** Xoá PCM tạm, trừ [keep] (tên tệp) mà tách giọng còn cần (D75). */
+    fun deletePcm(folder: File, keep: String? = null) {
+        for (name in listOf(RAW_PCM_FILE, ChunkPreparer.CLEAN_PCM_FILE)) {
+            if (name != keep) File(folder, name).delete()
+        }
     }
 
     /** Kết quả đoạn đã lưu; tệp rỗng hoặc hỏng coi như chưa có (gửi lại), như `file_exists` + `json.load` của desktop. */

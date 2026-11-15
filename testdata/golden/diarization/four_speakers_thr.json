@@ -1,0 +1,64 @@
+{
+ "model": "sherpa-onnx 2.0.1: models/segmentation-3.0.onnx + campplus_zh_en_advanced",
+ "thiet_bi": "cpu",
+ "thoi_luong_giay": 56.86,
+ "so_nguoi": 1,
+ "sherpa": {
+  "phien_ban": "2.0.1",
+  "seg": "segmentation-3.0.onnx",
+  "emb": "campplus_zh_en_advanced",
+  "threads": 4,
+  "window_shift_ratio": 0.1,
+  "num_clusters": -1,
+  "threshold": 1.1,
+  "min_duration_on": 0.2,
+  "min_duration_off": 0.5,
+  "piece_minutes": null,
+  "overlap_seconds": null,
+  "min_speakers": null,
+  "max_speakers": null
+ },
+ "ty_le_chong_lan": 0.0,
+ "doan": [
+  {
+   "bat_dau": 0.318,
+   "ket_thuc": 10.747,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 11.455,
+   "ket_thuc": 17.041,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 22.137,
+   "ket_thuc": 24.837,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 27.638,
+   "ket_thuc": 29.478,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 30.001,
+   "ket_thuc": 31.553,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 33.68,
+   "ket_thuc": 37.932,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 48.04,
+   "ket_thuc": 50.47,
+   "nguoi_noi": "SPEAKER_00"
+  },
+  {
+   "bat_dau": 52.529,
+   "ket_thuc": 54.605,
+   "nguoi_noi": "SPEAKER_00"
+  }
+ ]
+}

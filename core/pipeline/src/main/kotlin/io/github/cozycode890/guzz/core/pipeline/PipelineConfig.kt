@@ -26,6 +26,7 @@ data class PipelineConfig(
     val chunk: ChunkSettings = ChunkSettings(),
     val chunkFormat: String = SettingKeys.CHUNK_FORMAT.default,
     val gemini: GeminiConfig = GeminiConfig(),
+    val speakers: SpeakerConfig = SpeakerConfig(),
 ) {
     companion object {
         /** Tần số xử lý cố định (Stage 2), có trong mã âm thanh như `sample_rate` của desktop. */
@@ -62,6 +63,7 @@ data class PipelineConfig(
             ),
             chunkFormat = settings.get(SettingKeys.CHUNK_FORMAT),
             gemini = GeminiConfig.load(settings),
+            speakers = SpeakerConfig.load(settings),
         )
     }
 }

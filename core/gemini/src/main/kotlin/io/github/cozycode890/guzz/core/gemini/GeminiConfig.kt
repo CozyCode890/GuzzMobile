@@ -171,3 +171,16 @@ fun constraintError(cfg: GeminiConfig): String? {
     return "Cách nhận diện '$method' tách giọng trên Google nên cần model *-transcribe, nhưng model đang chọn " +
         "'${cfg.model}' không phải. Đổi model sang gemini-3.5-transcribe hoặc chọn cách tách giọng trên máy + prompt."
 }
+
+/**
+ * Cách gần nhất hợp với [model]: `pyannote` ↔ `hybrid` (đều tách giọng trên máy), `gemini` → `pyannote`. Port của
+ * config.py: `closest_alternative_method`. Đổi model mà cách đang chọn không hợp thì giao diện tự chuyển sang cách này và
+ * báo cho người dùng (E5).
+ */
+fun closestAlternativeMethod(model: String, method: String): String {
+    val valid = validDiarizationMethods(model)
+    if (method in valid) return method
+    if (method == DiarizationMethod.PYANNOTE && DiarizationMethod.HYBRID in valid) return DiarizationMethod.HYBRID
+    if (method == DiarizationMethod.HYBRID && DiarizationMethod.PYANNOTE in valid) return DiarizationMethod.PYANNOTE
+    return valid[0]
+}
