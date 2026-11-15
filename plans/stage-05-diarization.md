@@ -77,6 +77,7 @@ Hỏi người dùng ngày 2026-11-14, người dùng chọn phương án Recomm
 | D78 | Âm thanh gốc hay sạch, segmentation fp32 hay int8 | **Chọn theo số đo trên PC (B1–B5)**: mặc định như desktop (sạch, fp32) trừ khi cách kia tốt hơn rõ: DER TB thấp hơn ≥ 1 điểm và không bài nào trượt thêm D29. Giữ cài đặt `run_on` | Không bỏ lỡ cách tốt hơn, mà không đổi mặc định vì chênh lệch nhỏ. |
 | D79 | Lấy AAR sherpa-onnx 2.0.1 và model khi build | **Task Gradle tự tải** từ GitHub Releases của sherpa-onnx vào thư mục cache ngoài repo, **kiểm SHA-256**, sai thì dừng build | Repo nhẹ; clone mới chỉ cần mạng một lần; tệp tải về không đổi lén được. |
 | D80 | Không ngưỡng nào đạt D29 ở ≥ 3/5 bài khi không biết số người (B1, hỏi ngày 2026-11-15 theo D39) | **Ngưỡng 1,1 + ưu tiên nhập số người**: không biết số người thì phân cụm bằng 1,1; trang Người nói khuyên nhập số người; biết số người thì chạy luật D72 với min = max = N | 1,1: 2/5 đạt, DER TB 17,9, giữ được người hỏi; 1,2–1,4: 2/5 đạt, DER TB 12,5–13,7 nhưng bài nhiều người gần như luôn ra 1 người. Biết số người (min = max = N): 3/5 đạt, DER TB 15,4. |
+| D81 | Chia phần làm DER TB tăng 2,6 điểm so với nguyên bài (B4, vượt mức 2 điểm; hỏi ngày 2026-11-15) | **Giữ P = 20 phút** | Chia phần đạt D29 nhiều bài hơn (2/5 so với 1/5), nguyên bài ra thừa người; bài 2 giờ nguyên bài làm điện thoại hết RAM. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -152,10 +153,10 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   nối, tổng > max thì gộp người nói ít thời gian nhất vào người gần nhất (cosine) tới khi còn max; tổng < min thì phân cụm
   lại mọi phần với `num_clusters` = min.
   **Kiểm:** bảng DER có / không có luật; không bài nào xấu đi quá 1 điểm. Xấu hơn thì ghi Nhật ký và hỏi người dùng.
-- [ ] **B3. int8 và âm thanh gốc (B6, B7 cũ; D78)** với cấu hình B1–B2: segmentation int8 so với fp32; `goc16k.wav` so với
+- [x] **B3. int8 và âm thanh gốc (B6, B7 cũ; D78)** với cấu hình B1–B2: segmentation int8 so với fp32; `goc16k.wav` so với
   `sach.flac` (chấm bằng `evaluate.py --remap`).
   **Kiểm:** hai bảng trong stage-01-results.md; chọn theo luật D78, ghi vào "Mặc định kỹ thuật" nếu khác desktop.
-- [ ] **B4. Chia phần so với nguyên bài (B8 cũ)** với cấu hình cuối: DER của P = 20 so với nguyên bài trên B1–B5.
+- [x] **B4. Chia phần so với nguyên bài (B8 cũ)** với cấu hình cuối: DER của P = 20 so với nguyên bài trên B1–B5.
   **Kiểm:** bảng trong stage-01-results.md; DER TB tăng ≤ 2 điểm, không thì ghi Nhật ký và hỏi người dùng (đổi P).
 
 ### C. `:core:speaker` (JVM, chạy hết trên PC)
@@ -308,6 +309,9 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
     bị khoá kèm lý do; đổi cách và số người, quay lại rồi mở lại vẫn giữ; bấm chip `gemini-3.5-flash-lite` → tự chuyển
     sang "Tách giọng trên máy + Prompt" và hiện câu báo. Lint 0 lỗi.
 - **2026-11-15, G.** Điện thoại không nối được qua Tailscale (`adb connect` hết giờ); người dùng chọn để G1–G2 lại sau.
+- **2026-11-15, B3–B4.** Bảng ở stage-01-results.md §1. int8 (DER TB 21,4) và âm thanh gốc (20,2) đều kém hơn sạch +
+  fp32 (17,9) → giữ mặc định desktop (D78), không đổi "Mặc định kỹ thuật". Nguyên bài 15,3 (chênh 2,6 điểm > 2) → hỏi
+  người dùng, chọn giữ P = 20 phút (D81).
 
 ## Phát sinh
 

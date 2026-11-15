@@ -101,6 +101,24 @@ desktop.
 Luật không làm bài nào xấu đi quá 1 điểm (B3 biết số người +1,0). B4 trượt ở mọi cấu hình, như Stage 1 (người chính
 53,6% ở desktop, sherpa-onnx gộp phần lớn người hỏi vào giảng viên).
 
+### Stage 5 B3–B4. int8, âm thanh gốc, chia phần (D78, D81)
+
+Cấu hình B1–B2 (ngưỡng 1,1, chia phần P = 20 phút, O = 60 s, luật min 1 / max 6), `sweep.py S5B3` / `S5B4`, 2026-11-15.
+Âm thanh gốc chấm bằng `evaluate.py --remap` (đổi mốc về âm thanh sạch như `diarize_speakers`). Nguyên bài: không chia
+phần, không luật min–max.
+
+| Cấu hình | B1 | B2 | B3 | B4 | B5 | DER TB | Số người | Đạt D29 | RAM đỉnh PC (MB) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **sạch, fp32, P = 20 (chọn)** | 4,2 | 3,6 | 15,3 | 53,9 | 12,7 | **17,9** | 2 / 2 / 5 / 2 / 2 | **2/5** | 568 |
+| sạch, segmentation int8 | 9,3 | 3,1 | 24,7 | 46,2 | 23,6 | 21,4 | 1 / 2 / 6 / 2 / 1 | 2/5 | 553 |
+| âm thanh gốc, fp32 | 4,9 | 1,5 | 50,1 | 38,4 | 5,9 | 20,2 | 2 / 2 / 5 / 2 / 4 | 2/5 | 560 |
+| sạch, fp32, nguyên bài | 38,7 | 2,8 | 8,2 | 25,3 | 1,3 | 15,3 | 4 / 1 / 13 / 4 / 1 | 1/5 | 949 |
+
+- D78: int8 và âm thanh gốc đều làm DER TB cao hơn (21,4 và 20,2 so với 17,9), không bài nào đạt thêm → giữ mặc định
+  desktop: âm thanh sạch, segmentation fp32. int8 làm miss tăng rõ (B3, B5 hơn 20%).
+- B4 (D81): nguyên bài DER TB thấp hơn 2,6 điểm (> mức 2 điểm) nhưng chỉ 1/5 bài đạt và ra thừa người (B3 13 người);
+  bài 2 giờ nguyên bài làm điện thoại hết RAM (Stage 1 D4). Người dùng chọn **giữ P = 20 phút**.
+
 ### B6–B8. int8, âm thanh gốc, chia phần
 
 Chưa đo → Stage 5 (D39). Thuật toán nối người nói (B8) đã có bản Python (`run_sherpa.py --piece-minutes`) và bản Kotlin
