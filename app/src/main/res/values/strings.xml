@@ -62,4 +62,26 @@
     <string name="transcript_title">Bản chép lời</string>
     <!-- %1$s: lỗi -->
     <string name="transcript_read_error">Không đọc được bản chép lời: %1$s</string>
+    <!-- Trang Người nói (Stage 5, D71, D76) -->
+    <string name="speakers_title">Người nói</string>
+    <string name="speakers_enabled">Nhận diện người nói</string>
+    <string name="speakers_off">tắt</string>
+    <string name="speakers_method">Cách nhận diện</string>
+    <string name="speakers_method_pyannote">Tách giọng trên máy + Prompt</string>
+    <string name="speakers_method_gemini">Gemini tự nhận diện</string>
+    <string name="speakers_method_hybrid">Kết hợp (trên máy + Gemini)</string>
+    <string name="speakers_locked_transcribe">Không dùng được với %1$s: model *-transcribe không nhận prompt và bản đồ người nói.</string>
+    <string name="speakers_locked_general">Không dùng được với %1$s: cần model *-transcribe (Google tách giọng / mốc từng từ).</string>
+    <string name="speakers_switched">Đã chuyển cách nhận diện sang “%1$s” vì %2$s không dùng được cách “%3$s”.</string>
+    <string name="speakers_count">Số người nói</string>
+    <string name="speakers_count_hint">Nên nhập số người nếu biết: không biết thì app tự đoán, kém chính xác hơn (bài nhiều người dễ ra thiếu người).</string>
+    <string name="speakers_num">Số người (0 = tự đoán)</string>
+    <string name="speakers_min">Ít nhất</string>
+    <string name="speakers_max">Nhiều nhất</string>
+    <string name="speakers_main_label">Tên người nói chính</string>
+    <string name="speakers_other_label">Tên người khác</string>
+    <string name="speakers_smooth">Làm mượt (trả mảnh ngắn về người nói chính)</string>
+    <string name="speakers_save_map">Lưu bản đồ người nói (.nguoi_noi.txt)</string>
+    <string name="queue_speakers">Người nói: %1$s</string>
+    <string name="queue_speakers_open">Đổi</string>
 </resources>

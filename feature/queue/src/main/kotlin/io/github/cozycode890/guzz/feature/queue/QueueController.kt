@@ -10,6 +10,7 @@ import io.github.cozycode890.guzz.core.common.settings.Settings
 import io.github.cozycode890.guzz.core.gemini.ChunkTranscriber
 import io.github.cozycode890.guzz.core.gemini.QuotaTracker
 import io.github.cozycode890.guzz.core.pipeline.DirectoryOutputFolder
+import io.github.cozycode890.guzz.core.diarization.AndroidSpeakerDiarizer
 import io.github.cozycode890.guzz.core.pipeline.FilePipeline
 import io.github.cozycode890.guzz.core.pipeline.OutputFolder
 import io.github.cozycode890.guzz.core.pipeline.PipelineConfig
@@ -50,7 +51,10 @@ class QueueController(
     /** Gốc thư mục tạm (mục "Mặc định kỹ thuật"): không phải `cacheDir`, hệ thống không tự xoá; `adb pull` xem được. */
     val tempRoot = File(context.getExternalFilesDir(null) ?: context.filesDir, "tmp")
 
-    private val pipeline = FilePipeline(tempRoot, logger)
+    // Tách giọng trên máy (Stage 5): sherpa-onnx trong process :diarize, Dừng thì giết process đó.
+    private val pipeline = FilePipeline(
+        tempRoot, logger, diarizer = AndroidSpeakerDiarizer(context, log = { logger.info(it) }),
+    )
 
     private val env = object : QueueEnvironment {
         override suspend fun loadConfig() = PipelineConfig.load(settings)

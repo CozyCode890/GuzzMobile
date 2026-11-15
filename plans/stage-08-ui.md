@@ -93,3 +93,8 @@ _(viết ở session của stage này)_
   `notify_when_done`; `[SYSTEM] delete_temp_when_done`. Stage 4 chỉ có model, cắt lặng, thư mục lưu.
 - (Từ plan Stage 4, 2026-11-11) Cân nhắc tuỳ chọn "chỉ gửi khi có Wi-Fi" (bài 2 giờ tải lên khoảng 200 MB FLAC, số đo
   Stage 2), cùng chỗ với tuỳ chọn tiết kiệm dữ liệu bằng Opus ở trên. Hỏi người dùng trước khi làm.
+- (Từ Stage 5, 2026-11-15) Cách Kết hợp: dòng "Thời gian nói" / phần đầu có thể có mục `?` (vd `? 0.2 phút`) khi một
+  người trong lượt nói không được gán từ nào sau khi làm mượt; desktop cũng vậy (`minutes_per_speaker(turns, name_map)`),
+  golden khớp. Cân nhắc ẩn mục `?` khi làm lại phần hiển thị. Trang Người nói (D76) mới có các mục rút gọn: thêm ngưỡng,
+  mẫu đoạn văn, prompt, `run_on`, `map_delivery`, `timestamps`, `mark_review` ở đây.
+

@@ -53,4 +53,26 @@
     <string name="queue_status_skipped">Skipped</string>
     <string name="transcript_title">Transcript</string>
     <string name="transcript_read_error">Cannot read the transcript: %1$s</string>
+    <!-- Speakers page (Stage 5) -->
+    <string name="speakers_title">Speakers</string>
+    <string name="speakers_enabled">Identify speakers</string>
+    <string name="speakers_off">off</string>
+    <string name="speakers_method">Method</string>
+    <string name="speakers_method_pyannote">On-device diarization + prompt</string>
+    <string name="speakers_method_gemini">Gemini identifies speakers</string>
+    <string name="speakers_method_hybrid">Combined (on device + Gemini)</string>
+    <string name="speakers_locked_transcribe">Not available with %1$s: *-transcribe models take no prompt or speaker map.</string>
+    <string name="speakers_locked_general">Not available with %1$s: needs a *-transcribe model (Google diarization / word timestamps).</string>
+    <string name="speakers_switched">Switched the method to “%1$s” because %2$s cannot use “%3$s”.</string>
+    <string name="speakers_count">Number of speakers</string>
+    <string name="speakers_count_hint">Enter the number of speakers if you know it: guessing is less accurate (recordings with many speakers often come out with too few).</string>
+    <string name="speakers_num">Speakers (0 = guess)</string>
+    <string name="speakers_min">At least</string>
+    <string name="speakers_max">At most</string>
+    <string name="speakers_main_label">Main speaker name</string>
+    <string name="speakers_other_label">Other speakers name</string>
+    <string name="speakers_smooth">Smoothing (short pieces go back to the main speaker)</string>
+    <string name="speakers_save_map">Save the speaker map (.nguoi_noi.txt)</string>
+    <string name="queue_speakers">Speakers: %1$s</string>
+    <string name="queue_speakers_open">Change</string>
 </resources>

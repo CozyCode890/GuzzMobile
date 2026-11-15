@@ -325,6 +325,9 @@ class QueueService : Service() {
             Stage.CLEAN.code -> context.getString(
                 R.string.queue_detail_audio, item.step ?: "", (item.progress / 0.15 * 100).coerceAtMost(100.0).roundToInt(),
             )
+            Stage.DIARIZE.code -> context.getString(
+                R.string.queue_detail_diarize, ((item.progress - 0.15) / 0.2 * 100).coerceIn(0.0, 100.0).roundToInt(),
+            )
             Stage.TRANSCRIBE.code -> if (item.chunk != null && item.chunkTotal != null) {
                 context.getString(R.string.queue_detail_chunk, item.chunk, item.chunkTotal, item.model ?: "")
             } else {

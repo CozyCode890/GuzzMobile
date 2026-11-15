@@ -220,13 +220,13 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### F. Service và giao diện (thử trên máy ảo `guzz_15t`, Gemini giả)
 
-- [ ] **F1. Nối vào hàng đợi:** `QueueController` dùng bản Android của `SpeakerDiarizer`; tên bước "nhận diện người
+- [x] **F1. Nối vào hàng đợi:** `QueueController` dùng bản Android của `SpeakerDiarizer`; tên bước "nhận diện người
   nói" trên thông báo và hàng đợi; Dừng lúc đang tách giọng giết `:diarize`; `FakeTranscriber` trả mốc từng từ và nhãn
   `spk_N`; `queue_debug.ps1` in thêm bước tách giọng.
   **Kiểm:** trên máy ảo, `L1_20m.m4a`, cả 3 cách bằng Gemini giả → bản chép lời có tên người nói, `.nguoi_noi.txt` khi
   bật lưu bản đồ; Dừng lúc đang tách giọng → `dung`, Bắt đầu → log "dùng lại" cho phần đã xong; `-Kill` lúc đang tách
   giọng → mở app làm tiếp; `logcat -b crash` trống.
-- [ ] **F2. Trang Người nói rút gọn (D76, D71):** mở từ màn hình Hàng đợi; các mục của D76; cách không hợp model bị khoá
+- [x] **F2. Trang Người nói rút gọn (D76, D71):** mở từ màn hình Hàng đợi; các mục của D76; cách không hợp model bị khoá
   kèm lý do; đổi model ở chip của Hàng đợi thì tự chuyển cách và báo (E5). vi / en trong `strings.xml`.
   **Kiểm:** trên máy ảo: đổi từng mục, quay lại thấy giữ nguyên; chọn model `*-transcribe` → cách "Tách giọng trên máy +
   Prompt" bị khoá và cách đang chọn tự đổi, có thông báo; `.\gradlew lint` xanh.
@@ -245,7 +245,7 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### H. Đóng stage
 
-- [ ] **H1. Tài liệu:** CLAUDE.md thêm lệnh (test `:core:speaker`, `gen_speaker.py`, test thiết bị `:core:diarization`,
+- [x] **H1. Tài liệu:** CLAUDE.md thêm lệnh (test `:core:speaker`, `gen_speaker.py`, test thiết bị `:core:diarization`,
   cache AAR / model); README §3–4 sửa nếu module khác dự kiến; ghi giấy phép model (MIT / Apache-2.0) vào chỗ Stage 9 sẽ
   dùng.
   **Kiểm:** chạy lại từng lệnh đã chép.
@@ -293,6 +293,21 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   - E: thiếu PCM khi có đoạn trong cache thì xử lý âm thanh lại cả bài (như `need_clean` của desktop), không giải mã
     riêng cho tách giọng. Prompt người nói (`prompt_diarization.txt`) đóng gói trong `:core:gemini` cạnh `prompt.txt`.
     Bản đồ người nói cả bài `<tên>.nguoi_noi.txt` ghi cạnh bản chép lời, cùng tên gốc, có thì ghi đè như desktop.
+- **2026-11-15, F (máy ảo `guzz_15t`, Gemini giả).**
+  - F1: `L1_20m.m4a` cả 3 cách (Tách giọng trên máy + Prompt với `gemini-3.5-flash-lite`, hai cách kia với
+    `gemini-3.5-transcribe`) ra bản chép lời có tên; bật lưu bản đồ thì có `<tên>.nguoi_noi.txt`. Tách giọng 13 phút âm
+    thanh sạch mất 85–89 s trên máy ảo. `L1_120m.m4a` (5 phần), cách Kết hợp: Dừng lúc đang tách giọng → `dung`,
+    `:diarize` mất ngay; Bắt đầu → "Dùng lại phần 1/5, 2/5 đã tách giọng"; `-Kill` lúc đang tách giọng → service tự khởi
+    động lại, "Dùng lại phần 1/5 … 3/5", chạy xong (2 người, 408 s tách giọng cho các phần còn lại). `logcat -b crash`
+    trống.
+  - Lỗi tìm ra trên máy, sửa: regex ICU của Android không nhận cờ `(?U)` (PatternSyntaxException khi nạp `Speakers`),
+    nay viết rõ `\p{Nd}`; tiến độ tách giọng tính theo số phần chạy trong lần này nên làm tiếp thì về 0, nay tính theo
+    chỉ số phần và không cho lùi.
+  - Thêm lệnh debug `queue_debug.ps1 -Speakers <cách|off> -Model … -Num … -SaveMap` (receiver `cmd=speakers`).
+  - F2: trang Người nói (menu ⋮ và dòng "Người nói: …" ở màn hình Hàng đợi) kiểm bằng uiautomator: cách không hợp model
+    bị khoá kèm lý do; đổi cách và số người, quay lại rồi mở lại vẫn giữ; bấm chip `gemini-3.5-flash-lite` → tự chuyển
+    sang "Tách giọng trên máy + Prompt" và hiện câu báo. Lint 0 lỗi.
+- **2026-11-15, G.** Điện thoại không nối được qua Tailscale (`adb connect` hết giờ); người dùng chọn để G1–G2 lại sau.
 
 ## Phát sinh
 

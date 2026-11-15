@@ -7,12 +7,12 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 5, đã plan chi tiết (2026-11-14, D71–D79). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3
-xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày
-2026-11-01.
-**Việc tiếp theo:** làm Stage 5 theo "Kế hoạch chi tiết": A (khung, tải AAR / model), B (đo ngưỡng trên PC, chạy nền)
-song song với C. Thử trên máy ảo `guzz_15t` trước (D70), điện thoại chỉ cho đợt thử cuối. Gửi bất cứ thứ gì lên Google
-thì hỏi người dùng ngay trước khi gửi. Số đo của Stage 1 ở [stage-01-results.md](plans/stage-01-results.md).
+**Stage hiện tại:** Stage 5 🔨 (từ 2026-11-14): A–F và H1 xong (2026-11-15), còn G1–G2 trên Xiaomi 15T và H2. Stage 4
+(MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày 2026-11-10
+(rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
+**Việc tiếp theo:** nối điện thoại (USB + `adb tcpip 5555`, rồi Tailscale) và làm G1 (đo bài 2 giờ chia phần, Gemini
+giả) rồi G2 (gửi thật B4 × 3 cách, hỏi người dùng ngay trước mỗi lần gửi), xong H2 đóng stage. Ngưỡng phân cụm 1,1
+(D80), segmentation fp32. Số đo ở [stage-01-results.md](plans/stage-01-results.md).
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -134,6 +134,23 @@ $env:ANDROID_SERIAL = 'emulator-5556'
 # Test và golden của pipeline (Stage 4)
 .\gradlew :core:pipeline:test
 D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_pipeline.py
+
+# Tách giọng (Stage 5). AAR sherpa-onnx 2.0.1 và model: plugin settings guzz.deps tự tải lần build đầu vào
+# <Gradle user home>\guzz-deps (đổi bằng -Pguzz.depsDir=...), kiểm SHA-256 theo gradle\guzz-deps.txt, sai thì dừng build.
+# Test và golden của :core:speaker (speaker.py, nối người nói giữa các phần, luật min–max); có GUZZ_SPIKE_DATA thì chạy
+# thêm golden trên lượt nói thật B1–B5 (--rerun vì dữ liệu ngoài repo)
+.\gradlew :core:speaker:test
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_speaker.py
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_link.py
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\real_speaker.py
+$env:GUZZ_SPIKE_DATA = 'D:\GuzzMobileData\stage-01'; .\gradlew :core:speaker:test --rerun
+# Test thiết bị của :core:diarization (sherpa-onnx trên máy so với PC, giết / Dừng process :diarize), máy ảo hoặc máy thật
+.\gradlew :core:diarization:connectedDebugAndroidTest
+# Thử 3 cách nhận diện bằng adb (bản debug): đặt cách / model / số người, rồi -Add ... -Start như trên
+.\tools\device\queue_debug.ps1 -Speakers hybrid -Model gemini-3.5-transcribe -Num 0 -SaveMap
+.\tools\device\queue_debug.ps1 -Speakers off
+# Đo ngưỡng / luật min–max / int8 / âm thanh gốc trên PC (venv của Stage 1, chạy nền vài giờ): spikes\README.md
+D:\GuzzMobileData\stage-01\venv\Scripts\python.exe spikes\diarization\sweep.py S5B1 --embs campplus-zhen --jobs 3 --threads 4
 
 # Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
 $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i

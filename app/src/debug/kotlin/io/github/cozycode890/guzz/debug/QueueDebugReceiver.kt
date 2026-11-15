@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Process
 import io.github.cozycode890.guzz.GuzzApp
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
+import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.pipeline.QueueState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +73,26 @@ class QueueDebugReceiver : BroadcastReceiver() {
                         container.fakeGeminiFlag.parentFile?.mkdirs()
                         if (on) container.fakeGeminiFlag.writeText("1") else container.fakeGeminiFlag.delete()
                         GuzzLog.info("Lệnh adb: Gemini giả ${if (on) "BẬT" else "tắt"}.")
+                    }
+                    "speakers" -> {
+                        // Stage 5: đặt cài đặt người nói để thử 3 cách bằng adb (method: pyannote|gemini|hybrid|off).
+                        val s = container.settings
+                        intent.getStringExtra("model")?.let { s.set(SettingKeys.MODEL, it) }
+                        intent.getStringExtra("method")?.let { m ->
+                            if (m == "off") {
+                                s.set(SettingKeys.SPEAKERS_ENABLED, false)
+                            } else {
+                                s.set(SettingKeys.SPEAKERS_ENABLED, true)
+                                s.set(SettingKeys.SPEAKERS_METHOD, m)
+                            }
+                        }
+                        if (intent.hasExtra("num")) s.set(SettingKeys.NUM_SPEAKERS, intent.getIntExtra("num", 0))
+                        if (intent.hasExtra("save_map")) s.set(SettingKeys.SAVE_SPEAKER_MAP, intent.getBooleanExtra("save_map", false))
+                        GuzzLog.info(
+                            "Lệnh adb: người nói ${if (s.get(SettingKeys.SPEAKERS_ENABLED)) s.get(SettingKeys.SPEAKERS_METHOD) else "tắt"}, " +
+                                "model ${s.get(SettingKeys.MODEL)}, số người ${s.get(SettingKeys.NUM_SPEAKERS)}, " +
+                                "lưu bản đồ ${s.get(SettingKeys.SAVE_SPEAKER_MAP)}.",
+                        )
                     }
                     "status", null -> Unit
                     else -> GuzzLog.warning("Lệnh adb lạ: $cmd")

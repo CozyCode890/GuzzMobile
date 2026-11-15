@@ -77,3 +77,9 @@ _(viết ở session của stage này)_
 - (Từ plan Stage 4, 2026-11-11) Đo lại tốc độ xử lý âm thanh trên bản release (không debuggable), chạy qua service hàng
   đợi thật (Phát sinh Stage 2 chuyển sang Stage 4, người dùng không muốn bước đo riêng ở Stage 4 nên dời tới đây). Mốc so:
   bài 2 giờ trên bản debug mất 346 s, PSS 114 MB (Stage 2, D45 / D50).
+- (Từ Stage 5, 2026-11-15) Màn hình giấy phép / NOTICE cho phần tách giọng đóng gói trong APK (bảng đủ ở
+  [stage-01-results.md](stage-01-results.md) §6): pyannote segmentation-3.0 (MIT, © 2022 CNRS: giữ câu bản quyền; tệp
+  `LICENSE` có sẵn trong cache của plugin guzz.deps, `models/segmentation-3.0.LICENSE`), 3D-Speaker CAM++ zh_en advanced
+  (Apache-2.0), sherpa-onnx 2.0.1 (Apache-2.0), ONNX Runtime trong AAR (MIT, © Microsoft; AAR không kèm LICENSE nên tự
+  thêm). Model và AAR không nằm trong repo: plugin `guzz.deps` tải theo `gradle/guzz-deps.txt` (D79), nên CI phát hành cần
+  mạng hoặc cache `guzz-deps`. Tách ABI (APK debug đang giữ đủ 4 ABI cho máy ảo `x86_64`).

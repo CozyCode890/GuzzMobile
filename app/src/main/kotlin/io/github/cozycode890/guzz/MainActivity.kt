@@ -148,6 +148,8 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
     val outputDir by container.settings.flow(SettingKeys.OUTPUT_DIR).collectAsState(initial = null)
     val model by container.settings.flow(SettingKeys.MODEL).collectAsState(initial = "")
     val trimSilence by container.settings.flow(SettingKeys.TRIM_SILENCE).collectAsState(initial = true)
+    val speakersOn by container.settings.flow(SettingKeys.SPEAKERS_ENABLED).collectAsState(initial = false)
+    val speakersMethod by container.settings.flow(SettingKeys.SPEAKERS_METHOD).collectAsState(initial = "")
     var hasKey by remember { mutableStateOf(true) }
     var message by remember { mutableStateOf<String?>(null) }
     var menuOpen by remember { mutableStateOf(false) }
@@ -228,6 +230,10 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
                 Box {
                     TextButton(onClick = { menuOpen = true }) { Text("⋮") }
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.speakers_title)) }, onClick = {
+                            menuOpen = false
+                            context.startActivity(Intent(context, SpeakersActivity::class.java))
+                        })
                         DropdownMenuItem(text = { Text(stringResource(R.string.main_open_google_ai)) }, onClick = {
                             menuOpen = false
                             context.startActivity(Intent(context, GoogleAiActivity::class.java))
@@ -276,11 +282,17 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
                 outputLabel = outputDir?.takeIf { it.isNotBlank() }?.let { Uri.parse(it).lastPathSegment?.substringAfter(':') ?: it },
                 model = model,
                 trimSilence = trimSilence,
+                speakersLabel = if (speakersOn) methodLabel(context, speakersMethod) else stringResource(R.string.speakers_off),
+                onSpeakers = { context.startActivity(Intent(context, SpeakersActivity::class.java)) },
                 onPickFolder = { pickFolder.launch(DOCUMENTS_HINT) },
                 onModel = { m ->
                     if (isValidModelName(m)) {
-                        scope.launch { container.settings.set(SettingKeys.MODEL, m) }
                         message = null
+                        scope.launch {
+                            container.settings.set(SettingKeys.MODEL, m)
+                            // E5: cách nhận diện không hợp model mới thì tự chuyển và báo.
+                            switchMethodForModel(context, container.settings, m)?.let { message = it }
+                        }
                     } else {
                         message = invalidModelMessage
                     }
@@ -340,6 +352,8 @@ private fun QuickSettings(
     outputLabel: String?,
     model: String,
     trimSilence: Boolean,
+    speakersLabel: String,
+    onSpeakers: () -> Unit,
     onPickFolder: () -> Unit,
     onModel: (String) -> Unit,
     onTrimSilence: (Boolean) -> Unit,
@@ -371,6 +385,13 @@ private fun QuickSettings(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.queue_trim_silence), modifier = Modifier.weight(1f))
                 Switch(checked = trimSilence, onCheckedChange = onTrimSilence)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.queue_speakers, speakersLabel), modifier = Modifier.weight(1f),
+                    maxLines = 2, overflow = TextOverflow.Ellipsis,
+                )
+                TextButton(onClick = onSpeakers) { Text(stringResource(R.string.queue_speakers_open)) }
             }
         }
     }

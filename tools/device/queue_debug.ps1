@@ -5,6 +5,8 @@
 #   .\tools\device\queue_debug.ps1 -Stop ; .\tools\device\queue_debug.ps1 -Start
 #   .\tools\device\queue_debug.ps1 -Kill                                       # giết tiến trình (kill -9)
 #   .\tools\device\queue_debug.ps1 -Status
+#   .\tools\device\queue_debug.ps1 -Speakers hybrid -Model gemini-3.5-transcribe -Num 0 -SaveMap   # Stage 5
+#   .\tools\device\queue_debug.ps1 -Speakers off
 #
 # Tệp của -Add nằm sẵn trong files/input (adb push vào /sdcard/Android/data/<package>/files/input/) hoặc là đường dẫn
 # tuyệt đối. Chưa chọn thư mục lưu SAF thì bản chép lời ra files/output/. -ChunkDelayMin: chờ giữa các đoạn (D67).
@@ -19,6 +21,10 @@ param(
     [switch]$Status,
     [switch]$ScreenOff,
     [ValidateSet('on', 'off')][string]$Fake,
+    [ValidateSet('pyannote', 'gemini', 'hybrid', 'off')][string]$Speakers,
+    [string]$Model,
+    [int]$Num = -1,
+    [switch]$SaveMap,
     [switch]$Wait,
     [int]$TimeoutMin = 180
 )
@@ -54,7 +60,9 @@ function Show-Status($s) {
     $q = $s.hang_doi
     Write-Host ("vòng chạy: {0} | cờ đang chạy: {1} | Gemini giả: {2} | PID {3}" -f $s.dang_chay_vong, $q.running, $s.gemini_gia, $s.pid)
     foreach ($i in $q.items) {
-        $detail = if ($i.chunk) { "đoạn $($i.chunk)/$($i.chunkTotal) $($i.model)" } elseif ($i.step) { $i.step } else { '' }
+        $detail = if ($i.stage -eq 'nguoi_noi') { 'nhận diện người nói' }
+                  elseif ($i.chunk) { "đoạn $($i.chunk)/$($i.chunkTotal) $($i.model)" }
+                  elseif ($i.step) { $i.step } else { '' }
         $line = "  {0,-10} {1,5:P0} {2} {3}" -f $i.status, $i.progress, $i.displayName, $detail
         if ($i.error) { $line += " | LỖI: $($i.error)" }
         if ($i.outFile) { $line += " → $($i.outFile)" }
@@ -63,6 +71,13 @@ function Show-Status($s) {
 }
 
 if ($Fake) { Send @('--es', 'cmd', 'fake', '--es', 'value', $Fake) }
+if ($Speakers -or $Model -or $Num -ge 0) {
+    $extra = @('--es', 'cmd', 'speakers', '--ez', 'save_map', $(if ($SaveMap) { 'true' } else { 'false' }))
+    if ($Speakers) { $extra += @('--es', 'method', $Speakers) }
+    if ($Model) { $extra += @('--es', 'model', $Model) }
+    if ($Num -ge 0) { $extra += @('--ei', 'num', "$Num") }
+    Send $extra
+}
 if ($Clear) { Send @('--es', 'cmd', 'clear') }
 if ($Add) {
     # Lệnh chạy qua shell của máy: bọc tên tệp trong nháy đơn để dấu cách / ký tự đặc biệt không tách tham số.

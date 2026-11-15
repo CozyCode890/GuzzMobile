@@ -94,7 +94,7 @@ class ChunkedDiarization(
         val bounds = PieceLinker.pieceBounds(
             total, (settings.pieceMinutes * 60 * sr).toLong(), (settings.overlapSeconds * sr).toLong(),
         )
-        var runs = 0
+        var shown = 0.0
         val runner = PieceRunner { k, n ->
             coroutineContext.ensureActive()
             val f = pieceFile(request, k, n)
@@ -105,11 +105,15 @@ class ChunkedDiarization(
                 }
             }
             val (a, b) = bounds[k]
-            val base = runs.toDouble()
+            // Theo chỉ số phần (không theo số phần chạy lần này): làm tiếp sau Dừng thì tiến độ không về 0.
+            val base = k.toDouble()
             val piece = engine.run(request.pcm, a, b, n) { done, all ->
-                if (all > 0) onProgress(((base + done.toDouble() / all) / bounds.size).coerceAtMost(1.0))
+                // Luật min–max chạy lại phần đầu: không cho tiến độ lùi.
+                if (all > 0) {
+                    shown = maxOf(shown, ((base + done.toDouble() / all) / bounds.size).coerceAtMost(1.0))
+                    onProgress(shown)
+                }
             }
-            runs++
             PieceJson.write(f, PieceJson.from(piece, n))
             piece
         }

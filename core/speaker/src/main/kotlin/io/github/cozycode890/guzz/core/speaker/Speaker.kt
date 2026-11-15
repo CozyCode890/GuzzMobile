@@ -291,9 +291,11 @@ object Speakers {
     // ------------------------------------------------------------------ đọc bản chép lời của model đa năng
 
     private const val S = PY_SPACE_CLASS
-    // (?U): `\d` của Python với str nhận cả chữ số Unicode.
+    // `\d` của Python với str nhận cả chữ số Unicode: viết rõ `\p{Nd}`, vì Java chỉ hiểu `\d` là ASCII còn regex ICU của
+    // Android không nhận cờ `(?U)` (PatternSyntaxException lúc chạy trên máy).
+    private const val D = "\\p{Nd}"
     private val LEADING_TIMESTAMP = Regex(
-        "(?U)^$S*[\\[(]$S*(?:(\\d{1,2}):)?(\\d{1,3}):(\\d{2})(?:[.,]\\d+)?$S*[\\])]$S*",
+        "^$S*[\\[(]$S*(?:($D{1,2}):)?($D{1,3}):($D{2})(?:[.,]$D+)?$S*[\\])]$S*",
     )
     private val SPEAKER_PREFIX = Regex("^$S*\\**$S*([^:\\n]{1,40}?)$S*\\**$S*:$S*\\**$S*")
 

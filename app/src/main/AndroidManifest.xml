@@ -54,6 +54,12 @@
         </provider>
 
         <activity
+            android:name=".SpeakersActivity"
+            android:exported="false"
+            android:label="@string/speakers_title"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".GoogleAiActivity"
             android:exported="false"
             android:label="@string/google_ai_title"
