@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- Tách giọng chạy trong process riêng: Dừng thì giết process này, hết RAM thì app chính vẫn sống (Stage 1 D7). -->
+        <service
+            android:name=".DiarizeService"
+            android:exported="false"
+            android:process=":diarize" />
+    </application>
+</manifest>

@@ -66,6 +66,41 @@ Khoảng cách cosine nằm trong [0, 2], complete-linkage đòi mọi cặp tro
 Stage 5 thử từ 0,8 trở lên, có thể cần > 1,2. **RAM của sherpa-onnx phình theo số cụm**, nên ngưỡng sai cũng làm hỏng
 số RAM.
 
+### Stage 5 B1. Ngưỡng phân cụm, chia phần (D80)
+
+PC Ryzen 7 7435HS, 3 process song song × 4 luồng (thời gian chỉ so được với nhau), 2026-11-14. Chạy giống trên máy:
+chia phần P = 20 phút, O = 60 s, CAM++ zh_en advanced, shift 0,1, một ngưỡng cho cả phân cụm trong phần lẫn nối người nói
+(`sweep.py S5B1`). DER sau `process_turns` (trong ngoặc: trước), %; số người sau làm mượt (ref / hyp).
+
+| Ngưỡng | B1 | B2 | B3 | B4 | B5 | DER TB | Số người B1 / B2 / B3 / B4 / B5 | Đạt D29 | RAM đỉnh (MB) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0,8 | 52,8 | 3,2 | 67,8 | 57,3 | 12,2 | 38,7 (39,7) | 18 / 10 / 42 / 17 / 6 | 0/5 | 824 |
+| 0,9 | 45,3 | 2,4 | 56,7 | 55,5 | 12,6 | 34,5 (36,1) | 11 / 6 / 28 / 11 / 3 | 0/5 | 704 |
+| 1,0 | 11,4 | 1,3 | 39,1 | 52,8 | 12,8 | 23,5 (22,8) | 7 / 4 / 15 / 4 / 2 | 1/5 (B2) | 555 |
+| **1,1** | 4,2 | 3,6 | 15,3 | 53,9 | 12,7 | **17,9** (17,3) | 2 / 2 / 6 / 2 / 2 | **2/5** (B1, B2) | 568 |
+| 1,2 | 4,4 | 2,8 | 8,6 | 45,4 | 1,4 | 12,5 (11,9) | 1 / 1 / 3 / 1 / 1 | 2/5 (B1, B5) | 560 |
+| 1,3 | 4,4 | 2,8 | 14,5 | 45,4 | 1,4 | 13,7 (13,2) | 1 / 1 / 1 / 1 / 1 | 2/5 (B1, B5) | 559 |
+| 1,4 | 4,4 | 2,8 | 14,5 | 45,4 | 1,4 | 13,7 (13,2) | 1 / 1 / 1 / 1 / 1 | 2/5 (B1, B5) | 558 |
+
+Tham chiếu: 2 / 3 / 5 / 4 / 1 người. Không ngưỡng nào ≥ 3/5 bài. Theo luật B5 cũ (hoà thì DER TB thấp hơn) là 1,2, nhưng
+từ 1,2 trở lên bài nhiều người gần như luôn ra 1 người (B1, B2, B4 mất hết người hỏi; DER thấp vì người chính chiếm
+84–97% thời gian). Người dùng chọn **1,1** + ưu tiên nhập số người (D80). Ngưỡng nối giữa các phần riêng (1,2 / 1,3 trên
+`.pieces.json` của 1,1, `relink.py`) không đổi kết quả bài nào.
+
+### Stage 5 B2. Luật min–max (D72), ngưỡng 1,1
+
+`sweep.py S5B2`, phần không cần phân cụm lại lấy từ `.pieces.json` của B1. "Biết số người": min = max = số người của
+desktop.
+
+| Cấu hình | B1 | B2 | B3 | B4 | B5 | DER TB | Số người | Đạt D29 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Không luật | 4,2 | 3,6 | 15,3 | 53,9 | 12,7 | 17,9 | 2 / 2 / 6 / 2 / 2 | 2/5 |
+| min 1, max 6 (mặc định) | 4,2 | 3,6 | 15,3 | 53,9 | 12,7 | 17,9 | 2 / 2 / 5 / 2 / 2 | 2/5 |
+| Biết số người | 4,2 | 1,5 | 16,3 | 53,9 | 1,4 | 15,4 (14,6) | 2 / 3 / 5 / 3 / 1 | **3/5** (B1, B2, B5) |
+
+Luật không làm bài nào xấu đi quá 1 điểm (B3 biết số người +1,0). B4 trượt ở mọi cấu hình, như Stage 1 (người chính
+53,6% ở desktop, sherpa-onnx gộp phần lớn người hỏi vào giảng viên).
+
 ### B6–B8. int8, âm thanh gốc, chia phần
 
 Chưa đo → Stage 5 (D39). Thuật toán nối người nói (B8) đã có bản Python (`run_sherpa.py --piece-minutes`) và bản Kotlin

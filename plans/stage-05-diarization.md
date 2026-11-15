@@ -76,6 +76,7 @@ Hỏi người dùng ngày 2026-11-14, người dùng chọn phương án Recomm
 | D77 | Gửi thật lên Gemini | **B4 × 3 cách, tổng ≤ 15 yêu cầu**; hỏi người dùng ngay trước mỗi lần gửi | B4 sau cắt lặng 4 đoạn, 4 người nói, có kết quả desktop để so; 12 yêu cầu, dư 3 cho thử lại. |
 | D78 | Âm thanh gốc hay sạch, segmentation fp32 hay int8 | **Chọn theo số đo trên PC (B1–B5)**: mặc định như desktop (sạch, fp32) trừ khi cách kia tốt hơn rõ: DER TB thấp hơn ≥ 1 điểm và không bài nào trượt thêm D29. Giữ cài đặt `run_on` | Không bỏ lỡ cách tốt hơn, mà không đổi mặc định vì chênh lệch nhỏ. |
 | D79 | Lấy AAR sherpa-onnx 2.0.1 và model khi build | **Task Gradle tự tải** từ GitHub Releases của sherpa-onnx vào thư mục cache ngoài repo, **kiểm SHA-256**, sai thì dừng build | Repo nhẹ; clone mới chỉ cần mạng một lần; tệp tải về không đổi lén được. |
+| D80 | Không ngưỡng nào đạt D29 ở ≥ 3/5 bài khi không biết số người (B1, hỏi ngày 2026-11-15 theo D39) | **Ngưỡng 1,1 + ưu tiên nhập số người**: không biết số người thì phân cụm bằng 1,1; trang Người nói khuyên nhập số người; biết số người thì chạy luật D72 với min = max = N | 1,1: 2/5 đạt, DER TB 17,9, giữ được người hỏi; 1,2–1,4: 2/5 đạt, DER TB 12,5–13,7 nhưng bài nhiều người gần như luôn ra 1 người. Biết số người (min = max = N): 3/5 đạt, DER TB 15,4. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -121,17 +122,17 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### A. Khung
 
-- [ ] **A1. Tải AAR và model (D79):** task Gradle (trong `build-logic`, dùng ở `:core:diarization`) tải
+- [x] **A1. Tải AAR và model (D79):** task Gradle (trong `build-logic`, dùng ở `:core:diarization`) tải
   `sherpa-onnx-2.0.1.aar`, segmentation-3.0 (fp32 và int8) và `3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx`
   từ GitHub Releases của sherpa-onnx vào thư mục cache ngoài repo (mặc định `<Gradle user home>/guzz-deps`), kiểm SHA-256
   với số ghi trong repo (lấy từ `spikes/diarization/models.sha256` và số AAR đã kiểm ở Stage 1). Có sẵn và khớp thì không
   tải lại; sai thì dừng build, báo tên tệp và hai mã băm.
   **Kiểm:** xoá thư mục cache → `.\gradlew :core:diarization:assembleDebug` tải một lần; chạy lại không tải (log Gradle);
   sửa một chữ số SHA → build dừng với thông báo rõ; `git status` không có tệp tải về.
-- [ ] **A2. Module** `:core:speaker` (JVM) và `:core:diarization` (Android library) như "Mặc định kỹ thuật";
+- [x] **A2. Module** `:core:speaker` (JVM) và `:core:diarization` (Android library) như "Mặc định kỹ thuật";
   `:core:pipeline` phụ thuộc `:core:speaker`, `:feature:queue` phụ thuộc `:core:diarization`.
   **Kiểm:** `.\gradlew projects` có hai module mới; `.\gradlew test assembleSideloadDebug assemblePlayDebug lint` xanh.
-- [ ] **A3. Cài đặt:** đủ mục `[SPEAKERS]` của desktop còn ý nghĩa trên máy (`num_speakers`, `min_speakers`,
+- [x] **A3. Cài đặt:** đủ mục `[SPEAKERS]` của desktop còn ý nghĩa trên máy (`num_speakers`, `min_speakers`,
   `max_speakers`, `run_on`, `smooth`, `sandwich_*`, `density_*`, `merge_gap_sec`, tên người nói, `map_delivery`,
   `prompt_file` → prompt mặc định, `timestamps`, `paragraph_template`, `max_paragraph_sec`, `paragraph_gap_sec`,
   `mark_review`) và `[OUTPUT] save_speaker_map`. Bỏ `python_path`, `pyannote_model`, `model_dir`, `offline`, `device`,
@@ -140,13 +141,13 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### B. Đo trên PC (D72, D78; chạy nền, JSON đã có thì bỏ qua)
 
-- [ ] **B1. Ngưỡng phân cụm** (B5 cũ của Stage 1), chạy **giống trên máy**: chia phần P = 20 phút, O = 60 s, CAM++
+- [x] **B1. Ngưỡng phân cụm** (B5 cũ của Stage 1), chạy **giống trên máy**: chia phần P = 20 phút, O = 60 s, CAM++
   zh_en, shift 0,1, ngưỡng ∈ {0,8; 0,9; 1,0; 1,1; 1,2; 1,3; 1,4} cho cả phân cụm trong phần lẫn nối người nói, trên B1–B5
   (`sweep.py`, thêm tuỳ chọn chia phần nếu chưa có).
   **Kiểm:** bảng theo ngưỡng (DER, số người, % người chính, sau `process_turns`) trong stage-01-results.md §1. Chọn
   **một** ngưỡng theo luật của B5 cũ: nhiều bài đạt D29 nhất, hoà thì DER TB thấp hơn. Không ngưỡng nào có ≥ 3/5 bài đạt
   → **hỏi người dùng** (trắc nghiệm, D39): bắt nhập số người, đổi cách phân cụm, hay đổi hướng.
-- [ ] **B2. Luật min–max (D72)** với ngưỡng của B1, min 1 / max 6 như desktop: viết luật trong `run_sherpa.py` (bản
+- [x] **B2. Luật min–max (D72)** với ngưỡng của B1, min 1 / max 6 như desktop: viết luật trong `run_sherpa.py` (bản
   Python để chấm), rồi chấm B1–B5. Luật: phần nào ra > max cụm thì phân cụm lại phần đó với `num_clusters` = max; sau khi
   nối, tổng > max thì gộp người nói ít thời gian nhất vào người gần nhất (cosine) tới khi còn max; tổng < min thì phân cụm
   lại mọi phần với `num_clusters` = min.
@@ -169,7 +170,7 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   thật: JSON lượt nói của Stage 1 (B1–B5) qua `process_turns` + `build_name_map`, thiếu dữ liệu thì bỏ qua.
   **Kiểm:** `.\gradlew :core:speaker:test` xanh; chạy lại `gen_speaker.py` không đổi `git diff testdata/golden/speaker`;
   test bản ghi thật chạy (không bỏ qua) trên PC này.
-- [ ] **C3. Chia phần và nối người nói:** port `PieceLinker`, `Hungarian` từ app spike (thay `org.json` bằng
+- [x] **C3. Chia phần và nối người nói:** port `PieceLinker`, `Hungarian` từ app spike (thay `org.json` bằng
   kotlinx.serialization), hàm chia phần (P, O → danh sách [a, b)), luật min–max của B2.
   **Kiểm:** golden so với `run_sherpa.py` (`link_pieces` và luật min–max) trên JSON từng phần của B1–B5 lấy từ B2, khớp
   từng lượt (±1 ms) và nhãn; thiếu dữ liệu thì bỏ qua. Ca tổng hợp cho biên: phần cuối ngắn, phần không ai nói, một phần.
@@ -262,6 +263,24 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   (tệp / chữ), `diarize`, `word_timestamps`, `extractWords`. Hỏi người dùng 9 câu trắc nghiệm, cả 9 chọn Recommended
   (D71–D79). Các mục Phát sinh từ Stage 1, 2, 4 đã vào plan: ngưỡng, int8, âm thanh gốc, chia phần → B1–B4; đo trên
   máy → G1; lưu ý JNI và dừng → "Mặc định kỹ thuật", D2–D3; PCM tạm → D75, E1.
+- **2026-11-14/15, A–C.**
+  - A1: plugin settings `guzz.deps` (module riêng `build-logic/deps`, vì plugin settings nạp ở classloader không có AGP)
+    đọc `gradle/guzz-deps.txt`, tải vào `<Gradle user home>/guzz-deps`, kiểm SHA-256, dựng repo Maven cục bộ
+    `com.k2fsa.sherpa-onnx:sherpa-onnx:2.0.1` (AGP không cho module thư viện phụ thuộc thẳng tệp `.aar`). Việc kiểm chạy
+    trong một `ValueSource` nên configuration cache vẫn kiểm lại. Đã kiểm: xoá cache → tải một lần; chạy lại không tải;
+    sửa một chữ số SHA → build dừng, in hai mã băm. Model vào assets qua task `copyDiarizationModels`.
+  - Interface `SpeakerDiarizer` (và `ChunkedDiarization`: chia phần, cache `phan_NN.json`, luật min–max) nằm ở
+    `:core:speaker` thay vì `:core:pipeline`, để `:core:diarization` không phụ thuộc pipeline; pipeline vẫn chỉ thấy
+    interface JVM.
+  - B1 (bảng ở stage-01-results.md §1): không ngưỡng nào ≥ 3/5 bài → hỏi người dùng (D80). Thử thêm ngưỡng nối giữa các
+    phần khác ngưỡng trong phần (`spikes/diarization/relink.py`, tính lại từ `.pieces.json`): 1,1 / 1,2 / 1,3 cho kết
+    quả y hệt, chênh lệch nằm ở phân cụm trong phần.
+  - B2: luật min 1 / max 6 không đổi DER bài nào quá 0,1 điểm (chỉ B3 có một phần > 6 cụm). Biết số người thì luật D72
+    với min = max = N (cách hiểu `num_speakers` > 0 trên mobile). Phân cụm lại một phần với sherpa-onnx là chạy lại cả
+    phần (segmentation + embedding), không chỉ phân cụm: API không cho lấy embedding ra; chỉ tốn khi luật kích hoạt.
+  - Spike: `linking.py` (nối người nói, luật max, bỏ chồng lấn; chỉ cần numpy + scipy) để golden chạy bằng Python của
+    desktop; `run_sherpa.py` thêm `--min-speakers / --max-speakers / --pieces-in / --pieces-out`, `sweep.py` thêm
+    S5B1–S5B4.
 
 ## Phát sinh
 

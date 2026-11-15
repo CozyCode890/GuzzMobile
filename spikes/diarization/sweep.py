@@ -8,6 +8,7 @@ Chạy các phép đo B3–B8 của Stage 1 trên B1–B5, rồi chấm bằng e
     ... sweep.py B7 --shift 0.25 --embs <emb> --threshold 0.6
     ... sweep.py B8 --shift 0.25 --embs <emb> --threshold 0.6
     ... sweep.py S5B1 --embs campplus-zhen --jobs 3 --threads 4      (Stage 5 B1: ngưỡng, chia phần 20 phút)
+    ... sweep.py S5B2 --embs campplus-zhen --threshold 1.1 --jobs 3 --threads 4   (Stage 5 B2: luật min–max)
 
 Mỗi lần chạy sherpa-onnx là một process riêng (run_sherpa.py), để RAM đỉnh đo đúng từng lần. JSON đã có thì bỏ qua, nên
 bị ngắt thì chạy lại lệnh cũ là làm tiếp. Kết quả: $D/out/pc/<bước>/<cấu hình>/<mã>.json; bảng chấm của từng cấu hình ở
@@ -120,6 +121,41 @@ def plan(args) -> list[tuple[str, list[dict]]]:
                 groups.append((name, [job(k, name, e, ["--shift", str(args.shift), "--threshold", str(t),
                                                        "--piece-minutes", "20", "--overlap-seconds", "60",
                                                        "--pieces-out"]) for k in CODES]))
+    elif args.step == "S5B2":
+        # Stage 5 B2: luật min–max (D72) với ngưỡng của B1. "m1-6": mặc định desktop (min 1, max 6); "biet": biết số
+        # người (min = max = số người của desktop). Phần nào không cần phân cụm lại thì lấy từ .pieces.json của S5B1.
+        e = args.embs[0]
+        t = args.threshold
+        src = f"{emb_short(e)}_shift{args.shift}_t{t}_p20"
+        base = ["--shift", str(args.shift), "--threshold", str(t), "--piece-minutes", "20", "--overlap-seconds", "60"]
+
+        def cached(k: str) -> list[str]:
+            pf = D / "out" / "pc" / "S5B1" / src / f"{k}.pieces.json"
+            return ["--pieces-in", str(pf)] if pf.is_file() else []
+
+        name = f"{src}_m1-6"
+        groups.append((name, [job(k, name, e, base + cached(k) + ["--min-speakers", "1", "--max-speakers", "6"])
+                              for k in CODES]))
+        name = f"{src}_biet"
+        groups.append((name, [job(k, name, e, base + cached(k) + ["--min-speakers", str(num_speakers(k)),
+                                                                  "--max-speakers", str(num_speakers(k))])
+                              for k in CODES]))
+    elif args.step in ("S5B3", "S5B4"):
+        # Stage 5 B3: segmentation int8 và âm thanh gốc (chấm bằng --remap), với cấu hình B1–B2 (chia phần 20 phút,
+        # luật min 1 / max 6). B4: nguyên bài (không chia phần) để so DER với chia phần.
+        e = args.embs[0]
+        t = args.threshold
+        src = f"{emb_short(e)}_shift{args.shift}_t{t}"
+        piece = ["--piece-minutes", "20", "--overlap-seconds", "60", "--min-speakers", "1", "--max-speakers", "6"]
+        base = ["--shift", str(args.shift), "--threshold", str(t)]
+        if args.step == "S5B3":
+            name = f"{src}_p20_int8"
+            groups.append((name, [job(k, name, e, base + piece, seg_model=seg8) for k in CODES]))
+            name = f"{src}_p20_goc"
+            groups.append((name, [job(k, name, e, base + piece, audio="goc16k.wav") for k in CODES]))
+        else:
+            name = f"{src}_nguyen_bai"
+            groups.append((name, [job(k, name, e, base) for k in CODES]))
     else:
         raise SystemExit(f"Bước không biết: {args.step}")
     return groups
@@ -162,7 +198,7 @@ def evaluate(step: str, name: str, jobs: list[dict], remap: bool) -> None:
 def main() -> None:
     c.utf8_console()
     ap = argparse.ArgumentParser(description="Chạy B3–B8 trên B1–B5 rồi chấm")
-    ap.add_argument("step", choices=["B3", "B4", "B5", "B6", "B7", "B8", "S5B1"])
+    ap.add_argument("step", choices=["B3", "B4", "B5", "B6", "B7", "B8", "S5B1", "S5B2", "S5B3", "S5B4"])
     ap.add_argument("--shift", type=float, default=0.1)
     ap.add_argument("--embs", nargs="*", default=[])
     ap.add_argument("--threshold", type=float, default=0.5)
@@ -177,7 +213,7 @@ def main() -> None:
             jobs = [j for j in jobs if j["code"] in args.only]
         with ThreadPoolExecutor(max_workers=args.jobs) as ex:
             list(ex.map(run_job, jobs))
-        evaluate(args.step, name, jobs, remap=args.step == "B7")
+        evaluate(args.step, name, jobs, remap=args.step == "B7" or name.endswith("_goc"))
 
 
 if __name__ == "__main__":

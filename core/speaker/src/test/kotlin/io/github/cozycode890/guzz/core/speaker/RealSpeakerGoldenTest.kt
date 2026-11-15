@@ -24,7 +24,7 @@ class RealSpeakerGoldenTest {
     @TestFactory
     fun realRecordings(): List<DynamicTest> {
         assumeTrue(dataDir != null, "không có GUZZ_SPIKE_DATA: bỏ qua golden trên bản ghi thật")
-        val files = File(dataDir, "golden-stage-05").listFiles { f -> f.name.endsWith(".json") }?.sortedBy { it.name }
+        val files = File(dataDir, "golden-stage-05").listFiles { f -> f.name.endsWith(".json") && !f.name.startsWith("link__") }?.sortedBy { it.name }
         assumeTrue(!files.isNullOrEmpty(), "chưa chạy tools/golden/real_speaker.py")
         // Mặc định của config.default.txt: trùng mặc định của SpeakerOptions.
         val opts = SpeakerOptions()

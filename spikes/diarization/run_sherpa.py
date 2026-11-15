@@ -179,10 +179,10 @@ def mean_embedding(extractor, audio: np.ndarray, turns: list[tuple[float, float]
     return e / n if n > 0 else None
 
 
-def link_pieces(pieces: list[dict], threshold: float) -> tuple[list[tuple[float, float, int]], list[dict]]:
+def link_pieces(pieces: list[dict], threshold: float):
     """
     pieces[k] = {a, b (giây, toàn bài), turns: [(start, end, nhãn cục bộ)] (giây toàn bài), emb: {nhãn: vector}}.
-    Trả về (lượt toàn bài với nhãn chung, nhật ký nối từng phần).
+    Trả về (lượt toàn bài với nhãn chung, nhật ký nối từng phần, {nhãn chung: [embedding của từng phần]}).
     """
     from scipy.optimize import linear_sum_assignment
 
@@ -257,7 +257,67 @@ def link_pieces(pieces: list[dict], threshold: float) -> tuple[list[tuple[float,
             merged[-1][1] = max(merged[-1][1], b)
         else:
             merged.append([a, b, g])
-    return [(a, b, g) for a, b, g in merged], log
+    return [(a, b, g) for a, b, g in merged], log, global_emb
+
+
+def merge_adjacent(segs: list[tuple[float, float, int]]) -> list[tuple[float, float, int]]:
+    merged: list[list] = []
+    for a, b, g in segs:
+        if merged and merged[-1][2] == g and a - merged[-1][1] < 1e-3:
+            merged[-1][1] = max(merged[-1][1], b)
+        else:
+            merged.append([a, b, g])
+    return [(a, b, g) for a, b, g in merged]
+
+
+def merge_to_max(segs: list[tuple[float, float, int]], global_emb: dict, max_speakers: int):
+    """
+    Luật max của D72 sau khi nối: còn nhiều hơn max người thì gộp người nói ít thời gian nhất (hoà: người xuất hiện
+    trước) vào người gần nhất theo cosine của embedding trung bình (chuẩn hoá L2); không có embedding thì vào người nói
+    lâu nhất. Lặp tới khi còn max người.
+    """
+    emb = {g: list(v) for g, v in global_emb.items()}
+    while True:
+        total: dict[int, float] = {}
+        for a, b, g in segs:
+            total[g] = total.get(g, 0.0) + (b - a)
+        if max_speakers <= 0 or len(total) <= max_speakers:
+            return segs
+        victim = min(total, key=total.get)
+        others = [g for g in total if g != victim]
+        target = None
+        if emb.get(victim):
+            ve = np.mean(emb[victim], axis=0)
+            ve /= np.linalg.norm(ve)
+            best_d = None
+            for g in others:
+                if not emb.get(g):
+                    continue
+                ge = np.mean(emb[g], axis=0)
+                ge /= np.linalg.norm(ge)
+                d = 1.0 - float(np.dot(ve, ge))
+                if best_d is None or d < best_d:
+                    target, best_d = g, d
+        if target is None:
+            target = max(others, key=lambda g: total[g])
+        emb[target] = emb.get(target, []) + emb.pop(victim, [])
+        segs = merge_adjacent([(a, b, target if g == victim else g) for a, b, g in segs])
+
+
+def write_pieces(path: Path, pieces: list[dict]) -> None:
+    c.write_json(path, [
+        {"a": p["a"], "b": p["b"], "turns": [[round(s, 3), round(e, 3), l] for s, e, l in p["turns"]],
+         "emb": {str(l): (None if v is None else [float(x) for x in v]) for l, v in p["emb"].items()}}
+        for p in pieces])
+
+
+def load_pieces_cache(path: Path) -> list[dict]:
+    out = []
+    for p in c.read_json(path):
+        out.append({"a": p["a"], "b": p["b"], "turns": [(s, e, int(l)) for s, e, l in p["turns"]],
+                    "emb": {int(k): (None if v is None else np.asarray(v, dtype=np.float64))
+                            for k, v in p["emb"].items()}})
+    return out
 
 
 # ---------------------------------------------------------------- main
@@ -277,6 +337,10 @@ def main() -> None:
     ap.add_argument("--out", required=True)
     ap.add_argument("--pieces-out", action="store_true",
                     help="Chia phần: ghi thêm <out>.pieces.json (lượt + embedding từng phần) cho Stage 5 B2 / C3")
+    ap.add_argument("--pieces-in", help="Chia phần: lấy phần đã tách (ngưỡng) từ .pieces.json, chỉ chạy lại phần cần "
+                                        "phân cụm lại theo luật min–max")
+    ap.add_argument("--min-speakers", type=int, default=0, help="Luật min–max của D72 (0 = tắt)")
+    ap.add_argument("--max-speakers", type=int, default=0)
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -295,18 +359,36 @@ def main() -> None:
 
     started = time.monotonic()
     log = None
+    rule_log: list[str] = []
     if args.piece_minutes > 0:
         if args.num_clusters:
             raise SystemExit("Chia phần chỉ dùng ngưỡng (--threshold), không dùng --num-clusters")
         extractor = sherpa_onnx.SpeakerEmbeddingExtractor(
             sherpa_onnx.SpeakerEmbeddingExtractorConfig(model=args.emb, num_threads=args.threads))
-        pieces = []
         bounds = piece_bounds(total, int(args.piece_minutes * 60 * c.SAMPLE_RATE),
                               int(args.overlap_seconds * c.SAMPLE_RATE))
+        cache = load_pieces_cache(Path(args.pieces_in)) if args.pieces_in else None
+        sd_fixed: dict[int, sherpa_onnx.OfflineSpeakerDiarization] = {}
+
+        def sd_for(n: int):
+            # Luật min–max (D72): phân cụm lại với số cụm cố định. Cấu hình khác num_clusters giữ nguyên.
+            if n <= 0:
+                return sd
+            if n not in sd_fixed:
+                cfg = build_config(args)
+                cfg.clustering.num_clusters = n
+                sd_fixed[n] = sherpa_onnx.OfflineSpeakerDiarization(cfg)
+            return sd_fixed[n]
+
         ov_total, speech_total = 0.0, 0.0
-        for k, (a, b) in enumerate(bounds):
+
+        def run_piece(k: int, n: int) -> dict:
+            nonlocal ov_total, speech_total
+            a, b = bounds[k]
+            if n <= 0 and cache is not None and k < len(cache):
+                return cache[k]
             samples = read_audio(audio_path, a, b)
-            raw = diarize(sd, samples, f"phần {k + 1}/{len(bounds)}")
+            raw = diarize(sd_for(n), samples, f"phần {k + 1}/{len(bounds)}" + (f" (số cụm {n})" if n > 0 else ""))
             ov, sp = overlap_seconds(raw)
             ov_total, speech_total = ov_total + ov, speech_total + sp
             excl = to_exclusive(raw)
@@ -314,15 +396,29 @@ def main() -> None:
             for l in sorted({s for _, _, s in excl}):
                 emb[l] = mean_embedding(extractor, samples, [(s, e) for s, e, sp in excl if sp == l])
             off = a / c.SAMPLE_RATE
-            pieces.append({"a": off, "b": b / c.SAMPLE_RATE,
-                           "turns": [(s + off, e + off, l) for s, e, l in excl], "emb": emb})
-            del samples
-        segs, log = link_pieces(pieces, args.threshold)
+            return {"a": off, "b": b / c.SAMPLE_RATE, "turns": [(s + off, e + off, l) for s, e, l in excl], "emb": emb}
+
+        pieces = [run_piece(k, 0) for k in range(len(bounds))]
         if args.pieces_out:
-            c.write_json(out.with_suffix(".pieces.json"), [
-                {"a": p["a"], "b": p["b"], "turns": [[round(s, 3), round(e, 3), l] for s, e, l in p["turns"]],
-                 "emb": {str(l): (None if v is None else [float(x) for x in v]) for l, v in p["emb"].items()}}
-                for p in pieces])
+            write_pieces(out.with_suffix(".pieces.json"), pieces)
+        if args.max_speakers > 0:
+            for k, p in enumerate(pieces):
+                n = len({l for _, _, l in p["turns"]})
+                if n > args.max_speakers:
+                    rule_log.append(f"phần {k}: {n} cụm > max {args.max_speakers}, phân cụm lại")
+                    pieces[k] = run_piece(k, args.max_speakers)
+        segs, log, gemb = link_pieces(pieces, args.threshold)
+        if args.min_speakers > 0 and segs and len({g for _, _, g in segs}) < args.min_speakers:
+            rule_log.append(f"{len({g for _, _, g in segs})} người < min {args.min_speakers}, phân cụm lại mọi phần")
+            pieces = [run_piece(k, args.min_speakers) for k in range(len(bounds))]
+            segs, log, gemb = link_pieces(pieces, args.threshold)
+        if args.max_speakers > 0:
+            before = len({g for _, _, g in segs})
+            segs = merge_to_max(segs, gemb, args.max_speakers)
+            if before > args.max_speakers:
+                rule_log.append(f"{before} người > max {args.max_speakers}, gộp người ít thời gian nhất")
+        if rule_log:
+            print("luật min–max: " + "; ".join(rule_log))
     else:
         raw = diarize(sd, read_audio(audio_path), audio_path.name)
         ov_total, speech_total = overlap_seconds(raw)
@@ -356,6 +452,8 @@ def main() -> None:
             "min_duration_off": MIN_DURATION_OFF,
             "piece_minutes": args.piece_minutes or None,
             "overlap_seconds": args.overlap_seconds if args.piece_minutes else None,
+            "min_speakers": args.min_speakers or None,
+            "max_speakers": args.max_speakers or None,
         },
         "ram_dinh_mb": round(psutil.Process().memory_info().peak_wset / 2**20),
         "ty_le_chong_lan": round(ratio, 4),
@@ -363,6 +461,8 @@ def main() -> None:
     }
     if log is not None:
         data["noi_phan"] = log
+    if rule_log:
+        data["luat_min_max"] = rule_log
     c.write_json(out, data)
     print(f"xong {audio_path.name}: {len(doan)} lượt, {len(order)} người, {elapsed:.0f} s, "
           f"RAM đỉnh {data['ram_dinh_mb']} MB, chồng lấn {ratio:.1%} → {out}")

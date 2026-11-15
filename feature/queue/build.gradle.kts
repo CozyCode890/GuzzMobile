@@ -11,4 +11,5 @@ android {
 dependencies {
     api(project(":core:pipeline"))
     api(project(":core:media"))
+    api(project(":core:diarization"))
 }

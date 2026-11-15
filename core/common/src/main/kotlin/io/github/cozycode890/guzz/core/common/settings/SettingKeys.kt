@@ -121,11 +121,43 @@ object SettingKeys {
         sameAsDesktop = false,
     )
 
-    // [SPEAKERS] (Stage 3 chỉ dùng để tính chuỗi model và ràng buộc model ↔ cách nhận diện; dùng thật ở Stage 5).
+    // [SPEAKERS] (Stage 5), chặn như load_config. Giá trị của `method` giữ như desktop (D71): `pyannote` là "Tách giọng
+    // trên máy + Prompt" (sherpa-onnx, không còn pyannote), `gemini`, `hybrid`. Không có trên mobile, vì tách giọng chạy
+    // sherpa-onnx ngay trong app với model đóng gói trong APK: `python_path`, `pyannote_model`, `model_dir`, `offline`
+    // (không tải gì từ Hugging Face), `device` (chỉ CPU), `timeout_minutes` (Dừng giết process `:diarize`, không cần hạn
+    // giờ). `prompt_file`: prompt mặc định đóng gói trong app, sửa prompt để Stage 8 (D76).
     val SPEAKERS_ENABLED = BoolSetting("SPEAKERS", "enabled", default = false)
     val SPEAKERS_METHOD = ChoiceSetting(
         "SPEAKERS", "method", default = "pyannote", choices = listOf("pyannote", "gemini", "hybrid"),
     )
+
+    /** Biết chính xác số người thì ghi vào (0 = tự đoán trong [min_speakers, max_speakers]); D80: khuyên nhập. */
+    val NUM_SPEAKERS = IntSetting("SPEAKERS", "num_speakers", default = 0, min = 0)
+    val MIN_SPEAKERS = IntSetting("SPEAKERS", "min_speakers", default = 1, min = 0)
+    val MAX_SPEAKERS = IntSetting("SPEAKERS", "max_speakers", default = 6, min = 0)
+    val RUN_ON = ChoiceSetting("SPEAKERS", "run_on", default = "clean", choices = listOf("clean", "original"))
+    val SMOOTH = BoolSetting("SPEAKERS", "smooth", default = true)
+    val SANDWICH_MAX_SEC = DoubleSetting("SPEAKERS", "sandwich_max_sec", default = 3.0)
+    val SANDWICH_GAP_SEC = DoubleSetting("SPEAKERS", "sandwich_gap_sec", default = 1.0)
+    val DENSITY_WINDOW_SEC = DoubleSetting("SPEAKERS", "density_window_sec", default = 60.0)
+    val DENSITY_MIN_SEC = DoubleSetting("SPEAKERS", "density_min_sec", default = 15.0)
+    val MERGE_GAP_SEC = DoubleSetting("SPEAKERS", "merge_gap_sec", default = 1.0, min = 0.0)
+    val LABEL_MAIN_SPEAKER = BoolSetting("SPEAKERS", "label_main_speaker", default = true)
+    val MAIN_LABEL = StringSetting("SPEAKERS", "main_label", default = "Giảng viên", clean = { it.trim().ifEmpty { "Giảng viên" } })
+    val OTHER_LABEL = StringSetting("SPEAKERS", "other_label", default = "Người hỏi", clean = { it.trim().ifEmpty { "Người hỏi" } })
+    val GENERIC_LABEL = StringSetting("SPEAKERS", "generic_label", default = "Người nói", clean = { it.trim().ifEmpty { "Người nói" } })
+    val MAP_DELIVERY = ChoiceSetting("SPEAKERS", "map_delivery", default = "file", choices = listOf("file", "text"))
+    val SPEAKER_TIMESTAMPS = BoolSetting("SPEAKERS", "timestamps", default = true)
+    val PARAGRAPH_TEMPLATE = StringSetting(
+        "SPEAKERS", "paragraph_template", default = "[{time}] {speaker}: {text}",
+        clean = { it.trim().ifEmpty { "[{time}] {speaker}: {text}" } },
+    )
+    val MAX_PARAGRAPH_SEC = DoubleSetting("SPEAKERS", "max_paragraph_sec", default = 60.0, min = 0.0)
+    val PARAGRAPH_GAP_SEC = DoubleSetting("SPEAKERS", "paragraph_gap_sec", default = 3.0, min = 0.0)
+    val MARK_REVIEW = BoolSetting("SPEAKERS", "mark_review", default = true)
+
+    /** Lưu thêm bản đồ người nói `<tên>.nguoi_noi.txt` cạnh bản chép lời. */
+    val SAVE_SPEAKER_MAP = BoolSetting("OUTPUT", "save_speaker_map", default = false)
 
     val all: List<SettingKey<*>> = listOf(
         OUTPUT_DIR,
@@ -173,6 +205,27 @@ object SettingKeys {
         QUOTAS_LINES,
         SPEAKERS_ENABLED,
         SPEAKERS_METHOD,
+        NUM_SPEAKERS,
+        MIN_SPEAKERS,
+        MAX_SPEAKERS,
+        RUN_ON,
+        SMOOTH,
+        SANDWICH_MAX_SEC,
+        SANDWICH_GAP_SEC,
+        DENSITY_WINDOW_SEC,
+        DENSITY_MIN_SEC,
+        MERGE_GAP_SEC,
+        LABEL_MAIN_SPEAKER,
+        MAIN_LABEL,
+        OTHER_LABEL,
+        GENERIC_LABEL,
+        MAP_DELIVERY,
+        SPEAKER_TIMESTAMPS,
+        PARAGRAPH_TEMPLATE,
+        MAX_PARAGRAPH_SEC,
+        PARAGRAPH_GAP_SEC,
+        MARK_REVIEW,
+        SAVE_SPEAKER_MAP,
     )
 
     // [APP]: trạng thái app tự ghi, người dùng không chỉnh. Không nằm trong [all] để không bị xuất / nhập cùng cài đặt.

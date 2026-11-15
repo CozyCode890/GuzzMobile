@@ -113,6 +113,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D77 | 2026-11-14 | Gửi thật lên Gemini (Stage 5) | **B4 × 3 cách, ≤ 15 yêu cầu**, hỏi trước mỗi lần gửi | 4 đoạn, 4 người, có kết quả desktop để so. |
 | D78 | 2026-11-14 | Âm thanh gốc / sạch, int8 (Stage 5) | **Theo số đo trên PC**: giữ mặc định desktop (sạch, fp32) trừ khi cách kia DER TB thấp hơn ≥ 1 điểm và không bài nào trượt thêm D29 | Không đổi mặc định vì chênh lệch nhỏ. |
 | D79 | 2026-11-14 | Lấy AAR sherpa-onnx và model khi build (Stage 5) | **Task Gradle tự tải, kiểm SHA-256**, cache ngoài repo | Repo nhẹ; tệp tải về không đổi lén được. |
+| D80 | 2026-11-15 | Ngưỡng phân cụm khi không biết số người không đạt D29 (Stage 5 B1, D39) | **Ngưỡng 1,1 + ưu tiên nhập số người**: biết số người thì luật min = max = N | 1,1 giữ được người hỏi (1,2 trở lên gần như luôn ra 1 người); biết số người đạt 3/5 bài như Stage 1. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

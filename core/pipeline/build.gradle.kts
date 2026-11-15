@@ -9,6 +9,7 @@ dependencies {
     api(project(":core:common"))
     api(project(":core:audio"))
     api(project(":core:gemini"))
+    api(project(":core:speaker"))
 
     testImplementation(testFixtures(project(":core:common")))
     testImplementation(testFixtures(project(":core:gemini")))

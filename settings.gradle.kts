@@ -13,6 +13,11 @@ pluginManagement {
     }
 }
 
+// Tải AAR sherpa-onnx và model tách giọng, kiểm SHA-256 (D79, gradle/guzz-deps.txt).
+plugins {
+    id("guzz.deps")
+}
+
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
@@ -35,5 +40,6 @@ include(":core:audio")
 include(":core:media")
 include(":core:gemini")
 include(":core:speaker")
+include(":core:diarization")
 include(":core:pipeline")
 include(":feature:queue")

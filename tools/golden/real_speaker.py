@@ -25,6 +25,14 @@ _common.use_desktop_modules()
 import config  # noqa: E402
 import speaker  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "spikes" / "diarization"))
+import linking  # noqa: E402
+import numpy as np  # noqa: E402
+
+# Ngưỡng chọn ở B1 (D80): golden nối người nói chạy trên .pieces.json của cấu hình này.
+LINK_SOURCE = "campplus-zhen_shift0.1_t1.1_p20"
+LINK_THRESHOLD = 1.1
+
 CODES = ["B1", "B2", "B3", "B4", "B5"]
 
 
@@ -70,6 +78,27 @@ def main() -> None:
             with open(out_dir / f"{code}__{name}.json", "w", encoding="utf-8", newline="\n") as f:
                 json.dump(data, f, ensure_ascii=False)
             print(f"{code}/{name}: {len(raw)} → {len(processed)} lượt, {len(names)} người, đổi {n}")
+        link_golden(D, code, out_dir)
+
+
+def link_golden(D: Path, code: str, out_dir: Path) -> None:
+    """Nối người nói (linking.py) trên lượt + embedding từng phần thật của B1 (Stage 5 C3)."""
+    pf = D / "out" / "pc" / "S5B1" / LINK_SOURCE / f"{code}.pieces.json"
+    if not pf.is_file():
+        return
+    with open(pf, encoding="utf-8") as f:
+        raw = json.load(f)
+    pieces = [{"a": p["a"], "b": p["b"], "turns": [(a, b, int(l)) for a, b, l in p["turns"]],
+               "emb": {int(k): (None if v is None else np.asarray(v, dtype=np.float64)) for k, v in p["emb"].items()}}
+              for p in raw]
+    segs, log, gemb = linking.link_pieces(pieces, LINK_THRESHOLD)
+    n_desktop = json.load(open(D / code / "meta.json", encoding="utf-8"))["so_nguoi_desktop"]
+    data = {"pieces_file": str(pf), "threshold": LINK_THRESHOLD, "linked": [[a, b, g] for a, b, g in segs],
+            "log": log, "max": {str(m): [[a, b, g] for a, b, g in linking.merge_to_max(segs, gemb, m)]
+                                for m in sorted({1, n_desktop, 6})}}
+    with open(out_dir / f"link__{code}.json", "w", encoding="utf-8", newline="\n") as f:
+        json.dump(data, f, ensure_ascii=False)
+    print(f"{code}/link: {len(pieces)} phần, {len({g for _, _, g in segs})} người")
 
 
 if __name__ == "__main__":
