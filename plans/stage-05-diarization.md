@@ -1,6 +1,6 @@
 # Stage 5 — Tách giọng trên máy
 
-**Trạng thái:** 🔨 đang làm (từ 2026-11-14) · **Cần xong trước:** 4 (và kết quả Stage 1)
+**Trạng thái:** ✅ xong 2026-11-15 · **Cần xong trước:** 4 (và kết quả Stage 1)
 
 ## Mục tiêu
 
@@ -50,9 +50,10 @@ hay token Hugging Face.
 ## Tiêu chí hoàn thành
 
 - [x] Golden test `speaker.py` khớp.
-- [ ] Bài giảng thật: số người và thời gian nói của giảng viên gần với desktop (ngưỡng D29).
+- [ ] Bài giảng thật: số người và thời gian nói của giảng viên gần với desktop (ngưỡng D29). **Không đạt ở B4**
+  (cả 3 cách; đạt ở B1, B2 trên PC, thêm B5 khi biết số người). Người dùng chấp nhận, đóng stage (D82).
 - [x] Dừng giữa lúc đang tách giọng, rồi chạy lại thì dùng lại được kết quả đã cache.
-- [ ] Bài 2 giờ chia phần trên Xiaomi 15T: tách giọng ≤ 30 phút, PSS ≤ 1 GB, ≤ 45 °C, ≤ 10% pin (D30).
+- [x] Bài 2 giờ chia phần trên Xiaomi 15T: tách giọng ≤ 30 phút, PSS ≤ 1 GB, ≤ 45 °C, ≤ 10% pin (D30).
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -78,6 +79,7 @@ Hỏi người dùng ngày 2026-11-14, người dùng chọn phương án Recomm
 | D79 | Lấy AAR sherpa-onnx 2.0.1 và model khi build | **Task Gradle tự tải** từ GitHub Releases của sherpa-onnx vào thư mục cache ngoài repo, **kiểm SHA-256**, sai thì dừng build | Repo nhẹ; clone mới chỉ cần mạng một lần; tệp tải về không đổi lén được. |
 | D80 | Không ngưỡng nào đạt D29 ở ≥ 3/5 bài khi không biết số người (B1, hỏi ngày 2026-11-15 theo D39) | **Ngưỡng 1,1 + ưu tiên nhập số người**: không biết số người thì phân cụm bằng 1,1; trang Người nói khuyên nhập số người; biết số người thì chạy luật D72 với min = max = N | 1,1: 2/5 đạt, DER TB 17,9, giữ được người hỏi; 1,2–1,4: 2/5 đạt, DER TB 12,5–13,7 nhưng bài nhiều người gần như luôn ra 1 người. Biết số người (min = max = N): 3/5 đạt, DER TB 15,4. |
 | D81 | Chia phần làm DER TB tăng 2,6 điểm so với nguyên bài (B4, vượt mức 2 điểm; hỏi ngày 2026-11-15) | **Giữ P = 20 phút** | Chia phần đạt D29 nhiều bài hơn (2/5 so với 1/5), nguyên bài ra thừa người; bài 2 giờ nguyên bài làm điện thoại hết RAM. |
+| D82 | Tiêu chí "bài giảng thật gần desktop" trượt ở B4 với cả 3 cách (G2, hỏi ngày 2026-11-15) | **Đóng stage, ghi trượt B4**; cải thiện tách giọng bài nhiều người hỏi để sau (Phát sinh) | B4 trượt ở mọi cấu hình đo được; các bài ít người đạt trên PC; 3 cách đều chạy đúng trên máy thật. Stage kế: **7**. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -234,12 +236,12 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 
 ### G. Trên Xiaomi 15T
 
-- [ ] **G1. Bài 2 giờ chia phần** (đo lại D5 của Stage 1 với ngưỡng thật): `L1_120m` và `L2` (5 người), Gemini giả,
+- [x] **G1. Bài 2 giờ chia phần** (đo lại D5 của Stage 1 với ngưỡng thật): `L1_120m` và `L2` (5 người), Gemini giả,
   rút cáp, tắt màn hình. Ghi thời gian tách giọng, PSS đỉnh của `:diarize`, % pin, nhiệt đỉnh, và thời gian từ lúc bấm
   Dừng tới lúc `:diarize` mất (D7 cách 2 của Stage 1).
   **Kiểm:** bảng trong stage-01-results.md §2: ≤ 30 phút, PSS ≤ 1 GB, ≤ 45 °C, ≤ 10% pin (D30); Dừng ≤ 1 s. Không đạt thì
   ghi Nhật ký và hỏi người dùng (đổi P, số luồng).
-- [ ] **G2. Gửi thật B4 × 3 cách (D77; hỏi người dùng ngay trước mỗi lần gửi):** cách "Tách giọng trên máy + Prompt" với
+- [x] **G2. Gửi thật B4 × 3 cách (D77; hỏi người dùng ngay trước mỗi lần gửi):** cách "Tách giọng trên máy + Prompt" với
   `gemini-3.5-flash-lite`, hai cách kia với `gemini-3.5-transcribe`.
   **Kiểm:** 3 bản chép lời có tên người nói; số người và phút nói của giảng viên so với `ref.json` của desktop (D29: lệch
   ≤ 1 người, ≤ 5 điểm %); tổng ≤ 15 yêu cầu (log và sổ hạn mức).
@@ -250,7 +252,7 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   cache AAR / model); README §3–4 sửa nếu module khác dự kiến; ghi giấy phép model (MIT / Apache-2.0) vào chỗ Stage 9 sẽ
   dùng.
   **Kiểm:** chạy lại từng lệnh đã chép.
-- [ ] **H2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 5 → ✅; "Việc tiếp theo" → stage kế (6 hoặc 7, hỏi người
+- [x] **H2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 5 → ✅; "Việc tiếp theo" → stage kế (6 hoặc 7, hỏi người
   dùng); commit, push.
   **Kiểm:** `git status -sb` báo `## main...origin/main`; `git grep -E "AIza[0-9A-Za-z_-]{30,}"` không ra gì; repo không
   có bản ghi thật, AAR hay model.
@@ -312,6 +314,14 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
 - **2026-11-15, B3–B4.** Bảng ở stage-01-results.md §1. int8 (DER TB 21,4) và âm thanh gốc (20,2) đều kém hơn sạch +
   fp32 (17,9) → giữ mặc định desktop (D78), không đổi "Mặc định kỹ thuật". Nguyên bài 15,3 (chênh 2,6 điểm > 2) → hỏi
   người dùng, chọn giữ P = 20 phút (D81).
+- **2026-11-15, G (Xiaomi 15T).**
+  - G1 (bảng ở stage-01-results.md §2): L1_120m tách giọng 18,8 phút, PSS 542 MB, 42,6 °C, pin −7%; L2 28,9 phút,
+    pin −9%, ra 6 người (desktop 5), một phần phân cụm lại theo luật max. adb qua Wi‑Fi rớt giữa L2 nên PSS / nhiệt
+    chỉ có nửa đầu (người dùng nhận). Dừng → `:diarize` mất sau 110 ms. Thêm `tools/device/measure_diarize.ps1`.
+    Không có Tailscale trên máy lúc đo: dùng adb qua Wi‑Fi trong mạng nhà (người dùng chạy `adb tcpip 5555`).
+  - G2: 12 yêu cầu thật, không lỗi. Cả 3 cách ra bản chép lời có tên, nhưng trượt D29 ở B4 (1–2 người so với 4 của
+    desktop). Hỏi người dùng: đóng stage, ghi trượt B4 (D82).
+- **2026-11-15, H2.** Stage 5 ✅. Tiêu chí "bài giảng thật" không đạt ở B4 (D82); ba tiêu chí còn lại đạt.
 
 ## Phát sinh
 
@@ -343,3 +353,10 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   chỉ còn `doan_*.flac` + `danh_sach_doan.json`). Khi bật tách giọng, phải giữ PCM cần cho tách giọng tới lúc có
   `nguoi_noi.<mã>.json` (như `need_clean` của desktop), hoặc giải mã lại khi các đoạn lấy từ cache; mã băm người nói theo
   `speaker_hash` của desktop. Hỏi người dùng nếu đổi chính sách dọn của D66.
+- (Từ G2, 2026-11-15) Tách giọng bài nhiều người hỏi (B4: người chính 53%, 4 người) kém: sherpa-onnx gộp người hỏi vào
+  giảng viên ở mọi ngưỡng và cả khi biết số người. Hướng có thể thử sau: tự phân cụm trên embedding (sherpa-onnx không
+  cho lấy embedding từng khối, phải tự chạy segmentation + embedding), embedding khác, hoặc ngưỡng làm mượt thấp hơn.
+  Chưa gắn stage; hỏi người dùng khi có thời gian.
+- (Từ G2, 2026-11-15) `gemini-3.5-transcribe` trả rất ít chữ ở B4 (đoạn 1 chỉ 2–476 ký tự cho 10 phút) với cả tách giọng
+  lẫn mốc từng từ; cách 1 với `gemini-3.5-flash-lite` không bị. Theo dõi khi dùng hai cách cần `*-transcribe`.
+

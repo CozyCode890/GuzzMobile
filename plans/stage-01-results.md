@@ -169,6 +169,40 @@ Dừng giữa chừng (D7):
   `:diarize` lúc giết 205 MB).
 - Cách 2 (chia phần + lệnh Dừng): chưa đo → Stage 5.
 
+### Stage 5 G1. Bài 2 giờ chia phần, ngưỡng thật (D30)
+
+Xiaomi 15T, Android 16, bản debug của Guzz (hàng đợi thật, Gemini giả), cách "Tách giọng trên máy + Prompt", không
+nhập số người, ngưỡng 1,1, P = 20 phút, O = 60 s, 4 luồng, rút cáp, adb qua Wi‑Fi, 2026-11-15. Số đo:
+`tools/device/measure_diarize.ps1` (mỗi 20 s: pin, nhiệt, PSS của `:diarize`), thời gian tách giọng lấy từ `guzz.log`.
+
+| Bài | Âm thanh sạch | Tách giọng | Người nói | PSS đỉnh `:diarize` | Nhiệt đỉnh | Pin lúc tách giọng (cả bài) | D30 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `L1_120m` | 5 phần | **18,8 phút** | 2 | **542 MB** | **42,6 °C** | 56 → 49%: **−7%** (−10%) | đạt |
+| `L2` (B3 gốc, 5 người) | 5 phần, 1 phần phân cụm lại (7 > 6 cụm) | **28,9 phút** | 6 | ≥ 333 MB* | ≥ 42,6 °C* | 45 → 36%: **−9%** (−12%) | đạt (*) |
+
+(*) adb qua Wi‑Fi rớt sau 16 phút của L2: PSS và nhiệt chỉ có nửa đầu bước tách giọng; thời gian và pin lấy từ log của
+app (dòng "Nhịp" mỗi phút), nên vẫn đủ. Người dùng nhận G1 với ghi chú này.
+
+Dừng giữa lúc tách giọng (D7 cách 2, giờ là cách chạy thật): từ lúc gửi lệnh Dừng tới khi process `:diarize` mất
+**110 ms** (đo trên máy, gồm cả thời gian gửi broadcast). So với Stage 1 (ngưỡng tạm 0,5, 71 cụm): L1_120m nhanh hơn
+(18,8 so với 22,9 phút) vì ít cụm hơn.
+
+### Stage 5 G2. Gửi thật B4 × 3 cách (D77)
+
+Xiaomi 15T, bản debug, không nhập số người, 2026-11-15. 12 yêu cầu (4 đoạn × 3 cách), không lỗi, không thử lại. Desktop
+(`ref.json` qua `process_turns`): 4 người, Giảng viên 21,2 phút (53,5%).
+
+| Cách | Model | Người nói | Giảng viên | D29 |
+| --- | --- | --- | --- | --- |
+| Tách giọng trên máy + Prompt | `gemini-3.5-flash-lite` | 1 | 34,5 phút (100%) | trượt (lệch 3 người, +46 điểm) |
+| Gemini tự nhận diện | `gemini-3.5-transcribe` | 2 | 6,6 phút (98,5%) | trượt |
+| Kết hợp | `gemini-3.5-transcribe` | 1 | 32,2 phút (100%) | trượt |
+
+B4 trượt ở mọi cấu hình đo trên PC (B1–B4 của Stage 5), kể cả khi biết số người: sherpa-onnx gộp phần lớn người hỏi vào
+giảng viên. `gemini-3.5-transcribe` trả rất ít chữ ở B4 (đoạn 1: 2–476 ký tự cho 10 phút, so với 662 của
+`gemini-3.5-flash-lite`), nên phút nói của cách Gemini tự nhận diện thấp. Người dùng chọn đóng Stage 5 với tiêu chí này
+trượt ở B4 (D82).
+
 Đề xuất cho Stage 5: chạy tách giọng trong process riêng, Dừng thì giết process đó; cache kết quả từng phần để chạy lại.
 
 Dung lượng thư viện (C3), `apkanalyzer files list --raw-size --download-size` trên APK debug của app spike
