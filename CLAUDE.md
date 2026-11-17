@@ -191,6 +191,16 @@ D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_ffmpeg.py --pcm <go
 # script đo trên PC: spikes/README.md. Dữ liệu ngoài repo ở $env:GUZZ_SPIKE_DATA (D:\GuzzMobileData\stage-01).
 .\gradlew -p spikes\android :app:installDebug
 .\gradlew -p spikes\android :app:testDebugUnitTest
+
+# Intent (Stage 6): test JVM của :feature:automation (đọc lệnh, sự kiện, đường dẫn ↔ Thư mục nguồn, so docs/intents.md)
+.\gradlew :feature:automation:testDebugUnitTest
+# Gửi lệnh như MacroDroid tới bản debug (máy ảo / điện thoại): bật công tắc, gửi TRANSCRIBE, xem sự kiện đã phát
+# (files/debug-events/events.jsonl). -Activity: gửi tới CommandActivity thay cho CommandReceiver
+.\tools\device\intent_debug.ps1 -Enable on
+.\tools\device\intent_debug.ps1 -Transcribe B1_1m.m4a -RequestId t1 -FakeGemini on
+.\tools\device\intent_debug.ps1 -Status ; .\tools\device\intent_debug.ps1 -Events
+# Test thiết bị của :app gồm AutomationIntentTest (lệnh → FILE_DONE, mã bí mật sai) và ContentSourceTest (MediaStore,
+# provider độ dài không rõ): cài tay hai APK như mục "Test thiết bị của :app" ở trên rồi am instrument
 ```
 
 ### Cài môi trường một lần

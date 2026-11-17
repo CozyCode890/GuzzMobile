@@ -13,3 +13,8 @@ dependencies {
     api(project(":feature:queue"))
     implementation(libs.androidx.activity.compose)
 }
+
+// IntentsDocTest đọc docs/intents.md: khai báo để sửa tài liệu thì test chạy lại, không lấy kết quả cũ từ cache.
+tasks.withType<Test>().configureEach {
+    inputs.file(rootProject.file("docs/intents.md")).withPropertyName("intentsDoc")
+}

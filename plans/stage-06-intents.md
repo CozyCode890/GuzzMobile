@@ -337,7 +337,7 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
   MacroDroid), bảng action / extra / event / `error_kind` (sinh từ `GuzzIntents` hoặc có test so khớp), ví dụ `adb`, 3 macro
   mẫu dạng bảng, máy đã thử (Android / hãng / kết quả đêm thử), giới hạn đã biết. Viết nháp trước F1, sửa theo F1–F5.
   **Kiểm:** test JVM: mọi action / event / extra trong `GuzzIntents` có mặt trong `docs/intents.md` và ngược lại.
-- [ ] **G2. `CLAUDE.md`**: khối lệnh "Intent (Stage 6)" cuối "Lệnh thường dùng" (`intent_debug.ps1`, test thiết bị C5, test
+- [x] **G2. `CLAUDE.md`**: khối lệnh "Intent (Stage 6)" cuối "Lệnh thường dùng" (`intent_debug.ps1`, test thiết bị C5, test
   `:feature:automation`).
   **Kiểm:** chạy lại từng lệnh trong khối trên máy ảo.
 - [ ] **G3. Gộp và đóng**: `.\gradlew test lint` xanh cả hai flavor; đánh dấu "Tiêu chí hoàn thành"; Stage 6 ✅ kèm ngày;
@@ -362,6 +362,8 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 
 - (2026-11-18, E) Máy ảo: trang hiện đủ mục ở bản sideload; bản play ẩn "Truy cập mọi tệp" và "Lưu cạnh tệp nguồn". `appops` / `deviceidle` đổi thì quay lại trang thấy ✓ / ✗ đổi theo; bấm dòng thì có toast "Đã sao chép …" (shell không đọc được clipboard nên kiểm bằng ảnh chụp); "Gửi thử sự kiện" ghi FILE_DONE `request_id=test`. Thư mục nguồn (D104) thử luôn trên bản play: chọn Music qua SAF, `/sdcard/Music/chia_se_2.m4a` đọc qua URI tài liệu (sự kiện mang URI đó ở `source`, không phải đường dẫn gốc), `/sdcard/Download/…` → FILE_FAILED `no_permission`.
 - (2026-11-18, E2) Lint: `URLDecoder.decode(String, Charset)` cần API 33, đổi sang bản nhận tên bảng mã. Còn 6 cảnh báo (KTX `toUri`, plurals cho `share_added`, `/sdcard` trong PathMapping) để Stage 8 xét cùng phần văn phong.
+
+- (2026-11-18, G1) Bản nháp `docs/intents.md` xong, `IntentsDocTest` so khớp với `GuzzIntents` (tài liệu là input của task test). Tên mục MacroDroid, mục "Máy đã thử" và tệp `docs/macrodroid/*.macro` chờ nhóm F trên máy thật.
 
 ## Phát sinh
 
