@@ -1,6 +1,6 @@
 # Stage 7 — Làm sạch âm thanh đầy đủ
 
-**Trạng thái:** 🔨 đang làm (bắt đầu 2026-11-17; plan chi tiết 2026-11-15) · **Cần xong trước:** 4
+**Trạng thái:** ✅ xong 2026-11-17 (plan chi tiết 2026-11-15) · **Cần xong trước:** 4
 
 ## Mục tiêu
 
@@ -46,9 +46,10 @@ từng bước phải khớp bản Python trong một sai số đã định.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Golden test từng bước: SNR so với Python ≥ 60 dB (D85), mốc cắt lặng / điểm cắt đoạn lệch ≤ 1 khối.
-- [ ] Bài 1 giờ: làm sạch đủ thêm ≤ 10 phút so với Stage 2 trên Xiaomi 15T, màn hình tắt, một luồng; PSS ≤ 400 MB (D88).
-- [ ] Nghe thử so với bản desktop trên cùng tệp: không nghe ra khác biệt (A/B, D90).
+- [x] Golden test từng bước: SNR so với Python ≥ 60 dB (D85), mốc cắt lặng / điểm cắt đoạn lệch ≤ 1 khối.
+- [x] Bài 1 giờ: làm sạch đủ thêm ≤ 10 phút so với Stage 2 trên Xiaomi 15T, màn hình tắt, một luồng; PSS ≤ 400 MB (D88).
+- [x] Nghe thử so với bản desktop trên cùng tệp: không nghe ra khác biệt (A/B, D90). Người dùng nghe ra khác ở B4, không
+  ở B3; đo thì mỗi cặp chỉ lệch 0–1 ms, khác nhau ≤ −86 dB sau khi dóng → người dùng chọn chấp nhận theo số đo (Nhật ký).
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -155,7 +156,7 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
   tổng hợp; port các ca liên quan của `tests/test_audio_processing.py`.
 - [x] **C4. `level_loudness`.**
   **Kiểm:** golden đường gain và tín hiệu ra (SNR ≥ 60 dB) trên tệp giọng xa gần; port ca của test desktop.
-- [ ] **C5. Chuỗi `clean_audio`** trong `ChunkPreparer` theo đúng thứ tự desktop (bandpass → ghim → khử ồn → ghim →
+- [x] **C5. Chuỗi `clean_audio`** trong `ChunkPreparer` theo đúng thứ tự desktop (bandpass → ghim → khử ồn → ghim →
   cân bằng → chuẩn hoá → cắt lặng), báo tiến độ `[1/6]…[6/6]`, `denoise = false` đi đúng nhánh desktop (giữ đường của
   Stage 2).
   **Kiểm:** golden `clean_audio` cả chuỗi trên tệp tổng hợp: SNR ≥ 60 dB, `ban_do_thoi_gian` và điểm cắt đoạn lệch ≤ 1
@@ -186,17 +187,17 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
 
 ### F. Nghe thử (D90)
 
-- [ ] **F1. Tệp A/B:** chạy cùng tệp gốc trên điện thoại (bản debug, `-PullPcm` / `.sach.flac`) và trên desktop (cùng
+- [x] **F1. Tệp A/B:** chạy cùng tệp gốc trên điện thoại (bản debug, `-PullPcm` / `.sach.flac`) và trên desktop (cùng
   preset) cho B4 và một bài loa nhiều hướng (preset Loa nhiều hướng); cắt 3 đoạn 30 s giống nhau mỗi bài, đặt tên A/B
   ngẫu nhiên, ghi khoá giải ở ngoài repo (`D:\GuzzMobileData\stage-07\nghe_thu\`).
   **Kiểm:** người dùng nghe và báo; không nghe ra khác biệt → tick tiêu chí; nghe ra thì ghi Nhật ký và hỏi.
 
 ### G. Đóng stage
 
-- [ ] **G1. Tài liệu:** CLAUDE.md thêm lệnh (golden DSP / làm sạch, bench, so PCM); README §3–4 sửa nếu module khác dự
+- [x] **G1. Tài liệu:** CLAUDE.md thêm lệnh (golden DSP / làm sạch, bench, so PCM); README §3–4 sửa nếu module khác dự
   kiến.
   **Kiểm:** chạy lại từng lệnh đã chép.
-- [ ] **G2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 7 → ✅; "Việc tiếp theo" → stage kế (hỏi người dùng);
+- [x] **G2. Đóng stage:** tick đủ "Tiêu chí hoàn thành"; Stage 7 → ✅; "Việc tiếp theo" → stage kế (hỏi người dùng);
   commit, push.
   **Kiểm:** `git status -sb` báo `## main...origin/main`; `git grep -E "AIza[0-9A-Za-z_-]{30,}"` không ra gì; repo không
   có bản ghi thật.
@@ -264,6 +265,13 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
   - `compare_clean.py` so theo từng khoảng giữ lại trùng nhau: một mốc cắt lặng lệch 1 ms (trong dung sai B9) làm phần
     sau trượt vài mẫu, so "nửa đầu" như bản trước ra −2 dB vô nghĩa. Nay so trên 99,7–99,8% mẫu.
   - F1: `make_ab.py` → `D:\GuzzMobileData\stage-07\nghe_thu\B4\` và `...\L2\` (3 đoạn 30 s ở 20 / 50 / 80% mỗi bài,
-    A/B ngẫu nhiên, khoá giải `khoa_giai.json`). Chờ người dùng nghe.
+    A/B ngẫu nhiên, khoá giải `khoa_giai.json`).
+- **2026-11-17, F1 + đóng stage.** Người dùng nghe: B4 nghe ra khác biệt, L2 (B3) không. Đo lại chính các tệp: hai tệp
+  mỗi cặp cùng độ to; đoạn 1–2 của B4 SNR 86 / 92 dB không lệch thời gian; đoạn 3 của B4 và cả 3 đoạn của L2 lệch 16–32
+  mẫu (1–2 ms, do một mốc cắt lặng lệch 1 ms ở trước đó), dóng lại thì 89–92 dB. Khác biệt đo được nằm dưới ngưỡng nghe
+  rất xa và L2 có cùng kiểu lệch mà không nghe ra. Hỏi người dùng (ABX mù / chấp nhận theo số đo / mô tả chỗ khác):
+  **chọn chấp nhận theo số đo**; cảm nhận khác ở B4 chưa lặp lại được. G1: chạy lại `gen_dsp.py`, `gen_cleaning.py`,
+  `gen_config_keys.py`, `gen_pipeline.py` → `testdata/golden` không đổi; các lệnh máy thật đã chạy ở D2–D3; CLAUDE.md
+  thêm mục `android` CLI. Stage 7 ✅, tiếp theo Stage 6.
 
 ## Phát sinh
