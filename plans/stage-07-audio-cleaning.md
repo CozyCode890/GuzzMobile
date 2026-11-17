@@ -236,5 +236,18 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
   - E1 (đang làm): trang Âm thanh (`AudioActivity`), dòng "Âm thanh: <preset>" thay công tắc Cắt lặng ở màn hình Hàng
     đợi. Thêm so với desktop: tắt khử ồn hay cắt lặng thì hiện "Cấu hình thủ công" (desktop `detect_preset` không xét hai
     mục này), và chọn một preset thì bật lại khử ồn + cắt lặng, để "tắt một bước thì thành Tuỳ chỉnh" đúng với mọi công tắc.
+  - C5 trên bản ghi thật (`real_golden.py --stage7`, preset mặc định, khối noisereduce mặc định): B1–B5 SNR 91,5–94,5 dB
+    (tín hiệu đã làm sạch + chuẩn hoá, int16, so với desktop), mốc TimeMap khớp 100%, điểm cắt lệch ≤ 2 ms. Tốc độ trên
+    PC (một luồng): làm sạch đủ bài 79 phút (B4) 15,9 s, bài 115 phút 21–23 s; Python của desktop 24–55 s. Heap đỉnh
+    ≤ 188 MB.
+  - D2 trên máy ảo `guzz_15t`, `L1_20m.m4a`, 4 preset (`compare_clean.py`): SNR 91,8 / 92,9 / 92,4 / 93,0 dB, TimeMap và
+    điểm cắt trùng; khử ồn 20 phút ≈ 29–35 s, ghìm tiếng động hai lượt 5 s ("Đã ghìm 50 tiếng động", trùng desktop), PSS
+    đỉnh 169–172 MB. Hàng đợi (Gemini giả): `.sach.flac` ra cạnh bản chép lời; Dừng lúc "khử ồn" → `dung`, không còn
+    `tam_*`; chạy lại xử lý lại từ đầu bước âm thanh rồi xong; `logcat -b crash` trống. E1 thử trên máy ảo: chọn từng
+    preset, tắt khử ồn / ghìm thì thành "Cấu hình thủ công", mở lại trang vẫn giữ.
+  - Công cụ mới: `queue_debug.ps1 -Preset/-Denoise/-SaveClean` (lệnh adb `audio`), `audio_debug.ps1 -PullClean`,
+    `tools/device/compare_clean.py` (chạy desktop trên đúng `goc.pcm` của máy rồi so), `tools/device/make_ab.py` (F1).
+  - F1: người dùng chọn **B3** cho preset Loa nhiều hướng (cùng B4 với preset mặc định). D3 và F1 cần Xiaomi 15T:
+    người dùng hẹn làm sau (2026-11-17).
 
 ## Phát sinh
