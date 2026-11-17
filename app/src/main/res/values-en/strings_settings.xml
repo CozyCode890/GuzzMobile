@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_google_ai_summary">API key, model, languages, model switching</string>
+    <string name="settings_audio_summary">Audio clean-up, video, chunking</string>
+    <string name="settings_speakers_summary">Speaker recognition, names, paragraph format</string>
+    <string name="settings_output_title">Transcripts</string>
+    <string name="settings_output_summary">File name, extension, conflicts, encoding</string>
+    <string name="settings_queue_title">Queue</string>
+    <string name="settings_queue_summary">When a file fails, notify when done</string>
+    <string name="settings_system_title">System</string>
+    <string name="settings_system_summary">Language, theme, getting started, export / import settings</string>
+    <string name="settings_logs_summary">View and share the activity log</string>
+    <string name="settings_about_summary">Version, licenses</string>
+
+    <string name="google_ai_key_section">API key</string>
+    <string name="google_ai_key_hint">The key is encrypted with an Android Keystore key and stays on this device: it is not included in exported settings or backed up to Drive.</string>
+    <string name="google_ai_check_model_missing">Connected, but model “%1$s” is not in this key\'s model list.</string>
+    <string name="google_ai_model_section">AI model</string>
+    <string name="google_ai_model_hint">gemini-3.5-transcribe is a dedicated transcription model (audio only, no prompt). General models such as gemini-3.8-flash use the prompt. Tap “Test connection” to load the models your key can use.</string>
+    <string name="google_ai_rb_transcribe">*-transcribe model: speaker recognition can use Gemini native diarization or Hybrid. On-device + Prompt is locked (this model accepts no prompt or attachments).</string>
+    <string name="google_ai_rb_general">General model: speaker recognition can only use On-device + Prompt. Gemini native diarization and Hybrid are locked (cloud speaker separation needs a *-transcribe model).</string>
+    <string name="google_ai_mode">Transcription mode (*-transcribe models)</string>
+    <string name="google_ai_mode_smart">smart — remove fillers, add punctuation</string>
+    <string name="google_ai_mode_verbatim">verbatim — every word as spoken</string>
+    <string name="google_ai_languages">Language codes</string>
+    <string name="google_ai_languages_hint">Comma-separated, e.g. vi-VN, en-US. Empty = auto-detect.</string>
+    <string name="google_ai_languages_suggest">*-transcribe models return very little text for mixed Vietnamese / English recordings without language codes. Consider %1$s.</string>
+    <string name="google_ai_languages_fill">Use %1$s</string>
+    <string name="google_ai_vocabulary">Domain-specific terms, comma-separated</string>
+    <string name="google_ai_request_section">Requests</string>
+    <string name="google_ai_store">Allow Google to store the interaction</string>
+    <string name="google_ai_delete_remote">Delete uploaded files right after each chunk</string>
+    <string name="google_ai_timeout">Timeout per chunk (seconds)</string>
+    <string name="google_ai_retries">Attempts per chunk on temporary errors</string>
+    <string name="google_ai_token_limit">Tokens per minute for models without a declared limit (0 = no limit)</string>
+    <string name="google_ai_token_limit_hint">The app paces chunks to stay under the limit and avoid 429 errors. Per-model limits are set on the Quota tab.</string>
+    <string name="google_ai_fallback_section">Automatic model switching</string>
+    <string name="google_ai_fallback_hint">When the current model runs out of quota (429), is overloaded, is blocked by Google\'s filters or does not exist, the app sends that chunk to a fallback model instead of failing the whole file. A model that has used up its daily quota stays locked until Google resets it.</string>
+    <string name="google_ai_fallback_enable">Switch to fallback models automatically</string>
+    <string name="google_ai_fallback_models">Fallback models (in priority order, comma-separated)</string>
+    <string name="google_ai_fallback_models_invalid">Not a model name: %1$s</string>
+    <string name="google_ai_fallback_retries">Overload or per-minute 429: attempts before switching model</string>
+    <string name="google_ai_fallback_overload_lock">Lock an overloaded model for (minutes, 0 = no lock)</string>
+    <string name="google_ai_fallback_return">Return to the main model once it is unlocked</string>
+    <string name="google_ai_fallback_return_hint">When off, the app keeps the fallback model until the end of the file (more consistent style).</string>
+    <string name="google_ai_fallback_wait_switch">Switch model when the per-minute token wait exceeds (s, 0 = always wait)</string>
+    <string name="google_ai_fallback_max_wait">All models locked: wait at most (minutes), longer than that stops the queue</string>
+    <string name="google_ai_fallback_proactive">Lock a model once its daily request limit is reached (do not wait for a 429)</string>
+
+    <string name="audio_advanced">Advanced parameters</string>
+    <string name="audio_advanced_hint">Changing a value switches the recording environment to “Custom parameters”.</string>
+    <string name="audio_target_dbfs">Target loudness (dBFS)</string>
+    <string name="audio_silence_offset">Silence threshold (dB below average)</string>
+    <string name="audio_min_silence">Minimum silence length (ms)</string>
+    <string name="audio_keep_silence">Keep-silence padding (ms)</string>
+    <string name="audio_noise_sample">Noise estimation window (s)</string>
+    <string name="audio_bandpass_low">Band-pass — low cutoff (Hz)</string>
+    <string name="audio_bandpass_high">Band-pass — high cutoff (Hz)</string>
+    <string name="audio_prop_decrease">Noise reduction ratio (0–1)</string>
+    <string name="audio_level_window">Loudness leveling window (s, 0 = off)</string>
+    <string name="audio_transient_db">Suppress sudden loud noises (dB above baseline, 0 = off)</string>
+    <string name="audio_chunk_section">Audio chunking</string>
+    <string name="audio_chunk_minutes">Duration per chunk (minutes)</string>
+    <string name="audio_chunk_search">Silence search window near cut (± s)</string>
+    <string name="audio_chunk_last_min">Merge final chunk if shorter than (s)</string>
+    <string name="audio_chunk_hint">Chunks are cut at the quietest point near each mark so no word is split. With speaker recognition on a *-transcribe model, a chunk can be at most 30 minutes.</string>
+    <string name="audio_custom_note">Changes here apply to files processed later; chunks already sent are not resent.</string>
+    <string name="video_section">Video file processing</string>
+    <string name="video_section_hint">Video files are processed just like audio: the app extracts the audio track, then runs the clean-up, chunking and transcription.</string>
+    <string name="video_track">Audio track to use</string>
+    <string name="video_track_auto">Automatic (first audio track)</string>
+    <string name="video_track_n">Track %1$d</string>
+    <string name="video_track_hint">Videos often contain multiple audio tracks (lapel mic, room mic, camera sound). Selecting the right track gives the cleanest transcript.</string>
+    <string name="video_skip_silent">Skip videos without audio</string>
+    <string name="video_skip_silent_hint">When off, such videos are reported as errors instead of skipped.</string>
+    <string name="video_save_extracted">Keep a copy of the extracted audio (.am_thanh.flac)</string>
+    <string name="video_save_extracted_hint">Saved next to the transcript for quick listening without loading the heavy video file.</string>
+
+    <string name="speakers_transcribe_limits">*-transcribe models with speaker recognition: forced verbatim, custom vocabulary ignored, at most 30 minutes per chunk.</string>
+    <string name="speakers_names_section">Speaker display names</string>
+    <string name="speakers_label_main">Label the primary speaker</string>
+    <string name="speakers_label_main_hint">Off: everyone is numbered by order of appearance.</string>
+    <string name="speakers_generic_label">Default speaker prefix (e.g. Speaker)</string>
+    <string name="speakers_output_section">Sending to Google &amp; transcript format</string>
+    <string name="speakers_timestamps">Show a timestamp at the start of each paragraph</string>
+    <string name="speakers_timestamps_hint">Timestamps match the original recording, even after silence removal.</string>
+    <string name="speakers_map_delivery">Send the speaker map</string>
+    <string name="speakers_map_delivery_file">As a second .txt file</string>
+    <string name="speakers_map_delivery_text">Inline at the end of the prompt</string>
+    <string name="speakers_smooth_section">Speaker turn smoothing &amp; merging</string>
+    <string name="speakers_smooth_hint">Speaker separation often splits the main speaker into two people when they move closer to or further from the mic. Rule 1 gives short pieces sandwiched by the same speaker back to that speaker; rule 2 gives turns of a secondary speaker who says very little nearby back to the main speaker. In exchange, a very short isolated question may be merged into the main speaker — turn this off if questions go missing.</string>
+    <string name="speakers_sandwich_max">Rule 1: sandwiched piece shorter than (s)</string>
+    <string name="speakers_sandwich_gap">Rule 1: max gap on each side (s)</string>
+    <string name="speakers_density_window">Rule 2: window ± (s)</string>
+    <string name="speakers_density_min">Rule 2: secondary speaker talks less than (s, 0 = off)</string>
+    <string name="speakers_merge_gap">Merge same-speaker turns closer than (s)</string>
+    <string name="speakers_paragraph_section">Paragraphs</string>
+    <string name="speakers_run_on">Run recognition on</string>
+    <string name="speakers_run_on_clean">Cleaned audio</string>
+    <string name="speakers_run_on_original">Original file (less voice distortion)</string>
+    <string name="speakers_paragraph_template">Paragraph template ({time} {speaker} {text})</string>
+    <string name="speakers_template_sample">Today we\'ll look at decision trees.</string>
+    <string name="speakers_template_preview">Preview: %1$s</string>
+    <string name="speakers_template_invalid">Invalid template: only {time}, {speaker} and {text} are allowed.</string>
+    <string name="speakers_para_max">Max paragraph length (s, 0 = unlimited)</string>
+    <string name="speakers_para_gap">Start a new paragraph after a pause of (s)</string>
+    <string name="speakers_mark_review">Flag uncertain paragraphs with [?]</string>
+    <string name="speakers_mark_review_hint">Flags long paragraphs where a second speaker also talks a lot, so you can re-listen.</string>
+
+    <string name="output_file_section">Transcript file</string>
+    <string name="output_name_template">File naming format</string>
+    <string name="output_name_preview">Example: %1$s · Variables: {name} file name, {recorded} source file time, {date} {time} conversion time, {model} model used</string>
+    <string name="output_name_invalid">Invalid template. Available variables: {name} {recorded} {date} {time} {model}</string>
+    <string name="output_extension">File extension</string>
+    <string name="output_on_conflict">When the file name exists</string>
+    <string name="output_conflict_number">Append index (name (2).txt)</string>
+    <string name="output_conflict_overwrite">Overwrite existing file</string>
+    <string name="output_conflict_skip">Skip file</string>
+    <string name="output_encoding">Encoding</string>
+    <string name="output_encoding_bom">UTF-8 with BOM (older Windows 10 Notepad)</string>
+    <string name="output_newline">Line endings</string>
+    <string name="output_newline_crlf">Windows (CRLF)</string>
+    <string name="output_newline_lf">Unix (LF)</string>
+    <string name="output_header">Include a summary header</string>
+    <string name="output_header_hint">Source file name, time, model used, total duration and speaking time per speaker.</string>
+    <string name="output_chunk_markers">Insert chunk boundary markers (“----- Đoạn 2/15 -----”)</string>
+    <string name="output_chunk_markers_hint">Helps locate the matching audio chunk when reviewing the transcript.</string>
+    <string name="output_save_map_hint">Only applies to On-device + Prompt and Hybrid.</string>
+
+    <string name="queue_on_error">When a file fails</string>
+    <string name="queue_on_error_continue">Continue with the next file</string>
+    <string name="queue_on_error_stop">Stop the whole queue</string>
+    <string name="queue_notify">Notify when the queue finishes</string>
+    <string name="queue_notify_hint">Shows a notification with the number of files done, failed and skipped.</string>
+
+    <string name="system_appearance">Appearance</string>
+    <string name="system_language">Interface language</string>
+    <string name="system_language_auto">Device language</string>
+    <string name="system_theme">Theme</string>
+    <string name="system_theme_auto">Follow system</string>
+    <string name="system_theme_light">Light</string>
+    <string name="system_theme_dark">Dark</string>
+    <string name="system_transfer">Export / import settings</string>
+    <string name="system_transfer_hint">Same format as Guzz desktop\'s config.txt: a desktop config.txt can be imported. The API key and the output folder are not included.</string>
+    <string name="system_export">Export settings</string>
+    <string name="system_import">Import settings</string>
+    <string name="system_export_done">Settings exported.</string>
+    <string name="system_transfer_failed">Could not read / write the file.</string>
+    <string name="system_import_done">Settings imported</string>
+    <string name="system_import_summary">Applied %1$d settings, skipped %2$d not used on the phone, %3$d invalid (previous value kept).</string>
+    <string name="system_import_errors">Invalid:</string>
+    <string name="system_import_skipped">Skipped:</string>
+    <string name="system_logs_section">Logs</string>
+    <string name="system_log_level">Log detail level</string>
+    <string name="system_log_info">Normal (INFO)</string>
+    <string name="system_log_debug">Detailed (DEBUG, also logs requests sent to Google)</string>
+    <string name="system_log_size">Size per log file (MB)</string>
+    <string name="system_log_count">Old log files to keep</string>
+    <string name="system_temp_section">Temp folder</string>
+    <string name="system_delete_temp">Delete a file\'s temp folder when it finishes</string>
+    <string name="system_delete_temp_hint">On errors the temp folder is always kept, so the next run resumes without resending finished chunks.</string>
+
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s (%2$d)</string>
+    <string name="about_flavor">Edition: %1$s</string>
+    <string name="about_flavor_sideload">sideload (GitHub)</string>
+    <string name="about_flavor_play">Play</string>
+    <string name="about_android">Android %1$s (API %2$d)</string>
+    <string name="about_log_path">Logs: %1$s</string>
+    <string name="about_quota_note">Quota only counts requests sent from this app; Google counts per account, so sharing a key with Guzz desktop can hit 429 sooner.</string>
+    <string name="about_licenses">Licenses</string>
+    <string name="about_licenses_models">Speaker separation: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
+    <string name="about_licenses_libs">Libraries: AndroidX and Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines and kotlinx.serialization (Apache-2.0).</string>
+</resources>

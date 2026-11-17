@@ -1,0 +1,30 @@
+﻿# Tệp thử: luật đọc của configparser trong config._read_parser
+; ghi chú bằng dấu chấm phẩy
+[GOOGLE_AI]
+Model = gemini-3.5-flash   # ghi chú cuối dòng sau khoảng trắng
+vocabulary = C#, F#, Node.js;Deno
+languages =
+transcribe_mode=VERBATIM
+
+[SPEAKERS]
+paragraph_template = [{time}] {speaker}: {text}
+main_label =   Giảng viên   
+
+[FALLBACK]
+models = gemini-3.5-flash-lite,
+    gemini-3.5-flash
+
+    gemini-3.8-flash
+enabled = no
+
+[QUOTAS]
+gemini-3.5-flash = 250000, 5, 20  ; khai báo tay
+Gemini-3.8-Flash = 1000, 2, 3
+
+[SYSTEM]
+log_size_mb = 3.0
+old_log_count = %5
+
+[GUI]
+accent_color = #009faa
+theme = Dark

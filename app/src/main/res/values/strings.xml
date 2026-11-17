@@ -45,7 +45,7 @@
     <!-- %1$s: tên thư mục -->
     <string name="queue_folder">Lưu vào: %1$s</string>
     <string name="queue_folder_none">(chưa chọn)</string>
-    <string name="queue_problem_no_key">Chưa có API key. Nhập key ở trang Google AI (menu ⋮).</string>
+    <string name="queue_problem_no_key">Chưa có API key. Nhập key ở Cài đặt → Google AI.</string>
     <string name="queue_problem_nothing">Không có tệp nào để chạy.</string>
     <string name="queue_view">Xem</string>
     <string name="queue_open_with">Mở bằng app khác</string>

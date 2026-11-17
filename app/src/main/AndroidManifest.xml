@@ -27,19 +27,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Guzz">
 
+        <!-- Activity duy nhất của giao diện (D114). adjustResize: bàn phím đẩy nội dung lên, không che ô đang gõ.
+             singleTop: intent mở trang (extra route, lối vào từ thông báo / app khác) tới onNewIntent của Activity đang
+             mở, không chồng thêm một MainActivity. -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".TranscriptActivity"
-            android:exported="false"
-            android:label="@string/transcript_title" />
 
         <!-- Mở / chia sẻ bản chép lời ghi bằng đường dẫn (thư mục ra của bản debug), và lối lùi khi app nhận không đọc
              được URI SAF (Rủi ro của Stage 4). -->
@@ -53,22 +53,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-            android:name=".SpeakersActivity"
-            android:exported="false"
-            android:label="@string/speakers_title"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".AudioActivity"
-            android:exported="false"
-            android:label="@string/audio_title" />
-
-        <activity
-            android:name=".GoogleAiActivity"
-            android:exported="false"
-            android:label="@string/google_ai_title"
-            android:windowSoftInputMode="adjustResize" />
+        <!-- D115: AppCompat tự lưu ngôn ngữ chọn trong app trên Android 8–12 (Android 13+ hệ thống tự lưu). -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
     </application>
 
 </manifest>

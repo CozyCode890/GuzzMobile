@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quota_now">Current status</string>
+    <string name="quota_not_shared">Counts only requests sent from this app, not shared with Guzz desktop.</string>
+    <string name="quota_wait_none">Ready — not waiting for any quota.</string>
+    <string name="quota_wait_tpm">⏳ Pacing: waiting %1$s to stay under %2$s tokens/min of %3$s</string>
+    <string name="quota_wait_rpm">⏳ Pacing: waiting %1$s to stay under %2$s requests/min of %3$s</string>
+    <string name="quota_wait_retry">⏳ Waiting %1$s before retrying %2$s (%3$s error)</string>
+    <string name="quota_wait_all_locked">⏳ Every usable model is locked, waiting %1$s (until %2$s): %3$s</string>
+    <string name="quota_chain">Models are tried in this order: %1$s</string>
+    <string name="quota_reset">Google resets daily quotas at %1$s (device time), in %2$s.</string>
+    <string name="quota_models">Models</string>
+    <string name="quota_status_ok">Ready</string>
+    <string name="quota_status_locked">Locked until %1$s (%2$s left) — %3$s</string>
+    <string name="quota_status_locked_manual">Locked until manually unlocked — %1$s</string>
+    <string name="quota_usage_today">Today: %1$s requests · %2$s tokens</string>
+    <string name="quota_errors">Errors: %1$s</string>
+    <string name="quota_learned">Reported by Google: %1$s</string>
+    <string name="quota_unlock">Unlock</string>
+    <string name="quota_forget">Forget learned limits</string>
+    <string name="quota_reset_counts">Reset counters</string>
+    <string name="quota_reset_all">Reset counters of all models</string>
+    <string name="quota_clear_history">Clear history</string>
+    <string name="quota_confirm">Apply to %1$s? This cannot be undone.</string>
+    <string name="quota_all_models">all models</string>
+    <string name="quota_limits">Per-model limits</string>
+    <string name="quota_limits_hint">One line per model: model = tokens/min, requests/min, requests/day. 0 = no limit (unless Google has reported one). See your key\'s real limits at ai.dev/rate-limit. A model with no line uses the tokens/min limit on the Google AI page.</string>
+    <string name="quota_limits_label">[QUOTAS]</string>
+    <string name="quota_limits_invalid">Some lines are malformed (expected model = number, number, number); not saved.</string>
+    <string name="quota_history">Lock, switch and error history</string>
+    <string name="quota_history_empty">No events yet.</string>
+    <string name="quota_ev_lock">Locked · %1$s</string>
+    <string name="quota_ev_unlock">Unlocked</string>
+    <string name="quota_ev_lock_expired">Lock ended</string>
+    <string name="quota_ev_switch">Switched model %1$s → %2$s</string>
+    <string name="quota_ev_error">Error · %1$s</string>
+    <string name="quota_ev_learn">Limit learned</string>
+    <string name="quota_ev_wait">Waiting</string>
+    <string name="quota_reason_daily">daily quota exhausted</string>
+    <string name="quota_reason_minute">per-minute quota exhausted</string>
+    <string name="quota_reason_reached_daily">daily request limit reached</string>
+    <string name="quota_reason_overloaded">overloaded (HTTP 5xx)</string>
+    <string name="quota_reason_not_found">the API key cannot use this model (HTTP 404)</string>
+    <string name="quota_reason_blocked">Google\'s filters blocked this chunk</string>
+    <string name="quota_reason_wait_tpm">the previous model had to wait for its tokens/min limit</string>
+    <string name="quota_reason_preferred">back to the preferred model</string>
+    <string name="quota_err_overloaded">overloaded</string>
+    <string name="quota_err_minute">per-minute quota</string>
+    <string name="quota_err_daily">daily quota</string>
+    <string name="quota_err_blocked">blocked by filters</string>
+    <string name="quota_err_model">model not found</string>
+    <string name="quota_err_config">config / key</string>
+    <string name="quota_err_network">network</string>
+    <string name="quota_err_other">other</string>
+
+    <string name="logs_title">Logs</string>
+    <string name="logs_search">Search logs</string>
+    <string name="logs_level_all">All</string>
+    <string name="logs_level_warning">Warnings &amp; errors</string>
+    <string name="logs_level_error">Errors only</string>
+    <string name="logs_share">Share log file</string>
+    <string name="logs_empty">The log is empty.</string>
+    <string name="logs_no_match">No lines match the filter.</string>
+</resources>

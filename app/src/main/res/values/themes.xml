@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Chỉ dùng cho cửa sổ trước khi Compose vẽ; màu thật ở GuzzTheme. -->
-    <style name="Theme.Guzz" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Chỉ dùng cho cửa sổ trước khi Compose vẽ; màu thật ở GuzzTheme. AppCompat vì MainActivity là AppCompatActivity
+         (đổi ngôn ngữ trong app, D115); DayNight để nền cửa sổ theo sáng / tối của hệ thống. -->
+    <style name="Theme.Guzz" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

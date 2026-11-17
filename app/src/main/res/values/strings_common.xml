@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stage 8: chuỗi dùng chung, thanh điều hướng, Thiết lập ban đầu. Tách tệp theo trang để không đụng strings.xml
+     của stage khác khi gộp. Câu chữ theo gui/i18n.py của desktop. -->
+<resources>
+    <string name="common_advanced">Nâng cao</string>
+    <string name="common_back">Quay lại</string>
+    <string name="common_cancel">Huỷ bỏ</string>
+    <string name="common_ok">Đóng</string>
+    <string name="common_more">Thêm lựa chọn</string>
+    <string name="common_restore_default">Khôi phục mặc định</string>
+    <string name="common_restore_default_confirm">Đưa các mục của trang này về giá trị mặc định?</string>
+    <string name="common_number_invalid">Không phải số hợp lệ; giá trị cũ vẫn được giữ.</string>
+    <!-- %1$s: khoảng cho phép, vd "0 – 1" hoặc "≥ 1" -->
+    <string name="common_number_range">Cần một số trong khoảng %1$s; giá trị cũ vẫn được giữ.</string>
+    <string name="lang_vi" translatable="false">Tiếng Việt</string>
+    <string name="lang_en" translatable="false">English</string>
+
+    <!-- Thanh dưới (D110) -->
+    <string name="nav_convert">Chuyển đổi</string>
+    <string name="nav_quota">Hạn mức</string>
+    <string name="nav_settings">Cài đặt</string>
+
+    <!-- Thiết lập ban đầu (D116) -->
+    <string name="setup_title">Thiết lập ban đầu</string>
+    <string name="setup_hint">Làm xong các bước dưới đây để Guzz chép lời được, kể cả khi tắt màn hình.</string>
+    <string name="setup_later">Để sau</string>
+    <string name="setup_done">Đã xong</string>
+    <string name="setup_todo">Chưa xong</string>
+    <string name="setup_api_key">Nhập API key của Google AI Studio</string>
+    <string name="setup_api_key_action">Nhập key</string>
+    <string name="setup_folder">Chọn thư mục lưu bản chép lời</string>
+    <string name="setup_notifications">Cho phép thông báo (xem tiến độ, nút Dừng)</string>
+    <string name="setup_allow">Cho phép</string>
+    <string name="setup_battery">Tắt tối ưu pin cho Guzz (Pin → Không hạn chế) để không bị dừng khi tắt màn hình</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_advanced">Advanced</string>
+    <string name="common_back">Back</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_ok">Close</string>
+    <string name="common_more">More options</string>
+    <string name="common_restore_default">Restore defaults</string>
+    <string name="common_restore_default_confirm">Reset the settings on this page to their defaults?</string>
+    <string name="common_number_invalid">Not a valid number; the previous value is kept.</string>
+    <string name="common_number_range">Enter a number in the range %1$s; the previous value is kept.</string>
+
+    <string name="nav_convert">Transcribe</string>
+    <string name="nav_quota">Quota</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="setup_title">Getting started</string>
+    <string name="setup_hint">Finish the steps below so Guzz can transcribe, even with the screen off.</string>
+    <string name="setup_later">Later</string>
+    <string name="setup_done">Done</string>
+    <string name="setup_todo">To do</string>
+    <string name="setup_api_key">Enter your Google AI Studio API key</string>
+    <string name="setup_api_key_action">Enter key</string>
+    <string name="setup_folder">Choose where to save transcripts</string>
+    <string name="setup_notifications">Allow notifications (progress, Stop button)</string>
+    <string name="setup_allow">Allow</string>
+    <string name="setup_battery">Turn off battery optimization for Guzz (Battery → Unrestricted) so it keeps running with the screen off</string>
+</resources>

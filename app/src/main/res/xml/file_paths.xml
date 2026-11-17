@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Thư mục FileProvider được cấp: files/output (bản chép lời của lệnh adb, bản debug). -->
+<!-- Thư mục FileProvider được cấp: files/output (bản chép lời của lệnh adb, bản debug), files/logs (chia sẻ tệp nhật ký
+     ở trang Nhật ký, Stage 8). -->
 <paths>
     <external-files-path name="output" path="output/" />
+    <external-files-path name="logs" path="logs/" />
 </paths>

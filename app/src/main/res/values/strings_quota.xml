@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stage 8: tab Hạn mức (use_* của gui/i18n.py) và trang Nhật ký (logs_*). -->
+<resources>
+    <string name="quota_now">Trạng thái hiện tại</string>
+    <string name="quota_not_shared">Chỉ đếm yêu cầu gửi từ app này, không chung với Guzz desktop.</string>
+    <string name="quota_wait_none">Sẵn sàng, không phải chờ hạn mức.</string>
+    <!-- %1$s còn bao lâu, %2$s hạn mức, %3$s model -->
+    <string name="quota_wait_tpm">⏳ Đang giãn nhịp, chờ %1$s để không vượt hạn mức %2$s token/phút của %3$s</string>
+    <string name="quota_wait_rpm">⏳ Đang giãn nhịp, chờ %1$s để không vượt hạn mức %2$s yêu cầu/phút của %3$s</string>
+    <!-- %1$s còn bao lâu, %2$s model, %3$s loại lỗi -->
+    <string name="quota_wait_retry">⏳ Chờ %1$s rồi thử lại %2$s (lỗi: %3$s)</string>
+    <!-- %1$s còn bao lâu, %2$s tới lúc, %3$s chi tiết -->
+    <string name="quota_wait_all_locked">⏳ Mọi model dùng được đều đang khoá, chờ %1$s (tới %2$s): %3$s</string>
+    <!-- %1$s: các model nối bằng → -->
+    <string name="quota_chain">Thứ tự model sẽ thử: %1$s</string>
+    <!-- %1$s giờ, %2$s còn bao lâu -->
+    <string name="quota_reset">Hạn mức theo ngày của Google được tính lại lúc %1$s (giờ máy), còn %2$s.</string>
+    <string name="quota_models">Các model</string>
+    <string name="quota_status_ok">Sẵn sàng</string>
+    <!-- %1$s tới lúc, %2$s còn bao lâu, %3$s lý do -->
+    <string name="quota_status_locked">Khoá tới %1$s (còn %2$s) — %3$s</string>
+    <string name="quota_status_locked_manual">Khoá tới khi mở khoá bằng tay — %1$s</string>
+    <!-- %1$s yêu cầu hôm nay (vd 3 / 20), %2$s token hôm nay -->
+    <string name="quota_usage_today">Hôm nay: %1$s yêu cầu · %2$s token</string>
+    <string name="quota_errors">Lỗi: %1$s</string>
+    <string name="quota_learned">Google đã báo: %1$s</string>
+    <string name="quota_unlock">Mở khoá</string>
+    <string name="quota_forget">Quên hạn mức đã học</string>
+    <string name="quota_reset_counts">Đặt lại bộ đếm</string>
+    <string name="quota_reset_all">Đặt lại bộ đếm mọi model</string>
+    <string name="quota_clear_history">Xoá lịch sử</string>
+    <!-- %1$s: tên model hoặc "mọi model" -->
+    <string name="quota_confirm">Áp dụng cho %1$s? Không hoàn tác được.</string>
+    <string name="quota_all_models">mọi model</string>
+    <string name="quota_limits">Hạn mức của từng model</string>
+    <string name="quota_limits_hint">Mỗi dòng: model = token/phút, yêu cầu/phút, yêu cầu/ngày. Số 0 = không giới hạn (trừ khi Google đã báo một con số). Hạn mức thật của key xem ở ai.dev/rate-limit. Model không có dòng riêng dùng hạn mức token/phút ở trang Google AI.</string>
+    <string name="quota_limits_label">[QUOTAS]</string>
+    <string name="quota_limits_invalid">Có dòng sai dạng (cần model = số, số, số); chưa lưu.</string>
+    <string name="quota_history">Lịch sử khoá, đổi model và lỗi</string>
+    <string name="quota_history_empty">Chưa có sự kiện nào.</string>
+    <string name="quota_ev_lock">Khoá · %1$s</string>
+    <string name="quota_ev_unlock">Mở khoá</string>
+    <string name="quota_ev_lock_expired">Hết khoá</string>
+    <!-- %1$s từ model, %2$s sang model -->
+    <string name="quota_ev_switch">Đổi model %1$s → %2$s</string>
+    <string name="quota_ev_error">Lỗi · %1$s</string>
+    <string name="quota_ev_learn">Ghi nhớ hạn mức</string>
+    <string name="quota_ev_wait">Chờ</string>
+    <string name="quota_reason_daily">hết hạn mức trong ngày</string>
+    <string name="quota_reason_minute">hết hạn mức theo phút</string>
+    <string name="quota_reason_reached_daily">đã dùng hết số yêu cầu/ngày</string>
+    <string name="quota_reason_overloaded">Google quá tải (HTTP 5xx)</string>
+    <string name="quota_reason_not_found">API key không dùng được model này (HTTP 404)</string>
+    <string name="quota_reason_blocked">bộ lọc của Google chặn đoạn này</string>
+    <string name="quota_reason_wait_tpm">model trước phải chờ hạn mức token/phút</string>
+    <string name="quota_reason_preferred">quay lại model ưu tiên</string>
+    <string name="quota_err_overloaded">quá tải</string>
+    <string name="quota_err_minute">hạn mức phút</string>
+    <string name="quota_err_daily">hạn mức ngày</string>
+    <string name="quota_err_blocked">bị bộ lọc chặn</string>
+    <string name="quota_err_model">model không tồn tại</string>
+    <string name="quota_err_config">cấu hình / key</string>
+    <string name="quota_err_network">mạng</string>
+    <string name="quota_err_other">khác</string>
+
+    <string name="logs_title">Nhật ký</string>
+    <string name="logs_search">Tìm trong nhật ký</string>
+    <string name="logs_level_all">Tất cả</string>
+    <string name="logs_level_warning">Cảnh báo &amp; lỗi</string>
+    <string name="logs_level_error">Chỉ lỗi</string>
+    <string name="logs_share">Chia sẻ tệp nhật ký</string>
+    <string name="logs_empty">Nhật ký trống.</string>
+    <string name="logs_no_match">Không có dòng nào khớp bộ lọc.</string>
+</resources>

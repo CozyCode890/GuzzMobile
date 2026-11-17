@@ -1,6 +1,6 @@
 # Stage 8 — Hoàn thiện giao diện
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-17) · **Cần xong trước:** 5, 6, 7 (làm song song với Stage 6, xem "Làm song
+**Trạng thái:** 🔨 đang làm (plan 2026-11-17) · **Cần xong trước:** 5, 6, 7 (làm song song với Stage 6, xem "Làm song
 song với Stage 6")
 
 ## Mục tiêu

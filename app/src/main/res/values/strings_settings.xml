@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stage 8: tab Cài đặt và các trang con. Câu chữ theo gui/i18n.py của desktop (bản đã chuẩn hoá theo REFACTOR_PLAN). -->
+<resources>
+    <!-- Danh sách Cài đặt -->
+    <string name="settings_google_ai_summary">API key, model, ngôn ngữ, tự đổi model</string>
+    <string name="settings_audio_summary">Làm sạch âm thanh, video, cắt đoạn</string>
+    <string name="settings_speakers_summary">Nhận diện người nói, tên, mẫu đoạn văn</string>
+    <string name="settings_output_title">Bản chép lời</string>
+    <string name="settings_output_summary">Tên tệp, đuôi tệp, trùng tên, bảng mã</string>
+    <string name="settings_queue_title">Hàng đợi</string>
+    <string name="settings_queue_summary">Khi tệp lỗi, thông báo khi xong</string>
+    <string name="settings_system_title">Hệ thống</string>
+    <string name="settings_system_summary">Ngôn ngữ, chủ đề, thiết lập ban đầu, xuất / nhập cài đặt</string>
+    <string name="settings_logs_summary">Xem và chia sẻ nhật ký hoạt động</string>
+    <string name="settings_about_summary">Phiên bản, giấy phép</string>
+
+    <!-- Google AI (C1) -->
+    <string name="google_ai_key_section">API key</string>
+    <string name="google_ai_key_hint">Key được mã hoá bằng khoá của Android Keystore và chỉ nằm trên máy này: không đi theo tệp xuất cài đặt, không sao lưu lên Drive.</string>
+    <!-- %1$s: tên model -->
+    <string name="google_ai_check_model_missing">Kết nối thành công, nhưng không thấy model “%1$s” trong danh sách model của key này.</string>
+    <string name="google_ai_model_section">Model AI</string>
+    <string name="google_ai_model_hint">gemini-3.5-transcribe là model chuyên chép lời (chỉ nhận âm thanh, không dùng prompt). Các model đa năng như gemini-3.8-flash dùng prompt. Bấm “Kiểm tra kết nối” để nạp danh sách model mà key của bạn dùng được.</string>
+    <string name="google_ai_rb_transcribe">Model *-transcribe: nhận diện người nói dùng được cách Gemini tự nhận diện hoặc Kết hợp. Cách Tách giọng trên máy + Prompt bị khoá (model này không nhận prompt hay tệp kèm).</string>
+    <string name="google_ai_rb_general">Model đa năng: nhận diện người nói chỉ dùng được cách Tách giọng trên máy + Prompt. Gemini tự nhận diện và Kết hợp bị khoá (tách giọng trên Google cần model *-transcribe).</string>
+    <string name="google_ai_mode">Chế độ chép lời (model *-transcribe)</string>
+    <string name="google_ai_mode_smart">smart — bỏ từ đệm, tự đặt dấu câu</string>
+    <string name="google_ai_mode_verbatim">verbatim — giữ nguyên từng từ đã nói</string>
+    <string name="google_ai_languages">Mã ngôn ngữ</string>
+    <string name="google_ai_languages_hint">Cách nhau dấu phẩy, vd vi-VN, en-US. Để trống = tự nhận diện.</string>
+    <!-- %1$s: vi-VN, en-US -->
+    <string name="google_ai_languages_suggest">Model *-transcribe chép rất thưa khi bài lẫn tiếng Việt và tiếng Anh mà không có mã ngôn ngữ. Nên điền %1$s.</string>
+    <string name="google_ai_languages_fill">Điền %1$s</string>
+    <string name="google_ai_vocabulary">Thuật ngữ chuyên ngành, cách nhau dấu phẩy</string>
+    <string name="google_ai_request_section">Gửi yêu cầu</string>
+    <string name="google_ai_store">Cho phép Google lưu lại cuộc trao đổi</string>
+    <string name="google_ai_delete_remote">Xoá tệp trên Google ngay sau khi xong mỗi đoạn</string>
+    <string name="google_ai_timeout">Chờ tối đa mỗi đoạn (giây)</string>
+    <string name="google_ai_retries">Số lần thử mỗi đoạn khi gặp lỗi tạm thời</string>
+    <string name="google_ai_token_limit">Hạn mức token/phút cho model chưa khai báo riêng (0 = không giới hạn)</string>
+    <string name="google_ai_token_limit_hint">App tự giãn nhịp gửi các đoạn để không vượt hạn mức và tránh lỗi 429. Hạn mức riêng của từng model khai ở tab Hạn mức.</string>
+    <string name="google_ai_fallback_section">Tự động chuyển model dự phòng</string>
+    <string name="google_ai_fallback_hint">Khi model đang dùng hết hạn mức (429), quá tải, bị bộ lọc của Google chặn hoặc không tồn tại, app gửi đoạn đó cho model dự phòng thay vì báo lỗi cả tệp. Model đã hết hạn mức trong ngày bị khoá cho tới khi Google tính lại.</string>
+    <string name="google_ai_fallback_enable">Tự động chuyển sang model dự phòng</string>
+    <string name="google_ai_fallback_models">Model dự phòng (theo thứ tự ưu tiên, cách nhau dấu phẩy)</string>
+    <!-- %1$s: các tên sai -->
+    <string name="google_ai_fallback_models_invalid">Không phải tên model: %1$s</string>
+    <string name="google_ai_fallback_retries">Quá tải hoặc 429 theo phút: thử lại bao nhiêu lần trước khi đổi model</string>
+    <string name="google_ai_fallback_overload_lock">Khoá model quá tải trong (phút, 0 = không khoá)</string>
+    <string name="google_ai_fallback_return">Quay lại model chính ngay khi model chính hết khoá</string>
+    <string name="google_ai_fallback_return_hint">Nếu tắt, app dùng model dự phòng cho tới hết tệp (văn phong đồng đều hơn).</string>
+    <string name="google_ai_fallback_wait_switch">Đổi model khi phải chờ hạn mức token/phút lâu hơn (giây, 0 = luôn chờ)</string>
+    <string name="google_ai_fallback_max_wait">Khi mọi model đều bị khoá: chờ tối đa (phút), lâu hơn thì dừng hàng đợi</string>
+    <string name="google_ai_fallback_proactive">Khoá model khi đã gửi đủ số yêu cầu/ngày (không đợi Google báo 429)</string>
+
+    <!-- Âm thanh, video & cắt đoạn (C2) -->
+    <string name="audio_advanced">Thông số nâng cao</string>
+    <string name="audio_advanced_hint">Sửa một ô thì môi trường thu âm thành “Cấu hình thủ công”.</string>
+    <string name="audio_target_dbfs">Âm lượng mục tiêu (dBFS)</string>
+    <string name="audio_silence_offset">Ngưỡng im lặng (dB dưới mức trung bình)</string>
+    <string name="audio_min_silence">Độ dài khoảng lặng tối thiểu (ms)</string>
+    <string name="audio_keep_silence">Khoảng đệm giữ lại hai đầu câu (ms)</string>
+    <string name="audio_noise_sample">Cửa sổ ước lượng tiếng ồn (giây)</string>
+    <string name="audio_bandpass_low">Lọc dải tần — ngưỡng dưới (Hz)</string>
+    <string name="audio_bandpass_high">Lọc dải tần — ngưỡng trên (Hz)</string>
+    <string name="audio_prop_decrease">Mức giảm tiếng ồn nền (0–1)</string>
+    <string name="audio_level_window">Cửa sổ cân bằng độ to (giây, 0 = tắt)</string>
+    <string name="audio_transient_db">Giảm tiếng ồn đột ngột (dB trên mức thông thường, 0 = tắt)</string>
+    <string name="audio_chunk_section">Phân đoạn âm thanh</string>
+    <string name="audio_chunk_minutes">Độ dài mỗi phân đoạn (phút)</string>
+    <string name="audio_chunk_search">Tìm khoảng lặng gần điểm cắt (± giây)</string>
+    <string name="audio_chunk_last_min">Tự động gộp đoạn cuối nếu ngắn hơn (giây)</string>
+    <string name="audio_chunk_hint">App không cắt đúng mốc thời gian mà tìm chỗ lặng nhất quanh đó, để không cắt ngang một từ. Khi nhận diện người nói bằng model *-transcribe, mỗi đoạn dài tối đa 30 phút.</string>
+    <string name="audio_custom_note">Đổi thông số ở đây chỉ áp dụng cho các tệp xử lý sau; đoạn đã gửi không bị gửi lại.</string>
+    <string name="video_section">Xử lý tệp video</string>
+    <string name="video_section_hint">Video được xử lý như tệp âm thanh: app lấy luồng âm thanh rồi chạy tiếp các bước làm sạch, phân đoạn và chép lời.</string>
+    <string name="video_track">Luồng âm thanh sẽ dùng</string>
+    <string name="video_track_auto">Tự động (luồng đầu tiên)</string>
+    <!-- %1$d: số thứ tự luồng, đếm từ 1 -->
+    <string name="video_track_n">Luồng %1$d</string>
+    <string name="video_track_hint">Video quay hội thảo thường có nhiều luồng âm thanh (micro cài áo, micro phòng, tiếng máy quay). Chọn đúng luồng chính thì bản chép lời mới không dính tiếng ồn của luồng kia.</string>
+    <string name="video_skip_silent">Bỏ qua video không có âm thanh</string>
+    <string name="video_skip_silent_hint">Nếu tắt, những video đó bị báo lỗi thay vì bỏ qua.</string>
+    <string name="video_save_extracted">Lưu bản sao âm thanh tách từ video (.am_thanh.flac)</string>
+    <string name="video_save_extracted_hint">Tệp âm thanh được lưu cạnh bản chép lời để tiện nghe lại mà không cần mở cả video nặng.</string>
+
+    <!-- Người nói (C3) -->
+    <string name="speakers_transcribe_limits">Model *-transcribe khi nhận diện người nói: tự chuyển sang chép nguyên văn, bỏ qua thuật ngữ chuyên ngành, mỗi đoạn tối đa 30 phút.</string>
+    <string name="speakers_names_section">Đặt tên người nói</string>
+    <string name="speakers_label_main">Đặt tên cho người nói chính</string>
+    <string name="speakers_label_main_hint">Tắt: mọi người đều được đánh số theo thứ tự xuất hiện.</string>
+    <string name="speakers_generic_label">Tiền tố mặc định (vd Người nói)</string>
+    <string name="speakers_output_section">Gửi cho Google &amp; định dạng bản chép lời</string>
+    <string name="speakers_timestamps">Hiện mốc thời gian ở đầu mỗi đoạn</string>
+    <string name="speakers_timestamps_hint">Mốc thời gian luôn khớp với tệp gốc, kể cả khi đã loại bỏ khoảng lặng.</string>
+    <string name="speakers_map_delivery">Gửi sơ đồ người nói</string>
+    <string name="speakers_map_delivery_file">Tệp .txt thứ hai kèm âm thanh</string>
+    <string name="speakers_map_delivery_text">Chèn thẳng vào cuối prompt</string>
+    <string name="speakers_smooth_section">Tối ưu hoá lượt nói</string>
+    <string name="speakers_smooth_hint">Tách giọng hay chia người nói chính thành hai người khi họ lúc gần lúc xa micro. Quy tắc 1 trả mảnh ngắn bị kẹp giữa cùng một người về lại người đó; quy tắc 2 trả lượt của người phụ nói quá ít quanh đó về người nói chính. Đổi lại, một câu hỏi rất ngắn đứng lẻ có thể bị gộp vào người nói chính — thấy mất câu hỏi thì tắt đi.</string>
+    <string name="speakers_sandwich_max">Quy tắc 1: mảnh kẹp giữa ngắn hơn (giây)</string>
+    <string name="speakers_sandwich_gap">Quy tắc 1: khoảng nghỉ hai bên tối đa (giây)</string>
+    <string name="speakers_density_window">Quy tắc 2: cửa sổ ± (giây)</string>
+    <string name="speakers_density_min">Quy tắc 2: người phụ nói ít hơn (giây, 0 = tắt)</string>
+    <string name="speakers_merge_gap">Gộp hai lượt liền nhau của cùng một người cách nhau tối đa (giây)</string>
+    <string name="speakers_paragraph_section">Đoạn văn</string>
+    <string name="speakers_run_on">Phân tích giọng nói trên</string>
+    <string name="speakers_run_on_clean">Âm thanh đã làm sạch</string>
+    <string name="speakers_run_on_original">Tệp gốc (giọng ít bị méo hơn)</string>
+    <string name="speakers_paragraph_template">Mẫu đoạn văn ({time} {speaker} {text})</string>
+    <string name="speakers_template_sample">Hôm nay chúng ta học về cây quyết định.</string>
+    <!-- %1$s: đoạn văn ví dụ -->
+    <string name="speakers_template_preview">Xem trước: %1$s</string>
+    <string name="speakers_template_invalid">Mẫu không hợp lệ: chỉ được dùng {time}, {speaker}, {text}.</string>
+    <string name="speakers_para_max">Đoạn văn dài tối đa (giây, 0 = không giới hạn)</string>
+    <string name="speakers_para_gap">Ngắt đoạn khi im lặng lâu hơn (giây)</string>
+    <string name="speakers_mark_review">Đánh dấu [?] các đoạn cần kiểm tra lại</string>
+    <string name="speakers_mark_review_hint">Đánh dấu những đoạn dài mà người thứ hai cũng nói khá nhiều, để dễ nghe lại.</string>
+
+    <!-- Bản chép lời (C4) -->
+    <string name="output_file_section">Tệp bản chép lời</string>
+    <string name="output_name_template">Quy tắc đặt tên tệp</string>
+    <!-- %1$s: tên tệp ví dụ -->
+    <string name="output_name_preview">Ví dụ: %1$s · Biến: {name} tên tệp, {recorded} lúc tạo tệp gốc, {date} {time} lúc chuyển, {model} model đã dùng</string>
+    <string name="output_name_invalid">Mẫu không hợp lệ. Biến dùng được: {name} {recorded} {date} {time} {model}</string>
+    <string name="output_extension">Đuôi tệp</string>
+    <string name="output_on_conflict">Xử lý khi trùng tên tệp</string>
+    <string name="output_conflict_number">Tự động thêm số thứ tự (tên (2).txt)</string>
+    <string name="output_conflict_overwrite">Ghi đè tệp cũ</string>
+    <string name="output_conflict_skip">Bỏ qua (không xử lý lại)</string>
+    <string name="output_encoding">Bảng mã</string>
+    <string name="output_encoding_bom">UTF-8 có BOM (Notepad cũ của Windows 10)</string>
+    <string name="output_newline">Kiểu xuống dòng</string>
+    <string name="output_newline_crlf">Windows (CRLF)</string>
+    <string name="output_newline_lf">Unix (LF)</string>
+    <string name="output_header">Chèn thông tin tóm tắt ở đầu tệp</string>
+    <string name="output_header_hint">Tên tệp gốc, thời gian thực hiện, model đã dùng, tổng thời lượng và thời lượng nói của từng người.</string>
+    <string name="output_chunk_markers">Đánh dấu ranh giới giữa các đoạn (“----- Đoạn 2/15 -----”)</string>
+    <string name="output_chunk_markers_hint">Giúp đối chiếu lại với âm thanh của từng đoạn khi cần kiểm tra câu chữ.</string>
+    <string name="output_save_map_hint">Chỉ áp dụng với cách Tách giọng trên máy + Prompt và Kết hợp.</string>
+
+    <!-- Hàng đợi (C4) -->
+    <string name="queue_on_error">Khi một tệp gặp lỗi</string>
+    <string name="queue_on_error_continue">Bỏ qua và làm tiếp tệp sau</string>
+    <string name="queue_on_error_stop">Dừng cả hàng đợi</string>
+    <string name="queue_notify">Thông báo khi xong hàng đợi</string>
+    <string name="queue_notify_hint">Hiện một thông báo cho biết số tệp xong, lỗi, bỏ qua.</string>
+
+    <!-- Hệ thống (C5, F3) -->
+    <string name="system_appearance">Giao diện</string>
+    <string name="system_language">Ngôn ngữ giao diện</string>
+    <string name="system_language_auto">Theo ngôn ngữ máy</string>
+    <string name="system_theme">Chủ đề</string>
+    <string name="system_theme_auto">Theo hệ thống</string>
+    <string name="system_theme_light">Sáng</string>
+    <string name="system_theme_dark">Tối</string>
+    <string name="system_transfer">Xuất / nhập cài đặt</string>
+    <string name="system_transfer_hint">Cùng định dạng config.txt của Guzz desktop: nhập được config.txt của desktop. API key và thư mục lưu không đi theo tệp.</string>
+    <string name="system_export">Xuất cài đặt</string>
+    <string name="system_import">Nhập cài đặt</string>
+    <string name="system_export_done">Đã xuất cài đặt.</string>
+    <string name="system_transfer_failed">Không đọc / ghi được tệp.</string>
+    <string name="system_import_done">Đã nhập cài đặt</string>
+    <!-- %1$d đã áp, %2$d bỏ qua, %3$d lỗi -->
+    <string name="system_import_summary">Đã áp %1$d mục, bỏ qua %2$d mục không dùng trên điện thoại, %3$d mục lỗi (giữ giá trị cũ).</string>
+    <string name="system_import_errors">Mục lỗi:</string>
+    <string name="system_import_skipped">Bỏ qua:</string>
+    <string name="system_logs_section">Nhật ký</string>
+    <string name="system_log_level">Mức chi tiết nhật ký</string>
+    <string name="system_log_info">Bình thường (INFO)</string>
+    <string name="system_log_debug">Chi tiết (DEBUG, ghi cả yêu cầu gửi Google)</string>
+    <string name="system_log_size">Dung lượng mỗi tệp nhật ký (MB)</string>
+    <string name="system_log_count">Số tệp nhật ký cũ giữ lại</string>
+    <string name="system_temp_section">Thư mục tạm</string>
+    <string name="system_delete_temp">Xong một tệp thì xoá thư mục tạm của tệp đó</string>
+    <string name="system_delete_temp_hint">Nếu lỗi giữa chừng thì thư mục tạm luôn được giữ lại, để lần sau làm tiếp mà không phải gửi lại các đoạn đã xong.</string>
+
+    <!-- Thông tin (C5) -->
+    <string name="about_title">Thông tin</string>
+    <!-- %1$s versionName, %2$d versionCode -->
+    <string name="about_version">Phiên bản %1$s (%2$d)</string>
+    <!-- %1$s: tên bản phân phối -->
+    <string name="about_flavor">Bản: %1$s</string>
+    <string name="about_flavor_sideload">tự cài (GitHub)</string>
+    <string name="about_flavor_play">Play</string>
+    <!-- %1$s Android, %2$d API -->
+    <string name="about_android">Android %1$s (API %2$d)</string>
+    <!-- %1$s: thư mục -->
+    <string name="about_log_path">Nhật ký: %1$s</string>
+    <string name="about_quota_note">Hạn mức chỉ đếm các yêu cầu gửi từ app này; Google đếm theo cả tài khoản, nên dùng chung key với Guzz desktop thì có thể bị 429 sớm hơn.</string>
+    <string name="about_licenses">Giấy phép</string>
+    <string name="about_licenses_models">Tách giọng: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
+    <string name="about_licenses_libs">Thư viện: AndroidX và Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines và kotlinx.serialization (Apache-2.0).</string>
+</resources>

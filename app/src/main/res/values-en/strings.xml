@@ -37,7 +37,7 @@
     <string name="queue_choose_folder">Choose folder</string>
     <string name="queue_folder">Save to: %1$s</string>
     <string name="queue_folder_none">(not chosen)</string>
-    <string name="queue_problem_no_key">No API key. Enter it on the Google AI page (⋮ menu).</string>
+    <string name="queue_problem_no_key">No API key. Enter it in Settings → Google AI.</string>
     <string name="queue_problem_nothing">Nothing to run.</string>
     <string name="queue_view">View</string>
     <string name="queue_open_with">Open with another app</string>

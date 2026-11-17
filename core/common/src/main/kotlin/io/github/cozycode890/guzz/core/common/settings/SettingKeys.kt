@@ -52,6 +52,17 @@ object SettingKeys {
     /** Số tệp nhật ký cũ giữ lại. Riêng 0 thì khác desktop: đầy là xoá trắng `guzz.log` (D23, `RotatingFileSink`). */
     val OLD_LOG_COUNT = IntSetting("SYSTEM", "old_log_count", default = 5, min = 0)
 
+    // [GUI] (Stage 8). Desktop còn accent_color, mica, scale, cỡ chữ nhật ký, nhớ cửa sổ: không có nghĩa trên điện thoại.
+
+    /**
+     * Ngôn ngữ giao diện (D115). Desktop mặc định `vi`; điện thoại mặc định theo ngôn ngữ máy (`auto`). AppCompat tự lưu
+     * ngôn ngữ đang dùng; mục này là bản để xuất / nhập, đồng bộ với AppCompat lúc mở app và khi đổi.
+     */
+    val LANGUAGE = ChoiceSetting("GUI", "language", default = "auto", choices = listOf("auto", "vi", "en"), sameAsDesktop = false)
+
+    /** Sáng / tối / theo hệ thống (D111), như desktop. */
+    val THEME = ChoiceSetting("GUI", "theme", default = "auto", choices = listOf("auto", "light", "dark"))
+
     // [AUDIO] (Stage 2). Desktop không chặn các số này; chặn dưới ở đây chỉ để giá trị âm vô nghĩa không lọt vào thuật
     // toán (`find_speech_segments` coi cửa sổ ≤ 0 là không cắt gì, `trim_silence` với keep_silence âm thì cắt lẹm vào
     // lời nói).
@@ -85,6 +96,9 @@ object SettingKeys {
 
     /** Video không có luồng âm thanh nào: bỏ qua tệp (true) hay báo lỗi (Stage 4, Phát sinh Stage 2). */
     val SKIP_SILENT = BoolSetting("VIDEO", "skip_silent", default = true)
+
+    /** Lưu tiếng tách từ video thành `<tên>.am_thanh.flac` cạnh bản chép lời (D68, D120). */
+    val SAVE_EXTRACTED = BoolSetting("VIDEO", "save_extracted", default = false)
 
     // [CHUNKING] (Stage 2). Desktop báo lỗi khi chunk_minutes ≤ 0; mobile không được làm app chết vì cài đặt, nên kẹp.
     val CHUNK_MINUTES = DoubleSetting("CHUNKING", "chunk_minutes", default = 10.0, min = 0.1)
@@ -192,6 +206,8 @@ object SettingKeys {
         LOG_LEVEL,
         LOG_SIZE_MB,
         OLD_LOG_COUNT,
+        LANGUAGE,
+        THEME,
         TARGET_DBFS,
         TRIM_SILENCE,
         MIN_SILENCE_LEN,
@@ -207,6 +223,7 @@ object SettingKeys {
         SAVE_CLEAN_AUDIO,
         AUDIO_TRACK,
         SKIP_SILENT,
+        SAVE_EXTRACTED,
         CHUNK_MINUTES,
         SEARCH_SECONDS,
         MIN_LAST_CHUNK_SECONDS,
