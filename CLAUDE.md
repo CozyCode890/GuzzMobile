@@ -226,6 +226,10 @@ D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_ffmpeg.py --pcm <go
   không ảnh hưởng build.
 - Android SDK: `ANDROID_HOME` (User) = `%LOCALAPPDATA%\Android\Sdk`; cmdline-tools 22.0 (`sdkmanager` báo deprecated),
   platform-tools 37.0.1, `platforms;android-37.0`, build-tools 37.0.0. Đã đồng ý `android-sdk-license`.
+- `android` CLI 1.1 (2026-11-17) ở `%ANDROID_HOME%\cmdline-tools\latest\bin\android.exe`: dùng cho cài APK
+  (`android install <apk> --device=<serial>`), đọc giao diện (`android layout --device=<serial>`), chụp màn hình
+  (`android screen capture -o <png>`), bật / tắt máy ảo (`android emulator start|stop guzz_15t`). Lệnh adb riêng của Guzz
+  (broadcast hàng đợi, màn hình thử) vẫn qua `tools\device\*.ps1`.
 - adb: bản trên `PATH` là gói winget `Google.PlatformTools`; Gradle dùng bản trong SDK. Hai bản cùng `37.0.1-15733141`
   (A5). Cập nhật bản này mà không cập nhật bản kia thì adb báo "server version doesn't match".
 - App Claude giữ biến môi trường từ lúc mở: đổi `JAVA_HOME` / `ANDROID_HOME` / `PATH` xong phải khởi động lại app.

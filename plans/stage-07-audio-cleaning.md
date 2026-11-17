@@ -171,7 +171,7 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
   desktop bằng `compare_ffmpeg.py` / script so mới.
   **Kiểm:** SNR so với desktop ≥ 60 dB trên tệp thật; Dừng giữa lúc khử ồn → `dung`, chạy lại xử lý lại từ đầu bước âm
   thanh (hoặc dùng lại nếu có cache); `logcat -b crash` trống.
-- [ ] **D3. Xiaomi 15T, bài 1 giờ** (`L1_60m` hoặc B4), màn hình tắt, preset mặc định: thời gian xử lý âm thanh so với
+- [x] **D3. Xiaomi 15T, bài 1 giờ** (`L1_60m` hoặc B4), màn hình tắt, preset mặc định: thời gian xử lý âm thanh so với
   Stage 2 trên cùng tệp, PSS đỉnh.
   **Kiểm:** bảng trong stage-01-results.md §3 (hoặc tệp kết quả Stage 7): thêm ≤ 10 phút, PSS ≤ 400 MB (D88). Không đạt
   thì ghi Nhật ký và hỏi người dùng (đa luồng, JTransforms, tắt bước).
@@ -247,7 +247,24 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
     preset, tắt khử ồn / ghìm thì thành "Cấu hình thủ công", mở lại trang vẫn giữ.
   - Công cụ mới: `queue_debug.ps1 -Preset/-Denoise/-SaveClean` (lệnh adb `audio`), `audio_debug.ps1 -PullClean`,
     `tools/device/compare_clean.py` (chạy desktop trên đúng `goc.pcm` của máy rồi so), `tools/device/make_ab.py` (F1).
-  - F1: người dùng chọn **B3** cho preset Loa nhiều hướng (cùng B4 với preset mặc định). D3 và F1 cần Xiaomi 15T:
-    người dùng hẹn làm sau (2026-11-17).
+  - F1: người dùng chọn **B3** cho preset Loa nhiều hướng (cùng B4 với preset mặc định). B3 trên máy là `L2.m4a` (cùng
+    tệp gốc).
+- **2026-11-17, D3 + F1 trên Xiaomi 15T** (USB; dùng thêm `android` CLI 1.1 cho máy ảo / màn hình). Màn hình thử âm
+  thanh, `-ScreenOff`, một luồng; kết quả ở `D:\GuzzMobileData\stage-07\d3\`:
+
+  | Bài | Đường | Tổng (s) | Giải mã (s) | Sau giải mã (s) | Lọc / ghìm / khử ồn / cân bằng (s) | PSS đỉnh | So với desktop |
+  | --- | --- | --- | --- | --- | --- | --- | --- |
+  | B4 79 phút | Stage 2 (khử ồn tắt) | 232,6 | 192,0 | 40,6 | — | 136 MB | — |
+  | B4 79 phút | Stage 7, preset mặc định | 439,7 | 337,6 | 102,1 | 9,8 / — / 53,2 / 4,0 | 200 MB | 91,6 dB, TimeMap 100%, 5 / 5 đoạn |
+  | B3 (L2) 115 phút | Stage 7, Hội trường đông người | 564,6 | 388,6 | 176,0 | 14,6 / 11,2 / 105,7 / — | 231 MB | 91,8 dB, TimeMap 100%, 9 / 9 đoạn |
+
+  Lượt Stage 7 của B4 đo lại vì lần đầu màn hình bật lúc kết thúc; lần đo lại `dumpsys power` báo `Dozing` suốt lúc chạy.
+  Thêm so với Stage 2: 207 s tổng, trong đó giải mã chậm hơn 146 s (biến động của bộ giải mã khi máy ngủ, không phải
+  Stage 7), phần sau giải mã thêm 62 s → **đạt D88** (≤ 10 phút, PSS ≤ 400 MB). Không cần đa luồng (D86).
+  - `compare_clean.py` so theo từng khoảng giữ lại trùng nhau: một mốc cắt lặng lệch 1 ms (trong dung sai B9) làm phần
+    sau trượt vài mẫu, so "nửa đầu" như bản trước ra −2 dB vô nghĩa. Nay so trên 99,7–99,8% mẫu.
+  - F1: `make_ab.py` → `D:\GuzzMobileData\stage-07
+ghe_thu\B4\`, `...\L2\` (3 đoạn 30 s ở 20 / 50 / 80% mỗi bài,
+    A/B ngẫu nhiên, khoá giải `khoa_giai.json`). Chờ người dùng nghe.
 
 ## Phát sinh

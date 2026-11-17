@@ -61,15 +61,36 @@ def main() -> None:
 
     print("desktop:", " | ".join(s.strip() for s in logs if "ghim" in s or "Thoi luong" in s))
     print(f"máy: {len(phone)} mẫu, desktop: {len(desk)} mẫu")
-    n = min(len(phone), len(desk))
-    if len(phone) == len(desk):
-        a, b = desk.astype(np.float64), phone.astype(np.float64)
-    else:
-        # Lệch vài mẫu ở một khoảng giữ lại thì các mẫu sau trượt: chỉ so phần đầu trước chỗ lệch đầu tiên.
-        print("số mẫu khác nhau: chỉ so nửa đầu")
-        a, b = desk[: n // 2].astype(np.float64), phone[: n // 2].astype(np.float64)
-    err = float(np.sum((a - b) ** 2))
-    snr = math.inf if err == 0 else 10 * math.log10(float(np.sum(a * a)) / err)
+    # So theo từng khoảng giữ lại: một mốc cắt lặng lệch 1 ms (trong dung sai B9) làm mọi mẫu sau đó trượt, nên chỉ so
+    # các khoảng có cùng [đầu, cuối] ở cả hai bên, mỗi bên lấy đúng vị trí của khoảng đó trong sach.pcm của mình. Mốc của
+    # điện thoại ghi tới mili giây, mà trim_silence luôn cắt ở bội của 1 ms (trừ cuối bài), nên đổi lại ra mẫu là chính xác.
+    desk_ranges = [(round(a * SR), round(b * SR)) for a, b in tm.segments]
+    phone_ranges = [(round(a * SR), round(b * SR)) for a, b in phone_list["ban_do_thoi_gian"]]
+
+    def offsets(ranges):
+        out, pos = {}, 0
+        for r in ranges:
+            out[r] = pos
+            pos += r[1] - r[0]
+        return out
+
+    od, op = offsets(desk_ranges), offsets(phone_ranges)
+    sig = err = 0.0
+    covered = 0
+    for r in desk_ranges:
+        if r not in op:
+            continue
+        length = r[1] - r[0]
+        a = desk[od[r]:od[r] + length].astype(np.float64)
+        b = phone[op[r]:op[r] + length].astype(np.float64)
+        if len(a) != length or len(b) != length:
+            continue
+        sig += float(np.sum(a * a))
+        err += float(np.sum((a - b) ** 2))
+        covered += length
+    snr = math.inf if err == 0 else 10 * math.log10(sig / err)
+    print(f"so trên {covered / max(1, len(desk)) * 100:.2f}% mẫu (các khoảng giữ lại trùng nhau, "
+          f"{len(set(desk_ranges) & set(phone_ranges))} / {len(desk_ranges)} khoảng)")
     print(f"SNR sach.pcm máy so với desktop: {snr:.1f} dB → {'ĐẠT' if snr >= 60 else 'TRƯỢT'} (≥ 60 dB)")
 
     d = dict(time_map=tm.to_json(), orig_duration=round(tm.orig_duration, 3), points=[int(p) for p in points])
