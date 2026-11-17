@@ -113,13 +113,14 @@ Chỗ dễ đụng tệp với Stage 6 và cách tránh:
 
 | Tệp / chỗ | Stage 6 có thể sửa | Stage 8 làm thế này |
 | --- | --- | --- |
-| `app/src/main/res/values*/strings.xml` | Thêm chuỗi trang Tự động hoá, thông báo lỗi lệnh | Chuỗi mới để ở **tệp riêng theo trang** (`strings_nav.xml`, `strings_settings.xml`, `strings_quota.xml`, `strings_logs.xml`, `strings_setup.xml`…); `strings.xml` cũ chỉ xoá chuỗi hết dùng, làm **một commit riêng ở nhóm I** (sau khi Stage 6 gộp). Gợi ý Stage 6 dùng `strings_automation.xml`. |
-| `SettingKeys.kt` | Thêm mục `[AUTOMATION]` (thường thêm vào cuối `all`) | Mục `[GUI]` đặt thành **một khối riêng ngay sau `[SYSTEM]`**, không chèn vào cuối tệp / cuối `all`. |
-| `AppContainer.kt` | Thêm receiver / bộ đọc lệnh | Thêm **tối đa vài dòng** (`lazy` ở cuối class trước `companion`); logic mới để ở lớp riêng (`ConfigTransfer`, `SetupChecklist`, `LogReader`). |
-| `MainActivity.kt` | Xử lý Chia sẻ tới Guzz (`ACTION_SEND`) / `onNewIntent` | B1 chuyển `QueueScreen` ra `ui/convert/`, `MainActivity` chỉ còn khung (NavHost). Gợi ý Stage 6 để phần xử lý intent ở hàm / tệp riêng, gọi một dòng từ `MainActivity`; H4 nối lại. |
-| `AndroidManifest.xml` | Thêm receiver, intent-filter, quyền `MANAGE_EXTERNAL_STORAGE` | Chỉ xoá các `<activity>` cũ (một commit ở B6) và thêm service lưu locale của AppCompat (A3). |
-| `gradle/libs.versions.toml`, `app/build.gradle.kts` | Có thể thêm thư viện | Thêm dòng ở vị trí theo thứ tự chữ cái, không sắp lại cả khối. |
-| `CLAUDE.md` "Lệnh thường dùng" | Thêm lệnh intent | Thêm khối "Giao diện (Stage 8)" riêng ở cuối mục. |
+| `strings.xml` | Không sửa: chuỗi của Stage 6 ở `feature/automation/src/main/res/values{,-en}/strings_automation.xml` | Chuỗi mới để ở **tệp riêng theo trang** (`strings_nav.xml`, `strings_settings.xml`, `strings_quota.xml`, `strings_logs.xml`, `strings_setup.xml`…); `strings.xml` cũ chỉ xoá chuỗi hết dùng, làm **một commit riêng ở nhóm I** (sau khi Stage 6 gộp). |
+| `SettingKeys.kt` | Thêm khối `[AUTOMATION]` ở **cuối** tệp / cuối `all` (`enabled`, `secret`, `include_paths`, `save_beside_source`, `source_dirs`) | Mục `[GUI]` đặt thành **một khối riêng ngay sau `[SYSTEM]`**, không chèn vào cuối tệp / cuối `all`. |
+| `AppContainer.kt` | Vài dòng cuối class | Thêm **tối đa vài dòng** (`lazy` ngay sau `queueController`, không ở cuối class); logic mới để ở lớp riêng (`ConfigTransfer`, `SetupChecklist`, `LogReader`). |
+| `MainActivity.kt` | Chỉ thêm một nút mở `AutomationActivity`; Chia sẻ tới Guzz là `ShareActivity` riêng, không đụng `onNewIntent` | B1 chuyển `QueueScreen` ra `ui/convert/`, `MainActivity` chỉ còn khung (NavHost). Gộp: bỏ nút của Stage 6, thay bằng mục trong tab Cài đặt (H1). |
+| `AndroidManifest.xml` (main + `sideload`) | Receiver, `CommandActivity`, `ShareActivity`, `AutomationActivity`, quyền `MANAGE_EXTERNAL_STORAGE` (sideload) | Chỉ xoá các `<activity>` cũ (một commit ở B6) và thêm service lưu locale của AppCompat (A3); `AutomationActivity` bỏ ở H1. |
+| `Queue.kt` / `QueueItem`, `PipelineConfig`, `QueueController`, `QueueDebugReceiver` | `requestId`, ghi đè cài đặt cho riêng tệp, `ownedCopy`, `charCount` | Không sửa trước khi Stage 6 gộp (nhóm G). |
+| `settings.gradle.kts`, `gradle/libs.versions.toml`, `app/build.gradle.kts` | Thêm `:feature:automation`, thư viện | Thêm dòng ở vị trí theo thứ tự chữ cái, không sắp lại cả khối. |
+| `CLAUDE.md` "Lệnh thường dùng" | Khối "Intent (Stage 6)" cuối mục | Thêm khối "Giao diện (Stage 8)" riêng **sau** khối của Stage 6. |
 
 Gộp: Stage 6 gộp vào `main` trước; Stage 8 rebase lên `main` trước nhóm G, giải xung đột, chạy lại `.\gradlew test lint`
 và B7 (Compose UI test).
@@ -240,7 +241,8 @@ và B7 (Compose UI test).
 - [ ] F1. `SetupChecklist` (D116): API key đã có; thư mục lưu đã chọn (SAF); quyền thông báo (Android 13+); miễn tối ưu pin
       (`isIgnoringBatteryOptimizations`; bản sideload có nút xin `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, bản play mở trang
       cài đặt pin). Mỗi mục kèm nút làm ngay; thẻ trên màn hình Chuyển đổi tự ẩn khi đủ, có nút "Để sau" (ẩn tới lần mở
-      app sau). Cài đặt → Hệ thống có cùng danh sách. Mục quyền đọc tệp thêm ở H2. Kiểm: trên máy ảo mới cài
+      app sau). Cài đặt → Hệ thống có cùng danh sách. Trước khi Stage 6 gộp, phần kiểm pin gọi thẳng `PowerManager` ở
+      một hàm nhỏ; H2 đổi sang `BatteryStatus` của Stage 6 và bỏ hàm đó. Mục quyền đọc tệp thêm ở H2. Kiểm: trên máy ảo mới cài
       (`pm clear`), thẻ hiện 4 mục; làm từng mục thì mục đó biến mất (`dumpsys deviceidle whitelist -<package>` để thử lại).
 - [ ] F2. `ConfigIni` ở `:core:common` (JVM thuần, D112): ghi INI (`[SECTION]`, `key = value`, dòng đầu ghi phiên bản Guzz
       Mobile và ngày), đọc theo đúng luật `configparser` của desktop (ghi chú cuối dòng chỉ khi `#` / `;` đứng sau khoảng
@@ -273,17 +275,21 @@ và B7 (Compose UI test).
 
 ### H. Phần dùng API intent của Stage 6 — chờ Stage 6 gộp vào `main`
 
-- [ ] H1. Trang Tự động hoá của Stage 6 thành route trong Cài đặt (D114), dùng widget chung B4, chuỗi ở
-      `strings_automation.xml` có đủ en, mục ít dùng vào Nâng cao. Kiểm: B7 thêm bước mở trang này; `ui_check.ps1` chạy trên
-      trang này.
+- [ ] H1. `AutomationSettingsScreen(model: AutomationSettingsModel)` của `:feature:automation` thành route trong tab Cài đặt
+      (D114); bỏ `AutomationActivity` và nút mở nó trên màn hình chính. Nếu cần, chỉnh trang dùng widget chung B4 và đưa
+      mục ít dùng vào Nâng cao (sửa trong `:feature:automation`, chuỗi vẫn ở `strings_automation.xml`, đủ en). Kiểm: B7 thêm
+      bước mở trang này; `ui_check.ps1` chạy trên trang này.
 - [ ] H2. Thiết lập ban đầu (F1) thêm mục quyền đọc tệp theo D6: bản sideload "Truy cập mọi tệp" (`MANAGE_EXTERNAL_STORAGE`),
-      bản play thư mục cấp qua SAF, dùng hàm kiểm quyền của Stage 6. Kiểm: máy ảo thu hồi quyền
-      (`appops set … MANAGE_EXTERNAL_STORAGE ignore`) thì mục hiện lại.
-- [ ] H3. Xuất / nhập (F2) gồm mục `[AUTOMATION]` của Stage 6, **trừ mã bí mật** (như API key). Kiểm: xuất ra không có mã bí
-      mật; nhập lại giữ công tắc cho phép.
-- [ ] H4. Lối vào từ ngoài sau khi đổi sang một Activity: Chia sẻ tới Guzz và lệnh mở app của Stage 6 đi vào tab Chuyển đổi,
-      `onNewIntent` khi app đang mở không mở chồng Activity. Kiểm: `adb shell am start -a android.intent.action.SEND` với
-      một tệp âm thanh lúc app đang mở và lúc đã đóng; macro mẫu của Stage 6 vẫn chạy.
+      bản play Thư mục nguồn SAF, dùng `FileAccess` của Stage 6; mục pin đổi sang `BatteryStatus`. Kiểm: máy ảo thu hồi
+      quyền (`appops set … MANAGE_EXTERNAL_STORAGE ignore`) thì mục hiện lại.
+- [ ] H3. Xuất / nhập (F2) gồm mục `[AUTOMATION]` của Stage 6, **trừ `secret`** (như API key); nhập không ghi đè
+      `source_dirs` (URI SAF chỉ có nghĩa trên máy đã cấp, như `OUTPUT.output_dir`). Kiểm: xuất ra không có `secret`; nhập
+      lại giữ công tắc cho phép, `source_dirs` không đổi.
+- [ ] H4. Lối vào từ ngoài sau khi đổi sang một Activity: `ShareActivity` (và thông báo "Bấm để bắt đầu" của Stage 6) mở
+      màn hình chính bằng intent launcher → vào đúng tab Chuyển đổi, không mở chồng `MainActivity` khi app đang mở
+      (`launchMode="singleTop"` hoặc cờ intent, xử lý `onNewIntent` chọn tab). Kiểm: `adb shell am start -a
+      android.intent.action.SEND` với một tệp âm thanh lúc app đang mở ở tab Cài đặt và lúc đã đóng; macro mẫu của Stage 6
+      vẫn chạy.
 
 ### I. Kiểm cuối và đóng stage
 
