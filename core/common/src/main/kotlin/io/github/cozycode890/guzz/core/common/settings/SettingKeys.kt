@@ -177,6 +177,27 @@ object SettingKeys {
     /** Lưu thêm bản đồ người nói `<tên>.nguoi_noi.txt` cạnh bản chép lời. */
     val SAVE_SPEAKER_MAP = BoolSetting("OUTPUT", "save_speaker_map", default = false)
 
+    // [AUTOMATION] (Stage 6): app khác (MacroDroid, Tasker…) điều khiển Guzz bằng intent. Chỉ có trên mobile. Đặt trước
+    // [all] vì [all] dựng lúc khởi tạo object, khoá khai báo sau nó còn null.
+
+    /** Cho phép app khác gửi lệnh (mặc định tắt). Chia sẻ tới Guzz không cần mục này (D98). */
+    val AUTOMATION_ENABLED = BoolSetting("AUTOMATION", "enabled", default = false, sameAsDesktop = false)
+
+    /** Mã bí mật tuỳ chọn (D93): rỗng = không kiểm. Không nằm trong [all]: không xuất / nhập, như API key. */
+    val AUTOMATION_SECRET = StringSetting("AUTOMATION", "secret", default = "", sameAsDesktop = false, clean = String::trim)
+
+    /** Sự kiện gửi ra có kèm đường dẫn tệp nguồn / bản chép lời (D97). */
+    val AUTOMATION_INCLUDE_PATHS = BoolSetting("AUTOMATION", "include_paths", default = true, sameAsDesktop = false)
+
+    /** Lưu bản chép lời cạnh tệp nguồn khi có quyền "Truy cập mọi tệp" (D96); không thì vào thư mục SAF. */
+    val SAVE_BESIDE_SOURCE = BoolSetting("AUTOMATION", "save_beside_source", default = false, sameAsDesktop = false)
+
+    /**
+     * "Thư mục nguồn" cấp qua SAF (D104), mỗi dòng một URI cây: đường dẫn nằm trong đó thì đọc được dù không có quyền
+     * "Truy cập mọi tệp". Không nằm trong [all]: URI chỉ dùng được trên máy đã cấp.
+     */
+    val AUTOMATION_SOURCE_DIRS = StringSetting("AUTOMATION", "source_dirs", default = "", sameAsDesktop = false, clean = String::trim)
+
     val all: List<SettingKey<*>> = listOf(
         OUTPUT_DIR,
         FILENAME_TEMPLATE,
@@ -252,6 +273,15 @@ object SettingKeys {
         PARAGRAPH_GAP_SEC,
         MARK_REVIEW,
         SAVE_SPEAKER_MAP,
+        AUTOMATION_ENABLED,
+        AUTOMATION_INCLUDE_PATHS,
+        SAVE_BESIDE_SOURCE,
+    )
+
+    /** Mục của máy này, không xuất / nhập cùng [all]: mã bí mật và quyền SAF chỉ có nghĩa trên máy đã cấp. */
+    val deviceLocal: List<SettingKey<*>> = listOf(
+        AUTOMATION_SECRET,
+        AUTOMATION_SOURCE_DIRS,
     )
 
     // [APP]: trạng thái app tự ghi, người dùng không chỉnh. Không nằm trong [all] để không bị xuất / nhập cùng cài đặt.

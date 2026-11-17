@@ -6,12 +6,16 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.log.Logger
+import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
 import io.github.cozycode890.guzz.core.gemini.ChunkTranscriber
 import io.github.cozycode890.guzz.core.gemini.QuotaTracker
 import io.github.cozycode890.guzz.core.pipeline.DirectoryOutputFolder
 import io.github.cozycode890.guzz.core.diarization.AndroidSpeakerDiarizer
 import io.github.cozycode890.guzz.core.pipeline.FilePipeline
+import io.github.cozycode890.guzz.core.pipeline.ItemOverrides
+import io.github.cozycode890.guzz.core.pipeline.ItemStatus
+import io.github.cozycode890.guzz.core.pipeline.OutputChoice
 import io.github.cozycode890.guzz.core.pipeline.OutputFolder
 import io.github.cozycode890.guzz.core.pipeline.PipelineConfig
 import io.github.cozycode890.guzz.core.pipeline.PipelineException
@@ -38,6 +42,8 @@ import java.io.File
  *
  * @param clientFactory client Gemini cho một tệp (dựng lại mỗi tệp, như desktop đọc lại key); `null` = chưa có key.
  * @param fallbackOutput thư mục ra khi chưa chọn thư mục SAF: chỉ bản debug (`files/output`, lệnh adb), bản thật `null`.
+ * @param cacheSalt mã thêm cho kết quả đoạn theo cấu hình của tệp (Gemini giả của bản debug).
+ * @param allFilesAccess đang có quyền "Truy cập mọi tệp" (Stage 6): mới ghi bằng đường dẫn được (D96).
  */
 class QueueController(
     private val context: Context,
@@ -45,7 +51,8 @@ class QueueController(
     private val tracker: () -> QuotaTracker,
     private val clientFactory: (PipelineConfig) -> ChunkTranscriber?,
     private val fallbackOutput: File? = null,
-    private val cacheSalt: () -> String = { "" },
+    private val cacheSalt: (PipelineConfig) -> String = { "" },
+    private val allFilesAccess: () -> Boolean = { false },
     private val logger: Logger = GuzzLog,
 ) {
     /** Gốc thư mục tạm (mục "Mặc định kỹ thuật"): không phải `cacheDir`, hệ thống không tự xoá; `adb pull` xem được. */
@@ -61,12 +68,18 @@ class QueueController(
         override fun client(cfg: PipelineConfig) = clientFactory(cfg)
         override val tracker: QuotaTracker get() = this@QueueController.tracker()
         override fun source(item: QueueItem) = AndroidChunkSource(context, item.source)
-        override fun output(cfg: PipelineConfig, item: QueueItem): OutputFolder = when {
-            cfg.outputDir.isNotBlank() -> SafOutputFolder(context, Uri.parse(cfg.outputDir))
-            fallbackOutput != null -> DirectoryOutputFolder(fallbackOutput)
-            else -> throw PipelineException("Chưa chọn thư mục lưu bản chép lời.", stopQueue = true)
+        override fun output(cfg: PipelineConfig, item: QueueItem): OutputFolder {
+            // D96: output_dir của lệnh / "Lưu cạnh tệp nguồn" chỉ khi có quyền "Truy cập mọi tệp"; không thì thư mục SAF.
+            val choice = OutputChoice.choose(item.source, item.overrides?.outputDir, cfg.saveBesideSource, allFilesAccess())
+            choice.note?.let { logger.warning("${item.displayName}: $it.") }
+            (choice.target as? OutputChoice.Directory)?.let { return DirectoryOutputFolder(File(it.dir)) }
+            return when {
+                cfg.outputDir.isNotBlank() -> SafOutputFolder(context, Uri.parse(cfg.outputDir))
+                fallbackOutput != null -> DirectoryOutputFolder(fallbackOutput)
+                else -> throw PipelineException("Chưa chọn thư mục lưu bản chép lời.", stopQueue = true)
+            }
         }
-        override fun cacheSalt() = this@QueueController.cacheSalt()
+        override fun cacheSalt(cfg: PipelineConfig) = this@QueueController.cacheSalt(cfg)
     }
 
     private val runner = QueueRunner(QueueStore(File(context.filesDir, "queue/${QueueStore.FILENAME}"), logger), env, pipeline, logger)
@@ -88,15 +101,22 @@ class QueueController(
 
     // ------------------------------------------------------------------ thêm / bỏ
 
-    /** Thêm tệp từ trình chọn tệp; giữ quyền đọc URI để đọc lại được sau khi app bị giết (D64). */
-    fun addUris(uris: List<Uri>): List<QueueItem> {
+    /**
+     * Thêm tệp từ trình chọn tệp, Chia sẻ tới Guzz hay lệnh của app khác (Stage 6); giữ quyền đọc URI để đọc lại được sau
+     * khi app bị giết (D64). URI tài liệu trong Thư mục nguồn (D104) không giữ quyền riêng được nhưng đọc được nhờ quyền
+     * của thư mục.
+     */
+    fun addUris(uris: List<Uri>, requestId: String? = null, overrides: ItemOverrides? = null): List<QueueItem> {
         val items = uris.mapNotNull { uri ->
             try {
                 runCatching {
                     context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 val info = querySource(context, uri.toString())
-                QueueItem(source = uri.toString(), displayName = info.displayName, mimeType = info.mimeType, durationSec = duration(uri.toString()))
+                QueueItem(
+                    source = uri.toString(), displayName = info.displayName, mimeType = info.mimeType,
+                    durationSec = duration(uri.toString()), requestId = requestId, overrides = overrides,
+                )
             } catch (e: Exception) {
                 logger.warning("Không thêm được $uri: ${e.message}")
                 // Không thêm được thì trả quyền vừa giữ, kẻo quyền bền tích lại mãi.
@@ -110,7 +130,14 @@ class QueueController(
     }
 
     /** Thêm đường dẫn tuyệt đối (lệnh adb của bản debug; Stage 6: intent khi có quyền "Truy cập mọi tệp"). */
-    fun addPath(file: File, chunkDelaySec: Double = 0.0): List<QueueItem> {
+    fun addPath(
+        file: File,
+        chunkDelaySec: Double = 0.0,
+        requestId: String? = null,
+        overrides: ItemOverrides? = null,
+        ownedCopy: Boolean = false,
+        displayName: String = file.name,
+    ): List<QueueItem> {
         if (!file.isFile) {
             logger.warning("Không thêm được ${file.path}: không thấy tệp.")
             return emptyList()
@@ -118,8 +145,9 @@ class QueueController(
         return add(
             listOf(
                 QueueItem(
-                    source = file.path, displayName = file.name, mimeType = mimeFromName(file.name),
-                    durationSec = duration(file.path), chunkDelaySec = chunkDelaySec,
+                    source = file.path, displayName = displayName, mimeType = mimeFromName(displayName),
+                    durationSec = duration(file.path), chunkDelaySec = chunkDelaySec, requestId = requestId,
+                    overrides = overrides, ownedCopy = ownedCopy,
                 ),
             ),
         )
@@ -149,11 +177,35 @@ class QueueController(
     }
 
     fun remove(id: String) {
-        runner.remove(id)?.let { releaseIfUnused(it.source) }
+        runner.remove(id)?.let {
+            releaseIfUnused(it.source)
+            deleteCopyIfUnused(it)
+        }
     }
 
     fun clearFinished() {
-        runner.clearFinished().forEach { releaseIfUnused(it.source) }
+        runner.clearFinished().forEach {
+            releaseIfUnused(it.source)
+            deleteCopyIfUnused(it)
+        }
+    }
+
+    /** Tệp được chia sẻ mà Guzz phải tự chép (D103): xoá bản chép khi không còn mục nào dùng nó. */
+    private fun deleteCopyIfUnused(item: QueueItem) {
+        if (!item.ownedCopy || state.value.items.any { it.source == item.source }) return
+        deleteCopy(item)
+    }
+
+    private fun deleteCopy(item: QueueItem) {
+        val f = File(item.source)
+        if (f.exists() && f.delete()) logger.info("Xoá bản chép của ${item.displayName}.")
+        f.parentFile?.takeIf { it.list().isNullOrEmpty() }?.delete()
+    }
+
+    /** Xong vòng chạy: tệp xong mà là bản chép thì xoá bản chép theo `[SYSTEM] delete_temp_when_done` (D103). */
+    private suspend fun deleteFinishedCopies() {
+        if (!settings.get(SettingKeys.DELETE_TEMP_WHEN_DONE)) return
+        state.value.items.filter { it.ownedCopy && it.status == ItemStatus.DONE }.forEach(::deleteCopy)
     }
 
     fun rerun(id: String) = runner.rerun(id)
@@ -198,7 +250,7 @@ class QueueController(
     fun shouldResume(): Boolean = job?.isActive != true && state.value.running && state.value.items.any { it.status.runnable }
 
     /** `[QUEUE] notify_when_done`: xong hàng đợi thì có thông báo tổng kết. */
-    suspend fun notifyWhenDone(): Boolean = settings.get(io.github.cozycode890.guzz.core.common.settings.SettingKeys.NOTIFY_WHEN_DONE)
+    suspend fun notifyWhenDone(): Boolean = settings.get(SettingKeys.NOTIFY_WHEN_DONE)
 
     /** Gọi khi mở app (D64). */
     fun resumeIfNeeded() {
@@ -221,6 +273,12 @@ class QueueController(
             var error: Throwable? = null
             try {
                 summary = runner.run()
+                try {
+                    deleteFinishedCopies()
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+                    logger.warning("Không xoá được bản chép của tệp đã xong: ${e.message}")
+                }
             } catch (e: CancellationException) {
                 summary = null
             } catch (e: Throwable) {

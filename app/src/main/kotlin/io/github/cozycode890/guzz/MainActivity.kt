@@ -241,6 +241,10 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
                             menuOpen = false
                             context.startActivity(Intent(context, GoogleAiActivity::class.java))
                         })
+                        DropdownMenuItem(text = { Text(stringResource(io.github.cozycode890.guzz.feature.automation.R.string.automation_title)) }, onClick = {
+                            menuOpen = false
+                            context.startActivity(Intent(context, AutomationActivity::class.java))
+                        })
                         if (BuildConfig.DEBUG) {
                             DropdownMenuItem(text = { Text(stringResource(R.string.queue_menu_debug)) }, onClick = {
                                 menuOpen = false

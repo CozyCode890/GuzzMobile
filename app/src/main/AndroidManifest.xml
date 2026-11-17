@@ -65,6 +65,12 @@
             android:label="@string/audio_title" />
 
         <activity
+            android:name=".AutomationActivity"
+            android:exported="false"
+            android:label="@string/automation_title"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".GoogleAiActivity"
             android:exported="false"
             android:label="@string/google_ai_title"

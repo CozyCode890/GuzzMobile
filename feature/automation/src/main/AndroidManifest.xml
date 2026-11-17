@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- Stage 6 (D91, D94): lệnh từ app tự động hoá. Gốc tên action cố định cho mọi bản; macro điền Package + Class
+             (Android 8+ không giao broadcast ngầm cho receiver khai báo ở đây). Công tắc "Cho phép app khác" mặc định tắt. -->
+        <receiver
+            android:name=".CommandReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="io.github.cozycode890.guzz.action.TRANSCRIBE" />
+                <action android:name="io.github.cozycode890.guzz.action.START" />
+                <action android:name="io.github.cozycode890.guzz.action.STOP" />
+                <action android:name="io.github.cozycode890.guzz.action.STATUS" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Lối dự phòng (D94): activity trong suốt, xử lý xong là đóng. -->
+        <activity
+            android:name=".CommandActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="io.github.cozycode890.guzz.action.TRANSCRIBE" />
+                <action android:name="io.github.cozycode890.guzz.action.START" />
+                <action android:name="io.github.cozycode890.guzz.action.STOP" />
+                <action android:name="io.github.cozycode890.guzz.action.STATUS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Chia sẻ tới Guzz (D98). -->
+        <activity
+            android:name=".ShareActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/share_label"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

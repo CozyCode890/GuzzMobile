@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":core:media"))
     implementation(project(":core:gemini"))
     implementation(project(":feature:queue"))
+    implementation(project(":feature:automation"))
     implementation(libs.androidx.activity.compose)
 
     androidTestImplementation(libs.androidx.test.runner)

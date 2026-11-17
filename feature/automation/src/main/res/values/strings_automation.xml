@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Trang Tự động hoá (Stage 6, D99). Stage 8 (H1) hoàn thiện văn phong. -->
+    <string name="automation_title">Tự động hoá</string>
+    <string name="automation_intro">MacroDroid, Tasker và app tương tự gửi lệnh tới Guzz bằng intent và nhận lại sự kiện khi chép lời xong. Hướng dẫn và macro mẫu: docs/intents.md.</string>
+    <string name="automation_enabled">Cho phép app khác điều khiển Guzz</string>
+    <string name="automation_enabled_hint">Tắt thì Guzz bỏ qua mọi lệnh và không phát sự kiện. Chia sẻ tới Guzz vẫn dùng được.</string>
+    <string name="automation_secret">Mã bí mật (tuỳ chọn)</string>
+    <string name="automation_secret_hint">Để trống thì không kiểm. Có mã thì lệnh phải gửi kèm extra secret đúng mã này.</string>
+    <string name="automation_secret_generate">Tạo mã ngẫu nhiên</string>
+    <string name="automation_secret_show">Hiện</string>
+    <string name="automation_secret_hide">Ẩn</string>
+    <string name="automation_include_paths">Kèm đường dẫn tệp trong sự kiện</string>
+    <string name="automation_include_paths_hint">App nào trên máy cũng nghe được sự kiện. Tắt thì sự kiện chỉ có tên tệp và request_id.</string>
+    <string name="automation_beside_source">Lưu bản chép lời cạnh tệp nguồn</string>
+    <string name="automation_beside_source_hint">Chỉ khi có quyền \"Truy cập mọi tệp\" và nguồn là đường dẫn; không thì lưu vào thư mục đã chọn.</string>
+
+    <string name="automation_section_access">Quyền</string>
+    <string name="automation_all_files">Truy cập mọi tệp</string>
+    <string name="automation_all_files_on">Đã cấp: nhận được đường dẫn tuyệt đối.</string>
+    <string name="automation_all_files_off">Chưa cấp: chỉ đọc được tệp trong Thư mục nguồn hoặc URI có quyền.</string>
+    <string name="automation_grant">Cấp quyền</string>
+    <string name="automation_source_dirs">Thư mục nguồn</string>
+    <string name="automation_source_dirs_hint">Đường dẫn nằm trong các thư mục này đọc được mà không cần \"Truy cập mọi tệp\" (vd Recordings).</string>
+    <string name="automation_source_dirs_empty">Chưa có thư mục nào.</string>
+    <string name="automation_source_add">Thêm thư mục</string>
+    <string name="automation_source_remove">Bỏ</string>
+    <string name="automation_battery">Miễn tối ưu pin</string>
+    <string name="automation_battery_on">Đã miễn: lệnh qua broadcast khởi động được hàng đợi lúc màn hình tắt.</string>
+    <string name="automation_battery_off">Chưa miễn: Android chặn lệnh qua broadcast khởi động hàng đợi khi Guzz ở nền.</string>
+    <string name="automation_notifications">Thông báo</string>
+    <string name="automation_notifications_on">Đã bật.</string>
+    <string name="automation_notifications_off">Đang tắt: hàng đợi vẫn chạy nhưng không có thông báo tiến độ, không có nút Dừng.</string>
+    <string name="automation_fix">Bật</string>
+
+    <string name="automation_section_api">Lệnh và sự kiện</string>
+    <string name="automation_api_hint">Bấm một dòng để sao chép. Package của bản này: %1$s</string>
+    <string name="automation_label_package">Package</string>
+    <string name="automation_label_receiver">Class (Broadcast)</string>
+    <string name="automation_label_activity">Class (Activity, dự phòng)</string>
+    <string name="automation_label_commands">Lệnh gửi tới Guzz</string>
+    <string name="automation_label_events">Sự kiện Guzz phát ra</string>
+    <string name="automation_copied">Đã sao chép %1$s</string>
+    <string name="automation_test_event">Gửi thử sự kiện</string>
+    <string name="automation_test_event_hint">Phát FILE_DONE giả, request_id = test, để thử macro nhận sự kiện.</string>
+    <string name="automation_test_event_sent">Đã phát FILE_DONE thử.</string>
+    <string name="automation_test_event_disabled">Bật \"Cho phép app khác điều khiển Guzz\" trước.</string>
+
+    <!-- Thông báo khi Android chặn khởi động hàng đợi từ nền (D102). -->
+    <string name="automation_channel">Lệnh từ app khác</string>
+    <string name="automation_blocked_title">Guzz chưa chạy được tệp vừa nhận</string>
+    <string name="automation_blocked_text">Android không cho Guzz chạy nền lúc này. Tệp vẫn trong hàng đợi: bấm để mở Guzz và bắt đầu. Miễn tối ưu pin cho Guzz để lần sau tự chạy.</string>
+
+    <!-- Chia sẻ tới Guzz (D98). -->
+    <string name="share_label">Chép lời bằng Guzz</string>
+    <string name="share_added">Đã thêm %1$d tệp vào hàng đợi.</string>
+    <string name="share_failed">Không đọc được: %1$s</string>
+    <string name="share_problem">Đã thêm vào hàng đợi nhưng chưa bắt đầu: %1$s</string>
+</resources>

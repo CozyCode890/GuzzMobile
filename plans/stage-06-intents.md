@@ -1,6 +1,6 @@
 # Stage 6 — Intent cho MacroDroid
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-17) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
+**Trạng thái:** 🔨 đang làm (2026-11-17, nhánh `stage-6`, worktree `D:\GuzzMobile-stage6`) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
 D42). Làm song song với Stage 8, mỗi stage một worktree; Stage 6 gộp vào `main` trước (xem "Làm song song với Stage 8").
 
 ## Mục tiêu
@@ -189,23 +189,23 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 
 ### A. Nền: module, cài đặt, hàng đợi mang `request_id` và ghi đè
 
-- [ ] **A1. Module `:feature:automation`** (convention plugin Android library), `:app` phụ thuộc; object `GuzzIntents`
+- [x] **A1. Module `:feature:automation`** (convention plugin Android library), `:app` phụ thuộc; object `GuzzIntents`
   (gốc tên D91, action, event, tên extra, `error_kind`).
   **Kiểm:** `.\gradlew assembleSideloadDebug assemblePlayDebug` xanh; test JVM: mọi tên trong `GuzzIntents` bắt đầu bằng
   `io.github.cozycode890.guzz.` và không trùng nhau.
-- [ ] **A2. Cài đặt `[AUTOMATION]`**: `enabled`, `secret`, `include_paths`, `save_beside_source`, `source_dirs` (mục "Mặc
+- [x] **A2. Cài đặt `[AUTOMATION]`**: `enabled`, `secret`, `include_paths`, `save_beside_source`, `source_dirs` (mục "Mặc
   định kỹ thuật"), cuối `SettingKeys`.
   **Kiểm:** `DesktopDefaultsTest` vẫn xanh (mục mobile-only được bỏ qua đúng); test đọc / ghi từng khoá với giá trị mặc định.
-- [ ] **A3. `QueueItem`** thêm `requestId`, `overrides`, `ownedCopy`, `charCount`; `QueueRunner` ghi `charCount` từ kết quả
+- [x] **A3. `QueueItem`** thêm `requestId`, `overrides`, `ownedCopy`, `charCount`; `QueueRunner` ghi `charCount` từ kết quả
   pipeline khi xong.
   **Kiểm:** test `:core:pipeline`: tệp `hang_doi.json` cũ (không có trường mới) đọc được; ghi rồi đọc lại giữ nguyên trường
   mới; tệp xong có `charCount` = độ dài bản chép lời của Gemini giả.
-- [ ] **A4. `ItemOverrides` + `PipelineConfig.withOverrides`** (D95): `speakers` (`off` → tắt; `device` / `pyannote` /
+- [x] **A4. `ItemOverrides` + `PipelineConfig.withOverrides`** (D95): `speakers` (`off` → tắt; `device` / `pyannote` /
   `gemini` / `hybrid`), `numSpeakers`, `preset` (áp `AudioPresets` lên phần làm sạch của cấu hình), `denoise`, `outputDir`;
   `QueueRunner` áp cho từng tệp. Không đụng cài đặt đã lưu.
   **Kiểm:** test `:core:pipeline`: mỗi ghi đè đổi đúng trường, trường khác giữ nguyên; hai tệp liền nhau, một có ghi đè một
   không, tệp sau dùng cài đặt app; đổi preset bằng ghi đè thì mã cache âm thanh đổi (như A3 của Stage 7).
-- [ ] **A5. Nơi lưu** (D96): `QueueEnvironment.output(cfg, item)` chọn theo thứ tự `outputDir` ghi đè → "cạnh tệp nguồn"
+- [x] **A5. Nơi lưu** (D96): `QueueEnvironment.output(cfg, item)` chọn theo thứ tự `outputDir` ghi đè → "cạnh tệp nguồn"
   (cài đặt `save_beside_source`) → thư mục SAF. "Cạnh tệp nguồn" / đường dẫn tuyệt đối chỉ dùng khi có "Truy cập mọi tệp"
   và nguồn là đường dẫn, không thì lùi về SAF và ghi log. Quy tắc chọn là hàm thuần (`OutputChoice`), `QueueController`
   chỉ dựng `DirectoryOutputFolder` / `SafOutputFolder`.
@@ -214,16 +214,16 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 
 ### B. Nhận lệnh
 
-- [ ] **B1. `ExtrasReader`** (Kotlin thuần, đọc `Map<String, Any?>`): chuỗi / số / boolean nhận cả dạng chuỗi; `paths` là
+- [x] **B1. `ExtrasReader`** (Kotlin thuần, đọc `Map<String, Any?>`): chuỗi / số / boolean nhận cả dạng chuỗi; `paths` là
   mảng, `ArrayList` hoặc chuỗi nhiều dòng; giá trị lạ (`speakers=abc`, `num_speakers=-1`, `preset` lạ, `start=maybe`) báo
   lỗi có tên extra.
   **Kiểm:** test JVM: thiếu extra, sai kiểu, chuỗi số, mảng rỗng, khoảng trắng thừa, `paths` nhiều dòng có dòng trống.
-- [ ] **B2. `CommandHandler`** (thuần, nhận interface hàng đợi / quyền / cài đặt): kiểm công tắc (`disabled`), mã bí mật
+- [x] **B2. `CommandHandler`** (thuần, nhận interface hàng đợi / quyền / cài đặt): kiểm công tắc (`disabled`), mã bí mật
   (D93: so sánh thời gian hằng, ô trống thì bỏ qua), đọc lệnh, trả danh sách việc + sự kiện trả lời (`ERROR`, `STATUS`,
   `FILE_FAILED` cho đường dẫn không đọc được, `duplicate`).
   **Kiểm:** test JVM: công tắc tắt; mã sai / thiếu / đúng / ô trống; TRANSCRIBE `start=false` chỉ thêm; STATUS trả số đúng
   với trạng thái giả; tệp trùng; log không chứa mã bí mật.
-- [ ] **B3. Đổi nguồn** (`SourceResolver`, thuần trừ lớp gọi Android): đường dẫn + "Truy cập mọi tệp" → đường dẫn; đường
+- [x] **B3. Đổi nguồn** (`SourceResolver`, thuần trừ lớp gọi Android): đường dẫn + "Truy cập mọi tệp" → đường dẫn; đường
   dẫn nằm trong một Thư mục nguồn SAF (D104) → URI tài liệu (`DocumentsContract.buildDocumentUriUsingTree`, so tiền tố
   `primary:` của URI cây với `/storage/emulated/0/`); `uri` / ClipData có cờ cấp quyền → giữ quyền bền nếu được, không thì
   chép (D103, dùng chung D2); không được thì `FILE_FAILED` `error_kind` `no_permission` / `not_found` kèm hướng dẫn.
@@ -345,6 +345,13 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
   **Kiểm:** `git log main` có commit gộp; `.\gradlew test` trên `main` xanh.
 
 ## Nhật ký
+
+- (2026-11-17, A2) `secret` và `source_dirs` không nằm trong `SettingKeys.all` mà trong danh sách mới `SettingKeys.deviceLocal` (mục của máy này, không xuất / nhập). Stage 8 H3 chỉ cần xuất `all`.
+- (2026-11-17, A3) `QueueItem` thêm cả `modelsUsed` (cho extra `models` của FILE_DONE). `QueueEnvironment.cacheSalt` nhận cấu hình của tệp (`cacheSalt(cfg)`), vì Gemini giả có thể bật cho riêng một tệp (B6); `PipelineConfig` thêm `debugFakeGemini` và `saveBesideSource`. Ghi đè không hợp lệ chỉ làm tệp đó lỗi `cau_hinh`, hàng đợi chạy tiếp.
+- (2026-11-17, A5) `OutputChoice` nằm ở `:core:pipeline` (JVM thuần, test JUnit 5). Thư mục cha lấy bằng cắt chuỗi, không dùng `File.parent` (test trên Windows ra dấu gạch ngược).
+- (2026-11-17, B2–B3) Không tách lớp `SourceResolver`: phần thuần là `PathMapping` (đường dẫn ↔ mã tài liệu), phần Android nằm trong `Automation.resolvePath/resolveUri`. Thêm: tệp trong thư mục riêng của app (`files/input` của lệnh adb) đọc thẳng không cần quyền; URI của lệnh TRANSCRIBE không giữ được quyền bền thì cũng chép như tệp chia sẻ (D103), trừ URI tài liệu dưới một cây SAF. Tệp bỏ qua (on_conflict = skip) phát FILE_DONE với `skipped=true`.
+- (2026-11-17, E2) Trang là `AutomationSettingsScreen(state: AutomationUiState, actions: AutomationActions)`; dữ liệu ở `AutomationSettingsModel` (cài đặt + trạng thái quyền, `refresh()` ở `onResume`). Stage 8 H1 dựng lại bằng widget chung thì dùng `AutomationSettingsModel`.
+- (2026-11-17) Máy ảo `guzz_15t` (emulator-5554) đang được session Stage 8 dùng, nên Stage 6 thử trên AVD riêng `guzz_15t_s6` (cùng thông số, cổng 5558) để không cài đè app của nhau.
 
 ## Phát sinh
 

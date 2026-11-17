@@ -24,7 +24,7 @@ thì hỏi người dùng ngay trước khi gửi.
 | 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ✅ 2026-11-15 | [stage-05-diarization.md](plans/stage-05-diarization.md) |
-| 6 | Intent cho MacroDroid | 📝 | [stage-06-intents.md](plans/stage-06-intents.md) |
+| 6 | Intent cho MacroDroid | 🔨 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | 📝 | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |

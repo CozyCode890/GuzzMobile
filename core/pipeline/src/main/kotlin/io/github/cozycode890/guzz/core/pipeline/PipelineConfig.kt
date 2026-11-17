@@ -30,6 +30,10 @@ data class PipelineConfig(
     val chunkFormat: String = SettingKeys.CHUNK_FORMAT.default,
     val gemini: GeminiConfig = GeminiConfig(),
     val speakers: SpeakerConfig = SpeakerConfig(),
+    /** Chỉ bản debug (Stage 6, B6): Gemini giả / thật cho riêng tệp, từ [ItemOverrides.fakeGemini]; `null` = theo cờ chung. */
+    val debugFakeGemini: Boolean? = null,
+    /** `[AUTOMATION] save_beside_source` (Stage 6, D96): xem [OutputChoice]. */
+    val saveBesideSource: Boolean = SettingKeys.SAVE_BESIDE_SOURCE.default,
 ) {
     companion object {
         /** Tần số xử lý cố định (Stage 2), có trong mã âm thanh như `sample_rate` của desktop. */
@@ -69,6 +73,7 @@ data class PipelineConfig(
             chunkFormat = settings.get(SettingKeys.CHUNK_FORMAT),
             gemini = GeminiConfig.load(settings),
             speakers = SpeakerConfig.load(settings),
+            saveBesideSource = settings.get(SettingKeys.SAVE_BESIDE_SOURCE),
         )
     }
 }
