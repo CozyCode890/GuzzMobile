@@ -4,10 +4,8 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.StatFs
 import android.provider.DocumentsContract
@@ -119,7 +117,6 @@ class Automation(
                 if (enabled) events.forEach(::emit)
             }
         }
-        if (debug) registerDebugLog()
     }
 
     /** Phát sự kiện bằng broadcast ngầm: receiver đăng ký lúc chạy (MacroDroid, Tasker) nhận được. */
@@ -128,6 +125,7 @@ class Automation(
         event.extras.forEach { (k, v) -> intent.putExtra(k, v) }
         context.sendBroadcast(intent)
         logger.info("Phát sự kiện $event")
+        if (debug) debugLog(event)
     }
 
     /** Nút "Gửi thử sự kiện": FILE_DONE giả, `request_id` = `test`. */
@@ -144,9 +142,14 @@ class Automation(
 
     /** Đường dẫn: có quyền thì đọc thẳng; không thì tìm trong Thư mục nguồn (D104). */
     private suspend fun resolvePath(path: String): Resolved {
-        val file = File(path)
-        if (isAppOwned(path) || fileAccess.hasAllFilesAccess()) {
-            return if (file.isFile) Resolved.Path(path) else Resolved.Failed(G.Kind.NOT_FOUND, "không thấy tệp $path")
+        appOwnedPath(path)?.let { own ->
+            return if (File(own).isFile) Resolved.Path(own) else Resolved.Failed(G.Kind.NOT_FOUND, "không thấy tệp $path")
+        }
+        if (fileAccess.hasAllFilesAccess()) {
+            // `/sdcard/…` có thể không đọc được trong process của app: thử cả đường dẫn thật `/storage/emulated/0/…`.
+            val real = listOfNotNull(path, PathMapping.volumeAndRelative(path)?.let { (v, rel) -> PathMapping.pathOf("$v:$rel") })
+                .firstOrNull { File(it).isFile }
+            return if (real != null) Resolved.Path(real) else Resolved.Failed(G.Kind.NOT_FOUND, "không thấy tệp $path")
         }
         for (tree in fileAccess.sourceDirs()) {
             if (tree.authority != EXTERNAL_STORAGE_AUTHORITY) continue
@@ -211,9 +214,21 @@ class Automation(
         false
     }
 
-    /** Tệp trong thư mục riêng của app (vd `files/input` của lệnh adb) đọc được mà không cần quyền gì. */
-    private fun isAppOwned(path: String): Boolean = listOfNotNull(context.getExternalFilesDir(null), context.filesDir)
-        .any { path.startsWith(it.path + "/") }
+    /**
+     * Tệp trong thư mục riêng của app (vd `files/input` của lệnh adb) đọc được mà không cần quyền gì. Trả về đường dẫn
+     * thật dưới thư mục đó: app không đọc được qua `/sdcard/…` dù đó cùng là một chỗ (thử trên máy ảo API 36).
+     */
+    private fun appOwnedPath(path: String): String? {
+        val target = PathMapping.volumeAndRelative(path)
+        for (dir in listOfNotNull(context.getExternalFilesDir(null), context.filesDir)) {
+            if (path.startsWith(dir.path + "/")) return path
+            val d = PathMapping.volumeAndRelative(dir.path) ?: continue
+            if (target != null && target.first == d.first && target.second.startsWith(d.second + "/")) {
+                return dir.path + "/" + target.second.removePrefix(d.second + "/")
+            }
+        }
+        return null
+    }
 
     private fun add(r: Resolved, requestId: String?, overrides: ItemOverrides?): Boolean {
         val c = queue()
@@ -254,6 +269,8 @@ class Automation(
         } catch (e: IllegalStateException) {
             // ForegroundServiceStartNotAllowedException (Android 12+) là IllegalStateException (D69, D102).
             logger.warning("Không khởi động được service từ nền: ${e.javaClass.simpleName}: ${e.message}")
+            // D102: mở app (bấm thông báo) thì hàng đợi tự bắt đầu.
+            queue().markPendingStart()
             StartOutcome.BLOCKED
         }
         override fun stop() = queue().stop()
@@ -287,21 +304,20 @@ class Automation(
         )
     }
 
-    /** C3: bản debug ghi mọi sự kiện `P.event.*` nhận được (của chính Guzz) vào `files/debug-events/events.jsonl`. */
-    private fun registerDebugLog() {
-        val file = File(context.getExternalFilesDir(null) ?: context.filesDir, "debug-events/events.jsonl")
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(c: Context, intent: Intent) {
-                val json = JSONObject().put("time", System.currentTimeMillis()).put("action", G.shortName(intent.action))
-                intent.extrasMap().forEach { (k, v) -> json.put(k, v?.toString()) }
-                runCatching {
-                    file.parentFile?.mkdirs()
-                    file.appendText(json.toString() + "\n", Charsets.UTF_8)
-                }
-            }
+    /**
+     * C3: bản debug ghi mọi sự kiện đã phát vào `files/debug-events/events.jsonl` (đọc bằng `intent_debug.ps1 -Events`).
+     * Ghi ngay lúc phát chứ không qua receiver đăng ký trong chính process: Android 14+ hoãn broadcast tới process cached
+     * (vừa dừng service), nên receiver đó bỏ sót FILE_DONE / QUEUE_FINISHED. App khác (MacroDroid) không bị ảnh hưởng.
+     */
+    @Synchronized
+    private fun debugLog(event: AutomationEvent) {
+        val json = JSONObject().put("time", System.currentTimeMillis()).put("action", G.shortName(event.action))
+        event.extras.forEach { (k, v) -> json.put(k, v) }
+        runCatching {
+            val file = File(context.getExternalFilesDir(null) ?: context.filesDir, "debug-events/events.jsonl")
+            file.parentFile?.mkdirs()
+            file.appendText(json.toString() + "\n", Charsets.UTF_8)
         }
-        val filter = IntentFilter().apply { G.events.forEach(::addAction) }
-        context.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
     }
 
     companion object {

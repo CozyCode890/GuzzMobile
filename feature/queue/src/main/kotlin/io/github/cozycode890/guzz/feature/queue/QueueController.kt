@@ -252,6 +252,14 @@ class QueueController(
     /** `[QUEUE] notify_when_done`: xong hàng đợi thì có thông báo tổng kết. */
     suspend fun notifyWhenDone(): Boolean = settings.get(SettingKeys.NOTIFY_WHEN_DONE)
 
+    /**
+     * Lệnh từ app khác tới mà Android chặn khởi động service từ nền (Stage 6, D102): bật cờ đang chạy để lần mở app sau
+     * ([resumeIfNeeded]) tự bắt đầu, như hàng đợi bị giết giữa chừng.
+     */
+    fun markPendingStart() {
+        runner.store.update { it.copy(running = true) }
+    }
+
     /** Gọi khi mở app (D64). */
     fun resumeIfNeeded() {
         if (shouldResume()) {

@@ -229,7 +229,7 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
   chép (D103, dùng chung D2); không được thì `FILE_FAILED` `error_kind` `no_permission` / `not_found` kèm hướng dẫn.
   **Kiểm:** test JVM cho phép đổi đường dẫn ↔ URI cây (thư mục con, tên có dấu, khoảng trắng, đường dẫn ngoài thư mục, thẻ
   nhớ ngoài không phải `primary`).
-- [ ] **B4. `CommandReceiver` + `CommandActivity`** (D94), manifest exported, cùng gọi `CommandHandler` qua `goAsync()` /
+- [x] **B4. `CommandReceiver` + `CommandActivity`** (D94), manifest exported, cùng gọi `CommandHandler` qua `goAsync()` /
   coroutine; thêm tệp qua `QueueController` (thêm `addPath` / `addUris` có `requestId`, `overrides`), rồi `start()` nếu
   `start=true`. Receiver bắt `ForegroundServiceStartNotAllowedException` → D102: tệp giữ trong hàng đợi, phát `ERROR`
   `background_blocked`, thông báo "Bấm để bắt đầu" (mở màn hình chính, `resumeIfNeeded`). Lệnh tới mà hàng đợi bị giết dở
@@ -239,30 +239,30 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
   → chạy, không thấy cửa sổ nào (`android layout` ngay sau đó chỉ thấy app đang mở trước). Gỡ miễn tối ưu pin
   (`dumpsys deviceidle whitelist -io.github.cozycode890.guzz.debug`) rồi gửi broadcast lúc app ở nền → log
   `background_blocked`, có thông báo, bấm thông báo thì chạy; activity vẫn chạy được.
-- [ ] **B5. Thử ghi đè và nơi lưu trên máy ảo**: `speakers=off`, `preset=speakers_around`, `output_dir=source` (có / không
+- [x] **B5. Thử ghi đè và nơi lưu trên máy ảo**: `speakers=off`, `preset=speakers_around`, `output_dir=source` (có / không
   quyền "Truy cập mọi tệp": `appops set ... MANAGE_EXTERNAL_STORAGE allow|ignore`).
   **Kiểm:** log từng tệp ghi cấu hình đã áp; bản chép lời nằm cạnh tệp nguồn khi có quyền, nằm ở thư mục SAF khi không; cài
   đặt app không đổi (`queue_debug.ps1 -Status`).
-- [ ] **B6. Gemini giả theo tệp (chỉ debug)**: extra `fake_gemini=on|off` lưu vào ghi đè của tệp; `clientFactory` của bản
+- [x] **B6. Gemini giả theo tệp (chỉ debug)**: extra `fake_gemini=on|off` lưu vào ghi đè của tệp; `clientFactory` của bản
   debug ưu tiên giá trị này hơn cờ `gemini_gia`; bản release bỏ qua extra.
   **Kiểm:** máy ảo: cờ chung bật, một tệp `fake_gemini=off` → log thấy client thật được dựng cho tệp đó (không có key thì
   lỗi `NoApiKey` cho đúng tệp đó; **không gửi gì**); test JVM: release bỏ qua.
 
 ### C. Sự kiện
 
-- [ ] **C1. `EventTracker`** (thuần): so `QueueState` cũ / mới → `FILE_STARTED` (vào `dang_chay`), `FILE_DONE`, `FILE_FAILED`
+- [x] **C1. `EventTracker`** (thuần): so `QueueState` cũ / mới → `FILE_STARTED` (vào `dang_chay`), `FILE_DONE`, `FILE_FAILED`
   (`loi`), `QUEUE_FINISHED` (cờ chạy tắt sau một vòng, kèm số xong / lỗi / bỏ qua, `stopped`); bỏ đường dẫn khi tắt
   `include_paths` (D97). Không phát lại sự kiện cũ khi process mới khởi động (trạng thái đầu là mốc).
   **Kiểm:** test JVM: chuỗi trạng thái của một vòng 3 tệp (xong, lỗi, bỏ qua); Dừng giữa chừng; process mới đọc hàng đợi đã
   xong thì không phát gì; tắt `include_paths` thì không còn `source` / `output_path` / `output_uri`.
-- [ ] **C2. `EventBroadcaster`**: dựng `Intent` từ sự kiện (extra `package`), `sendBroadcast` ngầm; chạy trong
+- [x] **C2. `EventBroadcaster`**: dựng `Intent` từ sự kiện (extra `package`), `sendBroadcast` ngầm; chạy trong
   `AppContainer` nghe `QueueController.state` khi công tắc bật; trả lời `STATUS` / `ERROR` của B2 cũng qua đây. Log mỗi
   sự kiện phát (action, `request_id`).
   **Kiểm:** máy ảo: `logcat -s Guzz` thấy `FILE_STARTED` → `FILE_DONE` → `QUEUE_FINISHED` đúng `request_id`.
-- [ ] **C3. Bộ ghi sự kiện của bản debug**: receiver đăng ký lúc chạy trong `GuzzApp` (debug) cho mọi `P.event.*`, ghi
+- [x] **C3. Bộ ghi sự kiện của bản debug**: receiver đăng ký lúc chạy trong `GuzzApp` (debug) cho mọi `P.event.*`, ghi
   `files/debug-events/events.jsonl`.
   **Kiểm:** sau B4, kéo tệp về thấy đủ sự kiện, `request_id` khớp lệnh.
-- [ ] **C4. `tools/device/intent_debug.ps1`**: `-Transcribe <tệp> [-RequestId] [-Secret] [-Activity] [-Speakers] [-Preset]
+- [x] **C4. `tools/device/intent_debug.ps1`**: `-Transcribe <tệp> [-RequestId] [-Secret] [-Activity] [-Speakers] [-Preset]
   [-OutputDir] [-FakeGemini on|off]`, `-Start`, `-Stop`, `-Status`, `-Events` (in `events.jsonl`), `-Enable on|off` (bật
   công tắc qua lệnh `automation` mới của `QueueDebugReceiver`). Tệp tương đối thì lấy trong `files/input/` như `queue_debug.ps1`.
   **Kiểm:** chạy lại B4 bằng script; `-Status` in sự kiện STATUS có % và đoạn i/n lúc đang chạy.
@@ -352,6 +352,10 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 - (2026-11-17, B2–B3) Không tách lớp `SourceResolver`: phần thuần là `PathMapping` (đường dẫn ↔ mã tài liệu), phần Android nằm trong `Automation.resolvePath/resolveUri`. Thêm: tệp trong thư mục riêng của app (`files/input` của lệnh adb) đọc thẳng không cần quyền; URI của lệnh TRANSCRIBE không giữ được quyền bền thì cũng chép như tệp chia sẻ (D103), trừ URI tài liệu dưới một cây SAF. Tệp bỏ qua (on_conflict = skip) phát FILE_DONE với `skipped=true`.
 - (2026-11-17, E2) Trang là `AutomationSettingsScreen(state: AutomationUiState, actions: AutomationActions)`; dữ liệu ở `AutomationSettingsModel` (cài đặt + trạng thái quyền, `refresh()` ở `onResume`). Stage 8 H1 dựng lại bằng widget chung thì dùng `AutomationSettingsModel`.
 - (2026-11-17) Máy ảo `guzz_15t` (emulator-5554) đang được session Stage 8 dùng, nên Stage 6 thử trên AVD riêng `guzz_15t_s6` (cùng thông số, cổng 5558) để không cài đè app của nhau.
+
+- (2026-11-18, B4) Trên máy ảo API 36, app không đọc được tệp qua `/sdcard/…` dù cùng chỗ với `/storage/emulated/0/…`: tệp trong thư mục riêng của app và tệp khi có "Truy cập mọi tệp" được đổi sang đường dẫn thật. Bị chặn chạy nền (D102) thì ngoài thông báo còn bật cờ đang chạy của hàng đợi (`QueueController.markPendingStart`), nên mở app / bấm thông báo là tự bắt đầu; đã thử: gỡ miễn tối ưu pin → ERROR background_blocked + thông báo, mở app → FILE_STARTED → FILE_DONE.
+- (2026-11-18, C3) Bộ ghi `events.jsonl` của bản debug ghi ngay lúc phát, không qua receiver đăng ký trong chính process: Android 14+ hoãn broadcast tới process cached (vừa dừng service) nên receiver đó bỏ sót FILE_DONE / QUEUE_FINISHED. Việc broadcast tới được app khác do test thiết bị C5 kiểm.
+- (2026-11-18, B5–B6) Máy ảo `guzz_15t_s6`: `output_dir=source` không có quyền → `files/output` + log cảnh báo, có quyền (`appops … MANAGE_EXTERNAL_STORAGE allow`) → `B5test.txt` cạnh tệp nguồn; `speakers=off`, `preset=speakers_around` ghi trong log tệp; `fake_gemini=off` khi cờ chung bật → client thật, lỗi "Chưa có API key" (máy ảo không có key, không gửi gì). Tệp tạo bằng `adb shell cp` app không đọc được (chủ là shell): đẩy từ PC bằng `adb push`.
 
 ## Phát sinh
 
