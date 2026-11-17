@@ -92,7 +92,7 @@ object EventFactory {
     ).apply { if (includePaths) put(G.EXTRA_SOURCE, item.source) }
 
     fun displayName(source: String): String =
-        source.trimEnd('/').substringAfterLast('/').let { java.net.URLDecoder.decode(it.replace("+", "%2B"), Charsets.UTF_8) }
+        source.trimEnd('/').substringAfterLast('/').let { java.net.URLDecoder.decode(it.replace("+", "%2B"), "UTF-8") }
             .substringAfterLast('/').substringAfterLast(':').ifEmpty { source }
 }
 

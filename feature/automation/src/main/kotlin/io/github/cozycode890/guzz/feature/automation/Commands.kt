@@ -157,7 +157,7 @@ object ExtrasReader {
     }
 
     /** Giải mã %XX của `file://` (không dùng `Uri` của Android để test được trên PC). */
-    private fun decodeFileUri(s: String): String = java.net.URLDecoder.decode(s.replace("+", "%2B"), Charsets.UTF_8)
+    private fun decodeFileUri(s: String): String = java.net.URLDecoder.decode(s.replace("+", "%2B"), "UTF-8")
 
     private const val MAX_SPEAKERS = 50
 }

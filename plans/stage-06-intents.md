@@ -290,12 +290,12 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 
 ### E. Trang Tự động hoá (D99)
 
-- [ ] **E1. `FileAccess`, `BatteryStatus`**: kiểm / xin "Truy cập mọi tệp" (sideload; Android 8–10 `READ_EXTERNAL_STORAGE`),
+- [x] **E1. `FileAccess`, `BatteryStatus`**: kiểm / xin "Truy cập mọi tệp" (sideload; Android 8–10 `READ_EXTERNAL_STORAGE`),
   Thư mục nguồn (thêm qua `OpenDocumentTree` + `takePersistableUriPermission`, bỏ thì trả quyền), miễn tối ưu pin (sideload
   có nút xin; play mở trang cài đặt pin), quyền thông báo.
   **Kiểm:** máy ảo: `appops set ... MANAGE_EXTERNAL_STORAGE ignore|allow` và `dumpsys deviceidle whitelist ±` → trạng thái
   trên trang đổi theo khi quay lại trang (`onResume`).
-- [ ] **E2. `AutomationSettingsScreen`** (Composable nhận `AutomationSettingsModel`) + `AutomationActivity` ở `:app`, nút mở
+- [x] **E2. `AutomationSettingsScreen`** (Composable nhận `AutomationSettingsModel`) + `AutomationActivity` ở `:app`, nút mở
   trên màn hình chính: công tắc cho phép; mã bí mật (ô + nút "Tạo mã ngẫu nhiên", ẩn / hiện); "Kèm đường dẫn trong sự
   kiện"; "Lưu cạnh tệp nguồn" (ẩn ở bản play); quyền tệp / Thư mục nguồn; pin; thông báo; danh sách action / event / tên
   lớp receiver, activity, mỗi dòng nút sao chép; nút "Gửi thử sự kiện" (phát `FILE_DONE` giả có `request_id` = `test`,
@@ -359,6 +359,9 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 
 - (2026-11-18, D1) `querySource` (:feature:queue) hỏi cột `last_modified` nên MediaStore ném IllegalArgumentException ("Invalid column"): đổi sang projection `null`, chỉ đọc cột có mặt. `ShareActivity` nhận URI ở cả ClipData lẫn `data` (`am start --grant-read-uri-permission` chỉ cấp quyền cho data / ClipData, không cho extra STREAM). Đã thử: `am start -a SEND -d content://media/…`, chia sẻ hai tệp từ app Files của máy ảo (SEND_MULTIPLE), giết app giữa chừng rồi mở lại → làm tiếp từ bản chép, xong thì `files/inbox` trống.
 - (2026-11-18, D3) Test ở `:app` (`ContentSourceTest`), không ở `:core:media`, vì cần cả `querySource` của :feature:queue. Provider trả độ dài không rõ là `UnknownLengthProvider` chỉ có ở bản debug (không exported).
+
+- (2026-11-18, E) Máy ảo: trang hiện đủ mục ở bản sideload; bản play ẩn "Truy cập mọi tệp" và "Lưu cạnh tệp nguồn". `appops` / `deviceidle` đổi thì quay lại trang thấy ✓ / ✗ đổi theo; bấm dòng thì có toast "Đã sao chép …" (shell không đọc được clipboard nên kiểm bằng ảnh chụp); "Gửi thử sự kiện" ghi FILE_DONE `request_id=test`. Thư mục nguồn (D104) thử luôn trên bản play: chọn Music qua SAF, `/sdcard/Music/chia_se_2.m4a` đọc qua URI tài liệu (sự kiện mang URI đó ở `source`, không phải đường dẫn gốc), `/sdcard/Download/…` → FILE_FAILED `no_permission`.
+- (2026-11-18, E2) Lint: `URLDecoder.decode(String, Charset)` cần API 33, đổi sang bản nhận tên bảng mã. Còn 6 cảnh báo (KTX `toUri`, plurals cho `share_added`, `/sdcard` trong PathMapping) để Stage 8 xét cùng phần văn phong.
 
 ## Phát sinh
 
