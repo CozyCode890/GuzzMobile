@@ -124,6 +124,18 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D88 | 2026-11-15 | Ngưỡng tốc độ làm sạch đủ (Stage 7) | Bài 1 giờ, Xiaomi 15T, màn hình tắt: **thêm ≤ 10 phút, PSS ≤ 400 MB** | Vẫn ngắn hơn thời gian chép lời. |
 | D89 | 2026-11-15 | Giao diện âm thanh (Stage 7) | **Trang Âm thanh rút gọn** (preset, bật / tắt bước, lưu âm thanh sạch); ô số → Stage 8 | Đủ dùng hằng ngày. |
 | D90 | 2026-11-15 | Nghe thử (Stage 7) | **Cặp tệp A/B**, người dùng nghe | Tiêu chí nghe cần tai người. |
+| D110 | 2026-11-17 | Điều hướng (Stage 8) | **Thanh dưới 3 tab**: Chuyển đổi · Hạn mức · Cài đặt (danh sách trang con) | Một tay bấm được, vừa 360 dp. |
+| D111 | 2026-11-17 | Màu (Stage 8) | **Material You + bộ màu Guzz dự phòng** cho máy dưới Android 12, không công tắc | Ít việc nhất. |
+| D112 | 2026-11-17 | Xuất / nhập cài đặt (Stage 8) | **INI như `config.txt` desktop**, nhập được `config.txt` desktop, không xuất API key, golden với `configparser` | Một định dạng cho cả hai app; key đã theo desktop (D16). |
+| D113 | 2026-11-17 | Máy tính bảng (Stage 8) | **Không**, chỉ giữ không vỡ (giới hạn bề ngang nội dung) | Không có máy để thử. |
+| D114 | 2026-11-17 | Tổ chức màn hình (Stage 8) | **Một Activity + Navigation Compose**; Activity cũ thành route, màn hình thử bản debug giữ Activity riêng | Back, giữ trạng thái tab, đổi ngôn ngữ / chủ đề gọn hơn. |
+| D115 | 2026-11-17 | Đổi ngôn ngữ (Stage 8) | **Chọn trong app** bằng per-app locale của AppCompat | Chạy từ Android 8, không khởi động lại. |
+| D116 | 2026-11-17 | Hướng dẫn lần đầu (Stage 8) | **Thẻ "Thiết lập ban đầu" trên màn hình chính**, tự ẩn khi đủ; cùng danh sách ở Cài đặt → Hệ thống | Không chặn dùng app. |
+| D117 | 2026-11-17 | Mục ít dùng (Stage 8) | **Phần "Nâng cao" gập cuối từng trang** | Trang ngắn, mục vẫn cạnh mục liên quan. |
+| D118 | 2026-11-17 | Opus tiết kiệm dữ liệu, chỉ gửi khi có Wi-Fi (Stage 8) | **Không làm** | Tính năng mới, ngoài phạm vi. |
+| D119 | 2026-11-17 | `languages` cho `*-transcribe` (Stage 8) | **Gợi ý bấm để điền `vi-VN, en-US`**, mặc định giữ trống như desktop, không gửi thử | Không đổi mặc định, không gửi gì lên Google. |
+| D120 | 2026-11-17 | `[VIDEO] save_extracted` (Stage 8, D68) | **Làm, thử bằng Gemini giả** | Lưu FLAC không phụ thuộc Gemini. |
+| D121 | 2026-11-17 | Kiểm giao diện (Stage 8) | **Máy ảo + `ui_check.ps1` (`android layout`, ảnh) + vài Compose UI test**, không thư viện screenshot | Đủ kiểm tiêu chí, không thêm phụ thuộc. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
