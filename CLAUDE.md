@@ -7,13 +7,13 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 6 (Intent cho MacroDroid), chưa plan chi tiết. Stage 7 (làm sạch âm thanh đầy đủ) xong ngày
+**Stage hiện tại:** Stage 6 (Intent cho MacroDroid), đã plan chi tiết ngày 2026-11-17 (D91–D104). Stage 7 (làm sạch âm thanh đầy đủ) xong ngày
 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, bài 79 phút thêm 3,5 phút trên Xiaomi 15T; tiêu chí nghe thử chấp nhận theo
 số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật gần desktop" trượt ở B4,
 D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày
 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 6 (Intent cho MacroDroid) ở một session riêng: hỏi người dùng các "Câu hỏi cần
-chốt" bằng câu trắc nghiệm, rồi viết "Kế hoạch chi tiết". Gửi bất cứ thứ gì lên Google
+**Việc tiếp theo:** làm Stage 6 và Stage 8 song song, mỗi stage một worktree; Stage 6 gộp vào `main` trước, Stage 8
+rebase rồi mới làm nhóm G, H (mục "Làm song song" ở cả hai tệp stage). Gửi bất cứ thứ gì lên Google
 thì hỏi người dùng ngay trước khi gửi.
 
 | Stage | Tên | Trạng thái | Tệp |
@@ -24,7 +24,7 @@ thì hỏi người dùng ngay trước khi gửi.
 | 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ✅ 2026-11-15 | [stage-05-diarization.md](plans/stage-05-diarization.md) |
-| 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
+| 6 | Intent cho MacroDroid | 📝 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | 📝 | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |

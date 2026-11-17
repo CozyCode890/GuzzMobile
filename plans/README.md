@@ -124,6 +124,20 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D88 | 2026-11-15 | Ngưỡng tốc độ làm sạch đủ (Stage 7) | Bài 1 giờ, Xiaomi 15T, màn hình tắt: **thêm ≤ 10 phút, PSS ≤ 400 MB** | Vẫn ngắn hơn thời gian chép lời. |
 | D89 | 2026-11-15 | Giao diện âm thanh (Stage 7) | **Trang Âm thanh rút gọn** (preset, bật / tắt bước, lưu âm thanh sạch); ô số → Stage 8 | Đủ dùng hằng ngày. |
 | D90 | 2026-11-15 | Nghe thử (Stage 7) | **Cặp tệp A/B**, người dùng nghe | Tiêu chí nghe cần tai người. |
+| D91 | 2026-11-17 | Tên action / sự kiện (Stage 6) | **Gốc cố định `io.github.cozycode890.guzz.action.*` / `.event.*` cho mọi bản**; macro chọn bản bằng ô Package | Macro thử trên debug dùng lại cho bản thật; receiver manifest đằng nào cũng cần Package. |
+| D92 | 2026-11-17 | Sự kiện tiến độ (Stage 6) | **Không có `FILE_PROGRESS`**; lệnh `STATUS` trả %, đoạn i/n | Ít broadcast, ít việc. |
+| D93 | 2026-11-17 | Mã bí mật (Stage 6) | **Tuỳ chọn**: ô trống thì không kiểm | Cài macro nhanh; công tắc cho phép mặc định tắt. |
+| D94 | 2026-11-17 | Cách nhận lệnh (Stage 6) | **Cả hai**: broadcast chính, activity trong suốt dự phòng | Broadcast cần miễn tối ưu pin; activity khởi động service được. |
+| D95 | 2026-11-17 | Extra ghi đè cài đặt (Stage 6) | **Người nói, preset âm thanh, thư mục lưu**; không ghi đè model / chế độ | Đủ cho macro theo lớp / phòng; chỉ áp cho tệp đó. |
+| D96 | 2026-11-17 | Nơi lưu khi không có `output_dir` (Stage 6) | **Như cài đặt app (SAF)** + lựa chọn "Lưu cạnh tệp nguồn" (cần "Truy cập mọi tệp"), mặc định tắt | Một chỗ lưu cho mọi cách thêm tệp. |
+| D97 | 2026-11-17 | Đường dẫn trong sự kiện (Stage 6) | **Có, tắt được** | Macro mở tệp chạy ngay; app nào cũng nghe được sự kiện. |
+| D98 | 2026-11-17 | Chia sẻ tới Guzz (Stage 6) | **Thêm và bắt đầu ngay**, không cần công tắc cho phép | Người dùng tự bấm Chia sẻ. |
+| D99 | 2026-11-17 | Chia việc trang Tự động hoá với Stage 8 | **Stage 6 làm trang gọn** (Composable ở `:feature:automation`); Stage 8 gắn vào điều hướng | Thử được bằng tay; ít đụng tệp chung. |
+| D100 | 2026-11-17 | Gemini thật trong đêm thử MacroDroid (Stage 6) | **Một bài 1–3 phút, ≤ 3 yêu cầu**, lúc Doze; hỏi trước khi gửi | Biết HyperOS có chặn mạng của FGS trong Doze không. |
+| D101 | 2026-11-17 | Macro mẫu (Stage 6) | **Bảng hướng dẫn + tệp `.macro` xuất từ máy thật** | Nhập được ngay; bảng để đọc và sửa. |
+| D102 | 2026-11-17 | Broadcast bị chặn khởi động service (Stage 6) | **Giữ tệp**, phát `ERROR` `background_blocked`, thông báo "Bấm để bắt đầu" | Không mất lệnh; macro gửi lại bằng activity. |
+| D103 | 2026-11-17 | Tệp chia sẻ không giữ được quyền đọc bền (Stage 6) | **Chép vào thư mục riêng của Guzz**, xoá khi xong / bỏ | Tự làm tiếp sau khi bị giết (D64) vẫn đọc được. |
+| D104 | 2026-11-17 | Bản play nhận đường dẫn (Stage 6) | **"Thư mục nguồn" cấp qua SAF**, đường dẫn trong đó đổi sang URI tài liệu | Trigger "Tệp thay đổi" của MacroDroid chỉ cho đường dẫn. |
 | D110 | 2026-11-17 | Điều hướng (Stage 8) | **Thanh dưới 3 tab**: Chuyển đổi · Hạn mức · Cài đặt (danh sách trang con) | Một tay bấm được, vừa 360 dp. |
 | D111 | 2026-11-17 | Màu (Stage 8) | **Material You + bộ màu Guzz dự phòng** cho máy dưới Android 12, không công tắc | Ít việc nhất. |
 | D112 | 2026-11-17 | Xuất / nhập cài đặt (Stage 8) | **INI như `config.txt` desktop**, nhập được `config.txt` desktop, không xuất API key, golden với `configparser` | Một định dạng cho cả hai app; key đã theo desktop (D16). |
