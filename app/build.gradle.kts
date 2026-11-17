@@ -18,6 +18,12 @@ android {
         buildConfig = true
     }
 
+    // Stage 8 (E3): thiếu bản tiếng Anh hay chuỗi viết cứng trong layout là lỗi, không chỉ cảnh báo. Chuỗi viết cứng trong
+    // Compose do tools/check_strings.ps1 bắt.
+    lint {
+        error += listOf("MissingTranslation", "HardcodedText")
+    }
+
     // D115: Android 13+ liệt kê Guzz trong Cài đặt → Ngôn ngữ ứng dụng; danh sách ngôn ngữ sinh từ thư mục values-*.
     androidResources {
         generateLocaleConfig = true

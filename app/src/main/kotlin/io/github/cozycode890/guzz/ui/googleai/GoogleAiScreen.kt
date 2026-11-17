@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +90,7 @@ private val pageKeys = listOf(
 fun GoogleAiScreen(container: AppContainer, onBack: () -> Unit) {
     val settings = container.settings
     val context = LocalContext.current
+    val resources = LocalResources.current
     val scope = rememberCoroutineScope()
     var savedMasked by remember { mutableStateOf<String?>(null) }
     var keyInput by remember { mutableStateOf("") }
@@ -261,7 +263,7 @@ fun GoogleAiScreen(container: AppContainer, onBack: () -> Unit) {
                     settings, SettingKeys.FALLBACK_MODELS, stringResource(R.string.google_ai_fallback_models), singleLine = false,
                     validate = { text ->
                         val bad = text.split(',').map { it.trim() }.filter { it.isNotEmpty() && !isValidModelName(it) }
-                        if (bad.isEmpty()) null else context.getString(R.string.google_ai_fallback_models_invalid, bad.joinToString(", "))
+                        if (bad.isEmpty()) null else resources.getString(R.string.google_ai_fallback_models_invalid, bad.joinToString(", "))
                     },
                 )
                 NumberSetting(settings, SettingKeys.RETRIES_BEFORE_SWITCH, stringResource(R.string.google_ai_fallback_retries))

@@ -14,12 +14,16 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -66,6 +70,9 @@ object Routes {
     fun transcript(location: String, name: String?): String =
         "$TRANSCRIPT?location=${Uri.encode(location)}&name=${Uri.encode(name.orEmpty())}"
 }
+
+/** Cỡ chữ tối đa của nhãn thanh dưới. */
+private const val MAX_TAB_FONT_SCALE = 1.3f
 
 private data class Tab(val route: String, val label: Int, val icon: ImageVector)
 
@@ -116,6 +123,10 @@ fun GuzzRoot(container: AppContainer, resumes: StateFlow<Int>, openRoute: StateF
         // Thanh dưới tự lo thanh điều hướng của hệ thống; từng trang tự lo thanh trạng thái (TopAppBar).
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
+            // Cỡ chữ hệ thống rất lớn (×2) làm nhãn "Chuyển đổi" xuống dòng và bị cắt ở 360 dp: nhãn thanh dưới chỉ phóng
+            // tới ×1,3, như các app hệ thống; chữ trong trang vẫn theo đúng cỡ người dùng chọn.
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, minOf(density.fontScale, MAX_TAB_FONT_SCALE))) {
             NavigationBar {
                 tabs.forEach { tab ->
                     NavigationBarItem(
@@ -129,10 +140,11 @@ fun GuzzRoot(container: AppContainer, resumes: StateFlow<Int>, openRoute: StateF
                             }
                         },
                         icon = { Icon(tab.icon, contentDescription = null) },
-                        label = { Text(stringResource(tab.label)) },
+                        label = { Text(stringResource(tab.label), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                         modifier = Modifier.testTag("tab:${tab.route}"),
                     )
                 }
+            }
             }
         },
     ) { padding ->

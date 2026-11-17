@@ -9,7 +9,8 @@
 #   .\tools\device\ui_check.ps1 -NoDynamicColor on           # bộ màu Guzz dự phòng thay cho màu động (D111), off để tắt
 #
 # -Small: đặt mật độ điểm ảnh để bề ngang màn hình đúng 360 dp. -Lang: ngôn ngữ riêng của app (Android 13+,
-# `cmd locale set-app-locales`), không đổi ngôn ngữ máy. Thiết bị: $env:ANDROID_SERIAL hoặc -Serial.
+# `cmd locale set-app-locales`), không đổi ngôn ngữ máy. Thiết bị: $env:ANDROID_SERIAL hoặc -Serial. Chạy bằng
+# PowerShell 7 (pwsh): Windows PowerShell 5 đọc sai tệp UTF-8 không BOM.
 param(
     [string]$Out,
     [string[]]$Pages = @('convert', 'quota', 'settings', 'settings/google_ai', 'settings/audio', 'settings/speakers',
@@ -39,7 +40,8 @@ if ($Reset) {
     Shell 'cmd uimode night no'
     Shell 'settings put system user_rotation 0'
     Shell 'settings put system accelerometer_rotation 1'
-    Shell "cmd locale set-app-locales $pkg --locales `"`""
+    # Không có --locales = danh sách rỗng: app lại theo ngôn ngữ máy.
+    Shell "cmd locale set-app-locales $pkg"
     Write-Host 'Đã trả máy về cấu hình mặc định.'
     if (-not $Out) { return }
 }
@@ -73,10 +75,13 @@ if ($Landscape) {
 
 Shell "am force-stop $pkg"
 Start-Sleep -Milliseconds 500
+$first = $true
 foreach ($page in $Pages) {
     $name = $page -replace '/', '_'
-    adb shell am start -n $activity --es route $page | Out-Null
-    Start-Sleep -Milliseconds $WaitMs
+    adb shell am start -n $activity --es route $page 2>&1 | Out-Null
+    # Trang đầu: app vừa khởi động (đọc cài đặt, có thể dựng lại vì đổi ngôn ngữ) nên chờ lâu hơn.
+    Start-Sleep -Milliseconds ($(if ($first) { $WaitMs + 4000 } else { $WaitMs }))
+    $first = $false
     if ($Serial) { android layout "--device=$Serial" "--output=$Out\$name.json" | Out-Null }
     else { android layout "--output=$Out\$name.json" | Out-Null }
     $png = "$Out\$name.png"
