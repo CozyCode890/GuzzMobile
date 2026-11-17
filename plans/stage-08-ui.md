@@ -143,115 +143,115 @@ và B7 (Compose UI test).
 
 ### A. Nền: thư viện, cài đặt giao diện, chủ đề, ngôn ngữ
 
-- [ ] A1. Thêm `androidx.navigation:navigation-compose` (route kiểu an toàn, kotlinx.serialization đã có) và
+- [x] A1. Thêm `androidx.navigation:navigation-compose` (route kiểu an toàn, kotlinx.serialization đã có) và
       `androidx.appcompat:appcompat` vào version catalog + `app/build.gradle.kts`. Kiểm: `.\gradlew assembleSideloadDebug
       assemblePlayDebug` xanh.
-- [ ] A2. `[GUI] language`, `[GUI] theme` trong `SettingKeys` (khối riêng sau `[SYSTEM]`, vào `all` để xuất / nhập). Kiểm:
+- [x] A2. `[GUI] language`, `[GUI] theme` trong `SettingKeys` (khối riêng sau `[SYSTEM]`, vào `all` để xuất / nhập). Kiểm:
       test `:core:common` đọc / ghi, giá trị lạ lùi về mặc định.
-- [ ] A3. Ngôn ngữ (D115): `MainActivity` thành `AppCompatActivity`, `themes.xml` đổi sang `Theme.AppCompat.DayNight.NoActionBar`
+- [x] A3. Ngôn ngữ (D115): `MainActivity` thành `AppCompatActivity`, `themes.xml` đổi sang `Theme.AppCompat.DayNight.NoActionBar`
       (cả `values-night`), manifest thêm `AppLocalesMetadataHolderService` (`autoStoreLocales`), bật
       `androidResources.generateLocaleConfig` + `res/resources.properties` (`unqualifiedResLocale=vi`). Đổi mục Ngôn ngữ thì
       gọi `AppCompatDelegate.setApplicationLocales` và ghi `GUI.language`. Kiểm: trên máy ảo đổi vi ↔ en, giao diện đổi
       ngay, mở lại app vẫn giữ; Android 13+ thấy Guzz trong Cài đặt → Ngôn ngữ ứng dụng.
-- [ ] A4. Chủ đề (D111): `GuzzTheme` đọc `GUI.theme` (Flow từ Settings), Android 12+ màu động, máy cũ bộ màu Guzz sáng /
+- [x] A4. Chủ đề (D111): `GuzzTheme` đọc `GUI.theme` (Flow từ Settings), Android 12+ màu động, máy cũ bộ màu Guzz sáng /
       tối (tệp `ui/theme/Color.kt`); thanh trạng thái / điều hướng đổi màu theo. Kiểm: đổi Sáng / Tối / Theo hệ thống
       không cần khởi động lại; xem bộ màu dự phòng bằng cờ chỉ có ở bản debug (tắt màu động) trên máy ảo.
-- [ ] A5. `tools/device/ui_check.ps1` (D121): tham số `-Small` (`wm size` + `wm density` cho bề ngang 360 dp), `-FontScale 2.0`,
+- [x] A5. `tools/device/ui_check.ps1` (D121): tham số `-Small` (`wm size` + `wm density` cho bề ngang 360 dp), `-FontScale 2.0`,
       `-Dark`, `-Lang en` (`cmd locale set-app-locales`), `-Landscape`, `-Out <thư mục>`; với mỗi trang trong danh sách:
       mở bằng deep link debug (B2), ghi `android layout` ra `.json` và chụp `.png`; `-Reset` trả máy ảo về như cũ. Kiểm: chạy
       trên `guzz_15t` ra đủ tệp cho trang Chuyển đổi.
 
 ### B. Khung một Activity (D110, D114)
 
-- [ ] B1. Tách code: `QueueScreen`, `QuickSettings`, `QueueRow`, `Banner` từ `MainActivity.kt` sang `ui/convert/`; màn hình
+- [x] B1. Tách code: `QueueScreen`, `QuickSettings`, `QueueRow`, `Banner` từ `MainActivity.kt` sang `ui/convert/`; màn hình
       của `GoogleAiActivity`, `AudioActivity`, `SpeakersActivity`, `TranscriptActivity` sang `ui/googleai/`, `ui/audio/`,
       `ui/speakers/`, `ui/transcript/` dạng composable nhận tham số (Activity cũ tạm gọi composable đó). Chưa đổi hành vi.
       Kiểm: build + thử nhanh 4 trang trên máy ảo như trước.
-- [ ] B2. `ui/nav/`: route (`Convert`, `Quota`, `Settings`, `GoogleAi`, `Audio`, `Speakers`, `Output`, `Queue`, `System`, `Logs`,
+- [x] B2. `ui/nav/`: route (`Convert`, `Quota`, `Settings`, `GoogleAi`, `Audio`, `Speakers`, `Output`, `Queue`, `System`, `Logs`,
       `About`, `Transcript(location, name)`), `NavHost` trong `MainActivity`, thanh dưới 3 tab (`NavigationBar`, giữ trạng thái
       từng tab, Back về tab Chuyển đổi rồi mới thoát). Bản debug nhận extra `route` để `ui_check.ps1` mở thẳng một trang.
       Kiểm: Compose UI test (B7) và thử Back trên máy ảo.
-- [ ] B3. Trang Cài đặt dạng danh sách (biểu tượng + tên + mô tả một dòng) mở các trang con; trang con có thanh tiêu đề với
+- [x] B3. Trang Cài đặt dạng danh sách (biểu tượng + tên + mô tả một dòng) mở các trang con; trang con có thanh tiêu đề với
       nút Back. Kiểm: `android layout` thấy đủ mục, bấm từng mục mở đúng trang.
-- [ ] B4. Bộ widget chung `ui/components/`: `SettingsPage` (cuộn, giới hạn bề ngang ~640 dp, D113), `SectionCard`,
+- [x] B4. Bộ widget chung `ui/components/`: `SettingsPage` (cuộn, giới hạn bề ngang ~640 dp, D113), `SectionCard`,
       `SwitchRow`, `ChoiceRow` (từ `ChoiceSetting`), `NumberRow` (kiểm `min` / `max` của `SettingKey`, báo lỗi dưới ô, không
       lưu giá trị sai), `TextRow`, `AdvancedSection` (gập, D117), nút "Khôi phục mặc định" từng trang. Ghi ngay khi đổi
       (như các trang Stage 3–7), không có nút Lưu. Kiểm: Compose UI test cho `NumberRow` (số ngoài khoảng không được lưu).
-- [ ] B5. Nối các trang cũ vào route: Chuyển đổi (tab 1), Google AI / Âm thanh / Người nói (trang con của Cài đặt; nút trên
+- [x] B5. Nối các trang cũ vào route: Chuyển đổi (tab 1), Google AI / Âm thanh / Người nói (trang con của Cài đặt; nút trên
       màn hình chính đổi sang điều hướng route), Xem bản chép lời (route `Transcript`, nút Mở / Chia sẻ giữ nguyên).
       Kiểm: thử trên máy ảo mọi lối vào cũ (nút ở hàng đợi, banner "chưa có key", cài đặt nhanh).
-- [ ] B6. Xoá 4 Activity cũ khỏi code và manifest (một commit riêng). `AudioDebugActivity` của bản debug giữ nguyên, mở
+- [x] B6. Xoá 4 Activity cũ khỏi code và manifest (một commit riêng). `AudioDebugActivity` của bản debug giữ nguyên, mở
       từ mục debug trong Cài đặt → Hệ thống. Kiểm: `.\gradlew lint` không còn cảnh báo class thừa; `adb shell am start`
       của `CLAUDE.md` vẫn mở app; `audio_debug.ps1` vẫn chạy.
-- [ ] B7. Compose UI test trong `app/src/androidTest` (chạy như test Keystore ở `CLAUDE.md`): bấm 3 tab, mở từng trang con
+- [x] B7. Compose UI test trong `app/src/androidTest` (chạy như test Keystore ở `CLAUDE.md`): bấm 3 tab, mở từng trang con
       của Cài đặt rồi Back; đổi ngôn ngữ sang en thì nhãn tab đổi. Kiểm: `am instrument` xanh trên máy ảo.
 
 ### C. Các trang cài đặt (không đụng intent)
 
-- [ ] C1. Google AI đầy đủ (bảng "Mục nào ở đâu"): ô key ở đầu, ô model cách xa và ghi rõ nhãn; `transcribe_mode`,
+- [x] C1. Google AI đầy đủ (bảng "Mục nào ở đâu"): ô key ở đầu, ô model cách xa và ghi rõ nhãn; `transcribe_mode`,
       `languages` + gợi ý D119 (`model.endsWith("-transcribe")` và ô trống → dòng nhắc + nút "Điền vi-VN, en-US"),
       `vocabulary`; Nâng cao: mục `[GOOGLE_AI]` còn lại và cả `[FALLBACK]` (danh sách model dự phòng sửa được, thứ tự).
       Ràng buộc model ↔ cách nhận diện như desktop (`model_ui.constraint_hint`). Kiểm: đổi từng mục rồi
       `queue_debug.ps1 -Status` / đọc lại DataStore thấy giá trị; gợi ý hiện / ẩn đúng khi đổi model.
-- [ ] C2. Âm thanh: video (`audio_track`, `skip_silent`, công tắc `save_extracted` — chỉ lưu cài đặt, phần pipeline ở G2);
+- [x] C2. Âm thanh: video (`audio_track`, `skip_silent`, công tắc `save_extracted` — chỉ lưu cài đặt, phần pipeline ở G2);
       Nâng cao: ô số `[AUDIO]` (D89) và `[CHUNKING]`. Kiểm: đổi preset thì ô số cập nhật; sửa một ô số thì preset thành
       "Tuỳ chỉnh" như desktop (`presets.py`).
-- [ ] C3. Người nói: thêm `timestamps`, `map_delivery`; Nâng cao: ngưỡng làm mượt, `run_on`, mẫu đoạn văn (kiểm chỗ giữ chỗ
+- [x] C3. Người nói: thêm `timestamps`, `map_delivery`; Nâng cao: ngưỡng làm mượt, `run_on`, mẫu đoạn văn (kiểm chỗ giữ chỗ
       như desktop), độ dài đoạn. Kiểm: đổi mẫu đoạn văn sai thì báo lỗi, không lưu; chạy hàng đợi Gemini giả với
       `-Speakers hybrid` vẫn ra bản chép lời.
-- [ ] C4. Bản chép lời: các mục `[OUTPUT]` + dòng xem trước tên tệp (dùng `OutputNaming`, như `filename_preview` của
+- [x] C4. Bản chép lời: các mục `[OUTPUT]` + dòng xem trước tên tệp (dùng `OutputNaming`, như `filename_preview` của
       desktop). Hàng đợi: `notify_when_done`, `on_file_error`. Kiểm: đổi `filename_template` thì xem trước đổi theo; chạy hàng
       đợi Gemini giả ra tên tệp đúng mẫu.
-- [ ] C5. Hệ thống: Ngôn ngữ, Chủ đề (A3, A4); Nâng cao: `log_level`, `log_size_mb`, `old_log_count`,
+- [x] C5. Hệ thống: Ngôn ngữ, Chủ đề (A3, A4); Nâng cao: `log_level`, `log_size_mb`, `old_log_count`,
       `delete_temp_when_done`. Thông tin: phiên bản (`versionName` + `versionCode`), flavor, giấy phép (sherpa-onnx Apache-2.0,
       segmentation-3.0 MIT, 3D-Speaker Apache-2.0, thư viện AndroidX / OkHttp), đường dẫn log. Kiểm: đổi `log_level` sang
       DEBUG thì `guzz.log` có dòng DEBUG ngay (không cần mở lại app).
 
 ### D. Hạn mức và Nhật ký
 
-- [ ] D1. Phần tính toán của trang Hạn mức để ở `:core:gemini` (`QuotaView`, JVM thuần): từ `UsageSnapshot` + `now` ra
+- [x] D1. Phần tính toán của trang Hạn mức để ở `:core:gemini` (`QuotaView`, JVM thuần): từ `UsageSnapshot` + `now` ra
       trạng thái "Bây giờ" (đang chờ model nào, đếm ngược, giờ đặt lại hằng ngày), từng model (đã dùng / hạn mức, khoá tới
       lúc nào, lý do), lịch sử. Port của `gui/pages/quota.py` (`_paint_now`, `_paint_models_table`, `_paint_events`). Chữ
       hiển thị là mã + tham số, `:app` ghép bằng `strings.xml`. Kiểm: unit test với snapshot dựng tay (khoá, hết ngày, đủ
       model).
-- [ ] D2. Trang Hạn mức (tab 2): Bây giờ (đếm ngược mỗi giây khi trang hiện), Các model (thẻ), nút Mở khoá / Quên hạn mức
+- [x] D2. Trang Hạn mức (tab 2): Bây giờ (đếm ngược mỗi giây khi trang hiện), Các model (thẻ), nút Mở khoá / Quên hạn mức
       đã học / Đặt lại bộ đếm (hỏi lại trước khi làm); Nâng cao: Hạn mức từng model (sửa `QUOTAS.lines`, thêm / xoá model),
       Lịch sử + Xoá lịch sử. Đọc lại khi `revision()` đổi (hàng đợi chạy nền ghi sổ). Ghi rõ "không đếm chung với desktop"
       (README rủi ro 5). Kiểm: `tools/device/quota_fixture.py` sinh một `su_dung.json` mẫu (có model bị khoá, hạn mức
       đã học, lịch sử; cấu trúc như ca trong `testdata/golden/gemini/tracker.json`), đẩy vào `files/quota/` bằng
       `adb shell run-as`, mở trang thấy đúng số / khoá; bấm Mở khoá thì tệp đổi.
-- [ ] D3. Nhật ký: đọc đuôi `guzz.log` (và `guzz.log.1` khi cần) ở luồng IO, lọc Tất cả / Cảnh báo / Lỗi như
+- [x] D3. Nhật ký: đọc đuôi `guzz.log` (và `guzz.log.1` khi cần) ở luồng IO, lọc Tất cả / Cảnh báo / Lỗi như
       `logs.py` (`_line_level`), ô tìm, tự làm mới khi trang hiện, nút Chia sẻ tệp log (FileProvider), cuộn xuống cuối.
       Kiểm: unit test bộ lọc mức (dòng nhiều dòng của traceback đi theo dòng đầu); trên máy ảo chạy hàng đợi Gemini giả
       thì dòng mới hiện ra.
 
 ### E. Tiếng Việt / tiếng Anh
 
-- [ ] E1. Chuyển mọi chuỗi viết cứng còn lại trong `:app` (kể cả `contentDescription`, hộp thoại, Toast) sang
+- [x] E1. Chuyển mọi chuỗi viết cứng còn lại trong `:app` (kể cả `contentDescription`, hộp thoại, Toast) sang
       `strings_*.xml` vi / en, câu chữ lấy từ `gui/i18n.py` (bản đã chuẩn hoá theo REFACTOR_PLAN). Kiểm: E3.
-- [ ] E2. `formatCountdown` / `formatLocalTime` và các chuỗi khác từ module JVM hiện trên giao diện: chuyển sang mã + tham
+- [x] E2. `formatCountdown` / `formatLocalTime` và các chuỗi khác từ module JVM hiện trên giao diện: chuyển sang mã + tham
       số (hoặc định dạng ở `:app`). Kiểm: trang Hạn mức tiếng Anh không còn chữ Việt.
-- [ ] E3. `tools/check_strings.ps1`: tìm chuỗi có chữ cái trong `Text("…")`, `text = "…"`, `label = { Text("…`,
+- [x] E3. `tools/check_strings.ps1`: tìm chuỗi có chữ cái trong `Text("…")`, `text = "…"`, `label = { Text("…`,
       `contentDescription = "…"`, `Toast.makeText(…, "…"` ở `app/src/main/kotlin` và `feature/*/src/main/kotlin`; in tệp:dòng,
       thoát mã 1 khi có. Bật lint `MissingTranslation` / `HardcodedText` ở mức lỗi. Kiểm: script báo 0, `.\gradlew lint`
       sạch.
 
 ### F. Thiết lập ban đầu, xuất / nhập cài đặt
 
-- [ ] F1. `SetupChecklist` (D116): API key đã có; thư mục lưu đã chọn (SAF); quyền thông báo (Android 13+); miễn tối ưu pin
+- [x] F1. `SetupChecklist` (D116): API key đã có; thư mục lưu đã chọn (SAF); quyền thông báo (Android 13+); miễn tối ưu pin
       (`isIgnoringBatteryOptimizations`; bản sideload có nút xin `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, bản play mở trang
       cài đặt pin). Mỗi mục kèm nút làm ngay; thẻ trên màn hình Chuyển đổi tự ẩn khi đủ, có nút "Để sau" (ẩn tới lần mở
       app sau). Cài đặt → Hệ thống có cùng danh sách. Trước khi Stage 6 gộp, phần kiểm pin gọi thẳng `PowerManager` ở
       một hàm nhỏ; H2 đổi sang `BatteryStatus` của Stage 6 và bỏ hàm đó. Mục quyền đọc tệp thêm ở H2. Kiểm: trên máy ảo mới cài
       (`pm clear`), thẻ hiện 4 mục; làm từng mục thì mục đó biến mất (`dumpsys deviceidle whitelist -<package>` để thử lại).
-- [ ] F2. `ConfigIni` ở `:core:common` (JVM thuần, D112): ghi INI (`[SECTION]`, `key = value`, dòng đầu ghi phiên bản Guzz
+- [x] F2. `ConfigIni` ở `:core:common` (JVM thuần, D112): ghi INI (`[SECTION]`, `key = value`, dòng đầu ghi phiên bản Guzz
       Mobile và ngày), đọc theo đúng luật `configparser` của desktop (ghi chú cuối dòng chỉ khi `#` / `;` đứng sau khoảng
       trắng — sửa lỗi `C#, F#` của `config_io.py`; giá trị nhiều dòng; key không phân biệt hoa thường). Áp vào Settings:
       mục biết thì chuyển kiểu bằng `SettingKey`, mục lạ / chỉ có trên desktop bỏ qua, sai kiểu / ngoài khoảng ghi vào báo
       cáo; không đụng `OUTPUT.output_dir` và `[APP]`. Port của `gui/config_io.py` (phần đọc). Kiểm: golden
       `tools/golden/gen_config.py` (đọc `config.default.txt` desktop và một tệp khó bằng `configparser`; cạnh
       `gen_config_keys.py` đã có, ra `testdata/golden/config/`) + `ConfigIniGoldenTest`; xuất rồi nhập lại ra đúng giá trị cũ.
-- [ ] F3. Nút Xuất (SAF `CreateDocument`, tên gợi ý `guzz-config.txt`) và Nhập (`OpenDocument`) ở Hệ thống; nhập xong hiện
+- [x] F3. Nút Xuất (SAF `CreateDocument`, tên gợi ý `guzz-config.txt`) và Nhập (`OpenDocument`) ở Hệ thống; nhập xong hiện
       tóm tắt: đã áp N mục, bỏ qua M mục, lỗi K mục (danh sách gập). Kiểm: trên máy ảo nhập `config.default.txt` của desktop
       (adb push) thì không lỗi, mục khác desktop (vd `[GUI] language`) đổi đúng; xuất ra tệp không có API key.
 
@@ -306,6 +306,34 @@ và B7 (Compose UI test).
       (`ui_check.ps1`, `check_strings.ps1`, `gen_config.py`, B7); đánh dấu tiêu chí hoàn thành, Stage 8 ✅ kèm ngày.
 
 ## Nhật ký
+
+- 2026-11-18, A–F trên nhánh `stage-8` (worktree `D:\GuzzMobile-stage8`), thử trên máy ảo `guzz_15t` (emulator-5554):
+  - **Khác kế hoạch:** B1 không qua bước trung gian "Activity cũ gọi composable": viết thẳng các trang thành route
+    (B2–B6 cùng lúc), vì đằng nào B6 cũng xoá Activity cũ.
+  - **Khác kế hoạch:** `MainActivity` thêm `launchMode="singleTop"` ngay ở B2 (kế hoạch để H4): không có thì
+    `am start --es route …` khi app đang mở chỉ đưa task lên trước, không gọi `onNewIntent`, `ui_check.ps1` không đổi
+    được trang.
+  - **Khác kế hoạch:** Hạn mức từng model (`[QUOTAS]`) sửa bằng một ô nhiều dòng `model = token/phút, yêu cầu/phút,
+    yêu cầu/ngày` (kiểm từng dòng đọc được), không làm lưới ô số như desktop: thêm / xoá model là thêm / xoá dòng.
+  - **Khác kế hoạch:** mục pin của Thiết lập ban đầu mở trang thông tin app ở cả hai bản (chưa xin
+    `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`: quyền khai trong manifest sideload là việc của Stage 6); H2 đổi sang
+    `BatteryStatus`.
+  - Nhãn thanh dưới chỉ phóng chữ tới ×1,3: ở 360 dp + cỡ chữ ×2, "Chuyển đổi" xuống dòng và bị cắt.
+  - Nhập cài đặt: ngôn ngữ nhập vào chỉ được áp khi đóng hộp tóm tắt (áp ngay thì AppCompat dựng lại Activity, hộp
+    mất). Không đọc `config.txt` kiểu cũ (section tiếng Việt, `LEGACY_SECTIONS` của desktop).
+  - E2: `formatCountdown` / `formatLocalTime` chỉ ra số và giờ (`3:05:09`, `14:00`, `18/09 14:00`), không có chữ, nên
+    không cần đổi; lý do khoá, loại lỗi, loại sự kiện của trang Hạn mức là mã, ghép câu ở `strings_quota.xml`.
+  - Kết quả thử: `.\gradlew lint test` xanh; Compose UI test (B7) 3/3 trên máy ảo; `tools\check_strings.ps1` sạch;
+    nhập `config.default.txt` desktop qua trình chọn tệp: áp 76 mục, bỏ qua 29 (mục chỉ có trên desktop), 0 lỗi, giao
+    diện sang tiếng Việt theo `[GUI] language = vi`; đổi chủ đề Tối ngay, cùng tiến trình; `quota_fixture.py` → trang
+    Hạn mức hiện khoá theo ngày / khoá tay / hạn mức đã học, bấm Mở khoá thì sổ có sự kiện `mo_khoa`; thẻ Thiết lập ban
+    đầu sau `pm clear` hiện 3 việc (máy ảo cài qua adb đã được miễn tối ưu pin sẵn); ảnh `ui_check.ps1` mặc định và
+    360 dp / chữ ×2 / tối / vi ở `D:\GuzzMobileData\stage-08`.
+  - Khởi động nguội bản debug trên máy ảo mất khoảng 2,5 s (`am start -W`): chưa so với trước Stage 8, xem lại ở I4
+    trên máy thật.
+  - Sự cố: `gradlew installSideloadDebug` chạy khi chưa đặt `ANDROID_SERIAL` đã cài đè bản stage-8 lên máy ảo
+    `guzz_15t_s6` của session Stage 6 (đã báo session đó). Từ đó luôn đặt `ANDROID_SERIAL`.
+  - Nhóm G, H chờ Stage 6 gộp vào `main`.
 
 ## Phát sinh
 

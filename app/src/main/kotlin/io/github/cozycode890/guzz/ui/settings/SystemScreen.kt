@@ -128,7 +128,7 @@ fun SystemScreen(container: AppContainer, resumes: StateFlow<Int>, onBack: () ->
                     val text = withContext(Dispatchers.IO) { readText(context, uri) }
                     report = importConfig(container, text)
                     transferMessage = null
-                    AppLanguage.apply(settings.get(SettingKeys.LANGUAGE))
+                    // Ngôn ngữ nhập vào được áp khi đóng hộp tóm tắt: áp ngay thì AppCompat dựng lại Activity và hộp mất.
                 } catch (e: Exception) {
                     GuzzLog.warning("Không nhập được cài đặt: ${e.message}")
                     transferMessage = failedMessage + " " + (e.message ?: "")
@@ -200,8 +200,13 @@ fun SystemScreen(container: AppContainer, resumes: StateFlow<Int>, onBack: () ->
     }
 
     report?.let { r ->
+        val close = {
+            report = null
+            scope.launch { AppLanguage.apply(settings.get(SettingKeys.LANGUAGE)) }
+            Unit
+        }
         AlertDialog(
-            onDismissRequest = { report = null },
+            onDismissRequest = close,
             title = { Text(stringResource(R.string.system_import_done)) },
             text = {
                 Column(Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState())) {
@@ -216,7 +221,7 @@ fun SystemScreen(container: AppContainer, resumes: StateFlow<Int>, onBack: () ->
                     }
                 }
             },
-            confirmButton = { TextButton(onClick = { report = null }) { Text(stringResource(R.string.common_ok)) } },
+            confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.common_ok)) } },
         )
     }
 }
