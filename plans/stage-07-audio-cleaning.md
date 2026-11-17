@@ -263,8 +263,7 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
   Stage 7), phần sau giải mã thêm 62 s → **đạt D88** (≤ 10 phút, PSS ≤ 400 MB). Không cần đa luồng (D86).
   - `compare_clean.py` so theo từng khoảng giữ lại trùng nhau: một mốc cắt lặng lệch 1 ms (trong dung sai B9) làm phần
     sau trượt vài mẫu, so "nửa đầu" như bản trước ra −2 dB vô nghĩa. Nay so trên 99,7–99,8% mẫu.
-  - F1: `make_ab.py` → `D:\GuzzMobileData\stage-07
-ghe_thu\B4\`, `...\L2\` (3 đoạn 30 s ở 20 / 50 / 80% mỗi bài,
+  - F1: `make_ab.py` → `D:\GuzzMobileData\stage-07\nghe_thu\B4\` và `...\L2\` (3 đoạn 30 s ở 20 / 50 / 80% mỗi bài,
     A/B ngẫu nhiên, khoá giải `khoa_giai.json`). Chờ người dùng nghe.
 
 ## Phát sinh
