@@ -4,6 +4,7 @@ import io.github.cozycode890.guzz.core.audio.ChunkEncoder
 import io.github.cozycode890.guzz.core.audio.ChunkList
 import io.github.cozycode890.guzz.core.audio.ChunkPreparer
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.audio.PrepareListener
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.audio.SampleRange
@@ -75,6 +76,7 @@ class SyntheticSource(
     private val noAudio: Boolean = false,
 ) : ChunkSource {
     var prepareCalls = 0
+    var lastClean: CleanSettings? = null
 
     override fun info() = SourceInfo("/test/$name", name, samples.size * 2L + 44, modifiedMillis, mime)
 
@@ -82,10 +84,13 @@ class SyntheticSource(
         folder: File,
         digest: String,
         chunk: ChunkSettings,
+        clean: CleanSettings,
+        saveClean: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList {
         prepareCalls++
+        lastClean = clean
         if (noAudio) throw NoAudioTrackException("Video $name không có luồng âm thanh nào.")
         // Giả bước giải mã để kiểm D66: xong thì goc.pcm bị xoá.
         File(folder, ChunkCache.RAW_PCM_FILE).writeBytes(ByteArray(16))
@@ -98,7 +103,12 @@ class SyntheticSource(
                 override fun checkCancelled() = listener.checkCancelled()
             },
             digest,
-        )
+            clean = clean,
+            log = listener::log,
+        ).also {
+            // "Mã hoá" âm thanh sạch: chép sach.pcm (test không có FLAC).
+            if (saveClean) File(folder, ChunkPreparer.CLEAN_PCM_FILE).copyTo(File(folder, ChunkSource.CLEAN_AUDIO_FILE), true)
+        }
     }
 }
 
@@ -152,9 +162,13 @@ fun text(s: String): JsonObject = buildJsonObject {
     }
 }
 
-/** Cấu hình như setUp của TestTranscribe: ghim model và thứ tự dự phòng, đoạn 0,4 phút, LF. */
+/**
+ * Cấu hình như setUp của TestTranscribe: ghim model và thứ tự dự phòng, đoạn 0,4 phút, LF. Tắt các bước làm sạch đầy đủ
+ * (Stage 7) để các ca cũ giữ nguyên đầu ra; ca làm sạch đủ tự bật.
+ */
 fun testConfig() = PipelineConfig(
     newline = "lf",
+    clean = CleanSettings.OFF,
     chunk = ChunkSettings(
         minSilenceLen = 1000, silenceThreshOffset = 20, keepSilence = 400,
         chunkMinutes = 0.4, searchSeconds = 3.0, minLastChunkSeconds = 5.0,

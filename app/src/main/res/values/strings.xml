@@ -45,7 +45,6 @@
     <!-- %1$s: tên thư mục -->
     <string name="queue_folder">Lưu vào: %1$s</string>
     <string name="queue_folder_none">(chưa chọn)</string>
-    <string name="queue_trim_silence">Cắt khoảng lặng</string>
     <string name="queue_problem_no_key">Chưa có API key. Nhập key ở trang Google AI (menu ⋮).</string>
     <string name="queue_problem_nothing">Không có tệp nào để chạy.</string>
     <string name="queue_view">Xem</string>
@@ -84,4 +83,23 @@
     <string name="speakers_save_map">Lưu bản đồ người nói (.nguoi_noi.txt)</string>
     <string name="queue_speakers">Người nói: %1$s</string>
     <string name="queue_speakers_open">Đổi</string>
+    <!-- Trang Âm thanh rút gọn (Stage 7, D89); tên preset như audio_preset_* của desktop -->
+    <string name="audio_title">Âm thanh</string>
+    <string name="audio_preset">Môi trường thu âm</string>
+    <string name="audio_preset_near_lecturer">Thu âm cự ly gần</string>
+    <string name="audio_preset_near_speaker">Thu qua loa phát thanh</string>
+    <string name="audio_preset_moving">Người nói di chuyển</string>
+    <string name="audio_preset_speakers_around">Hội trường đông người</string>
+    <string name="audio_preset_custom">Cấu hình thủ công</string>
+    <string name="audio_preset_hint">Các bộ thông số được tinh chỉnh sẵn cho từng môi trường thu âm. Riêng “Hội trường đông người” bật thêm bước giảm tiếng ồn đột ngột (tiếng va đập, ho, kéo ghế). Đổi một bước bên dưới thì thành “Cấu hình thủ công”.</string>
+    <string name="audio_steps">Các bước xử lý</string>
+    <string name="audio_denoise">Lọc tạp âm và giảm tiếng ồn nền</string>
+    <string name="audio_level">Cân bằng độ to khi người nói đi xa / lại gần</string>
+    <string name="audio_transient">Giảm tiếng ồn đột ngột (va đập, ho, kéo ghế)</string>
+    <string name="audio_trim">Loại bỏ khoảng lặng kéo dài</string>
+    <string name="audio_trim_hint">Loại bỏ khoảng lặng giúp gửi tệp nhanh hơn và tiết kiệm dung lượng. Mốc thời gian trong bản chép lời luôn được đồng bộ chính xác theo tệp gốc.</string>
+    <string name="audio_save_clean">Lưu kèm âm thanh đã lọc (.sach.flac)</string>
+    <string name="audio_save_clean_hint">Đã cắt bớt khoảng lặng nên ngắn hơn tệp gốc.</string>
+    <!-- %1$s: tên preset -->
+    <string name="queue_audio">Âm thanh: %1$s</string>
 </resources>

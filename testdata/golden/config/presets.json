@@ -1,0 +1,91 @@
+{
+  "default_preset": "moving_lecturer",
+  "default_values": {
+    "bandpass_high": 7000,
+    "bandpass_low": 80,
+    "keep_silence": 400,
+    "level_window_sec": 3.0,
+    "min_silence_len": 1000,
+    "noise_sample_sec": 1.5,
+    "prop_decrease": 0.8,
+    "silence_thresh_offset": 20,
+    "target_dbfs": -16.0,
+    "transient_clamp_db": 0.0
+  },
+  "fields": [
+    "target_dbfs",
+    "silence_thresh_offset",
+    "min_silence_len",
+    "keep_silence",
+    "noise_sample_sec",
+    "bandpass_low",
+    "bandpass_high",
+    "prop_decrease",
+    "level_window_sec",
+    "transient_clamp_db"
+  ],
+  "labels": [
+    "near_lecturer",
+    "near_speaker",
+    "moving_lecturer",
+    "speakers_around",
+    "custom"
+  ],
+  "meta": {
+    "guzz_desktop_commit": "97e42598c1227a4d6251b0449bb4749e0c2446c9",
+    "guzz_desktop_dirty": true,
+    "numpy": "2.5.3",
+    "python": "3.12.10",
+    "script": "gen_config_keys.py"
+  },
+  "presets": {
+    "moving_lecturer": {
+      "bandpass_high": 7000,
+      "bandpass_low": 80,
+      "keep_silence": 400,
+      "level_window_sec": 3.0,
+      "min_silence_len": 1000,
+      "noise_sample_sec": 1.5,
+      "prop_decrease": 0.8,
+      "silence_thresh_offset": 20,
+      "target_dbfs": -16.0,
+      "transient_clamp_db": 0.0
+    },
+    "near_lecturer": {
+      "bandpass_high": 8000,
+      "bandpass_low": 80,
+      "keep_silence": 300,
+      "level_window_sec": 0.0,
+      "min_silence_len": 700,
+      "noise_sample_sec": 2.0,
+      "prop_decrease": 0.85,
+      "silence_thresh_offset": 16,
+      "target_dbfs": -16.0,
+      "transient_clamp_db": 0.0
+    },
+    "near_speaker": {
+      "bandpass_high": 6000,
+      "bandpass_low": 80,
+      "keep_silence": 250,
+      "level_window_sec": 0.0,
+      "min_silence_len": 700,
+      "noise_sample_sec": 3.0,
+      "prop_decrease": 0.92,
+      "silence_thresh_offset": 14,
+      "target_dbfs": -18.0,
+      "transient_clamp_db": 0.0
+    },
+    "speakers_around": {
+      "bandpass_high": 8000,
+      "bandpass_low": 120,
+      "keep_silence": 300,
+      "level_window_sec": 0.0,
+      "min_silence_len": 700,
+      "noise_sample_sec": 3.0,
+      "prop_decrease": 0.85,
+      "silence_thresh_offset": 16,
+      "target_dbfs": -16.0,
+      "transient_clamp_db": 15.0
+    }
+  }
+}

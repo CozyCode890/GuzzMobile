@@ -1,6 +1,7 @@
 package io.github.cozycode890.guzz.core.pipeline
 
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
 import io.github.cozycode890.guzz.core.gemini.GeminiConfig
@@ -24,6 +25,8 @@ data class PipelineConfig(
     val deleteTempWhenDone: Boolean = SettingKeys.DELETE_TEMP_WHEN_DONE.default,
     val audioTrack: String = SettingKeys.AUDIO_TRACK.default,
     val chunk: ChunkSettings = ChunkSettings(),
+    val clean: CleanSettings = CleanSettings(),
+    val saveCleanAudio: Boolean = SettingKeys.SAVE_CLEAN_AUDIO.default,
     val chunkFormat: String = SettingKeys.CHUNK_FORMAT.default,
     val gemini: GeminiConfig = GeminiConfig(),
     val speakers: SpeakerConfig = SpeakerConfig(),
@@ -61,6 +64,8 @@ data class PipelineConfig(
                 searchSeconds = settings.get(SettingKeys.SEARCH_SECONDS),
                 minLastChunkSeconds = settings.get(SettingKeys.MIN_LAST_CHUNK_SECONDS),
             ),
+            clean = CleanSettings.load(settings),
+            saveCleanAudio = settings.get(SettingKeys.SAVE_CLEAN_AUDIO),
             chunkFormat = settings.get(SettingKeys.CHUNK_FORMAT),
             gemini = GeminiConfig.load(settings),
             speakers = SpeakerConfig.load(settings),

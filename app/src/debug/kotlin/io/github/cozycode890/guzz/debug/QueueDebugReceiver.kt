@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Process
 import io.github.cozycode890.guzz.GuzzApp
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
+import io.github.cozycode890.guzz.core.common.settings.AudioPresetValues
+import io.github.cozycode890.guzz.core.common.settings.AudioPresets
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.pipeline.QueueState
 import kotlinx.coroutines.CoroutineScope
@@ -92,6 +94,23 @@ class QueueDebugReceiver : BroadcastReceiver() {
                             "Lệnh adb: người nói ${if (s.get(SettingKeys.SPEAKERS_ENABLED)) s.get(SettingKeys.SPEAKERS_METHOD) else "tắt"}, " +
                                 "model ${s.get(SettingKeys.MODEL)}, số người ${s.get(SettingKeys.NUM_SPEAKERS)}, " +
                                 "lưu bản đồ ${s.get(SettingKeys.SAVE_SPEAKER_MAP)}.",
+                        )
+                    }
+                    "audio" -> {
+                        // Stage 7: chọn preset âm thanh / bật tắt từng bước bằng adb (preset: near_lecturer|near_speaker|
+                        // moving_lecturer|speakers_around).
+                        val s = container.settings
+                        intent.getStringExtra("preset")?.let { name ->
+                            val values = AudioPresets.all[name] ?: error("preset lạ: $name")
+                            values.applyTo(s)
+                            s.set(SettingKeys.DENOISE, true)
+                            s.set(SettingKeys.TRIM_SILENCE, true)
+                        }
+                        if (intent.hasExtra("denoise")) s.set(SettingKeys.DENOISE, intent.getBooleanExtra("denoise", true))
+                        if (intent.hasExtra("save_clean")) s.set(SettingKeys.SAVE_CLEAN_AUDIO, intent.getBooleanExtra("save_clean", false))
+                        GuzzLog.info(
+                            "Lệnh adb: âm thanh ${AudioPresets.detect(AudioPresetValues.read(s))}, khử ồn ${s.get(SettingKeys.DENOISE)}, " +
+                                "lưu âm thanh sạch ${s.get(SettingKeys.SAVE_CLEAN_AUDIO)}.",
                         )
                     }
                     "status", null -> Unit

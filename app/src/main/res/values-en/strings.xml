@@ -37,7 +37,6 @@
     <string name="queue_choose_folder">Choose folder</string>
     <string name="queue_folder">Save to: %1$s</string>
     <string name="queue_folder_none">(not chosen)</string>
-    <string name="queue_trim_silence">Trim silence</string>
     <string name="queue_problem_no_key">No API key. Enter it on the Google AI page (⋮ menu).</string>
     <string name="queue_problem_nothing">Nothing to run.</string>
     <string name="queue_view">View</string>
@@ -75,4 +74,23 @@
     <string name="speakers_save_map">Save the speaker map (.nguoi_noi.txt)</string>
     <string name="queue_speakers">Speakers: %1$s</string>
     <string name="queue_speakers_open">Change</string>
+    <!-- Audio page (Stage 7, D89); preset names as the desktop audio_preset_* -->
+    <string name="audio_title">Audio</string>
+    <string name="audio_preset">Recording environment</string>
+    <string name="audio_preset_near_lecturer">Close-range recording</string>
+    <string name="audio_preset_near_speaker">Recorded through speakers</string>
+    <string name="audio_preset_moving">Moving speaker</string>
+    <string name="audio_preset_speakers_around">Conference hall</string>
+    <string name="audio_preset_custom">Custom parameters</string>
+    <string name="audio_preset_hint">Presets tuned for common recording environments. “Conference hall” adds a step that suppresses sudden loud noises (desk knocks, coughs, scraping chairs). Changing a step below switches to “Custom parameters”.</string>
+    <string name="audio_steps">Processing steps</string>
+    <string name="audio_denoise">Noise reduction &amp; background filtering</string>
+    <string name="audio_level">Level loudness when the speaker moves away / closer</string>
+    <string name="audio_transient">Suppress sudden loud noises (knocks, coughs, chairs)</string>
+    <string name="audio_trim">Remove long silent intervals</string>
+    <string name="audio_trim_hint">Removing silences speeds up processing and reduces upload size. Timestamps in the transcript are always synchronized with the original audio.</string>
+    <string name="audio_save_clean">Also save the cleaned audio (.sach.flac)</string>
+    <string name="audio_save_clean_hint">Long silences are removed, so it is shorter than the original.</string>
+    <!-- %1$s: preset name -->
+    <string name="queue_audio">Audio: %1$s</string>
 </resources>

@@ -139,7 +139,8 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 :app                  Compose UI, điều hướng, thông báo, ghép các module
 :core:common          Settings, TimeMap, kiểu dữ liệu chung, log                  JVM thuần
 :core:audio           chunker, cắt lặng, chuẩn hoá, resampler, đọc / ghi PCM 16-bit,
-                      ChunkPreparer; (Stage 7) DSP đầy đủ                          JVM thuần
+                      ChunkPreparer; (Stage 7) AudioCleaner + gói dsp/ (FFT,
+                      Butterworth, sosfilt, STFT, noisereduce)                     JVM thuần
 :core:media           giải mã, ghi đoạn FLAC, liệt kê / chọn luồng, kiểm chỗ trống Android (MediaCodec)
 :core:gemini          Files API, Interactions API, phân loại lỗi, RateLimiter,
                       QuotaTracker, đổi model dự phòng                             JVM thuần
@@ -163,7 +164,8 @@ sherpa-onnx, service, intent) mới nằm ở module Android. Stage 0 có thể 
 | `video_io.py`: liệt kê, chọn, trích luồng âm thanh | `:core:media` | 2 |
 | `chunker.py` | `:core:audio`, port nguyên thuật toán | 2 |
 | `audio_processing.py`: `find_speech_segments`, `trim_silence`, `boost_and_normalize`, `measure_dbfs`, TimeMap | `:core:audio` | 2 |
-| `audio_processing.py`: `bandpass_filter`, `reduce_noise` (noisereduce), `suppress_transients`, `level_loudness`, preset | `:core:audio` | 7 |
+| `audio_processing.py`: `bandpass_filter`, `reduce_noise` (noisereduce), `suppress_transients`, `level_loudness` | `:core:audio` (`AudioCleaner`, `dsp/`) | 7 |
+| `gui/presets.py` | `:core:common` (`AudioPresets`) | 7 |
 | `google_ai.py` | `:core:gemini` | 3 |
 | `quota.py` (chỉ còn dùng trong app, không chung tệp với app khác) | `:core:gemini` | 3 |
 | `transcribe.py`: `ChunkDispatcher` (đổi model dự phòng) | `:core:gemini` | 3 |

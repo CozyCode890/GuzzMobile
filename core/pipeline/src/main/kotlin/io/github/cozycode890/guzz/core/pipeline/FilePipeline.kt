@@ -150,7 +150,7 @@ class FilePipeline(
         val folder = tempDirFor(info)
         val isVideo = Transcript.isVideo(info.displayName, info.mimeType)
         val audioKey = CacheKeys.audioHash(
-            fingerprint(info), PipelineConfig.SAMPLE_RATE, cfg.chunk, cfg.chunkFormat,
+            fingerprint(info), PipelineConfig.SAMPLE_RATE, cfg.chunk, cfg.clean, cfg.chunkFormat,
             if (isVideo) listOf("track", cfg.audioTrack) else null,
         )
 
@@ -238,6 +238,12 @@ class FilePipeline(
                 )
                 output.write(mapName, mapBytes, overwrite = names.any { it.equals(mapName, ignoreCase = true) })
             }
+            val cleanAudio = File(folder, ChunkSource.CLEAN_AUDIO_FILE)
+            if (cfg.saveCleanAudio && nonEmpty(cleanAudio)) {
+                // Như desktop: <tên>.sach.flac cạnh bản chép lời, có thì ghi đè.
+                val cleanName = pySplitext(name).first + ".sach.flac"
+                output.copy(cleanName, cleanAudio, overwrite = names.any { it.equals(cleanName, ignoreCase = true) })
+            }
             if (minutes.isNotEmpty()) logger.info("Thời gian nói: " + SpeakerTranscript.minutesLog(minutes))
             logger.info("HOÀN THÀNH: ${written.second}")
             if (cfg.deleteTempWhenDone) folder.deleteRecursively()
@@ -267,7 +273,11 @@ class FilePipeline(
         keepPcm: String? = null,
     ): ChunkList {
         val existing = withContext(io) {
-            ChunkCache.read(folder, digest)?.takeIf { keepPcm == null || nonEmpty(File(folder, keepPcm)) }
+            ChunkCache.read(folder, digest)?.takeIf {
+                (keepPcm == null || nonEmpty(File(folder, keepPcm))) &&
+                    // Như need_clean của desktop: cần lưu âm thanh sạch mà chưa có thì xử lý lại.
+                    (!cfg.saveCleanAudio || nonEmpty(File(folder, ChunkSource.CLEAN_AUDIO_FILE)))
+            }
         }
         if (existing != null) {
             logger.info("Các đoạn âm thanh đã có sẵn (${existing.chunks.size} đoạn), bỏ qua bước xử lý âm thanh.")
@@ -280,10 +290,11 @@ class FilePipeline(
             try {
                 folder.mkdirs()
                 source.prepare(
-                    folder, digest, cfg.chunk, cfg.audioTrack,
+                    folder, digest, cfg.chunk, cfg.clean, cfg.saveCleanAudio, cfg.audioTrack,
                     object : SourceListener {
                         override fun onProgress(fraction: Double, step: String) = progress(Stage.CLEAN, fraction, step = step)
                         override fun checkCancelled() = context.ensureActive()
+                        override fun log(message: String) = logger.info(message.trim())
                     },
                 )
             } finally {

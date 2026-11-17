@@ -2,6 +2,7 @@ package io.github.cozycode890.guzz.core.pipeline
 
 import io.github.cozycode890.guzz.core.audio.ChunkList
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import java.io.File
 import java.io.IOException
 
@@ -24,6 +25,9 @@ data class SourceInfo(
 interface SourceListener {
     fun onProgress(fraction: Double, step: String) {}
     fun checkCancelled() {}
+
+    /** Một dòng nhật ký của bước làm sạch (vd "Đã ghìm 3 tiếng động…"). */
+    fun log(message: String) {}
 }
 
 /**
@@ -35,16 +39,24 @@ interface ChunkSource {
     fun info(): SourceInfo
 
     /**
-     * Cắt đoạn vào [folder] và ghi `danh_sach_doan.json` có khoá `ma` = [digest]. Video không có luồng âm thanh thì ném
-     * [NoAudioTrackException].
+     * Làm sạch ([clean], Stage 7), cắt đoạn vào [folder] và ghi `danh_sach_doan.json` có khoá `ma` = [digest]. [saveClean]:
+     * ghi thêm âm thanh đã làm sạch [CLEAN_AUDIO_FILE] (FLAC) vào [folder] để chép ra cạnh bản chép lời. Video không có
+     * luồng âm thanh thì ném [NoAudioTrackException].
      */
     fun prepare(
         folder: File,
         digest: String,
         chunk: ChunkSettings,
+        clean: CleanSettings,
+        saveClean: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList
+
+    companion object {
+        /** Âm thanh đã làm sạch trong thư mục tạm, như `CLEAN_AUDIO_FILE` của transcribe.py. */
+        const val CLEAN_AUDIO_FILE = "sach.flac"
+    }
 }
 
 /** Video không có luồng âm thanh nào. Port của transcribe.py: `NoAudioError`. */
@@ -73,6 +85,12 @@ interface OutputFolder {
      * thì không để lại tệp dở. Trả về vị trí đã ghi (đường dẫn hoặc URI) để mở / chia sẻ.
      */
     fun write(name: String, bytes: ByteArray, overwrite: Boolean): String
+
+    /**
+     * Chép tệp [source] (có thể vài trăm MB, vd `<tên>.sach.flac`) thành [name], cùng quy tắc như [write]. Mặc định đọc
+     * cả tệp vào RAM; bản thật ghi theo dòng.
+     */
+    fun copy(name: String, source: File, overwrite: Boolean): String = write(name, source.readBytes(), overwrite)
 }
 
 /** Thư mục thường: ghi `.tmp` rồi đổi tên như `write_text` của desktop. */
@@ -89,6 +107,21 @@ class DirectoryOutputFolder(val dir: File) : OutputFolder {
         val tmp = File(dir, "$name.tmp")
         try {
             tmp.writeBytes(bytes)
+            if (!overwrite && target.exists()) throw IOException("$target đã có")
+            target.delete()
+            if (!tmp.renameTo(target)) throw IOException("Không đổi tên được $tmp")
+        } catch (e: IOException) {
+            tmp.delete()
+            throw PipelineException("Không ghi được $target: ${e.message}", cause = e)
+        }
+        return target.path
+    }
+
+    override fun copy(name: String, source: File, overwrite: Boolean): String {
+        val target = File(dir, name)
+        val tmp = File(dir, "$name.tmp")
+        try {
+            source.copyTo(tmp, overwrite = true)
             if (!overwrite && target.exists()) throw IOException("$target đã có")
             target.delete()
             if (!tmp.renameTo(target)) throw IOException("Không đổi tên được $tmp")

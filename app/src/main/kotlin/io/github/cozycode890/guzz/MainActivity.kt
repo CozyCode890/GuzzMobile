@@ -38,7 +38,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -147,7 +146,7 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
     val active by queue.active.collectAsState()
     val outputDir by container.settings.flow(SettingKeys.OUTPUT_DIR).collectAsState(initial = null)
     val model by container.settings.flow(SettingKeys.MODEL).collectAsState(initial = "")
-    val trimSilence by container.settings.flow(SettingKeys.TRIM_SILENCE).collectAsState(initial = true)
+    val audioPreset by remember { presetFlow(container.settings) }.collectAsState(initial = null)
     val speakersOn by container.settings.flow(SettingKeys.SPEAKERS_ENABLED).collectAsState(initial = false)
     val speakersMethod by container.settings.flow(SettingKeys.SPEAKERS_METHOD).collectAsState(initial = "")
     var hasKey by remember { mutableStateOf(true) }
@@ -230,6 +229,10 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
                 Box {
                     TextButton(onClick = { menuOpen = true }) { Text("⋮") }
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.audio_title)) }, onClick = {
+                            menuOpen = false
+                            context.startActivity(Intent(context, AudioActivity::class.java))
+                        })
                         DropdownMenuItem(text = { Text(stringResource(R.string.speakers_title)) }, onClick = {
                             menuOpen = false
                             context.startActivity(Intent(context, SpeakersActivity::class.java))
@@ -281,7 +284,8 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
             QuickSettings(
                 outputLabel = outputDir?.takeIf { it.isNotBlank() }?.let { Uri.parse(it).lastPathSegment?.substringAfter(':') ?: it },
                 model = model,
-                trimSilence = trimSilence,
+                audioLabel = audioPreset?.let { presetLabel(context, it) } ?: "",
+                onAudio = { context.startActivity(Intent(context, AudioActivity::class.java)) },
                 speakersLabel = if (speakersOn) methodLabel(context, speakersMethod) else stringResource(R.string.speakers_off),
                 onSpeakers = { context.startActivity(Intent(context, SpeakersActivity::class.java)) },
                 onPickFolder = { pickFolder.launch(DOCUMENTS_HINT) },
@@ -297,7 +301,6 @@ private fun QueueScreen(container: AppContainer, resumes: StateFlow<Int>) {
                         message = invalidModelMessage
                     }
                 },
-                onTrimSilence = { v -> scope.launch { container.settings.set(SettingKeys.TRIM_SILENCE, v) } },
             )
 
             // ---- nút
@@ -351,12 +354,12 @@ private fun Banner(text: String, action: String?, onAction: () -> Unit) {
 private fun QuickSettings(
     outputLabel: String?,
     model: String,
-    trimSilence: Boolean,
+    audioLabel: String,
+    onAudio: () -> Unit,
     speakersLabel: String,
     onSpeakers: () -> Unit,
     onPickFolder: () -> Unit,
     onModel: (String) -> Unit,
-    onTrimSilence: (Boolean) -> Unit,
 ) {
     var modelInput by remember(model) { mutableStateOf(model) }
     Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
@@ -383,8 +386,12 @@ private fun QuickSettings(
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.queue_trim_silence), modifier = Modifier.weight(1f))
-                Switch(checked = trimSilence, onCheckedChange = onTrimSilence)
+                // Stage 7 (D89): công tắc "Cắt lặng" cũ chuyển vào trang Âm thanh.
+                Text(
+                    stringResource(R.string.queue_audio, audioLabel), modifier = Modifier.weight(1f),
+                    maxLines = 2, overflow = TextOverflow.Ellipsis,
+                )
+                TextButton(onClick = onAudio) { Text(stringResource(R.string.queue_speakers_open)) }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(

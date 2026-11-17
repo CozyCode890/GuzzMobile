@@ -16,6 +16,7 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import io.github.cozycode890.guzz.GuzzApp
 import io.github.cozycode890.guzz.R
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
@@ -124,12 +125,20 @@ class AudioDebugService : Service() {
         stepStart["giai_ma"] = t0
         GuzzLog.info("Thử lõi âm thanh: bắt đầu $name, luồng $track → ${folder.path}")
         try {
-            val settings = runBlocking { AudioPreparation.chunkSettings((application as GuzzApp).container.settings) }
+            val appSettings = (application as GuzzApp).container.settings
+            val settings = runBlocking { AudioPreparation.chunkSettings(appSettings) }
+            // Stage 7: làm sạch đủ theo cài đặt (preset) như hàng đợi.
+            val clean = runBlocking { CleanSettings.load(appSettings) }
+            val cleanLog = JSONArray()
             json.put("cai_dat", JSONObject().put("target_dbfs", settings.targetDbfs).put("trim_silence", settings.trimSilence)
                 .put("min_silence_len", settings.minSilenceLen).put("silence_thresh_offset", settings.silenceThreshOffset)
                 .put("keep_silence", settings.keepSilence).put("chunk_minutes", settings.chunkMinutes)
                 .put("search_seconds", settings.searchSeconds).put("min_last_chunk_seconds", settings.minLastChunkSeconds)
-                .put("audio_track", track))
+                .put("audio_track", track)
+                .put("lam_sach", JSONObject().put("denoise", clean.denoise).put("noise_sample_sec", clean.noiseSampleSec)
+                    .put("bandpass_low", clean.bandpassLow).put("bandpass_high", clean.bandpassHigh)
+                    .put("prop_decrease", clean.propDecrease).put("level_window_sec", clean.levelWindowSec)
+                    .put("transient_clamp_db", clean.transientClampDb)))
             val listener = object : PreparationListener {
                 private var lastUi = 0L
 
@@ -148,6 +157,11 @@ class AudioDebugService : Service() {
                     if (cancelled) throw CancellationException("người dùng bấm Dừng")
                 }
 
+                override fun log(message: String) {
+                    cleanLog.put(message.trim())
+                    GuzzLog.info("Thử lõi âm thanh: ${message.trim()}")
+                }
+
                 private fun ui(step: String, fraction: Double) {
                     val now = SystemClock.elapsedRealtime()
                     if (now - lastUi < 250 && fraction < 1.0) return
@@ -155,7 +169,8 @@ class AudioDebugService : Service() {
                     state.value = state.value.copy(step = step, fraction = fraction)
                 }
             }
-            val r = AudioPreparation(this).run(input, track, settings, folder, listener)
+            val r = AudioPreparation(this).run(input, track, settings, folder, listener, clean = clean)
+            json.put("nhat_ky_lam_sach", cleanLog)
             val seconds = (SystemClock.elapsedRealtime() - t0) / 1000.0
             val audioSeconds = r.decode.samples / r.decode.sampleRate.toDouble()
             json.put("ket_qua", "ok")

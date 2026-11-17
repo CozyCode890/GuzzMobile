@@ -105,7 +105,8 @@ class ChunkPreparerTest {
         val wav = Golden.readWav("prepare/lecture.wav")
         val settings = ChunkSettings(minSilenceLen = 700, silenceThreshOffset = 16, keepSilence = 300, chunkMinutes = 0.25,
             searchSeconds = 3.0, minLastChunkSeconds = 4.0)
-        for (stopAt in PrepareStep.entries) {
+        // Các bước của Stage 2; bước làm sạch đầy đủ: CleaningGoldenTest.
+        for (stopAt in listOf(PrepareStep.NORMALIZE, PrepareStep.TRIM, PrepareStep.WRITE_CLEAN, PrepareStep.WRITE_CHUNKS)) {
             val folder = File(dir, stopAt.name)
             val listener = object : PrepareListener {
                 var current: PrepareStep? = null

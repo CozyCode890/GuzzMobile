@@ -61,6 +61,24 @@ object SettingKeys {
     val SILENCE_THRESH_OFFSET = IntSetting("AUDIO", "silence_thresh_offset", default = 20)
     val KEEP_SILENCE = IntSetting("AUDIO", "keep_silence", default = 400, min = 0)
 
+    // [AUDIO] (Stage 7): làm sạch đầy đủ. Mặc định = preset "Giảng viên đi lại", đúng config.default.txt (D87). Desktop
+    // chỉ chặn transient_clamp_db (`max(0, …)`); ở đây chặn thêm prop_decrease trong [0, 1] và noise_sample_sec,
+    // level_window_sec không âm vì giá trị ngoài khoảng đó vô nghĩa (reduce_noise tự nâng time_constant_s lên 0,2 s,
+    // level_loudness coi ≤ 0 là tắt). Không có `sample_rate`: mobile xử lý cố định 16 kHz (Stage 2,
+    // `AudioPreparation.SAMPLE_RATE`), Google AI cũng hạ âm thanh về 16 kHz.
+    val DENOISE = BoolSetting("AUDIO", "denoise", default = true)
+    val NOISE_SAMPLE_SEC = DoubleSetting("AUDIO", "noise_sample_sec", default = 1.5, min = 0.0)
+    val BANDPASS_LOW = IntSetting("AUDIO", "bandpass_low", default = 80)
+    val BANDPASS_HIGH = IntSetting("AUDIO", "bandpass_high", default = 7000)
+    val PROP_DECREASE = DoubleSetting("AUDIO", "prop_decrease", default = 0.8, min = 0.0, max = 1.0)
+    val LEVEL_WINDOW_SEC = DoubleSetting("AUDIO", "level_window_sec", default = 3.0, min = 0.0)
+
+    /** Ghìm tiếng động to hơn mức thường quá số dB này; 0 = tắt. Như load_config: `max(0.0, …)`. */
+    val TRANSIENT_CLAMP_DB = DoubleSetting("AUDIO", "transient_clamp_db", default = 0.0, min = 0.0)
+
+    /** Lưu thêm âm thanh đã làm sạch `<tên>.sach.flac` cạnh bản chép lời. */
+    val SAVE_CLEAN_AUDIO = BoolSetting("OUTPUT", "save_clean_audio", default = false)
+
     // [VIDEO] (Stage 2). `extract_first`, `extract_format` của desktop không có trên mobile (D47): bài nào cũng được giải
     // mã một lần ra PCM tạm. Giá trị lạ của audio_track không làm hỏng gì: chọn luồng lùi về luồng đầu như desktop.
     val AUDIO_TRACK = StringSetting("VIDEO", "audio_track", default = "auto")
@@ -179,6 +197,14 @@ object SettingKeys {
         MIN_SILENCE_LEN,
         SILENCE_THRESH_OFFSET,
         KEEP_SILENCE,
+        DENOISE,
+        NOISE_SAMPLE_SEC,
+        BANDPASS_LOW,
+        BANDPASS_HIGH,
+        PROP_DECREASE,
+        LEVEL_WINDOW_SEC,
+        TRANSIENT_CLAMP_DB,
+        SAVE_CLEAN_AUDIO,
         AUDIO_TRACK,
         SKIP_SILENT,
         CHUNK_MINUTES,

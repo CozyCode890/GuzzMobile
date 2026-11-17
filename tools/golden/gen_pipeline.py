@@ -14,6 +14,7 @@ Test Kotlin: io.github.cozycode890.guzz.core.pipeline.*GoldenTest.
 from __future__ import annotations
 
 import base64
+import dataclasses
 import datetime as dt
 import json
 import os
@@ -25,7 +26,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import _common  # noqa: E402
 
-_common.use_desktop_modules()
+desktop = _common.use_desktop_modules()
 import config  # noqa: E402
 import speaker  # noqa: E402
 import transcribe  # noqa: E402
@@ -61,13 +62,25 @@ TEMP_DIR_CASES = [
 ]
 
 AUDIO_HASH_CASES = [
-    # (vân tay, tham số âm thanh của mobile theo thứ tự audioHash, chữ ký video hoặc None)
-    ("/sdcard/B5.m4a|81234567|1789660800", [16000, -16.0, True, 1000, 20, 400, 10.0, 20.0, 60.0, "flac"], None),
-    ("/sdcard/B5.m4a|81234567|1789660800", [16000, -16.0, True, 1000, 20, 400, 10.0, 20.0, 60.0, "flac"],
-     ["track", "auto"]),
-    ("content://p/document/7|99|1789660800", [16000, -18.5, False, 700, 16, 300, 0.4, 3.0, 5.0, "flac"],
+    # (vân tay, tham số Config của desktop, chữ ký video hoặc None). Mã tính bằng chính transcribe.audio_hash (Stage 7:
+    # gồm cả tham số làm sạch; transient_clamp_db chỉ vào mã khi > 0).
+    ("/sdcard/B5.m4a|81234567|1789660800", {}, None),
+    ("/sdcard/B5.m4a|81234567|1789660800", {}, ["track", "auto"]),
+    ("content://p/document/7|99|1789660800",
+     dict(denoise=False, target_dbfs=-18.5, silence_trimming=False, min_silence_len=700, silence_thresh_offset=16,
+          keep_silence=300, chunk_minutes=0.4, chunk_search_seconds=3.0, min_last_chunk_seconds=5.0,
+          noise_sample_sec=2.0, bandpass_low=120, bandpass_high=8000, prop_decrease=0.85, level_window_sec=0.0),
      ["track", "1"]),
+    ("/sdcard/L1.m4a|5|7", dict(noise_sample_sec=3.0, bandpass_low=120, bandpass_high=8000, prop_decrease=0.85,
+                                level_window_sec=0.0, transient_clamp_db=15.0), None),
 ]
+
+# Tên trường Config của desktop → khoá trong golden (đúng tên tham số Kotlin).
+AUDIO_HASH_FIELDS = ["denoise", "sample_rate", "target_dbfs", "silence_trimming", "min_silence_len",
+                     "silence_thresh_offset", "keep_silence", "noise_sample_sec", "bandpass_low", "bandpass_high",
+                     "prop_decrease", "level_window_sec", "transient_clamp_db", "chunk_minutes",
+                     "chunk_search_seconds", "min_last_chunk_seconds", "chunk_format"]
+
 
 SHARED_KEY_CASES = [
     # (audio_key, model, prompt hay None, languages, vocabulary, transcribe_mode)
@@ -91,10 +104,13 @@ def hash_json() -> dict:
         temp_dirs.append({"name": name, "fingerprint": fp, "dir": os.path.basename(folder)})
 
     audio = []
-    for fp, params, signature in AUDIO_HASH_CASES:
-        digest = transcribe._hash(fp, *params)
-        audio.append({"fingerprint": fp, "params": params, "video_signature": signature,
-                      "hash": digest if signature is None else transcribe._hash(digest, signature)})
+    default_cfg = config.load_config(str(desktop / "config.default.txt"))
+    for fp, overrides, signature in AUDIO_HASH_CASES:
+        cfg = dataclasses.replace(default_cfg, **overrides)
+        with mock.patch.object(transcribe, "fingerprint", return_value=fp):
+            digest = transcribe.audio_hash(cfg, "x", None if signature is None else tuple(signature))
+        audio.append({"fingerprint": fp, "params": {k: getattr(cfg, k) for k in AUDIO_HASH_FIELDS},
+                      "video_signature": signature, "hash": digest})
 
     shared = []
     for audio_key, model, prompt, langs, vocab, mode in SHARED_KEY_CASES:

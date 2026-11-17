@@ -25,7 +25,7 @@ thì hỏi người dùng ngay trước khi gửi.
 | 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ✅ 2026-11-15 | [stage-05-diarization.md](plans/stage-05-diarization.md) |
 | 6 | Intent cho MacroDroid | ⬜ | [stage-06-intents.md](plans/stage-06-intents.md) |
-| 7 | Làm sạch âm thanh đầy đủ | 📝 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
+| 7 | Làm sạch âm thanh đầy đủ | 🔨 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ⬜ | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
@@ -155,6 +155,19 @@ $env:GUZZ_SPIKE_DATA = 'D:\GuzzMobileData\stage-01'; .\gradlew :core:speaker:tes
 .\tools\device\queue_debug.ps1 -Speakers off
 # Đo ngưỡng / luật min–max / int8 / âm thanh gốc trên PC (venv của Stage 1, chạy nền vài giờ): spikes\README.md
 D:\GuzzMobileData\stage-01\venv\Scripts\python.exe spikes\diarization\sweep.py S5B1 --embs campplus-zhen --jobs 3 --threads 4
+
+# Làm sạch âm thanh đầy đủ (Stage 7): golden nền số (FFT, butter, sosfilt, stft…) và từng bước làm sạch + chuỗi
+# clean_audio; tạo lại riêng golden của Stage 7
+.\gradlew :core:audio:test --tests "*DspGoldenTest" --tests "*CleaningGoldenTest" --rerun -i
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_dsp.py
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_cleaning.py
+# Golden chuỗi đủ trên bản ghi thật B1–B5 (preset mặc định; ghi ~1 GB vào $env:GUZZ_SPIKE_DATA\golden-stage-07), rồi test
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\real_golden.py --stage7
+$env:GUZZ_SPIKE_DATA = 'D:\GuzzMobileData\stage-01'; .\gradlew :core:audio:test --tests "*RealRecordingGoldenTest" --rerun -i
+# Trên máy (bản debug): chọn preset bằng adb, chạy màn hình thử âm thanh, kéo goc.pcm + sach.pcm về rồi so với desktop
+.\tools\device\queue_debug.ps1 -Preset speakers_around       # near_lecturer|near_speaker|moving_lecturer|speakers_around
+.\tools\device\audio_debug.ps1 -Path L1_20m.m4a -PullClean D:\GuzzMobileData\stage-07\d2\speakers_around
+D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_clean.py D:\GuzzMobileData\stage-07\d2\speakers_around\L1_20m
 
 # Đo tốc độ resampler trên PC (chỉ chạy khi đặt GUZZ_BENCH=1)
 $env:GUZZ_BENCH = '1'; .\gradlew :core:audio:test --tests "*SincResamplerBenchmark" --rerun -i

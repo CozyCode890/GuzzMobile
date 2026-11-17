@@ -1,6 +1,7 @@
 package io.github.cozycode890.guzz.core.pipeline
 
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.gemini.DiarizationMethod
 import io.github.cozycode890.guzz.core.gemini.GeminiConfig
 
@@ -25,8 +26,9 @@ object CacheKeys {
         "${pySplitext(displayName).first}_${pyHash(fingerprint).take(8)}"
 
     /**
-     * Mã của các đoạn âm thanh: vân tay + mọi tham số làm đổi nội dung đoạn. Port của transcribe.py: `audio_hash`, với
-     * các tham số mobile có (16 kHz, làm sạch tối giản của Stage 2, cắt đoạn, định dạng); Stage 7 thêm tham số DSP.
+     * Mã của các đoạn âm thanh: vân tay + mọi tham số làm đổi nội dung đoạn. Port của transcribe.py: `audio_hash`, đúng
+     * thứ tự tham số của desktop (Stage 7 thêm các tham số làm sạch); `transient_clamp_db` chỉ thêm vào khi > 0 như
+     * desktop.
      *
      * @param videoSignature cách lấy tiếng từ video (vd luồng đã chọn), `null` với tệp âm thanh: như desktop, mã của tệp
      * âm thanh không đổi khi thêm khái niệm video.
@@ -35,14 +37,18 @@ object CacheKeys {
         fingerprint: String,
         sampleRate: Int,
         chunk: ChunkSettings,
+        clean: CleanSettings,
         chunkFormat: String,
         videoSignature: List<Any?>? = null,
     ): String {
-        val digest = pyHash(
-            fingerprint, sampleRate, chunk.targetDbfs, chunk.trimSilence, chunk.minSilenceLen,
-            chunk.silenceThreshOffset, chunk.keepSilence, chunk.chunkMinutes, chunk.searchSeconds,
-            chunk.minLastChunkSeconds, chunkFormat,
+        val parts = mutableListOf<Any?>(
+            fingerprint, clean.denoise, sampleRate, chunk.targetDbfs, chunk.trimSilence, chunk.minSilenceLen,
+            chunk.silenceThreshOffset, chunk.keepSilence, clean.noiseSampleSec, clean.bandpassLow, clean.bandpassHigh,
+            clean.propDecrease, clean.levelWindowSec, chunk.chunkMinutes, chunk.searchSeconds, chunk.minLastChunkSeconds,
+            chunkFormat,
         )
+        if (clean.transientClampDb > 0) parts.add(listOf("chan_dot_ngot_db", clean.transientClampDb))
+        val digest = pyHash(*parts.toTypedArray())
         return if (videoSignature == null) digest else pyHash(digest, videoSignature)
     }
 

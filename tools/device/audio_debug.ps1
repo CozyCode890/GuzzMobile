@@ -3,9 +3,12 @@
 #   .\tools\device\audio_debug.ps1 -Path L1_120m.m4a -ScreenOff
 #   .\tools\device\audio_debug.ps1 -Path two_tracks.mp4 -Track 1
 #   .\tools\device\audio_debug.ps1 -Path V1.mp4 -PullPcm "$env:GUZZ_SPIKE_DATA\out\stage-02"
+#   .\tools\device\audio_debug.ps1 -Path L1_20m.m4a -PullClean D:\GuzzMobileData\stage-07     # Stage 7
 #
 # Tệp phải nằm sẵn trong files/input của app (adb push vào /sdcard/Android/data/<package>/files/input/). Kết quả ở
-# files/debug-audio/<tên bài>/ket_qua.json; -Pull kéo ket_qua.json và danh_sach_doan.json về, -PullPcm kéo thêm goc.pcm.
+# files/debug-audio/<tên bài>/ket_qua.json; -Pull kéo ket_qua.json và danh_sach_doan.json về, -PullPcm kéo thêm goc.pcm,
+# -PullClean kéo thêm goc.pcm và sach.pcm (đã làm sạch theo preset đang chọn + cắt lặng; so với desktop:
+# tools\device\compare_clean.py). Làm sạch theo cài đặt của app: đổi preset bằng queue_debug.ps1 -Preset.
 # -ScreenOff tắt màn hình ngay sau khi bắt đầu (phím SLEEP), để đo đúng điều kiện D45.
 param(
     [Parameter(Mandatory)][string]$Path,
@@ -13,6 +16,7 @@ param(
     [switch]$ScreenOff,
     [string]$Pull,
     [string]$PullPcm,
+    [string]$PullClean,
     [int]$TimeoutMin = 60
 )
 
@@ -43,12 +47,13 @@ while (-not (adb shell "ls $folder/ket_qua.json 2>/dev/null")) {
 }
 $json = adb shell cat "$folder/ket_qua.json" | Out-String
 $r = $json | ConvertFrom-Json
-if ($Pull -or $PullPcm) {
-    $dest = Join-Path ($Pull ? $Pull : $PullPcm) $name
+if ($Pull -or $PullPcm -or $PullClean) {
+    $dest = Join-Path ($Pull ? $Pull : ($PullPcm ? $PullPcm : $PullClean)) $name
     New-Item -ItemType Directory -Force $dest | Out-Null
     adb pull "$folder/ket_qua.json" $dest | Out-Null
     adb pull "$folder/danh_sach_doan.json" $dest 2>$null | Out-Null
-    if ($PullPcm) { adb pull "$folder/goc.pcm" $dest | Out-Null }
+    if ($PullPcm -or $PullClean) { adb pull "$folder/goc.pcm" $dest | Out-Null }
+    if ($PullClean) { adb pull "$folder/sach.pcm" $dest | Out-Null }
 }
 if ($r.ket_qua -ne 'ok') {
     Write-Host "${Path}: LỖI $($r.loi)"

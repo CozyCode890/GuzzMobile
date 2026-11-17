@@ -2,36 +2,50 @@
   "audio_hash": [
     {
       "fingerprint": "/sdcard/B5.m4a|81234567|1789660800",
-      "hash": "c8e5d7ca64",
-      "params": [
-        16000,
-        -16.0,
-        true,
-        1000,
-        20,
-        400,
-        10.0,
-        20.0,
-        60.0,
-        "flac"
-      ],
+      "hash": "d583e602b5",
+      "params": {
+        "bandpass_high": 7000,
+        "bandpass_low": 80,
+        "chunk_format": "flac",
+        "chunk_minutes": 10.0,
+        "chunk_search_seconds": 20.0,
+        "denoise": true,
+        "keep_silence": 400,
+        "level_window_sec": 3.0,
+        "min_last_chunk_seconds": 60.0,
+        "min_silence_len": 1000,
+        "noise_sample_sec": 1.5,
+        "prop_decrease": 0.8,
+        "sample_rate": 16000,
+        "silence_thresh_offset": 20,
+        "silence_trimming": true,
+        "target_dbfs": -16.0,
+        "transient_clamp_db": 0.0
+      },
       "video_signature": null
     },
     {
       "fingerprint": "/sdcard/B5.m4a|81234567|1789660800",
-      "hash": "1c91df03f8",
-      "params": [
-        16000,
-        -16.0,
-        true,
-        1000,
-        20,
-        400,
-        10.0,
-        20.0,
-        60.0,
-        "flac"
-      ],
+      "hash": "3cb2301fa7",
+      "params": {
+        "bandpass_high": 7000,
+        "bandpass_low": 80,
+        "chunk_format": "flac",
+        "chunk_minutes": 10.0,
+        "chunk_search_seconds": 20.0,
+        "denoise": true,
+        "keep_silence": 400,
+        "level_window_sec": 3.0,
+        "min_last_chunk_seconds": 60.0,
+        "min_silence_len": 1000,
+        "noise_sample_sec": 1.5,
+        "prop_decrease": 0.8,
+        "sample_rate": 16000,
+        "silence_thresh_offset": 20,
+        "silence_trimming": true,
+        "target_dbfs": -16.0,
+        "transient_clamp_db": 0.0
+      },
       "video_signature": [
         "track",
         "auto"
@@ -39,23 +53,54 @@
     },
     {
       "fingerprint": "content://p/document/7|99|1789660800",
-      "hash": "6a1fd0e39e",
-      "params": [
-        16000,
-        -18.5,
-        false,
-        700,
-        16,
-        300,
-        0.4,
-        3.0,
-        5.0,
-        "flac"
-      ],
+      "hash": "2317a32938",
+      "params": {
+        "bandpass_high": 8000,
+        "bandpass_low": 120,
+        "chunk_format": "flac",
+        "chunk_minutes": 0.4,
+        "chunk_search_seconds": 3.0,
+        "denoise": false,
+        "keep_silence": 300,
+        "level_window_sec": 0.0,
+        "min_last_chunk_seconds": 5.0,
+        "min_silence_len": 700,
+        "noise_sample_sec": 2.0,
+        "prop_decrease": 0.85,
+        "sample_rate": 16000,
+        "silence_thresh_offset": 16,
+        "silence_trimming": false,
+        "target_dbfs": -18.5,
+        "transient_clamp_db": 0.0
+      },
       "video_signature": [
         "track",
         "1"
       ]
+    },
+    {
+      "fingerprint": "/sdcard/L1.m4a|5|7",
+      "hash": "a2a134316d",
+      "params": {
+        "bandpass_high": 8000,
+        "bandpass_low": 120,
+        "chunk_format": "flac",
+        "chunk_minutes": 10.0,
+        "chunk_search_seconds": 20.0,
+        "denoise": true,
+        "keep_silence": 400,
+        "level_window_sec": 0.0,
+        "min_last_chunk_seconds": 60.0,
+        "min_silence_len": 1000,
+        "noise_sample_sec": 3.0,
+        "prop_decrease": 0.85,
+        "sample_rate": 16000,
+        "silence_thresh_offset": 20,
+        "silence_trimming": true,
+        "target_dbfs": -16.0,
+        "transient_clamp_db": 15.0
+      },
+      "video_signature": null
     }
   ],
   "hash_cases": [

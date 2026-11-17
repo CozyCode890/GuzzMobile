@@ -1,6 +1,7 @@
 package io.github.cozycode890.guzz.core.pipeline
 
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.common.testing.Golden
 import io.github.cozycode890.guzz.core.gemini.GeminiConfig
 import kotlinx.serialization.json.JsonArray
@@ -66,25 +67,31 @@ class PipelineGoldenTest {
     @Test
     fun `mã âm thanh theo đúng thứ tự tham số, chữ ký video băm chồng`() {
         for (c in golden("hash.json").arr("audio_hash")) {
-            val p = toKotlin(c.getValue("params")) as List<*>
+            val p = c.getValue("params").jsonObject.mapValues { it.value.jsonPrimitive }
             val chunk = ChunkSettings(
-                targetDbfs = p[1] as Double, trimSilence = p[2] as Boolean, minSilenceLen = (p[3] as Long).toInt(),
-                silenceThreshOffset = (p[4] as Long).toInt(), keepSilence = (p[5] as Long).toInt(),
-                chunkMinutes = p[6] as Double, searchSeconds = p[7] as Double, minLastChunkSeconds = p[8] as Double,
+                targetDbfs = p.getValue("target_dbfs").double, trimSilence = p.getValue("silence_trimming").boolean,
+                minSilenceLen = p.getValue("min_silence_len").int,
+                silenceThreshOffset = p.getValue("silence_thresh_offset").int,
+                keepSilence = p.getValue("keep_silence").int, chunkMinutes = p.getValue("chunk_minutes").double,
+                searchSeconds = p.getValue("chunk_search_seconds").double,
+                minLastChunkSeconds = p.getValue("min_last_chunk_seconds").double,
+            )
+            val clean = CleanSettings(
+                denoise = p.getValue("denoise").boolean, noiseSampleSec = p.getValue("noise_sample_sec").double,
+                bandpassLow = p.getValue("bandpass_low").int, bandpassHigh = p.getValue("bandpass_high").int,
+                propDecrease = p.getValue("prop_decrease").double, levelWindowSec = p.getValue("level_window_sec").double,
+                transientClampDb = p.getValue("transient_clamp_db").double,
             )
             val sig = toKotlin(c.getValue("video_signature")) as List<*>?
-            val hash = CacheKeys.audioHash(
-                c.getValue("fingerprint").str, (p[0] as Long).toInt(), chunk, p[9] as String, sig,
-            )
+            val fp = c.getValue("fingerprint").str
+            val rate = p.getValue("sample_rate").int
+            val format = p.getValue("chunk_format").content
+            val hash = CacheKeys.audioHash(fp, rate, chunk, clean, format, sig)
             assertEquals(c.getValue("hash").str, hash)
-            // Đổi một tham số âm thanh thì mã đổi.
-            assertNotEquals(
-                hash,
-                CacheKeys.audioHash(
-                    c.getValue("fingerprint").str, (p[0] as Long).toInt(),
-                    chunk.copy(chunkMinutes = chunk.chunkMinutes + 1), p[9] as String, sig,
-                ),
-            )
+            // Đổi một tham số cắt đoạn hay làm sạch (đổi preset) thì mã đổi, nên các đoạn được xử lý lại.
+            assertNotEquals(hash, CacheKeys.audioHash(fp, rate, chunk.copy(chunkMinutes = chunk.chunkMinutes + 1), clean, format, sig))
+            assertNotEquals(hash, CacheKeys.audioHash(fp, rate, chunk, clean.copy(propDecrease = 0.5), format, sig))
+            assertNotEquals(hash, CacheKeys.audioHash(fp, rate, chunk, clean.copy(transientClampDb = 12.0), format, sig))
         }
     }
 

@@ -43,7 +43,19 @@ class RealRecordingGoldenTest {
         @SerialName("chunk_minutes") val chunkMinutes: Double,
         @SerialName("search_seconds") val searchSeconds: Double,
         @SerialName("min_last_chunk_seconds") val minLastChunkSeconds: Double,
-    )
+        // Stage 7 (golden-stage-07): tham số làm sạch đủ; golden-stage-02 không có các khoá này.
+        val denoise: Boolean = false,
+        @SerialName("noise_sample_sec") val noiseSampleSec: Double = 2.0,
+        @SerialName("bandpass_low") val bandpassLow: Int = 80,
+        @SerialName("bandpass_high") val bandpassHigh: Int = 8000,
+        @SerialName("prop_decrease") val propDecrease: Double = 0.85,
+        @SerialName("level_window_sec") val levelWindowSec: Double = 0.0,
+        @SerialName("transient_clamp_db") val transientClampDb: Double = 0.0,
+    ) {
+        fun clean() = CleanSettings(
+            denoise, noiseSampleSec, bandpassLow, bandpassHigh, propDecrease, levelWindowSec, transientClampDb,
+        )
+    }
 
     @Serializable
     private class RealGolden(
@@ -56,6 +68,7 @@ class RealRecordingGoldenTest {
         @SerialName("clean_samples") val cleanSamples: Long,
         val points: List<Long>,
         @SerialName("python_seconds") val pythonSeconds: Double,
+        val boosted: String? = null,
     )
 
     private val dataDir: File? = System.getenv("GUZZ_SPIKE_DATA")?.let(::File)?.takeIf { it.isDirectory }
@@ -69,7 +82,21 @@ class RealRecordingGoldenTest {
         return codes.map { code -> dynamicTest(code) { check(code, File(goldenDir, "$code.json")) } }
     }
 
-    private fun check(code: String, jsonFile: File) {
+    /**
+     * Stage 7 (C5): chuỗi làm sạch ĐỦ (preset mặc định Giảng viên đi lại) so với desktop chạy bằng
+     * `real_golden.py --stage7`. Ngoài dung sai B9 như trên, đo SNR của tín hiệu đã làm sạch + chuẩn hoá (chưa cắt lặng,
+     * PCM 16-bit như `_to_pcm16`) so với desktop: ≥ 60 dB (D85).
+     */
+    @TestFactory
+    fun `Stage 7 - B1–B5 chuỗi làm sạch đủ khớp desktop`(): List<DynamicTest> {
+        assumeTrue(dataDir != null, "không có GUZZ_SPIKE_DATA: bỏ qua golden trên bản ghi thật")
+        val goldenDir = File(dataDir, "golden-stage-07")
+        val codes = listOf("B1", "B2", "B3", "B4", "B5").filter { File(goldenDir, "$it.json").isFile }
+        assumeTrue(codes.isNotEmpty(), "chưa chạy tools/golden/real_golden.py --stage7")
+        return codes.map { code -> dynamicTest(code) { check(code, File(goldenDir, "$code.json"), stage7 = true) } }
+    }
+
+    private fun check(code: String, jsonFile: File, stage7: Boolean = false) {
         val g = Json { ignoreUnknownKeys = true }.decodeFromString(RealGolden.serializer(), jsonFile.readText())
         val wav = File(dataDir, g.wav ?: "$code/goc16k.wav")
         val (offset, bytes) = wavData(wav)
@@ -84,9 +111,23 @@ class RealRecordingGoldenTest {
         System.gc()
         heapPools.forEach { it.resetPeakUsage() }
         val t0 = System.nanoTime()
+        var snr = Double.NaN
+        var cleanSeconds = 0.0
         val result = Pcm16File(wav, offset, bytes).use { pcm ->
             assertEquals(g.samples, pcm.size, "số mẫu")
-            ChunkPreparer(settings, { _, _, _, out -> out.writeText("") }).prepare(pcm, g.sr, wav.path, folder)
+            if (!stage7) {
+                ChunkPreparer(settings, { _, _, _, out -> out.writeText("") }).prepare(pcm, g.sr, wav.path, folder)
+            } else {
+                folder.mkdirs()
+                AudioCleaner(s.clean(), g.sr, folder, log = { println("   $it") }).use { cleaner ->
+                    val cleaned = cleaner.clean(pcm)
+                    cleanSeconds = (System.nanoTime() - t0) / 1e9
+                    val gain = Loudness.gainFor(Loudness.measureDbfs(cleaned), s.targetDbfs)
+                    val boosted = if (gain == null) cleaned else io.github.cozycode890.guzz.core.audio.pcm.GainSource(cleaned, gain)
+                    snr = Pcm16File(File(jsonFile.parentFile, g.boosted!!)).use { snrPcm16(it, boosted) }
+                    ChunkPreparer(settings, { _, _, _, out -> out.writeText("") }).prepare(cleaned, g.sr, wav.path, folder)
+                }
+            }
         }
         val seconds = (System.nanoTime() - t0) / 1e9
         val peakHeapMb = heapPools.sumOf { it.peakUsage.used } / 1e6
@@ -112,12 +153,40 @@ class RealRecordingGoldenTest {
                     edgesP.size, edgesK.size, cutsK.size - 1, maxCutDiff,
                 ),
         )
+        if (stage7) {
+            println("%s: làm sạch đủ %.1f s; SNR so với desktop (đã làm sạch + chuẩn hoá, int16) %.1f dB".format(code, cleanSeconds, snr))
+            assertTrue(snr >= 60.0, "$code: SNR $snr dB < 60 dB")
+        }
         assertEquals(g.origDuration, result.originalDuration, "thời lượng gốc")
         assertTrue(keptDiff <= 0.1, "$code: tổng thời lượng giữ lại lệch $keptDiff s")
         assertTrue(matchedRatio >= 0.999, "$code: chỉ ${matchedRatio * 100}% mốc TimeMap khớp trong ±10 ms")
         assertEquals(cutsP.size, cutsK.size, "$code: số đoạn")
         assertTrue(maxCutDiff <= 0.050, "$code: điểm cắt lệch $maxCutDiff s")
         folder.deleteRecursively()
+    }
+
+    /** SNR (dB) của [actual] lượng tử hoá như `_to_pcm16` so với [expected] (int16 của desktop), đọc theo khối. */
+    private fun snrPcm16(expected: Pcm16File, actual: io.github.cozycode890.guzz.core.audio.pcm.SampleSource): Double {
+        assertEquals(expected.size, actual.size, "số mẫu tín hiệu đã làm sạch")
+        val n = 1 shl 16
+        val a = FloatArray(n)
+        val e = ShortArray(n)
+        var sig = 0.0
+        var err = 0.0
+        var pos = 0L
+        while (pos < actual.size) {
+            val c = minOf(n.toLong(), actual.size - pos).toInt()
+            actual.read(pos, a, 0, c)
+            expected.readShorts(pos, e, 0, c)
+            for (i in 0 until c) {
+                val x = io.github.cozycode890.guzz.core.audio.pcm.Pcm16.fromFloatDesktop(a[i]).toDouble()
+                val y = e[i].toDouble()
+                sig += y * y
+                err += (x - y) * (x - y)
+            }
+            pos += c
+        }
+        return if (err == 0.0) Double.POSITIVE_INFINITY else 10 * kotlin.math.log10(sig / err)
     }
 
     /** (byte bắt đầu, số byte) của chunk `data` trong WAV PCM 16-bit mono. */

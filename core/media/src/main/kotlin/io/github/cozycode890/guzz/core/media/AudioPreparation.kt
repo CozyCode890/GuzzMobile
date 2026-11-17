@@ -5,6 +5,8 @@ import android.os.SystemClock
 import io.github.cozycode890.guzz.core.audio.ChunkList
 import io.github.cozycode890.guzz.core.audio.ChunkPreparer
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
+import io.github.cozycode890.guzz.core.audio.SampleRange
 import io.github.cozycode890.guzz.core.audio.PrepareListener
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.audio.pcm.Pcm16File
@@ -15,6 +17,9 @@ import java.io.File
 /** Nghe cả bước giải mã lẫn các bước của [ChunkPreparer]; [checkCancelled] chung cho cả hai. */
 interface PreparationListener : DecodeListener, PrepareListener {
     fun onTracks(tracks: List<AudioTrackInfo>, chosen: AudioTrackInfo) {}
+
+    /** Một dòng nhật ký của bước làm sạch đầy đủ (Stage 7). */
+    fun log(message: String) {}
 
     override fun checkCancelled() {}
 }
@@ -31,8 +36,8 @@ data class PreparationResult(
 
 /**
  * Từ một tệp âm thanh / video ra các đoạn FLAC + `danh_sach_doan.json` trong [folder]: chọn luồng âm thanh, kiểm chỗ
- * trống (D44), giải mã ra `goc.pcm`, rồi [ChunkPreparer]. Phần "nguồn âm thanh" + `prepare_chunks` của transcribe.py;
- * dùng lại đoạn đã cắt (cache theo mã băm) là việc của `:core:pipeline`.
+ * trống (D44), giải mã ra `goc.pcm`, rồi [ChunkPreparer] (làm sạch theo [CleanSettings], Stage 7). Phần "nguồn âm
+ * thanh" + `prepare_chunks` của transcribe.py; dùng lại đoạn đã cắt (cache theo mã băm) là việc của `:core:pipeline`.
  */
 class AudioPreparation(private val context: Context) {
 
@@ -43,6 +48,8 @@ class AudioPreparation(private val context: Context) {
         folder: File,
         listener: PreparationListener = object : PreparationListener {},
         digest: String = "",
+        clean: CleanSettings = CleanSettings.OFF,
+        saveClean: Boolean = false,
     ): PreparationResult {
         folder.mkdirs()
         File(folder, ChunkPreparer.CHUNK_LIST_FILE).delete()
@@ -58,7 +65,17 @@ class AudioPreparation(private val context: Context) {
         }
         val t1 = SystemClock.elapsedRealtime()
         val chunks = Pcm16File(raw).use { pcm ->
-            ChunkPreparer(settings, FlacEncoder()).prepare(pcm, SAMPLE_RATE, input.name, folder, listener, digest)
+            ChunkPreparer(settings, FlacEncoder()).prepare(
+                pcm, SAMPLE_RATE, input.name, folder, listener, digest, clean = clean, log = listener::log,
+            )
+        }
+        val cleanFlac = File(folder, CLEAN_AUDIO_FILE)
+        cleanFlac.delete()
+        if (saveClean) {
+            // Như need_clean của desktop: âm thanh đã làm sạch (sau cắt lặng) ra sach.flac, chép cạnh bản chép lời sau.
+            Pcm16File(File(folder, ChunkPreparer.CLEAN_PCM_FILE)).use { clean ->
+                FlacEncoder().encode(clean, SampleRange(0, clean.size), SAMPLE_RATE, cleanFlac)
+            }
         }
         val t2 = SystemClock.elapsedRealtime()
         return PreparationResult(tracks, track, decoded, chunks, t1 - t0, t2 - t1)
@@ -66,6 +83,7 @@ class AudioPreparation(private val context: Context) {
 
     companion object {
         const val RAW_PCM_FILE = "goc.pcm"
+        const val CLEAN_AUDIO_FILE = "sach.flac"
 
         /** Tần số xử lý cố định (mục "Mặc định kỹ thuật" của Stage 2). */
         const val SAMPLE_RATE = 16_000
@@ -87,6 +105,10 @@ class AudioPreparation(private val context: Context) {
 /** Để [PrepareStep] hiện được tên bước ở màn hình thử / log. */
 val PrepareStep.label: String
     get() = when (this) {
+        PrepareStep.BANDPASS -> "lọc dải tần"
+        PrepareStep.TRANSIENTS -> "ghìm tiếng động"
+        PrepareStep.DENOISE -> "khử ồn"
+        PrepareStep.LEVEL -> "cân bằng âm lượng"
         PrepareStep.NORMALIZE -> "chuẩn hoá âm lượng"
         PrepareStep.TRIM -> "cắt lặng"
         PrepareStep.WRITE_CLEAN -> "ghi sach.pcm"

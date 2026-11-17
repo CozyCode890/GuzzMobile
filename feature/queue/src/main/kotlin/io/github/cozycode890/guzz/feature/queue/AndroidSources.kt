@@ -8,6 +8,7 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import io.github.cozycode890.guzz.core.audio.ChunkList
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.media.AudioPreparation
 import io.github.cozycode890.guzz.core.media.MediaInput
@@ -62,8 +63,8 @@ fun mimeFromName(name: String): String? =
     MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substringAfterLast('.', "").lowercase())
 
 /**
- * [ChunkSource] trên máy: giải mã → làm sạch tối giản → cắt đoạn FLAC bằng [AudioPreparation] (Stage 2). Tiến độ: giải
- * mã chiếm 60% bước âm thanh, bốn bước của `ChunkPreparer` chia đều phần còn lại.
+ * [ChunkSource] trên máy: giải mã → làm sạch (Stage 7) → cắt đoạn FLAC bằng [AudioPreparation]. Tiến độ: giải mã chiếm
+ * 60% bước âm thanh, các bước của `ChunkPreparer` chia đều phần còn lại.
  */
 class AndroidChunkSource(private val context: Context, private val source: String) : ChunkSource {
     override fun info(): SourceInfo = querySource(context, source)
@@ -72,6 +73,8 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
         folder: File,
         digest: String,
         chunk: ChunkSettings,
+        clean: CleanSettings,
+        saveClean: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList {
@@ -83,9 +86,11 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
             )
 
             override fun checkCancelled() = listener.checkCancelled()
+
+            override fun log(message: String) = listener.log(message)
         }
         return try {
-            AudioPreparation(context).run(mediaInputOf(source), audioTrack, chunk, folder, l, digest).chunks
+            AudioPreparation(context).run(mediaInputOf(source), audioTrack, chunk, folder, l, digest, clean, saveClean).chunks
         } catch (e: NoAudioException) {
             throw NoAudioTrackException(e.message ?: "Tệp không có luồng âm thanh nào.")
         }
@@ -142,6 +147,26 @@ class SafOutputFolder(private val context: Context, private val tree: Uri) : Out
         } ?: throw PipelineException("Không tạo được $name trong thư mục lưu ($label).", stopQueue = true)
         try {
             (resolver.openOutputStream(doc, "wt") ?: throw FileNotFoundException("không mở được để ghi")).use { it.write(bytes) }
+        } catch (e: Exception) {
+            if (created) runCatching { DocumentsContract.deleteDocument(resolver, doc) }
+            throw PipelineException("Không ghi được $name ($label): ${e.message}", cause = e)
+        }
+        return doc.toString()
+    }
+
+    /** Như [write] nhưng chép theo dòng từ tệp (âm thanh sạch có thể vài trăm MB, không đọc cả vào RAM). */
+    override fun copy(name: String, source: File, overwrite: Boolean): String {
+        val existing = if (overwrite) children().entries.firstOrNull { it.key.equals(name, ignoreCase = true) }?.value else null
+        val created = existing == null
+        val doc = existing ?: try {
+            DocumentsContract.createDocument(resolver, treeDoc, mimeFromName(name) ?: "application/octet-stream", name)
+        } catch (e: Exception) {
+            throw PipelineException("Không tạo được $name trong thư mục lưu ($label): ${e.message}", stopQueue = true, cause = e)
+        } ?: throw PipelineException("Không tạo được $name trong thư mục lưu ($label).", stopQueue = true)
+        try {
+            (resolver.openOutputStream(doc, "wt") ?: throw FileNotFoundException("không mở được để ghi")).use { os ->
+                source.inputStream().use { it.copyTo(os, 1 shl 16) }
+            }
         } catch (e: Exception) {
             if (created) runCatching { DocumentsContract.deleteDocument(resolver, doc) }
             throw PipelineException("Không ghi được $name ($label): ${e.message}", cause = e)

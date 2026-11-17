@@ -1,5 +1,6 @@
 package io.github.cozycode890.guzz.core.pipeline
 
+import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.common.log.LogLevel
 import io.github.cozycode890.guzz.core.common.log.MemorySink
 import io.github.cozycode890.guzz.core.common.log.SinkLogger
@@ -124,6 +125,40 @@ class FilePipelineTest {
         File(tempDir, "doan_002.wav").delete()
         run(client)
         assertEquals(3, source.prepareCalls)
+
+        // Stage 7 (A3): đổi preset thì xử lý lại, chọn lại đúng preset cũ thì dùng lại các đoạn vừa cắt.
+        cfg = cfg.copy(clean = cfg.clean.copy(propDecrease = 0.85, noiseSampleSec = 2.0, levelWindowSec = 0.0))
+        run(client)
+        assertEquals(4, source.prepareCalls)
+        run(client)
+        assertEquals(4, source.prepareCalls)
+        cfg = cfg.copy(clean = cfg.clean.copy(transientClampDb = 15.0))
+        run(client)
+        assertEquals(5, source.prepareCalls)
+    }
+
+    @Test
+    fun `làm sạch đủ và lưu âm thanh sạch thì có sach_flac cạnh bản chép lời, thiếu thì xử lý lại`() {
+        cfg = cfg.copy(clean = CleanSettings(transientClampDb = 15.0), saveCleanAudio = true, deleteTempWhenDone = false)
+        val client = FakeClient { _, _ -> text("x") }
+        val r = run(client)
+        assertEquals(CleanSettings(transientClampDb = 15.0), source.lastClean)
+        val stem = r.outName!!.substringBeforeLast('.')
+        val saved = File(out.dir, "$stem.sach.flac")
+        assertTrue(saved.isFile && saved.length() > 0, "không có $saved")
+        assertEquals(1, source.prepareCalls)
+        // Còn sach.flac trong thư mục tạm: dùng lại đoạn đã cắt.
+        run(client)
+        assertEquals(1, source.prepareCalls)
+        // Mất sach.flac mà vẫn cần lưu: xử lý lại (như need_clean của desktop).
+        File(tempDir, ChunkSource.CLEAN_AUDIO_FILE).delete()
+        run(client)
+        assertEquals(2, source.prepareCalls)
+        // Tắt lưu thì không cần sach.flac nữa.
+        File(tempDir, ChunkSource.CLEAN_AUDIO_FILE).delete()
+        cfg = cfg.copy(saveCleanAudio = false)
+        run(client)
+        assertEquals(2, source.prepareCalls)
     }
 
     @Test

@@ -1,6 +1,6 @@
 # Stage 7 — Làm sạch âm thanh đầy đủ
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-15) · **Cần xong trước:** 4
+**Trạng thái:** 🔨 đang làm (bắt đầu 2026-11-17; plan chi tiết 2026-11-15) · **Cần xong trước:** 4
 
 ## Mục tiêu
 
@@ -83,8 +83,9 @@ Hỏi người dùng ngày 2026-11-15, người dùng chọn phương án Recomm
     có đệm 1 024 mẫu cho `sosfiltfilt` như desktop;
   - cân bằng âm lượng: lượt 1 năng lượng khối 50 ms, tính đường gain trên mảng nhỏ, lượt 2 nhân gain.
 - Kiểu số: float32 cho mẫu như desktop (`y` float32), float64 cho phép tính trung gian mà numpy làm bằng float64
-  (`sosfilt` với `sos` float64 trả về float64 rồi gán lại float32, STFT của scipy chạy complex128 khi đầu vào float32?
-  → kiểm kiểu thật ở B4 và ghi lại).
+  (`sosfilt` với `sos` float64 trả về float64 rồi gán lại float32). Đã kiểm ở B4: noisereduce chép mỗi khối vào
+  `np.zeros` float64 (`_read_chunk`), nên STFT chạy **complex128**, ISTFT ra **float64**, rồi ép float32 khi ghi khối;
+  bản Kotlin tính double / phức double rồi `toFloat()` ở cùng chỗ.
 - Tham số mặc định của noisereduce 3.0.3 mà desktop không đổi: `n_fft` 1024, `win_length` = `n_fft`, `hop_length` = 256,
   `freq_mask_smooth_hz` 500, `time_mask_smooth_ms` 50, `thresh_n_mult_nonstationary` 2, `sigmoid_slope_nonstationary` 10.
 - Golden: `tools/golden/gen_dsp.py` (FFT, butter, sosfilt / sosfiltfilt / filtfilt, stft / istft, fftconvolve) và
@@ -114,45 +115,45 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
 
 ### A. Cài đặt, preset, mã cache
 
-- [ ] **A1. Cài đặt:** `[AUDIO]` `denoise`, `noise_sample_sec`, `bandpass_low`, `bandpass_high`, `prop_decrease`,
+- [x] **A1. Cài đặt:** `[AUDIO]` `denoise`, `noise_sample_sec`, `bandpass_low`, `bandpass_high`, `prop_decrease`,
   `level_window_sec`, `transient_clamp_db`; `[OUTPUT] save_clean_audio`. Chặn như `load_config`. `sample_rate` giữ cố
   định 16 kHz (Stage 2), ghi lý do.
   **Kiểm:** `DesktopDefaultsTest` xanh với mục mới (mặc định = Giảng viên đi lại, D87).
-- [ ] **A2. Preset:** port `gui/presets.py` (`PRESETS`, `PRESET_FIELDS`, `values_from_config`, `detect_preset`), áp
+- [x] **A2. Preset:** port `gui/presets.py` (`PRESETS`, `PRESET_FIELDS`, `values_from_config`, `detect_preset`), áp
   preset = ghi các mục cài đặt.
   **Kiểm:** port các ca của `tests/test_preset.py`; golden bảng preset so với desktop.
-- [ ] **A3. Mã cache:** `CacheKeys.audioHash` thêm tham số làm sạch như `audio_hash` của desktop.
+- [x] **A3. Mã cache:** `CacheKeys.audioHash` thêm tham số làm sạch như `audio_hash` của desktop.
   **Kiểm:** golden trong `gen_pipeline.py` (có / không ghim tiếng động, video); test: đổi preset thì xử lý lại, không đổi
   thì dùng lại đoạn đã cắt.
 
 ### B. Nền tảng số (`:core:audio/dsp`, JVM)
 
-- [ ] **B1. FFT** radix-2 thực / phức (D83), `rfft` / `irfft` như numpy.
+- [x] **B1. FFT** radix-2 thực / phức (D83), `rfft` / `irfft` như numpy.
   **Kiểm:** golden `gen_dsp.py` so với `numpy.fft` (sai số tương đối ≤ 1e-12 với double); bench 1 giờ âm thanh các
   phép STFT trên PC (`GUZZ_BENCH=1`), ghi số vào Nhật ký.
-- [ ] **B2. Butterworth** (D84): `buttap`, `lp2bp_zpk`, `lp2lp_zpk`, `bilinear_zpk`, `zpk2sos` (cách ghép cặp cực / không
+- [x] **B2. Butterworth** (D84): `buttap`, `lp2bp_zpk`, `lp2lp_zpk`, `bilinear_zpk`, `zpk2sos` (cách ghép cặp cực / không
   điểm của scipy).
   **Kiểm:** golden hệ số `sos` so với `scipy.signal.butter(..., output="sos")` cho 4 preset và 20 bộ tham số ngẫu nhiên
   (bậc 4–5, band / low), sai lệch ≤ 1e-10.
-- [ ] **B3. `sosfilt` (có `zi`), `sosfiltfilt`, `filtfilt`** (đúng `padtype`, `padlen`, `lfilter_zi` / `sosfilt_zi`).
+- [x] **B3. `sosfilt` (có `zi`), `sosfiltfilt`, `filtfilt`** (đúng `padtype`, `padlen`, `lfilter_zi` / `sosfilt_zi`).
   **Kiểm:** golden trên tín hiệu ngẫu nhiên và sin, nhiều độ dài (kể cả ngắn hơn `padlen`), sai lệch ≤ 1e-9.
-- [ ] **B4. STFT / ISTFT** của scipy (cửa sổ hann, `padded=False`, `boundary`), `fftconvolve(mode="same")`.
+- [x] **B4. STFT / ISTFT** của scipy (cửa sổ hann, `padded=False`, `boundary`), `fftconvolve(mode="same")`.
   **Kiểm:** golden so với scipy trên khối 600 000 + đệm; ghi kiểu số thật của scipy (float32 / complex64 hay float64) vào
   "Mặc định kỹ thuật".
 
 ### C. Các bước làm sạch (`:core:audio`, JVM)
 
-- [ ] **C1. `bandpass_filter`** dòng chảy theo khối 2^20 mẫu có `zi`.
+- [x] **C1. `bandpass_filter`** dòng chảy theo khối 2^20 mẫu có `zi`.
   **Kiểm:** golden trên tệp tổng hợp (`gen_cleaning.py`), SNR ≥ 60 dB; đúng các nhánh bỏ qua (`low <= 0`, `low >= high`,
   `high` > Nyquist).
-- [ ] **C2. `reduce_noise`** = noisereduce 3.0.3 non-stationary (khối 600 000, đệm 30 000, mặt nạ sigmoid, làm mượt bằng
+- [x] **C2. `reduce_noise`** = noisereduce 3.0.3 non-stationary (khối 600 000, đệm 30 000, mặt nạ sigmoid, làm mượt bằng
   bộ lọc `_smoothing_filter`, `prop_decrease`, `time_constant_s` = max(0,2, `noise_sample_sec`)).
   **Kiểm:** golden SNR ≥ 60 dB trên tệp tổng hợp (ồn trắng + ồn hồng + giọng, dài hơn 2 khối để có biên khối); đo
   thời gian 1 giờ trên PC.
-- [ ] **C3. `suppress_transients`** (hai lượt quanh khử ồn, `_merge_regions`, log "Đã ghim N tiếng động…").
+- [x] **C3. `suppress_transients`** (hai lượt quanh khử ồn, `_merge_regions`, log "Đã ghim N tiếng động…").
   **Kiểm:** golden mức ghim từng khối (≤ 1e-6 dB), các vùng ghim và tín hiệu ra (SNR ≥ 60 dB) trên tệp có tiếng gõ / ho
   tổng hợp; port các ca liên quan của `tests/test_audio_processing.py`.
-- [ ] **C4. `level_loudness`.**
+- [x] **C4. `level_loudness`.**
   **Kiểm:** golden đường gain và tín hiệu ra (SNR ≥ 60 dB) trên tệp giọng xa gần; port ca của test desktop.
 - [ ] **C5. Chuỗi `clean_audio`** trong `ChunkPreparer` theo đúng thứ tự desktop (bandpass → ghim → khử ồn → ghim →
   cân bằng → chuẩn hoá → cắt lặng), báo tiến độ `[1/6]…[6/6]`, `denoise = false` đi đúng nhánh desktop (giữ đường của
@@ -163,10 +164,10 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
 
 ### D. Pipeline và trên máy
 
-- [ ] **D1. Nối vào pipeline:** `AudioPreparation` / `ChunkPreparer` dùng chuỗi đủ theo cài đặt; tên bước trên thông báo
+- [x] **D1. Nối vào pipeline:** `AudioPreparation` / `ChunkPreparer` dùng chuỗi đủ theo cài đặt; tên bước trên thông báo
   ("lọc dải tần", "khử ồn"…); `save_clean_audio` → `<tên>.sach.flac` cạnh bản chép lời (qua `OutputFolder`).
   **Kiểm:** `.\gradlew :core:pipeline:test` xanh; test: bật lưu âm thanh sạch thì có `.sach.flac`.
-- [ ] **D2. Máy ảo:** `audio_debug.ps1` và hàng đợi (Gemini giả) với `L1_20m.m4a`, 4 preset; `-PullPcm` rồi so với
+- [x] **D2. Máy ảo:** `audio_debug.ps1` và hàng đợi (Gemini giả) với `L1_20m.m4a`, 4 preset; `-PullPcm` rồi so với
   desktop bằng `compare_ffmpeg.py` / script so mới.
   **Kiểm:** SNR so với desktop ≥ 60 dB trên tệp thật; Dừng giữa lúc khử ồn → `dung`, chạy lại xử lý lại từ đầu bước âm
   thanh (hoặc dùng lại nếu có cache); `logcat -b crash` trống.
@@ -177,7 +178,7 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
 
 ### E. Giao diện
 
-- [ ] **E1. Trang Âm thanh rút gọn (D89):** mở từ menu và dòng "Âm thanh: <preset>" ở màn hình Hàng đợi; chọn preset (4
+- [x] **E1. Trang Âm thanh rút gọn (D89):** mở từ menu và dòng "Âm thanh: <preset>" ở màn hình Hàng đợi; chọn preset (4
   + Tuỳ chỉnh, nhận preset bằng `detect_preset`), bật / tắt khử ồn, cân bằng âm lượng, ghim tiếng động, cắt lặng; lưu âm
   thanh sạch. vi / en trong `strings.xml`. Công tắc "Cắt lặng" cũ ở cài đặt nhanh chuyển vào trang này.
   **Kiểm:** máy ảo: chọn từng preset, quay lại thấy giữ; tắt một bước thì preset thành "Tuỳ chỉnh"; `.\gradlew lint`
@@ -205,5 +206,35 @@ tên ca. Thử trên máy ảo `guzz_15t` trước (D70), Xiaomi 15T cho đo t�
 - **2026-11-15, plan.** Đọc `audio_processing.py` (toàn bộ), `gui/presets.py`, mục `[AUDIO]` của `config.default.txt`
   (trùng preset Giảng viên đi lại), noisereduce 3.0.3 (`noisereduce.py`, `spectralgate/base.py`, `nonstationary.py`,
   `utils.py`). Hỏi người dùng 8 câu trắc nghiệm, cả 8 chọn Recommended (D83–D90).
+
+- **2026-11-17, A–D1.** Session tách từ session đang điều tra lỗi mốc thời gian (chung thư mục).
+  - A: 8 mục cài đặt mới (`SettingKeys`), `AudioPresets` (port presets.py) + golden `config/presets.json` (thêm vào
+    `gen_config_keys.py`), `CacheKeys.audioHash` đúng thứ tự `audio_hash` của desktop (golden `gen_pipeline.py` nay gọi
+    thẳng `transcribe.audio_hash`). Mã cache của mobile đổi so với Stage 2–5: bài làm dở từ trước sẽ xử lý âm thanh lại.
+    Chặn thêm so với desktop: `prop_decrease` trong [0, 1], `noise_sample_sec` / `level_window_sec` ≥ 0.
+  - B: gói `:core:audio/dsp` (`RealFft`, `Butterworth`, `IirFilter`, `Stft`, `Convolve`, `Np`, `NoiseReducer`). Golden
+    `gen_dsp.py` → `testdata/golden/dsp/dsp.json` (1,2 MB, mảng base64 float64). Đạt: rfft / irfft ≤ 1e-12, hệ số
+    butter ≤ 1e-10 (4 preset, lọc thấp của ghìm tiếng động, 20 bộ ngẫu nhiên, bậc 1–8), sosfilt / sosfiltfilt ≤ 1e-9
+    (sosfilt theo khối gán float32 lệch ≤ 1 ulp), filtfilt bậc một ≤ 1e-12, stft / istft ≤ 1e-12 (khối 660 000 mẫu ≤ 1e-11).
+    scipy tự thu `nperseg` khi đầu vào ngắn hơn 1 024 mẫu: noisereduce không gặp (mỗi khối ≥ 60 000 mẫu) nên không port.
+  - **Làm khác D83:** không dùng FFT cho `fftconvolve` của mặt nạ. Nhân `_smoothing_filter` (33 × 7) là tích ngoài của
+    hai vectơ nên chập lần lượt theo trục tần số rồi thời gian (`Convolve.same1d`, 40 phép nhân mỗi ô) — bằng
+    `fftconvolve(mode="same")` tới 1e-12 (golden), nhanh hơn và không cần mảng 1 024 × 4 096 mỗi khối.
+  - C: `Bandpass`, `TransientSuppressor`, `NoiseReducer`, `LevelLoudness`, `AudioCleaner` (thứ tự `clean_audio`, tệp tạm
+    `tam_NN.f32` qua `F32Writer` / `F32File`, xoá tệp bước trước). Golden `gen_cleaning.py` → `testdata/golden/cleaning/`
+    (3,8 MB: tín hiệu tổng hợp 10 s 16 kHz có gõ bàn / ho / đi xa gần, kết quả float32 thô từng bước, 3 chuỗi đủ PCM
+    16-bit). Kết quả: bandpass, ghìm tiếng động (mức ghìm từng khối, vùng ghìm), khử ồn (3 khối 60 000 + đệm 15 000)
+    **trùng từng bit** với Python; level_loudness 145 dB; cả chuỗi (sach.pcm int16) 100 / 105 / 126 dB, bản đồ thời gian
+    và điểm cắt trùng. Golden khử ồn dùng khối 60 000 / đệm 15 000 để có biên khối trong 10 s (desktop 600 000 / 30 000;
+    chuỗi đủ chạy đúng mặc định, nhánh một khối); khối mặc định trên bài dài: golden bản ghi thật B1–B5 (C5).
+  - `ChunkPreparer.prepare` nhận `CleanSettings` (mặc định `OFF` = Stage 2); `PrepareStep` thêm BANDPASS, TRANSIENTS,
+    DENOISE, LEVEL ở đầu. Nhật ký làm sạch (vd "Đã ghìm 4 tiếng động…") đi qua `SourceListener.log` vào log của pipeline.
+  - D1: `ChunkSource.prepare` nhận `clean`, `saveClean`; `AudioPreparation` ghi `sach.flac` (FLAC của `sach.pcm`) khi
+    bật lưu; `FilePipeline` chép ra `<tên>.sach.flac` bằng `OutputFolder.copy` (SAF chép theo dòng, không đọc cả tệp vào
+    RAM) và coi cache thiếu `sach.flac` là phải xử lý lại (như `need_clean`). Màn hình thử âm thanh (debug) dùng cài đặt
+    làm sạch của app, ghi `lam_sach` và `nhat_ky_lam_sach` vào `ket_qua.json`.
+  - E1 (đang làm): trang Âm thanh (`AudioActivity`), dòng "Âm thanh: <preset>" thay công tắc Cắt lặng ở màn hình Hàng
+    đợi. Thêm so với desktop: tắt khử ồn hay cắt lặng thì hiện "Cấu hình thủ công" (desktop `detect_preset` không xét hai
+    mục này), và chọn một preset thì bật lại khử ồn + cắt lặng, để "tắt một bước thì thành Tuỳ chỉnh" đúng với mọi công tắc.
 
 ## Phát sinh

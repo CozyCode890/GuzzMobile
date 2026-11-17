@@ -55,8 +55,11 @@ data class ChunkList(
     fun toTimeMap() = TimeMap(timeMap.map { it[0] to it[1] }, originalDuration)
 }
 
-/** Các bước để báo tiến độ (desktop báo "[n/6]"). */
-enum class PrepareStep { NORMALIZE, TRIM, WRITE_CLEAN, WRITE_CHUNKS }
+/**
+ * Các bước để báo tiến độ (desktop báo "[n/6]"). Bốn bước đầu là làm sạch đầy đủ của Stage 7 ([AudioCleaner]), chỉ có
+ * khi bật trong [CleanSettings].
+ */
+enum class PrepareStep { BANDPASS, TRANSIENTS, DENOISE, LEVEL, NORMALIZE, TRIM, WRITE_CLEAN, WRITE_CHUNKS }
 
 /**
  * Báo tiến độ và điểm dừng: [onProgress] nhận bước và phần đã xong của bước đó (0..1); [checkCancelled] được gọi sau mỗi
@@ -73,10 +76,11 @@ interface PrepareListener {
 
 /**
  * Từ PCM thô của cả bài (`goc.pcm`) ra các đoạn gửi Gemini + `danh_sach_doan.json`.
- * Port của transcribe.py: `prepare_chunks`, phần làm sạch tối giản của `clean_audio` (D7: chỉ chuẩn hoá âm lượng và cắt
- * lặng) và chunker.py: `write_chunks`. Dùng lại đoạn đã cắt (so khoá `ma`) là việc của `:core:pipeline`.
+ * Port của transcribe.py: `prepare_chunks`, audio_processing.py: `clean_audio` và chunker.py: `write_chunks`. Dùng lại
+ * đoạn đã cắt (so khoá `ma`) là việc của `:core:pipeline`.
  *
- * Đọc lại nguồn nhiều lượt thay vì giữ tín hiệu trong RAM (D43), xem "Mặc định kỹ thuật" của Stage 2:
+ * Đọc lại nguồn nhiều lượt thay vì giữ tín hiệu trong RAM (D43), xem "Mặc định kỹ thuật" của Stage 2 và Stage 7:
+ * 0. (Stage 7, nếu bật) lọc dải tần, ghìm tiếng động, khử ồn, cân bằng âm lượng ([AudioCleaner], ra `tam_NN.f32`);
  * 1. đo dBFS → hệ số khuếch đại;
  * 2–3. đo dBFS sau khuếch đại và tìm khoảng có tiếng ([SilenceTrimmer]);
  * 4. ghép các khoảng giữ lại → `sach.pcm` (int16 như `_to_pcm16` của desktop) và năng lượng khối 50 ms trên giá trị float;
@@ -94,6 +98,8 @@ class ChunkPreparer(
      * @param sourceName đường dẫn / URI của tệp gốc, ghi vào khoá `nguon`.
      * @param folder thư mục tạm của bài; ghi `sach.pcm`, `doan_NNN.<đuôi>`, `danh_sach_doan.json` vào đây.
      * @param digest mã ghi vào khoá `ma`, trong cùng lần ghi cuối (có tệp là có mã đúng).
+     * @param clean các bước làm sạch đầy đủ (Stage 7); mặc định tắt hết như Stage 2.
+     * @param log nhận các dòng nhật ký của bước làm sạch.
      */
     fun prepare(
         raw: SampleSource,
@@ -102,6 +108,9 @@ class ChunkPreparer(
         folder: File,
         listener: PrepareListener = PrepareListener.NONE,
         digest: String = "",
+        clean: CleanSettings = CleanSettings.OFF,
+        log: (String) -> Unit = {},
+        noiseChunk: Pair<Int, Int> = 600_000 to 30_000,
     ): ChunkList {
         // Desktop: "Sau khi lam sach khong con doan nao co tieng." Chỉ xảy ra khi nguồn rỗng, vì cắt lặng không bao giờ bỏ
         // hết (cả bài là lặng thì giữ nguyên).
@@ -109,6 +118,20 @@ class ChunkPreparer(
         folder.mkdirs()
         val listFile = File(folder, CHUNK_LIST_FILE)
         listFile.delete()
+        return AudioCleaner(clean, sampleRate, folder, listener, log, noiseChunk).use { cleaner ->
+            prepareCleaned(cleaner.clean(raw), sampleRate, sourceName, folder, listener, digest, listFile)
+        }
+    }
+
+    private fun prepareCleaned(
+        raw: SampleSource,
+        sampleRate: Int,
+        sourceName: String,
+        folder: File,
+        listener: PrepareListener,
+        digest: String,
+        listFile: File,
+    ): ChunkList {
 
         // (1) Chuẩn hoá âm lượng.
         listener.onProgress(PrepareStep.NORMALIZE, 0.0)

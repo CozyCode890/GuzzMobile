@@ -7,6 +7,11 @@ Với mỗi bài B1–B5 của Stage 1: đọc `$GUZZ_SPIKE_DATA\\<mã>\\goc16k.
 bỏ các bước Stage 7 (D7): boost_and_normalize → trim_silence → find_split_points. Ghi
 `$GUZZ_SPIKE_DATA\\golden-stage-02\\<mã>.json`. Test Kotlin `RealRecordingGoldenTest` đọc lại và so theo dung sai B9.
 
+Stage 7 (C5, `--stage7`): chuỗi clean_audio ĐỦ với config.default.txt (preset Giảng viên đi lại: lọc dải tần, khử ồn,
+cân bằng âm lượng), ghi `$GUZZ_SPIKE_DATA\\golden-stage-07\\<mã>.json` (bản đồ thời gian, điểm cắt) và
+`<mã>.boosted.pcm`: tín hiệu đã làm sạch + chuẩn hoá, CHƯA cắt lặng, PCM 16-bit như `_to_pcm16` (≈ 220 MB một bài 2 giờ),
+để test Kotlin đo SNR. Chạy: `... real_golden.py --stage7` (cả 5 bài) hoặc `--stage7 B4`.
+
 Chạy:
     D:\\Guzz\\runtime\\python\\python.exe -B -s tools\\golden\\real_golden.py            (cả 5 bài)
     ... real_golden.py B2 B4                                                               (một số bài)
@@ -16,6 +21,7 @@ Chạy:
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import math
 import os
@@ -82,6 +88,44 @@ def run(y: np.ndarray, source: str) -> dict:
     )
 
 
+def run_stage7(y: np.ndarray, source: str, code: str) -> dict:
+    """Chuỗi đủ của clean_audio (config.default.txt), tách bước cắt lặng ra để lưu được tín hiệu trước khi cắt."""
+    from unittest import mock
+
+    from audio_io import _to_pcm16
+
+    cfg = config.load_config(str(_common.desktop_dir() / "config.default.txt"))
+    t0 = time.monotonic()
+    logs = []
+    with mock.patch.object(audio_processing, "read_audio", return_value=y):
+        boosted, sr, _ = audio_processing.clean_audio_from_config(
+            dataclasses.replace(cfg, silence_trimming=False), source, progress_callback=logs.append)
+    clean_seconds = time.monotonic() - t0
+    clean, kept = audio_processing.trim_silence(boosted, SR, silence_thresh_offset=cfg.silence_thresh_offset,
+                                                min_silence_len=cfg.min_silence_len, keep_silence=cfg.keep_silence)
+    tm = audio_processing.TimeMap([(a / SR, b / SR) for a, b in kept], len(boosted) / SR)
+    points = chunker.find_split_points(clean, SR, cfg.chunk_minutes, cfg.chunk_search_seconds,
+                                       cfg.min_last_chunk_seconds)
+    elapsed = time.monotonic() - t0
+    out = data_dir() / "golden-stage-07"
+    out.mkdir(parents=True, exist_ok=True)
+    (out / f"{code}.boosted.pcm").write_bytes(_to_pcm16(boosted))
+    return dict(
+        source=source, sr=SR, samples=int(len(y)),
+        settings=dict(target_dbfs=cfg.target_dbfs, trim_silence=True, min_silence_len=cfg.min_silence_len,
+                      silence_thresh_offset=cfg.silence_thresh_offset, keep_silence=cfg.keep_silence,
+                      chunk_minutes=cfg.chunk_minutes, search_seconds=cfg.chunk_search_seconds,
+                      min_last_chunk_seconds=cfg.min_last_chunk_seconds, denoise=cfg.denoise,
+                      noise_sample_sec=cfg.noise_sample_sec, bandpass_low=cfg.bandpass_low,
+                      bandpass_high=cfg.bandpass_high, prop_decrease=cfg.prop_decrease,
+                      level_window_sec=cfg.level_window_sec, transient_clamp_db=cfg.transient_clamp_db),
+        kept=[[int(a), int(b)] for a, b in kept],
+        time_map=tm.to_json(), orig_duration=round(tm.orig_duration, 3),
+        clean_samples=int(len(clean)), points=[int(p) for p in points], boosted=f"{code}.boosted.pcm",
+        logs=logs, python_seconds=round(elapsed, 1), python_clean_seconds=round(clean_seconds, 1),
+    )
+
+
 def compare(desktop: dict, phone: dict) -> None:
     """So danh_sach_doan.json của điện thoại với desktop theo dung sai của bước B9 (như RealRecordingGoldenTest)."""
     tm_d = audio_processing.TimeMap([tuple(s) for s in desktop["time_map"]], desktop["orig_duration"])
@@ -104,8 +148,8 @@ def compare(desktop: dict, phone: dict) -> None:
           f"{len(cuts_p) - 1} / {len(cuts_d) - 1} đoạn; điểm cắt lệch tối đa {max_cut:.3f} s → {'ĐẠT' if ok else 'TRƯỢT'}")
 
 
-def write(name: str, data: dict) -> Path:
-    out = data_dir() / "golden-stage-02"
+def write(name: str, data: dict, folder: str = "golden-stage-02") -> Path:
+    out = data_dir() / folder
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{name}.json"
     payload = {"meta": _common.meta(os.path.basename(__file__)), **data}
@@ -119,7 +163,20 @@ def main() -> None:
     ap.add_argument("--pcm", help="tệp PCM 16-bit LE mono 16 kHz không header (goc.pcm lấy từ điện thoại)")
     ap.add_argument("--name", help="tên JSON ra khi dùng --pcm")
     ap.add_argument("--compare", help="danh_sach_doan.json của điện thoại: so với kết quả desktop theo dung sai B9")
+    ap.add_argument("--stage7", action="store_true", help="chuỗi làm sạch đủ của Stage 7 (golden-stage-07)")
     args = ap.parse_args()
+
+    if args.stage7:
+        for code in args.codes or CODES:
+            wav = data_dir() / code / "goc16k.wav"
+            y, sr = _common.read_wav16(wav)
+            data = run_stage7(y, f"{code}/goc16k.wav", code)
+            data["wav"] = f"{code}/goc16k.wav"
+            path = write(code, data, "golden-stage-07")
+            print(f"{code}: {len(y) / SR / 60:.1f} phút, {len(data['kept'])} khoảng giữ lại, "
+                  f"{len(data['points']) - 1} đoạn, Python {data['python_seconds']} s "
+                  f"(làm sạch {data['python_clean_seconds']} s) → {path}", flush=True)
+        return
 
     if args.pcm:
         if not args.name:
