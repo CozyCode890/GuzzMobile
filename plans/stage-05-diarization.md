@@ -322,6 +322,18 @@ diện, thử trên máy ảo `guzz_15t`, D70) → G (Xiaomi 15T: đo bài 2 gi�
   - G2: 12 yêu cầu thật, không lỗi. Cả 3 cách ra bản chép lời có tên, nhưng trượt D29 ở B4 (1–2 người so với 4 của
     desktop). Hỏi người dùng: đóng stage, ghi trượt B4 (D82).
 - **2026-11-15, H2.** Stage 5 ✅. Tiêu chí "bài giảng thật" không đạt ở B4 (D82); ba tiêu chí còn lại đạt.
+- **2026-11-17, sửa sau khi đóng stage: mốc sai ở cuối bài.** Người dùng báo mốc sai ở nửa cuối hai bài giảng thật 2
+  giờ (`.aac` của Sound Recorder, Xiaomi 15T). Kiểm trên PC (tệp ở `D:\GuzzMobileData\bug-timestamp`, ngoài repo):
+  - giải mã đủ 7199,9 s; cắt lặng và điểm cắt đoạn khớp desktop (≤ 1 s); mốc từng đoạn khớp chỗ bắt đầu nói (lệch
+    < 1 s) ở cả cách `hybrid` (mốc từng từ) lẫn `pyannote` (mốc Gemini chép từ bản đồ người nói);
+  - lỗi thật: đoạn 12 của bài 2026-11-17 (`pyannote`, gemini-3.5-flash-lite), Gemini trả cả 10 phút trên MỘT dòng
+    `[00:15.9] Giảng viên: … [08:15.0] Giảng viên: …`; `parse_prompt_paragraphs` chỉ đọc mốc đầu dòng nên cả đoạn thành
+    một đoạn văn mốc 01:49:59, các mốc tương đối nằm lẫn trong chữ. Desktop cũng vậy.
+  - Sửa (mobile, khác desktop): `Speakers.parsePromptParagraphs` tách dòng trước mỗi mốc giữa dòng có tên người nói
+    trong danh sách ngay sau; ca `inline_timestamps_on_one_line` trong `SpeakerTest`. Chạy trên chữ thật của đoạn 12:
+    68 đoạn văn, mốc 01:49:59 → 01:59:55.
+  - Bài 2026-11-10 (`hybrid`, gemini-3.5-transcribe) có khoảng trống 6 phút và hai dòng lặp quanh 01:09–01:15: do model
+    trả ít chữ / lặp, mốc vẫn đúng chỗ; không sửa.
 
 ## Phát sinh
 

@@ -299,6 +299,31 @@ object Speakers {
     )
     private val SPEAKER_PREFIX = Regex("^$S*\\**$S*([^:\\n]{1,40}?)$S*\\**$S*:$S*\\**$S*")
 
+    /** Mốc `[mm:ss]` / `[mm:ss.s]` / `[h:mm:ss]` ở bất kỳ đâu trong dòng (cùng dạng với [LEADING_TIMESTAMP]). */
+    private val INLINE_TIMESTAMP = Regex("[\\[(]$S*(?:$D{1,2}:)?$D{1,3}:$D{2}(?:[.,]$D+)?$S*[\\])]")
+
+    /**
+     * Tách một dòng ở trước mỗi mốc nằm giữa dòng mà ngay sau là tên người nói trong [names]: model đôi khi viết cả đoạn
+     * trên một dòng (`[00:15.9] Giảng viên: … [08:15.0] Giảng viên: …`, gặp với gemini-3.5-flash-lite ngày 2026-11-17),
+     * không tách thì cả 10 phút thành một đoạn văn với một mốc, còn các mốc tương đối nằm lẫn trong chữ. Chỉ tách khi có
+     * tên ngay sau mốc, để chữ như "tới [05:00] thì nghỉ" giữ nguyên. Mobile thêm, desktop không có.
+     */
+    private fun splitInlineTimestamps(line: String, names: Map<String, String>): List<String> {
+        val cuts = INLINE_TIMESTAMP.findAll(line)
+            .filter { it.range.first > 0 && splitSpeaker(line.substring(it.range.last + 1), names).first != null }
+            .map { it.range.first }
+            .toList()
+        if (cuts.isEmpty()) return listOf(line)
+        val parts = ArrayList<String>(cuts.size + 1)
+        var from = 0
+        for (c in cuts) {
+            parts += line.substring(from, c)
+            from = c
+        }
+        parts += line.substring(from)
+        return parts
+    }
+
     /** `'**Giảng viên:** abc'` → (`Giảng viên`, `abc`) nếu tên có trong [names] (khoá viết thường). Port của `_split_speaker`. */
     private fun splitSpeaker(line: String, names: Map<String, String>): Pair<String?, String> {
         val m = SPEAKER_PREFIX.find(line)
@@ -313,7 +338,8 @@ object Speakers {
      * Tách bản chép lời có tên người nói thành các [Paragraph], mỗi dòng không rỗng là một đoạn. Mốc `[mm:ss]` đầu dòng
      * (tính từ đầu đoạn âm thanh) đổi thành mốc tệp gốc: `toOriginal(chunkStart + mốc)`. Dòng không ghi tên thì thuộc
      * người nói dòng trước; dòng chỉ có "Tên:" thì tên (và mốc) áp cho dòng kế tiếp. Chỉ nhận tên có trong [names], để
-     * "Ví dụ: ..." không bị coi là người nói. Port của speaker.py: `parse_prompt_paragraphs`.
+     * "Ví dụ: ..." không bị coi là người nói. Port của speaker.py: `parse_prompt_paragraphs`; khác desktop ở chỗ dòng có
+     * nhiều mốc kèm tên được tách ra trước ([splitInlineTimestamps]).
      */
     fun parsePromptParagraphs(
         text: String,
@@ -326,7 +352,7 @@ object Speakers {
         val result = ArrayList<Paragraph>()
         var speakerName: String? = null
         var pendingTs: Double? = null
-        for (raw in text.pySplitLines()) {
+        for (raw in text.pySplitLines().flatMap { splitInlineTimestamps(it, lookup) }) {
             if (raw.pyStrip().isEmpty()) continue
             var line = raw
             var timestamp: Double? = null

@@ -115,6 +115,22 @@ class SpeakerTest {
             )
         }
 
+        /** Mobile thêm: cả đoạn trên một dòng, mốc `[mm:ss.s]` giữa dòng (gemini-3.5-flash-lite, 2026-11-17). */
+        @Test
+        fun inline_timestamps_on_one_line() {
+            val text = "[00:00.0] Giảng viên: để ý con này. [00:15.9] **Người hỏi 1:** Dạ thầy. " +
+                "[08:15.0] Giảng viên: It's always accept, tới [09:00] thì nghỉ. (09:56.0) Ai đó: không có tên"
+            val result = Speakers.parsePromptParagraphs(text, listOf("Giảng viên", "Người hỏi 1"), 6599.0) { it }
+            assertEquals(
+                listOf(
+                    Triple("Giảng viên", 6599.0, "để ý con này."),
+                    Triple("Người hỏi 1", 6614.0, "Dạ thầy."),
+                    Triple("Giảng viên", 6599.0 + 495, "It's always accept, tới [09:00] thì nghỉ. (09:56.0) Ai đó: không có tên"),
+                ),
+                result.map { Triple(it.speaker, it.timestamp, it.content) },
+            )
+        }
+
         @Test
         fun test_format_template() {
             val d = Paragraph("abc", "Giảng viên", 3725.4, review = true)
