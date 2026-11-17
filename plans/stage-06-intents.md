@@ -266,25 +266,25 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
   [-OutputDir] [-FakeGemini on|off]`, `-Start`, `-Stop`, `-Status`, `-Events` (in `events.jsonl`), `-Enable on|off` (bật
   công tắc qua lệnh `automation` mới của `QueueDebugReceiver`). Tệp tương đối thì lấy trong `files/input/` như `queue_debug.ps1`.
   **Kiểm:** chạy lại B4 bằng script; `-Status` in sự kiện STATUS có % và đoạn i/n lúc đang chạy.
-- [ ] **C5. Test thiết bị** (`:app`, `androidTest`): bật công tắc + Gemini giả, gửi broadcast TRANSCRIBE tới
+- [x] **C5. Test thiết bị** (`:app`, `androidTest`): bật công tắc + Gemini giả, gửi broadcast TRANSCRIBE tới
   `CommandReceiver` với một tệp ngắn trong `testdata/media`, receiver đăng ký trong test chờ `FILE_DONE` cùng
   `request_id` (≤ 60 s); ca mã bí mật sai → `ERROR` `bad_secret`, hàng đợi không đổi.
   **Kiểm:** chạy trên máy ảo theo cách cài tay ở `CLAUDE.md` (tiêu chí hoàn thành "Instrumented test").
 
 ### D. Chia sẻ tới Guzz
 
-- [ ] **D1. `ShareActivity`** (trong suốt, intent-filter `SEND` / `SEND_MULTIPLE` cho `audio/*`, `video/*`): đọc
+- [x] **D1. `ShareActivity`** (trong suốt, intent-filter `SEND` / `SEND_MULTIPLE` cho `audio/*`, `video/*`): đọc
   `EXTRA_STREAM`, thêm vào hàng đợi, `checkStart()` → bắt đầu (D98) hoặc báo lý do (thiếu key / thư mục lưu) bằng toast +
   mở màn hình chính; luôn mở màn hình chính sau cùng. Không cần công tắc cho phép.
   **Kiểm:** máy ảo: app Files → Chia sẻ một tệp `.m4a` tới "Guzz (debug)" (bấm bằng `android layout` / `android input
   tap`) → tệp chạy ngay; chia sẻ 2 tệp cùng lúc → cả hai vào hàng đợi; `adb shell am start -a android.intent.action.SEND
   -t audio/mp4 --eu android.intent.extra.STREAM content://media/...` cũng chạy.
-- [ ] **D2. Chép khi không giữ được quyền** (D103): thử `takePersistableUriPermission`; không được thì kiểm chỗ trống (D44)
+- [x] **D2. Chép khi không giữ được quyền** (D103): thử `takePersistableUriPermission`; không được thì kiểm chỗ trống (D44)
   rồi chép vào `files/inbox/<id>/<tên>` trong luồng nền **trước** khi Activity đóng (giữ Activity tới khi chép xong, có
   vòng chờ); `ownedCopy = true`; xoá khi tệp xong (theo `delete_temp_when_done`) hoặc bị bỏ khỏi danh sách.
   **Kiểm:** máy ảo: chia sẻ từ app Files rồi `am kill` app giữa chừng, mở app → tệp làm tiếp, đọc được; xong thì
   `files/inbox` trống; bỏ tệp lỗi khỏi danh sách thì bản chép bị xoá. Test JVM cho quy tắc xoá.
-- [ ] **D3. Test thiết bị đọc qua ContentProvider thật** (Phát sinh Stage 2): `MediaInput.Content` / `AndroidChunkSource`
+- [x] **D3. Test thiết bị đọc qua ContentProvider thật** (Phát sinh Stage 2): `MediaInput.Content` / `AndroidChunkSource`
   đọc tệp qua một `FileProvider` của test trả độ dài không rõ (−1), và qua MediaStore Downloads.
   **Kiểm:** `:core:media:connectedDebugAndroidTest` (hoặc `androidTest` của `:app`) xanh trên máy ảo.
 
@@ -356,6 +356,9 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 - (2026-11-18, B4) Trên máy ảo API 36, app không đọc được tệp qua `/sdcard/…` dù cùng chỗ với `/storage/emulated/0/…`: tệp trong thư mục riêng của app và tệp khi có "Truy cập mọi tệp" được đổi sang đường dẫn thật. Bị chặn chạy nền (D102) thì ngoài thông báo còn bật cờ đang chạy của hàng đợi (`QueueController.markPendingStart`), nên mở app / bấm thông báo là tự bắt đầu; đã thử: gỡ miễn tối ưu pin → ERROR background_blocked + thông báo, mở app → FILE_STARTED → FILE_DONE.
 - (2026-11-18, C3) Bộ ghi `events.jsonl` của bản debug ghi ngay lúc phát, không qua receiver đăng ký trong chính process: Android 14+ hoãn broadcast tới process cached (vừa dừng service) nên receiver đó bỏ sót FILE_DONE / QUEUE_FINISHED. Việc broadcast tới được app khác do test thiết bị C5 kiểm.
 - (2026-11-18, B5–B6) Máy ảo `guzz_15t_s6`: `output_dir=source` không có quyền → `files/output` + log cảnh báo, có quyền (`appops … MANAGE_EXTERNAL_STORAGE allow`) → `B5test.txt` cạnh tệp nguồn; `speakers=off`, `preset=speakers_around` ghi trong log tệp; `fake_gemini=off` khi cờ chung bật → client thật, lỗi "Chưa có API key" (máy ảo không có key, không gửi gì). Tệp tạo bằng `adb shell cp` app không đọc được (chủ là shell): đẩy từ PC bằng `adb push`.
+
+- (2026-11-18, D1) `querySource` (:feature:queue) hỏi cột `last_modified` nên MediaStore ném IllegalArgumentException ("Invalid column"): đổi sang projection `null`, chỉ đọc cột có mặt. `ShareActivity` nhận URI ở cả ClipData lẫn `data` (`am start --grant-read-uri-permission` chỉ cấp quyền cho data / ClipData, không cho extra STREAM). Đã thử: `am start -a SEND -d content://media/…`, chia sẻ hai tệp từ app Files của máy ảo (SEND_MULTIPLE), giết app giữa chừng rồi mở lại → làm tiếp từ bản chép, xong thì `files/inbox` trống.
+- (2026-11-18, D3) Test ở `:app` (`ContentSourceTest`), không ở `:core:media`, vì cần cả `querySource` của :feature:queue. Provider trả độ dài không rõ là `UnknownLengthProvider` chỉ có ở bản debug (không exported).
 
 ## Phát sinh
 

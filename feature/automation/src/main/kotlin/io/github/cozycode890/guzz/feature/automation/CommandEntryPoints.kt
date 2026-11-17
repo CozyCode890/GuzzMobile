@@ -107,7 +107,9 @@ class ShareActivity : Activity() {
                 else intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
                 )?.let(out::addAll)
         }
+        // App chia sẻ đặt URI ở ClipData (để được cấp quyền); vài app / lệnh adb đặt ở data.
         intent.clipData?.let { clip -> for (i in 0 until clip.itemCount) clip.getItemAt(i).uri?.let(out::add) }
+        intent.data?.let(out::add)
         return out.toList()
     }
 }
