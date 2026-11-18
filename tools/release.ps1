@@ -20,7 +20,9 @@
 param(
     [Parameter(Mandatory)][string]$Version,
     # Chỉ để thử script: bỏ kiểm git (cây bẩn, khác origin/main). Không dùng khi phát hành thật.
-    [switch]$SkipGitCheck
+    [switch]$SkipGitCheck,
+    # Mặc định Gradle chạy bó RAM (máy 16 GB vẫn đang dùng việc khác): 2 worker, heap 2 GB, Kotlin biên dịch trong daemon.
+    [switch]$FullSpeed
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,8 +52,15 @@ foreach ($name in 'GUZZ_KEYSTORE', 'GUZZ_KEYSTORE_PASSWORD', 'GUZZ_KEY_ALIAS') {
 if (-not (Test-Path -LiteralPath $env:GUZZ_KEYSTORE)) { Fail "Không thấy keystore: $env:GUZZ_KEYSTORE" }
 
 # 3. Test, lint, build.
-& .\gradlew test lint assembleSideloadRelease "-Pguzz.version=$Version" --console=plain
-if ($LASTEXITCODE -ne 0) { Fail 'Gradle lỗi (test, lint hoặc build).' }
+$gradleArgs = @('test', 'lint', 'assembleSideloadRelease', "-Pguzz.version=$Version", '--console=plain')
+if (-not $FullSpeed) {
+    $gradleArgs += @('--max-workers=2', '--no-parallel', '-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8',
+        '-Pkotlin.compiler.execution.strategy=in-process')
+}
+& .\gradlew @gradleArgs
+$gradleExit = $LASTEXITCODE
+if (-not $FullSpeed) { & .\gradlew --stop | Out-Null }
+if ($gradleExit -ne 0) { Fail 'Gradle lỗi (test, lint hoặc build).' }
 $apk = 'app\build\outputs\apk\sideload\release\app-sideload-release.apk'
 if (-not (Test-Path $apk)) { Fail "Không thấy $apk" }
 
