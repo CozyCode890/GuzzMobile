@@ -185,14 +185,14 @@ Quy tắc giữ suốt stage:
 
 ### D. Cấu hình release (D122, D128, D129, D130)
 
-- [ ] D1. Số phiên bản (D130): `guzzVersion = "1.0.0"` trong `libs.versions.toml`, convention plugin tính
+- [x] D1. Số phiên bản (D130): `guzzVersion = "1.0.0"` trong `libs.versions.toml`, convention plugin tính
       `versionCode`; cho phép ghi đè bằng `-Pguzz.version=1.0.1` (dùng ở F2). Kiểm: `apkanalyzer manifest version-code`
       ra `10000`, `version-name` ra `1.0.0`; với `-Pguzz.version=1.0.1` ra `10001`.
 - [ ] D2. Ký (D129): `signingConfigs.release` đọc `GUZZ_KEYSTORE`, `GUZZ_KEYSTORE_PASSWORD`, `GUZZ_KEY_ALIAS`,
       `GUZZ_KEY_PASSWORD` từ biến môi trường; thiếu thì ký bằng khoá debug và in cảnh báo rõ "chỉ để thử" (để Claude build
       thử F mà không cần mật khẩu). Kiểm: build không biến → `apksigner verify --print-certs` ra chứng chỉ debug; script
       phát hành (D5) từ chối bản ký debug.
-- [ ] D3. R8 + tài nguyên: `isMinifyEnabled = true`, `isShrinkResources = true` cho `release`; keep rules cho
+- [x] D3. R8 + tài nguyên: `isMinifyEnabled = true`, `isShrinkResources = true` cho `release`; keep rules cho
       `com.k2fsa.sherpa.onnx.**` (JNI tìm class / field / method theo tên) và lớp callback tiến độ của
       `:core:diarization` (JNI gọi `invoke`); kiểm rule đi kèm OkHttp / kotlinx.serialization đủ. Đọc
       `build/outputs/mapping/sideloadRelease/usage.txt` cho C2. Kiểm: `assembleSideloadRelease` ra APK; F1 chạy được tách
@@ -245,12 +245,12 @@ Bản thử là `sideloadRelease` ký bằng khoá debug (D2), package `io.githu
 15T (bản debug là `.debug`). Script trong `tools/device/` đang trỏ package `.debug`: thêm tham số `-Package` cho script
 cần dùng.
 
-- [ ] F1. Xiaomi 15T, cài mới bản 1.0.0: thẻ Thiết lập ban đầu (quyền thông báo, Truy cập mọi tệp, miễn tối ưu pin —
+- [x] F1. Xiaomi 15T, cài mới bản 1.0.0: thẻ Thiết lập ban đầu (quyền thông báo, Truy cập mọi tệp, miễn tối ưu pin —
       người dùng tự bấm), người dùng tự nhập API key. Luồng chính: chọn tệp âm thanh, tệp video, Chia sẻ tới Guzz, một lệnh
       MacroDroid (bật công tắc + mã bí mật trên bản release), tách giọng bật. **Gửi thật: hỏi trước.** Kiểm: các tệp ra
       `.txt` đúng, MacroDroid nhận FILE_DONE; log không có lỗi R8 (`ClassNotFoundException`, `NoSuchMethodError`,
       `UnsatisfiedLinkError`).
-- [ ] F2. Cài đè: có cài đặt đã đổi, key, sổ hạn mức, hàng đợi có tệp, lịch sử → build `-Pguzz.version=1.0.1`,
+- [x] F2. Cài đè: có cài đặt đã đổi, key, sổ hạn mức, hàng đợi có tệp, lịch sử → build `-Pguzz.version=1.0.1`,
       `adb install -r`. Kiểm: cài đặt, key, hạn mức, hàng đợi, lịch sử còn nguyên; log ghi `last_version_code`
       10000 → 10001; hàng đợi làm tiếp được.
 - [ ] F3. Máy ảo API 26 và API 30 (`x86_64`, build `-Pguzz.emulatorAbi=true`; hỏi trước khi tải system image, nêu dung
@@ -404,6 +404,27 @@ cần dùng.
   `.p12` + mật khẩu vào trình quản lý mật khẩu và thử khôi phục (vân tay phải trùng số trên).
 - (2026-11-18, E5) `LICENSE` MIT ghi "Copyright (c) 2026 CozyCode890" (tên tài khoản GitHub; repo desktop không có LICENSE
   để theo); `README.md`, `CHANGELOG.md` (mục 1.0.0). Kiểm hiển thị trên GitHub ở G3.
+- (2026-11-19, F1) Xiaomi 15T qua USB (Tailscale không vào được, Gỡ lỗi không dây chưa bật). Bản thử
+  `sideloadRelease` ký khoá debug, package `io.github.cozycode890.guzz` chưa từng cài trên máy: `adb install` bị HyperOS huỷ
+  (`INSTALL_FAILED_USER_RESTRICTED`), người dùng cài bằng tay từ `Download/GuzzThu`. **Crash** khi mở "Nâng cao" của trang
+  Google AI: `Thiếu resource prompt.txt trong :core:gemini` — `DefaultPrompt` nạp resource theo tên tương đối, R8 dời class
+  sang package khác. Người dùng cho tách session [fix-prompt-r8]: `f79b795` đọc bằng đường dẫn tuyệt đối, thêm
+  `app/proguard-rules.pro` giữ tên các class lỗi của Guzz (`-keepnames … extends Throwable`, để log / sự kiện ở bản release
+  không ghi tên kiểu `ke1`). Cài đè bản đã sửa, gửi thật (người dùng đồng ý 4 đoạn ngắn cắt từ bản ghi ở
+  `D:\GuzzMobileData\stage-09\f\`): `B1_1m.m4a` qua trình chọn tệp, `V1_3m.mp4` (video 3 phút), `L1_2m_chiase.m4a` qua Chia
+  sẻ tới Guzz, `L1_1m_lenh.m4a` qua lệnh TRANSCRIBE bằng `adb shell am broadcast` (thay MacroDroid; người dùng tự chạy vì
+  có mã bí mật). Đều ra `.txt` (`gemini-3.1-flash-lite`). Lần đầu chưa bật tách giọng và chưa cấp "Truy cập mọi tệp" cho bản
+  release (quyền cấp riêng từng package): lệnh bị từ chối đúng cách (`FILE_FAILED`, `request_id`, lý do rõ). Lần hai:
+  tách giọng trên bản R8 chạy được (process `:diarize`, sherpa-onnx: `B1_1m` 8 s / 9 lượt, `L1_1m_lenh` 12 s / 6 lượt),
+  lệnh ra `FILE_STARTED` → `FILE_DONE` cùng `request_id f1-lenh` → `QUEUE_FINISHED`; trùng tên tự đánh số
+  (`B1_1m (2).txt`). Không còn crash. Stack trace bản release bị R8 đổi tên → `release.ps1` chép thêm `mapping.txt` vào
+  `dist\`. Icon trên màn hình chính HyperOS (mặt nạ vuông bo) đúng: `…\stage-09\f\e1_xiaomi_icon.png`.
+- (2026-11-19, F2) Có sẵn: tệp chờ `L1_2m_chiase.m4a` (chưa bấm Bắt đầu), key, cách người nói "trên máy", tự động hoá bật +
+  mã bí mật, quyền "Truy cập mọi tệp", sổ hạn mức. `adb install -r` bản `-Pguzz.version=1.0.1`: log ghi "Đã cập nhật từ
+  versionCode 10000 lên 10001"; tệp chờ, thư mục lưu, model, preset, người nói, key (`AQ.A…gmkw`), công tắc + mã bí mật,
+  quyền tệp, hạn mức (`gemini-3.1-flash-lite`: 5 yêu cầu, 8.754 token) còn nguyên (máy tự bấm qua giao diện bằng
+  uiautomator theo lời người dùng). Đạt tiêu chí "cài đè giữ nguyên dữ liệu và cài đặt" với khoá debug; G2 cài bản ký khoá
+  thật sẽ phải gỡ bản thử (khác chữ ký).
 
 ## Phát sinh
 

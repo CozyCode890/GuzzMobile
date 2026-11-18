@@ -70,6 +70,11 @@ $versionCode = (& $apkanalyzer manifest version-code $apk).Trim()
 New-Item -ItemType Directory -Force dist | Out-Null
 $out = "dist\guzz-$Version.apk"
 Copy-Item $apk $out -Force
+# mapping.txt của R8: không có nó thì không đọc được stack trace của bản release (tên class bị đổi, vd `h70.a`). Giữ cùng
+# APK, không đăng lên Releases; dist\ bị .gitignore nên sao thêm ra ngoài repo nếu cần giữ lâu.
+$mapping = 'app\build\outputs\mapping\sideloadRelease\mapping.txt'
+if (-not (Test-Path $mapping)) { Fail "Không thấy $mapping (R8 chưa chạy?)." }
+Copy-Item $mapping "dist\guzz-$Version-mapping.txt" -Force
 $sha = (Get-FileHash $out -Algorithm SHA256).Hash.ToLower()
 $size = [math]::Round((Get-Item $out).Length / 1MB, 1)
 $fingerprint = ($certs -split "`n" | Where-Object { $_ -match 'SHA-256 digest' } | Select-Object -First 1).Trim()
