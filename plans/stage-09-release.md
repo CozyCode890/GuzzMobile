@@ -1,6 +1,6 @@
 # Stage 9 — Đóng gói & phát hành
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-18) · **Cần xong trước:** 8
+**Trạng thái:** 🔨 đang làm (plan 2026-11-18) · **Cần xong trước:** 8
 
 ## Mục tiêu
 
@@ -11,12 +11,14 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 
 ### Làm
 
-- Nâng AGP / Gradle / thư viện lên bộ mới nhất mà Kotlin đã phủ (D134).
+- Nâng AGP / Gradle / thư viện lên bộ mới nhất mà Kotlin đã phủ (D134); lúc làm, AGP / Gradle đã ở mức đó, chỉ nâng thư
+  viện (D136).
 - Rà lỗ hổng: checklist Android + đọc kỹ mặt tấn công, quét bí mật trong lịch sử git, quét lỗ hổng thư viện (D132).
 - Tinh gọn: code chết, tài nguyên và phụ thuộc thừa, hết cảnh báo lint; code chỉ cho debug không lọt vào release (D133).
 - R8 / minify (kèm keep rules cho JNI của sherpa-onnx); chỉ ABI `arm64-v8a`; bỏ `.so` thừa; nén `.so`; APK ≤ 50 MB (D128).
 - Model trong assets: đã kiểm lúc plan, không nén hai lần (xem "Ghi chú kỹ thuật"); giữ đọc thẳng từ assets.
-- Ký release bằng keystore ngoài repo, build tay trên PC (D122, D129); số phiên bản 1.0.0 (D130).
+- Ký release bằng khoá Morphe có sẵn, chuyển sang PKCS12, để ngoài repo; build tay trên PC (D122, D129, D137); số phiên
+  bản 1.0.0 (D130).
 - Icon chính thức từ icon desktop (D127); trang Giới thiệu: giấy phép đủ toàn văn, ghi chú quyền riêng tư, link Releases
   (D126).
 - Repo chuyển public: LICENSE MIT, README, CHANGELOG; giữ lịch sử git, chỉ sửa tệp hiện tại (D123–D125).
@@ -64,7 +66,8 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 
 ## Rủi ro
 
-- Mất keystore → sao lưu vào trình quản lý mật khẩu ngay khi tạo (D129), kiểm bằng cách khôi phục thử (E2).
+- Mất keystore → sao lưu vào trình quản lý mật khẩu ngay sau khi chuyển sang PKCS12 (D129, D137), kiểm bằng cách khôi
+  phục thử (E2). Khoá Morphe cũng ký các app Morphe đã vá: lộ khoá thì ảnh hưởng cả hai.
 - R8 xoá / đổi tên class mà JNI của sherpa-onnx tìm theo tên → app chết lúc tách giọng chỉ ở bản release. → Keep rules,
   và thử tách giọng trên bản release (D4, F1).
 - Nâng AGP / Gradle làm hỏng plugin `guzz.deps` hoặc convention plugin → nâng ở commit riêng đầu stage, hỏng khó gỡ thì
@@ -89,6 +92,8 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 | D133 | Tinh gọn | **Code chết, tài nguyên, phụ thuộc thừa** (lint, báo cáo R8) + **hết cảnh báo lint** + **code chỉ cho debug không lọt release**; không dọn `spikes/`, không `/simplify` | Theo công cụ, ít rủi ro sửa nhầm. |
 | D134 | Nâng AGP / Gradle / thư viện | **Nâng lên bộ mới nhất Kotlin đã phủ**, commit riêng đầu stage, chạy lại test + lint + test thiết bị | Theo Phát sinh Stage 0; phát hành trên bộ build mới. |
 | D135 | Pin và nhiệt | **Không thêm tính năng, chỉ đo** bài 2 giờ trên bản release (giữ ô số luồng hiện có); bất thường thì hỏi lại | Người dùng ít thời gian; đã có ô số luồng. |
+| D136 | Nâng AGP / Gradle khi Kotlin 2.4.21 (ổn định mới nhất, 2.5.0 mới RC) chỉ phủ tới AGP 9.3.1 / Gradle 9.7.0 (A1) | **Giữ AGP 9.3.3 / Gradle 9.7.1**, chỉ nâng appcompat 1.8.0 và kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` kèm lý do | Đúng D134: bộ hiện tại đã là mức cao nhất Kotlin phủ. |
+| D137 | Khoá ký (thay phần tạo khoá mới của D129) | **Dùng khoá Morphe có sẵn** (`Downloads\Morphe.keystore`, dạng BKS của Morphe Manager): người dùng tự chạy lệnh chuyển sang PKCS12 (cần thư viện BouncyCastle cho `keytool`) ra `D:\GuzzMobileData\keys\`, tự gõ mật khẩu; sao lưu như D129 | Người dùng chọn, không tạo khoá mới. Gradle / apksigner không đọc BKS. |
 
 ## Kế hoạch chi tiết
 
@@ -119,14 +124,14 @@ Quy tắc giữ suốt stage:
 
 ### A. Nâng bộ build (D134)
 
-- [ ] A1. Tra bảng tương thích Kotlin (kotlinlang.org/docs/gradle-configure-project.html), release notes AGP và
+- [x] A1. Tra bảng tương thích Kotlin (kotlinlang.org/docs/gradle-configure-project.html), release notes AGP và
       gradle.org/releases: chọn bộ Kotlin / AGP / Gradle mới nhất đã được phủ; ghi nguồn và ngày vào Nhật ký. Kiểm: bảng
       phiên bản cũ → mới trong Nhật ký, kèm checksum Gradle khớp gradle.org/release-checksums.
-- [ ] A2. Nâng `gradle/libs.versions.toml` và `gradle-wrapper.properties` (cả thư viện lint báo: appcompat,
+- [x] A2. Nâng `gradle/libs.versions.toml` và `gradle-wrapper.properties` (cả thư viện lint báo: appcompat,
       kotlinx-serialization…, chỉ bản ổn định). Kiểm: `.\gradlew test lint` xanh cả hai flavor; lint hết cảnh báo
       `AndroidGradlePluginVersion` / `GradleDependency` / `NewerVersionAvailable`. Hỏng khó gỡ thì quay về bộ cũ của
       phần hỏng, ghi Nhật ký.
-- [ ] A3. Test thiết bị sau khi nâng, trên máy ảo `guzz_15t`: `:core:media`, `:core:diarization` và bộ của `:app`
+- [x] A3. Test thiết bị sau khi nâng, trên máy ảo `guzz_15t`: `:core:media`, `:core:diarization` và bộ của `:app`
       (cài tay hai APK như CLAUDE.md). Kiểm: tất cả qua. Commit riêng "Stage 9 A: nâng …".
 
 ### B. Rà lỗ hổng bảo mật (D132)
@@ -213,10 +218,12 @@ Quy tắc giữ suốt stage:
       sóng âm + hai vạch chữ trắng trong vùng an toàn 66 dp (`ic_launcher_foreground`), lớp `monochrome`; bản debug giữ
       cùng hình, khác màu nền để phân biệt. Kiểm: ảnh chụp launcher trên máy ảo (tròn, vuông, icon theo chủ đề Android
       13+) và trên Xiaomi 15T; người dùng xem ảnh và đồng ý.
-- [ ] E2. Keystore (D129): soạn sẵn lệnh `keytool -genkeypair` (RSA 4096, hạn 10000 ngày, alias `guzz`) ghi ra
-      `D:\GuzzMobileData\keys\guzz-release.jks` để **người dùng tự chạy và tự gõ mật khẩu**; người dùng đính kèm tệp + mật
-      khẩu vào trình quản lý mật khẩu. Kiểm: người dùng tải lại tệp từ trình quản lý mật khẩu ra thư mục khác,
-      `keytool -list -keystore <bản tải lại>` ra cùng vân tay SHA-256 với bản gốc.
+- [ ] E2. Keystore (D129, D137): hỏi trước khi tải `bcprov-jdk18on` (BouncyCastle, Maven Central) vào thư mục ngoài repo;
+      soạn sẵn lệnh `keytool -importkeystore` từ `Downloads\Morphe.keystore` (`-srcstoretype BKS -providerpath <bcprov>
+      -providerclass org.bouncycastle.jce.provider.BouncyCastleProvider`) ra `D:\GuzzMobileData\keys\guzz-release.p12`
+      (`-deststoretype PKCS12`) để **người dùng tự chạy và tự gõ mật khẩu** (không lấy mật khẩu từ chat). Người dùng đính
+      kèm tệp `.p12` + mật khẩu vào trình quản lý mật khẩu. Kiểm: `keytool -list -v` trên bản `.p12` và trên bản tải lại
+      từ trình quản lý mật khẩu ra cùng vân tay SHA-256; alias ghi vào Nhật ký cho `GUZZ_KEY_ALIAS`.
 - [ ] E3. Trang Giới thiệu: phiên bản, link GitHub và trang Releases (D126); "Giấy phép" mở danh sách, mỗi mục bấm vào
       xem toàn văn (tệp trong `assets/licenses/`): sherpa-onnx (Apache-2.0), ONNX Runtime (MIT, © Microsoft, tự thêm vì
       AAR không kèm), pyannote segmentation-3.0 (MIT, © 2022 CNRS, lấy `models/segmentation-3.0.LICENSE` trong cache
@@ -274,6 +281,29 @@ cần dùng.
       osv-scanner); "Việc tiếp theo" ghi Stage 10 (tuỳ chọn) hoặc dừng. Kiểm: `git status` sạch sau commit, đã push.
 
 ## Nhật ký
+
+- (2026-11-18, A1) Tra phiên bản (Google Maven, Maven Central, services.gradle.org, kotlinlang.org
+  /docs/gradle-configure-project.html, GitHub releases):
+
+  | Thành phần | Đang dùng | Mới nhất ổn định | Kotlin 2.4.20–2.4.21 phủ tới | Chọn |
+  | --- | --- | --- | --- | --- |
+  | Kotlin | 2.4.21 | 2.4.21 (2.5.0-RC ra 2026-11-11) | — | giữ |
+  | AGP | 9.3.3 | 9.5.1 (nhánh 9.3: 9.3.3) | 9.3.1 | giữ (D136) |
+  | Gradle | 9.7.1 | 9.9.1 (2026-11-10) | 9.7.0 | giữ (D136) |
+  | appcompat | 1.7.1 | 1.8.0 (2026-08-12; minSdk mặc định 23) | — | **1.8.0** |
+  | kotlinx-serialization | 1.12.0 | 1.13.0 (2026-11-11; bỏ thay đổi phá vỡ của 1.12.0, dựa Kotlin 2.4.10) | — | **1.13.0** |
+
+  Các thư viện khác đã là bản ổn định mới nhất: Compose BOM 2026.09.00, activity-compose 1.13.0, datastore 1.3.0,
+  navigation-compose 2.10.2, material-icons-core 1.7.8, coroutines 1.11.0, OkHttp 5.5.1, JUnit 6.1.3, junit 4.13.2,
+  androidx.test runner 1.7.0, ext-junit 1.3.0. Gradle không đổi nên không cần kiểm checksum wrapper mới.
+- (2026-11-18) Người dùng chọn ký bằng khoá Morphe có sẵn thay vì tạo khoá mới (D137); E2 đổi theo.
+- (2026-11-18, A2) Nâng appcompat 1.8.0, kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` ở `:app`
+  (D136). `.\gradlew test lint lintPlayDebug` xanh; lint hết cảnh báo "có bản mới" (`:app` còn 10 cảnh báo + 2 gợi ý,
+  `:feature:automation` 6, `:feature:queue` 1, `:core:media` 1: để C1).
+- (2026-11-18, A3) Máy ảo `guzz_15t` (API 36): `:core:media` và `:core:diarization` `connectedDebugAndroidTest` qua
+  (9 + 3); `:app` 11/11 qua. Lần chạy đầu `AutomationIntentTest.transcribeThenFileDoneWithSameRequestId` trượt ba lần liền
+  vì hàng đợi của máy ảo còn sót bài `L1_20m.m4a` (20 phút) từ lần thử trước, chạy trước tệp 8 s của test nên quá 90 s;
+  `queue_debug.ps1 -Stop`, `-Clear` rồi chạy lại cả bộ thì qua. Không liên quan bản nâng.
 
 ## Phát sinh
 

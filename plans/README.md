@@ -168,6 +168,8 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D133 | 2026-11-18 | Tinh gọn (Stage 9) | **Code chết, tài nguyên, phụ thuộc thừa, hết cảnh báo lint, code debug không lọt release**; không dọn `spikes/`, không `/simplify` | Theo công cụ, ít rủi ro sửa nhầm. |
 | D134 | 2026-11-18 | Nâng AGP / Gradle / thư viện (Stage 9) | **Bộ mới nhất Kotlin đã phủ**, commit riêng đầu stage | Theo Phát sinh Stage 0. |
 | D135 | 2026-11-18 | Pin và nhiệt (Stage 9) | **Không thêm tính năng, chỉ đo** bài 2 giờ trên bản release | Đã có ô số luồng; người dùng ít thời gian. |
+| D136 | 2026-11-18 | Nâng AGP / Gradle khi Kotlin 2.4.21 chỉ phủ tới AGP 9.3.1 / Gradle 9.7.0 (Stage 9) | **Giữ AGP 9.3.3 / Gradle 9.7.1**, chỉ nâng appcompat 1.8.0, kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` | Bộ hiện tại đã là mức cao nhất Kotlin phủ (D134). |
+| D137 | 2026-11-18 | Khoá ký (Stage 9, thay phần tạo khoá của D129) | **Dùng khoá Morphe có sẵn**, người dùng tự chuyển BKS → PKCS12 ra ngoài repo, sao lưu như D129 | Người dùng chọn, không tạo khoá mới. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

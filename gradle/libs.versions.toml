@@ -7,7 +7,8 @@ composeBom = "2026.09.00"
 activityCompose = "1.13.0"
 datastore = "1.3.0"
 coroutines = "1.11.0"
-serialization = "1.12.0"
+# Stage 9 (A2, 2026-11-18): 1.13.0 bỏ thay đổi phá vỡ của 1.12.0 (bọc ngoại lệ của serializer), vẫn dựa trên Kotlin 2.4.
+serialization = "1.13.0"
 junit = "6.1.3"
 junit4 = "4.13.2"
 # Test thiết bị (Stage 2, :core:media). Bản ổn định mới nhất trên Google Maven ngày 2026-11-10.
@@ -17,7 +18,8 @@ androidxTestExtJunit = "1.3.0"
 okhttp = "5.5.1"
 # Giao diện (Stage 8, D114, D115). Bản ổn định trên Google Maven ngày 2026-11-17; appcompat chỉ để đổi ngôn ngữ trong app.
 navigationCompose = "2.10.2"
-appcompat = "1.7.1"
+# appcompat 1.8.0 (Stage 9, A2): minSdk mặc định lên 23, vẫn dưới minSdk 26 của Guzz.
+appcompat = "1.8.0"
 # Bộ biểu tượng cơ bản đã ra khỏi Compose BOM: ghim bản cuối.
 materialIconsCore = "1.7.8"
 

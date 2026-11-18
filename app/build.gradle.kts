@@ -22,6 +22,9 @@ android {
     // Compose do tools/check_strings.ps1 bắt.
     lint {
         error += listOf("MissingTranslation", "HardcodedText")
+        // D136: AGP / Gradle giữ ở bản cao nhất mà Kotlin đang dùng đã được kiểm (bảng tương thích của Kotlin), nên cảnh
+        // báo "có AGP / Gradle mới" là cố ý. Bật lại khi nâng Kotlin.
+        disable += "AndroidGradlePluginVersion"
     }
 
     // D115: Android 13+ liệt kê Guzz trong Cài đặt → Ngôn ngữ ứng dụng; danh sách ngôn ngữ sinh từ thư mục values-*.

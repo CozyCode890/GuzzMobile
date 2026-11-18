@@ -7,7 +7,7 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 9 (đóng gói & phát hành), đã plan chi tiết ngày 2026-11-18 (D122–D135), chưa làm.
+**Stage hiện tại:** Stage 9 (đóng gói & phát hành), đang làm (plan 2026-11-18, D122–D137).
 Stage 6 (Intent cho MacroDroid) xong ngày 2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
 thử theo D107; Chia sẻ tới Guzz nhận cả Zalo, D106). Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
 (D110–D121; một Activity, 3 tab, đủ trang cài đặt, tiếng Việt / tiếng Anh, xuất / nhập config.txt). Stage 7 (làm sạch âm
@@ -30,7 +30,7 @@ push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 | 6 | Intent cho MacroDroid | ✅ 2026-11-18 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
-| 9 | Đóng gói & phát hành | 📝 | [stage-09-release.md](plans/stage-09-release.md) |
+| 9 | Đóng gói & phát hành | 🔨 | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
 
 Ký hiệu: ⬜ chưa plan chi tiết · 📝 đã plan chi tiết · 🔨 đang làm · ✅ xong (ghi ngày) · ⏸ hoãn
