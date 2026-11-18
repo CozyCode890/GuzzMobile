@@ -45,10 +45,10 @@ android {
     buildTypes {
         getByName("release") {
             // D3: R8 bỏ code / tài nguyên không dùng; keep rules cho JNI của sherpa-onnx ở consumer-rules.pro của
-            // :core:diarization.
+            // :core:diarization, của app ở proguard-rules.pro.
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = if (releaseKeystore != null) {
                 signingConfigs.getByName("release")
             } else {
