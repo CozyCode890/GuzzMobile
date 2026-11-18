@@ -1,6 +1,6 @@
 # Stage 9 — Đóng gói & phát hành
 
-**Trạng thái:** 🔨 đang làm (plan 2026-11-18) · **Cần xong trước:** 8
+**Trạng thái:** ✅ xong 2026-11-19 (plan 2026-11-18) · **Cần xong trước:** 8
 
 ## Mục tiêu
 
@@ -46,14 +46,14 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 
 ## Tiêu chí hoàn thành
 
-- [ ] Cài APK release lên máy chưa từng cài Guzz: chạy được hết luồng chính.
-- [ ] Cài đè bản mới lên bản cũ: giữ nguyên dữ liệu và cài đặt.
-- [ ] Dung lượng APK ≤ 50 MB (D128).
-- [ ] gitleaks không còn phát hiện thật trong lịch sử; osv-scanner không còn lỗ hổng High / Critical chưa xử lý (hoặc đã
+- [x] Cài APK release lên máy chưa từng cài Guzz: chạy được hết luồng chính.
+- [x] Cài đè bản mới lên bản cũ: giữ nguyên dữ liệu và cài đặt.
+- [x] Dung lượng APK ≤ 50 MB (D128).
+- [x] gitleaks không còn phát hiện thật trong lịch sử; osv-scanner không còn lỗ hổng High / Critical chưa xử lý (hoặc đã
       ghi lý do chấp nhận); checklist bảo mật (B1) đủ dấu.
-- [ ] `.\gradlew lint` 0 cảnh báo (cảnh báo cố ý thì tắt tại chỗ kèm lý do); APK release không chứa class / receiver chỉ
+- [x] `.\gradlew lint` 0 cảnh báo (cảnh báo cố ý thì tắt tại chỗ kèm lý do); APK release không chứa class / receiver chỉ
       dành cho debug.
-- [ ] Repo public có `LICENSE`, `README.md`, `CHANGELOG.md`; không còn IP / đường dẫn cá nhân trong các tệp hiện tại.
+- [x] Repo public có `LICENSE`, `README.md`, `CHANGELOG.md`; không còn IP / đường dẫn cá nhân trong các tệp hiện tại.
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -189,7 +189,7 @@ Quy tắc giữ suốt stage:
 - [x] D1. Số phiên bản (D130): `guzzVersion = "1.0.0"` trong `libs.versions.toml`, convention plugin tính
       `versionCode`; cho phép ghi đè bằng `-Pguzz.version=1.0.1` (dùng ở F2). Kiểm: `apkanalyzer manifest version-code`
       ra `10000`, `version-name` ra `1.0.0`; với `-Pguzz.version=1.0.1` ra `10001`.
-- [ ] D2. Ký (D129): `signingConfigs.release` đọc `GUZZ_KEYSTORE`, `GUZZ_KEYSTORE_PASSWORD`, `GUZZ_KEY_ALIAS`,
+- [x] D2. Ký (D129): `signingConfigs.release` đọc `GUZZ_KEYSTORE`, `GUZZ_KEYSTORE_PASSWORD`, `GUZZ_KEY_ALIAS`,
       `GUZZ_KEY_PASSWORD` từ biến môi trường; thiếu thì ký bằng khoá debug và in cảnh báo rõ "chỉ để thử" (để Claude build
       thử F mà không cần mật khẩu). Kiểm: build không biến → `apksigner verify --print-certs` ra chứng chỉ debug; script
       phát hành (D5) từ chối bản ký debug.
@@ -202,7 +202,7 @@ Quy tắc giữ suốt stage:
       `useLegacyPackaging = true`; release chỉ `arm64-v8a`, thêm `-Pguzz.emulatorAbi=true` để build release có thêm
       `x86_64` chỉ cho máy ảo F3 (không phát hành bản này). Kiểm: `unzip -v` thấy `.so` dạng `Defl`, không còn hai `.so`
       thừa; `apkanalyzer apk file-size` / `download-size` ≤ 50 MB; ghi số đo từng phần (model, .so, dex, res) vào Nhật ký.
-- [ ] D5. `tools/release.ps1 -Version 1.0.0`: kiểm cây git sạch và đang ở `main` trùng `origin/main`; chạy
+- [x] D5. `tools/release.ps1 -Version 1.0.0`: kiểm cây git sạch và đang ở `main` trùng `origin/main`; chạy
       `.\gradlew test lint assembleSideloadRelease -Pguzz.version=…`; từ chối nếu thiếu biến ký hoặc APK ký bằng khoá
       debug; `apksigner verify`; chép ra `dist\guzz-<version>.apk` (thêm `dist/` vào `.gitignore`); in SHA-256 của APK và
       vân tay chứng chỉ. Không tự tạo tag hay Release. Kiểm: chạy không biến ký → dừng với thông báo rõ; chạy trong cây
@@ -235,7 +235,7 @@ Quy tắc giữ suốt stage:
       dùng, theo điều khoản của Google; tách giọng và làm sạch âm thanh chạy trên máy; app không có phân tích / theo dõi;
       log và bản chép lời chỉ nằm trên máy. Kiểm: chụp trang; nội dung khớp code (không có thư viện analytics trong
       `apkanalyzer dex packages`).
-- [ ] E5. `LICENSE` (MIT, năm 2026, tên chủ repo như repo desktop), `README.md` (tiếng Việt: Guzz Mobile là gì, cài APK
+- [x] E5. `LICENSE` (MIT, năm 2026, tên chủ repo như repo desktop), `README.md` (tiếng Việt: Guzz Mobile là gì, cài APK
       từ Releases, cấp quyền, nhập key, MacroDroid → `docs/intents.md`, quyền riêng tư, build từ mã nguồn), `CHANGELOG.md`
       (mục `1.0.0`: tính năng chính theo Stage 2–8). Kiểm: xem bản hiển thị trên GitHub sau G3; link nội bộ không gãy.
       Commit "Stage 9 E: …".
@@ -268,17 +268,17 @@ cần dùng.
 - [x] G1. Dọn tệp hiện tại trước khi public (D124): `git grep` IP Tailscale, tên tài khoản Windows, email, đường dẫn
       riêng; IP và lệnh `adb connect` chuyển sang `CLAUDE.local.md` (thêm vào `.gitignore`), CLAUDE.md / plans thay bằng
       `<ip-tailscale>`. Kiểm: `git grep` các mẫu đó ra rỗng; gitleaks (B2) chạy lại trên cây hiện tại sạch. Commit.
-- [ ] G2. Người dùng tạo keystore thật (E2) rồi tự chạy `.\tools\release.ps1 -Version 1.0.0` trong terminal của mình
+- [x] G2. Người dùng tạo keystore thật (E2) rồi tự chạy `.\tools\release.ps1 -Version 1.0.0` trong terminal của mình
       (đặt biến mật khẩu ở đó). Gỡ bản ký debug trên Xiaomi 15T (soạn lệnh `adb uninstall` để người dùng chạy), cài
       `dist\guzz-1.0.0.apk`. Kiểm: `apksigner verify --print-certs` ra vân tay của keystore thật; mở app, chạy một tệp
       ngắn (gửi thật: hỏi trước).
-- [ ] G3. **Hỏi người dùng** rồi chuyển repo public: `gh repo edit CozyCode890/GuzzMobile --visibility public
+- [x] G3. **Hỏi người dùng** rồi chuyển repo public: `gh repo edit CozyCode890/GuzzMobile --visibility public
       --accept-visibility-change-consequences`. Kiểm: `gh repo view --json visibility` ra `PUBLIC`; README, LICENSE hiện
       đúng trên GitHub.
-- [ ] G4. **Hỏi người dùng** rồi tạo tag `v1.0.0`, push tag, `gh release create v1.0.0 dist\guzz-1.0.0.apk --title
+- [x] G4. **Hỏi người dùng** rồi tạo tag `v1.0.0`, push tag, `gh release create v1.0.0 dist\guzz-1.0.0.apk --title
       "Guzz 1.0.0" --notes-file <mục 1.0.0 của CHANGELOG>` (ghi SHA-256 vào ghi chú). Kiểm: tải APK từ trang Releases
       bằng trình duyệt điện thoại, SHA-256 khớp, cài đè lên bản G2 được.
-- [ ] G5. Đóng stage: đánh dấu Tiêu chí hoàn thành; Stage 9 ✅ kèm ngày trong CLAUDE.md và README §5; CLAUDE.md thêm khối
+- [x] G5. Đóng stage: đánh dấu Tiêu chí hoàn thành; Stage 9 ✅ kèm ngày trong CLAUDE.md và README §5; CLAUDE.md thêm khối
       lệnh "Phát hành (Stage 9)" (`release.ps1`, biến ký, `-Pguzz.version`, `-Pguzz.emulatorAbi`, gitleaks /
       osv-scanner); "Việc tiếp theo" ghi Stage 10 (tuỳ chọn) hoặc dừng. Kiểm: `git status` sạch sau commit, đã push.
 
@@ -448,6 +448,23 @@ cần dùng.
   `CLAUDE.local.md` (thêm vào `.gitignore`, Claude Code vẫn tự đọc). Lịch sử git giữ nguyên (D124). `git grep` các mẫu đó
   rỗng; gitleaks trên cây hiện tại chỉ còn 8 phát hiện trong `spikes/android/app/build/` (không commit) và key giả của
   golden; lịch sử: không có.
+- (2026-11-19, G2) Người dùng tự đặt `GUZZ_KEYSTORE` / `GUZZ_KEY_ALIAS=Morphe` / mật khẩu (`Read-Host -MaskInput`) và chạy
+  `pwsh .\tools\release.ps1 -Version 1.0.0` (mặc định Gradle bó RAM từ `ae2cef0`; `-FullSpeed` để chạy hết sức): test + lint
+  xanh, ra `dist\guzz-1.0.0.apk` 43,9 MB + `guzz-1.0.0-mapping.txt`. `apksigner`: `CN=Morphe`, SHA-256 chứng chỉ
+  `3a2819db…5df772` (khớp E2); `1.0.0` / `10000`, không debuggable; SHA-256 APK
+  `5cd14f6206e2fcb5c529e2a387087e781d31755ed08265a4b15d933d324d4004`. Người dùng đồng ý gỡ bản thử (khoá debug, mất dữ liệu
+  thử) → cài bản ký thật trên Xiaomi 15T: "Lần mở đầu tiên trên máy này (versionCode 10000)", không crash. Lúc tự bấm qua
+  các trang, hộp xin quyền thông báo của lần mở đầu (HyperOS chặn chụp, ảnh tối) phủ lên Guzz; sau đó quyền thông báo ở
+  trạng thái "Cho phép" (USER_SET) — có thể do lần bấm tự động, đã báo người dùng; quy tắc "kiểm cửa sổ trước mỗi lần bấm"
+  ghi vào bộ nhớ của Claude.
+- (2026-11-19, G3) Người dùng đồng ý → `gh repo edit CozyCode890/GuzzMobile --visibility public`: `PUBLIC`, GitHub nhận
+  giấy phép MIT và README; trang repo mở không cần đăng nhập.
+- (2026-11-19, G4) Người dùng đồng ý → tag có chú thích `v1.0.0` trên `ae2cef0` (commit build APK), `gh release create
+  v1.0.0 dist/guzz-1.0.0.apk --title "Guzz 1.0.0"`, ghi chú = mục 1.0.0 của CHANGELOG + SHA-256 APK + vân tay chứng chỉ
+  (`mapping.txt` không đăng). Tải lại APK từ trang Release không đăng nhập: SHA-256 trùng. Không cài lại từ trình duyệt
+  điện thoại: cùng tệp (cùng SHA-256) đã cài ở G2.
+- (2026-11-19, G5) Đủ "Tiêu chí hoàn thành"; Stage 9 ✅. E2 còn một việc của người dùng: cất `guzz-release.p12` + mật khẩu
+  vào trình quản lý mật khẩu và thử khôi phục (vân tay phải trùng `3A:28:19:DB…`).
 
 ## Phát sinh
 
@@ -482,3 +499,7 @@ cần dùng.
   các cảnh báo "có bản mới").
 - (Plan Stage 9, 2026-11-18) Người dùng yêu cầu rà lỗ hổng và tinh gọn phần dư thừa trước khi phát hành. → Nhóm B, C
   (D132, D133).
+- (Stage 9, 2026-11-19) Chưa đo được % pin của bài 2 giờ trên bản release (F4 chạy lúc cáp USB còn cắm). Lần sau: rút
+  cáp thật, adb qua Wi-Fi, `tools/device/measure_release.ps1`. Chưa gắn stage.
+- (Stage 9, 2026-11-19) Chưa thử trên Android 11 (API 30) và chưa gửi Gemini thật trên Android cũ (D139). Nếu có người dùng
+  máy cũ báo lỗi thì thử lại trên máy ảo `guzz_api26` (đã có sẵn image).

@@ -7,7 +7,8 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 9 (đóng gói & phát hành), đang làm (plan 2026-11-18, D122–D137).
+**Stage hiện tại:** chưa có. Stage 9 (đóng gói & phát hành) xong ngày 2026-11-19 (D122–D139): bản 1.0.0 đã ký
+và đăng ở [GitHub Releases](https://github.com/CozyCode890/GuzzMobile/releases/tag/v1.0.0), repo chuyển public.
 Stage 6 (Intent cho MacroDroid) xong ngày 2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
 thử theo D107; Chia sẻ tới Guzz nhận cả Zalo, D106). Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
 (D110–D121; một Activity, 3 tab, đủ trang cài đặt, tiếng Việt / tiếng Anh, xuất / nhập config.txt). Stage 7 (làm sạch âm
@@ -15,9 +16,9 @@ thanh đầy đủ) xong ngày 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, 
 nghe thử chấp nhận theo số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật
 gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày
 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** làm Stage 9 theo [stage-09-release.md](plans/stage-09-release.md), bắt đầu từ nhóm A (nâng AGP /
-Gradle), rồi B (rà lỗ hổng) và C (tinh gọn) trước phần cấu hình release. Gửi bất cứ thứ gì lên Google, chuyển repo public,
-push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
+**Việc tiếp theo:** Stage 10 (tuỳ chọn, plugin Tasker/Locale) chờ plan chi tiết, hoặc dừng ở 1.0.0. Bản sau: sửa,
+ghi `CHANGELOG.md`, nâng `guzz` trong `gradle/libs.versions.toml`, chạy `tools/release.ps1` (mục "Phát hành" ở
+dưới). Gửi bất cứ thứ gì lên Google, push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -30,7 +31,7 @@ push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 | 6 | Intent cho MacroDroid | ✅ 2026-11-18 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
-| 9 | Đóng gói & phát hành | 🔨 | [stage-09-release.md](plans/stage-09-release.md) |
+| 9 | Đóng gói & phát hành | ✅ 2026-11-19 | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
 
 Ký hiệu: ⬜ chưa plan chi tiết · 📝 đã plan chi tiết · 🔨 đang làm · ✅ xong (ghi ngày) · ⏸ hoãn
@@ -222,6 +223,24 @@ adb shell am instrument -w -e class 'io.github.cozycode890.guzz.ui.NavigationTes
 # Sổ hạn mức mẫu cho tab Hạn mức (tự tắt app rồi đẩy vào files/quota/); lưu âm thanh tách từ video, chọn luồng 2
 python -X utf8 tools\device\quota_fixture.py
 .\tools\device\queue_debug.ps1 -SaveExtracted on -Track 1
+# Phát hành (Stage 9). Khoá ký ở D:\GuzzMobileData\keys\guzz-release.p12 (alias Morphe, sao lưu trong trình quản lý mật
+# khẩu); người dùng tự đặt mật khẩu trong terminal của họ, Claude không nhập. Script: kiểm git sạch = origin/main, test,
+# lint, build bó RAM, ký, kiểm chữ ký / phiên bản, ra dist\guzz-<v>.apk + mapping.txt + SHA-256. Nâng `guzz` trong
+# gradle/libs.versions.toml (versionCode = MAJOR×10000 + MINOR×100 + PATCH) và ghi CHANGELOG.md trước.
+$env:GUZZ_KEYSTORE = 'D:\GuzzMobileData\keys\guzz-release.p12'; $env:GUZZ_KEY_ALIAS = 'Morphe'
+$env:GUZZ_KEYSTORE_PASSWORD = Read-Host 'Mật khẩu keystore' -MaskInput
+pwsh .\tools\release.ps1 -Version 1.0.1
+Remove-Item Env:GUZZ_KEYSTORE_PASSWORD
+# Tag + Release (hỏi người dùng trước): ghi chú lấy mục của phiên bản trong CHANGELOG.md, kèm SHA-256 script in ra
+git tag -a v1.0.1 -m "Guzz Mobile 1.0.1"; git push origin v1.0.1
+gh release create v1.0.1 dist\guzz-1.0.1.apk --title "Guzz 1.0.1" --notes-file <ghi chú>
+# Bản release để thử, không cần khoá thật (ký khoá debug, CHỈ ĐỂ THỬ; khác chữ ký nên phải gỡ trước khi cài bản thật);
+# thêm x86_64 cho máy ảo. Tham số -P có dấu chấm phải để trong ngoặc kép.
+.\gradlew assembleSideloadRelease "-Pguzz.version=1.0.1" "-Pguzz.emulatorAbi=true"
+# Đo một lượt hàng đợi trên bản release (pin, nhiệt thermalservice, PSS :diarize), thêm tệp qua Chia sẻ tới Guzz
+pwsh .\tools\device\measure_release.ps1 -ShareUri content://media/external/file/<id> -Out D:\GuzzMobileData\stage-09\do.csv
+# Quét bí mật / lỗ hổng thư viện (công cụ ở D:\GuzzMobileData\tools, Stage 9 B2–B3)
+D:\GuzzMobileData\tools\gitleaks\gitleaks.exe git --log-opts="--all" --redact .
 ```
 
 ### Cài môi trường một lần
@@ -272,4 +291,4 @@ python -X utf8 tools\device\quota_fixture.py
   restrictions" (2026-11-11); thiếu cài đặt này HyperOS tắt wake lock khi màn hình tắt và việc nền đứng im.
 - Python và runtime của Guzz desktop (dùng cho golden test): `D:\Guzz\runtime\python\python.exe`; pyannote:
   `D:\Guzz\runtime\nguoi_noi\python.exe`; ffmpeg: `D:\Guzz\runtime\ffmpeg\ffmpeg.exe`.
-- `D:\GuzzMobile` là git repo, nhánh `main`, remote `origin` = `CozyCode890/GuzzMobile` (private, SSH).
+- `D:\GuzzMobile` là git repo, nhánh `main`, remote `origin` = `CozyCode890/GuzzMobile` (public từ 2026-11-19, D123; SSH).
