@@ -31,3 +31,6 @@ spikes/android/app/libs/
 
 # Bản phát hành (tools/release.ps1, Stage 9)
 dist/
+
+# Ghi chú riêng của máy (IP điện thoại…), Claude Code tự đọc; không commit (Stage 9 G1)
+CLAUDE.local.md

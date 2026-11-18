@@ -2,7 +2,7 @@
 # pin, nhiệt, PSS của process :diarize và của app, bước đang chạy, tới khi tệp xong / lỗi / dừng. Bản debug, đã đặt
 # cài đặt bằng queue_debug.ps1 (-Fake on, -Speakers ...).
 #
-#   $env:ANDROID_SERIAL = '192.168.1.6:5555'
+#   $env:ANDROID_SERIAL = '<ip-lan>:5555'
 #   .\tools\device\measure_diarize.ps1 -Add L1_120m.m4a -Out D:\GuzzMobileData\stage-05\g1_L1_120m.csv
 #
 # In tóm tắt: thời gian tách giọng (từ log), PSS đỉnh của :diarize, nhiệt đỉnh, % pin tụt.

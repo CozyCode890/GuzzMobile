@@ -266,7 +266,8 @@ python -X utf8 tools\device\quota_fixture.py
 - App Claude giữ biến môi trường từ lúc mở: đổi `JAVA_HOME` / `ANDROID_HOME` / `PATH` xong phải khởi động lại app.
 - GitHub CLI `gh` đã đăng nhập tài khoản CozyCode890 (SSH). Repo desktop: `CozyCode890/Guzz` (public).
 - Máy thật: Xiaomi 15T, Android 16, HyperOS 3.0, đã bật Gỡ lỗi USB (chi tiết ở D22).
-- adb không dây qua Tailscale: `adb connect 100.71.61.23:5555`, rồi `$env:ANDROID_SERIAL = '100.71.61.23:5555'`. Máy
+- adb không dây qua Tailscale: `adb connect <ip-tailscale>:5555`, rồi `$env:ANDROID_SERIAL = '<ip-tailscale>:5555'`
+  (địa chỉ thật ở `CLAUDE.local.md`, không commit). Máy
   khởi động lại thì cổng 5555 đóng: người dùng cắm USB và chạy `adb tcpip 5555`. Guzz (debug) đã được đặt pin "No
   restrictions" (2026-11-11); thiếu cài đặt này HyperOS tắt wake lock khi màn hình tắt và việc nền đứng im.
 - Python và runtime của Guzz desktop (dùng cho golden test): `D:\Guzz\runtime\python\python.exe`; pyannote:

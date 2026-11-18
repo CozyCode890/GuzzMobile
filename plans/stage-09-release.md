@@ -265,7 +265,7 @@ cần dùng.
 
 ### G. Công khai và phát hành (D123, D124)
 
-- [ ] G1. Dọn tệp hiện tại trước khi public (D124): `git grep` IP Tailscale, tên tài khoản Windows, email, đường dẫn
+- [x] G1. Dọn tệp hiện tại trước khi public (D124): `git grep` IP Tailscale, tên tài khoản Windows, email, đường dẫn
       riêng; IP và lệnh `adb connect` chuyển sang `CLAUDE.local.md` (thêm vào `.gitignore`), CLAUDE.md / plans thay bằng
       `<ip-tailscale>`. Kiểm: `git grep` các mẫu đó ra rỗng; gitleaks (B2) chạy lại trên cây hiện tại sạch. Commit.
 - [ ] G2. Người dùng tạo keystore thật (E2) rồi tự chạy `.\tools\release.ps1 -Version 1.0.0` trong terminal của mình
@@ -429,7 +429,7 @@ cần dùng.
 - (2026-11-19, F4) Xiaomi 15T, bản release 1.0.1 (khoá debug), `L1_120m.m4a` (2 giờ) nạp bằng Chia sẻ tới Guzz qua adb
   (`am start … ShareActivity --eu android.intent.extra.STREAM content://media/external/file/<id>`; tệp được chép vào
   `inbox`, D103), cách người nói "trên máy", preset "Moving speaker", `gemini-3.1-flash-lite`; gửi thật 9 đoạn (người dùng
-  đồng ý). adb qua Wi-Fi (`adb tcpip 5555`, `192.168.1.6:5555`) + `dumpsys battery unplug` (người dùng bảo tự chạy), xong
+  đồng ý). adb qua Wi-Fi (`adb tcpip 5555`, `<ip-lan>:5555`) + `dumpsys battery unplug` (người dùng bảo tự chạy), xong
   `dumpsys battery reset` + `adb usb`. Script mới `tools/device/measure_release.ps1` (không cần receiver debug) +
   bộ ghi nhiệt riêng. Kết quả: **41,3 phút** tổng; xử lý âm thanh + cắt đoạn **339 s** (đủ chuỗi làm sạch Stage 7; mốc bản
   debug Stage 2 chỉ cắt lặng + chuẩn hoá: 346 s), tách giọng **1568 s = 26,1 phút** (1135 lượt, 2 người; mốc Stage 1:
@@ -443,6 +443,11 @@ cần dùng.
   cài được trên Android 8.0.0; bấm qua 3 tab, 9 trang Cài đặt (nhãn "Output" thật là "Transcripts"), phần "Nâng cao" của
   Transcripts và của Google AI (chỗ crash ở F1): app sống, `logcat -b crash` trống. Ảnh: `…\stage-09\f3_api26_b\`. Không
   gửi Gemini trên máy ảo, không thử API 30 (D139). Tắt máy ảo sau khi thử.
+- (2026-11-19, G1) IP Tailscale, IP LAN và serial USB của điện thoại ở 6 tệp (CLAUDE.md, stage-00, stage-01, stage-09,
+  `spikes/README.md`, `measure_diarize.ps1`) thay bằng `<ip-tailscale>`, `<ip-lan>`, `<serial>`; giá trị thật chuyển sang
+  `CLAUDE.local.md` (thêm vào `.gitignore`, Claude Code vẫn tự đọc). Lịch sử git giữ nguyên (D124). `git grep` các mẫu đó
+  rỗng; gitleaks trên cây hiện tại chỉ còn 8 phát hiện trong `spikes/android/app/build/` (không commit) và key giả của
+  golden; lịch sử: không có.
 
 ## Phát sinh
 

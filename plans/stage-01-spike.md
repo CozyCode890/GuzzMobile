@@ -707,8 +707,8 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
     đang có hai FGS. App spike đặt `android:allowBackup="false"`. Guzz thật cũng phải chặn (ghi ở I3 cho Stage 4 / 9).
   - Session bị ngắt giữa chừng: B4 và hàng đợi trên máy dừng; chạy lại (`sweep.py B4` bỏ qua JSON đã có;
     `run_bench.ps1` bỏ qua log đã có `ket_thuc`). Bench đang chạy trên máy vẫn chạy tiếp vì nằm trong FGS của app.
-  - Người dùng hỏi chạy qua Wi-Fi: máy đã để adbd nghe TCP 5555, `adb connect 192.168.1.6:5555` được ngay, không đổi gì
-    trên máy. Từ đây dùng `$env:ANDROID_SERIAL = '192.168.1.6:5555'`; `run_bench.ps1` tự connect lại khi rớt Wi-Fi và
+  - Người dùng hỏi chạy qua Wi-Fi: máy đã để adbd nghe TCP 5555, `adb connect <ip-lan>:5555` được ngay, không đổi gì
+    trên máy. Từ đây dùng `$env:ANDROID_SERIAL = '<ip-lan>:5555'`; `run_bench.ps1` tự connect lại khi rớt Wi-Fi và
     không tính rớt kết nối là app chết. Máy rút cáp được, nên D6 / G3 không cần cáp; đêm G3 thì `adb disconnect` để PC
     không đánh thức máy.
   - B4 xong: chọn CAM++ zh_en advanced (DER TB 8,2%) và ERes2Net base (9,9%) cho B5. B5 chạy `--jobs 3 --threads 5`.
@@ -726,13 +726,13 @@ spike build bằng wrapper gốc: `.\gradlew -p spikes\android :app:installDebug
     / 30 ở ngưỡng 0,5.
   - D5 kiểm 1 đạt: `L1_10m`, P = 3 phút, O = 60 s, bản Kotlin trùng bản Python 136/136 lượt, cách nối từng nhãn giống hệt.
   - Người dùng bật "Gỡ lỗi không dây" → adb trên PC tự nối thêm kết nối TLS qua mDNS; chạy adb server với `ADB_MDNS=0`.
-    Theo yêu cầu người dùng, adb chuyển sang địa chỉ Tailscale `100.71.61.23:5555` (`ANDROID_SERIAL`), bỏ đường LAN.
+    Theo yêu cầu người dùng, adb chuyển sang địa chỉ Tailscale `<ip-tailscale>:5555` (`ANDROID_SERIAL`), bỏ đường LAN.
     Lưu ý cho G3 / D6: app Tailscale (VPN) chạy trên máy có thể ảnh hưởng Doze và pin; ghi lại lúc chạy đêm.
   - D5, `L1_120m`, P = 20 phút, ngưỡng tạm 0,5 (71 cụm): 22,9 phút, PSS 556 MB, đạt D30 ngay cả với số cụm quá nhiều.
   - D7 cách 3: giết process `:diarize` mất 54 ms, process chính sống, RAM trả lại.
 - **2026-11-01 18:40, TẠM DỪNG theo yêu cầu người dùng (đi thi; người dùng báo khi nào chạy tiếp).** Đã tắt mọi job
   trên PC; trên máy gửi `bench stop` (lượt `dec_L1ogg_sinc` có thể chạy nốt rồi tự dừng). Khi chạy tiếp:
-  1. Kết nối máy: `adb connect 100.71.61.23:5555` (Tailscale), `$env:ANDROID_SERIAL = '100.71.61.23:5555'`. Có hai kết
+  1. Kết nối máy: `adb connect <ip-tailscale>:5555` (Tailscale), `$env:ANDROID_SERIAL = '<ip-tailscale>:5555'`. Có hai kết
      nối thì `adb kill-server; $env:ADB_MDNS = '0'; adb start-server`. Máy khởi động lại thì phải cắm USB, người dùng chạy
      `adb tcpip 5555`. Đặt tạm `$env:JAVA_HOME`, `$env:ANDROID_HOME`, `$env:GUZZ_SPIKE_DATA` từ giá trị mức User.
   2. PC, B5: chạy lại `sweep.py B5 --shift 0.1 --embs campplus-zhen --thresholds 0.8 0.9 1.0 1.1 1.2 --jobs 3 --threads 5`

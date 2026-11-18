@@ -73,26 +73,26 @@ Máy thử đang để adbd nghe cổng TCP 5555 (`getprop service.adb.tcp.port`
 và PC cùng mạng Wi-Fi. Kết nối vẫn phải qua khoá RSA của PC đã được cho phép, như lúc cắm USB.
 
 ```powershell
-adb connect 192.168.1.6:5555          # IP của wlan0: adb shell ip -4 addr show wlan0
-$env:ANDROID_SERIAL = '192.168.1.6:5555'   # cắm cả USB thì adb thấy hai máy, phải chọn một
+adb connect <ip-lan>:5555          # IP của wlan0: adb shell ip -4 addr show wlan0
+$env:ANDROID_SERIAL = '<ip-lan>:5555'   # cắm cả USB thì adb thấy hai máy, phải chọn một
 .\spikes\android\run_bench.ps1 -Batch spikes\android\batches\d4.txt   # rớt Wi-Fi thì script tự connect lại
-adb disconnect 192.168.1.6:5555       # trước đêm thử Doze (G3): không để PC hỏi máy giữa chừng
+adb disconnect <ip-lan>:5555       # trước đêm thử Doze (G3): không để PC hỏi máy giữa chừng
 ```
 
-Qua Tailscale (PC và điện thoại cùng tailnet; điện thoại `xiaomi-15t` = 100.71.61.23): cùng cổng 5555, dùng được cả khi
+Qua Tailscale (PC và điện thoại cùng tailnet; điện thoại `xiaomi-15t` = <ip-tailscale>): cùng cổng 5555, dùng được cả khi
 máy ra khỏi mạng Wi-Fi nhà. Đây là cách đang dùng từ 2026-11-01:
 
 ```powershell
-adb connect 100.71.61.23:5555
-$env:ANDROID_SERIAL = '100.71.61.23:5555'
-adb disconnect 192.168.1.6:5555       # bỏ đường LAN để adb chỉ thấy một máy
+adb connect <ip-tailscale>:5555
+$env:ANDROID_SERIAL = '<ip-tailscale>:5555'
+adb disconnect <ip-lan>:5555       # bỏ đường LAN để adb chỉ thấy một máy
 ```
 
 Máy bật "Gỡ lỗi không dây" thì adb trên PC tự nối thêm một kết nối TLS qua mDNS (`adb-<serial>-…._adb-tls-connect._tcp`),
 và lệnh adb không có `-s` báo "more than one device". Chỉ giữ cổng 5555 (không đổi gì trên máy):
 
 ```powershell
-adb kill-server; $env:ADB_MDNS = '0'; adb start-server; adb connect 192.168.1.6:5555
+adb kill-server; $env:ADB_MDNS = '0'; adb start-server; adb connect <ip-lan>:5555
 ```
 
 Khởi động lại máy thì mất chế độ TCP. Người dùng bật lại bằng `adb tcpip 5555` (cắm USB), hoặc dùng "Gỡ lỗi không dây"

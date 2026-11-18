@@ -114,7 +114,7 @@ Mỗi bước có dòng **Kiểm:** là cách chứng minh bước đó xong. L�
   lên đầu `PATH`.
   **Kiểm:** `(Get-Command adb).Source` chỉ ra một bản; `adb devices` không báo "server version doesn't match".
 - [x] **A6. Đọc thông tin máy thật** (làm luôn lúc plan, 2026-10-31): Gỡ lỗi USB đã bật, `adb devices -l` thấy
-  `TOCMU4GYCYJBHA5X … model:25069PTEBG device:goya`; kết quả `getprop` và `/proc/meminfo` ghi ở D22.
+  `<serial> … model:25069PTEBG device:goya`; kết quả `getprop` và `/proc/meminfo` ghi ở D22.
 - [x] **A7. Cho phép cài qua USB trên HyperOS.** Trong Tuỳ chọn nhà phát triển bật "Cài đặt qua USB" (và "Gỡ lỗi USB
   (Cài đặt bảo mật)" nếu cần cấp quyền qua adb). HyperOS thường đòi đăng nhập tài khoản Xiaomi để bật mục này — người dùng
   tự làm trên máy.
