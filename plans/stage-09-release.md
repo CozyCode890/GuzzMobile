@@ -171,15 +171,15 @@ Quy tắc giữ suốt stage:
 
 ### C. Tinh gọn (D133)
 
-- [ ] C1. Sửa cảnh báo lint còn lại: `toUri` (KTX), `plurals` cho các chuỗi `%d` + danh từ (cả bản tiếng Anh),
+- [x] C1. Sửa cảnh báo lint còn lại: `toUri` (KTX), `plurals` cho các chuỗi `%d` + danh từ (cả bản tiếng Anh),
       `mutableIntStateOf`, `fullBackupContent` cho API < 31, `SdCardPath` trong PathMapping (dùng `Environment` hoặc tắt
       tại chỗ kèm lý do nếu `/sdcard` là chuỗi người dùng gõ), `UsableSpace`, `ExportedReceiver` (cố ý cho MacroDroid,
       đã có mã bí mật: `tools:ignore` kèm comment). Kiểm: `.\gradlew lint` 0 cảnh báo ở mọi module; `check_strings.ps1`
       sạch; test JVM của `:feature:automation` qua.
-- [ ] C2. Tài nguyên và code thừa: bật tạm `UnusedResources` / `UnusedIds` ở mọi module, xoá phần lint báo; class /
+- [x] C2. Tài nguyên và code thừa: bật tạm `UnusedResources` / `UnusedIds` ở mọi module, xoá phần lint báo; class /
       hàm public không ai gọi (tìm bằng `grep` tên, kèm báo cáo `usage.txt` của R8 ở D3). Kiểm: lint không báo; `test`
       xanh.
-- [ ] C3. Phụ thuộc thừa: từng module, so `dependencies {}` với import thật (`grep`), bỏ dòng không dùng (vd
+- [x] C3. Phụ thuộc thừa: từng module, so `dependencies {}` với import thật (`grep`), bỏ dòng không dùng (vd
       `appcompat` ở module không đổi ngôn ngữ). Kiểm: `.\gradlew assembleSideloadDebug assemblePlayDebug test` xanh.
       Commit "Stage 9 C: …".
 
@@ -197,7 +197,7 @@ Quy tắc giữ suốt stage:
       `:core:diarization` (JNI gọi `invoke`); kiểm rule đi kèm OkHttp / kotlinx.serialization đủ. Đọc
       `build/outputs/mapping/sideloadRelease/usage.txt` cho C2. Kiểm: `assembleSideloadRelease` ra APK; F1 chạy được tách
       giọng và gửi Gemini trên bản này.
-- [ ] D4. Gói (D128): `packaging.jniLibs.excludes` cho `libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`;
+- [x] D4. Gói (D128): `packaging.jniLibs.excludes` cho `libsherpa-onnx-c-api.so`, `libsherpa-onnx-cxx-api.so`;
       `useLegacyPackaging = true`; release chỉ `arm64-v8a`, thêm `-Pguzz.emulatorAbi=true` để build release có thêm
       `x86_64` chỉ cho máy ảo F3 (không phát hành bản này). Kiểm: `unzip -v` thấy `.so` dạng `Defl`, không còn hai `.so`
       thừa; `apkanalyzer apk file-size` / `download-size` ≤ 50 MB; ghi số đo từng phần (model, .so, dex, res) vào Nhật ký.
@@ -206,11 +206,11 @@ Quy tắc giữ suốt stage:
       debug; `apksigner verify`; chép ra `dist\guzz-<version>.apk` (thêm `dist/` vào `.gitignore`); in SHA-256 của APK và
       vân tay chứng chỉ. Không tự tạo tag hay Release. Kiểm: chạy không biến ký → dừng với thông báo rõ; chạy trong cây
       bẩn → dừng.
-- [ ] D6. Code chỉ cho debug không lọt release: liệt kê class / receiver / activity của bản debug (màn hình thử âm thanh,
+- [x] D6. Code chỉ cho debug không lọt release: liệt kê class / receiver / activity của bản debug (màn hình thử âm thanh,
       receiver adb của hàng đợi, Gemini giả, extra `fake_gemini`, `route` mở thẳng trang…); bản release không có hoặc
       không chạy được. Kiểm: `apkanalyzer manifest print` + `apkanalyzer dex packages` trên APK release không thấy các
       class / thành phần đó; `adb shell am broadcast` lệnh debug tới bản release không có tác dụng. Commit "Stage 9 D: …".
-- [ ] D7. Flavor `play`: `assemblePlayRelease` build được, manifest không có `MANAGE_EXTERNAL_STORAGE`. Kiểm:
+- [x] D7. Flavor `play`: `assemblePlayRelease` build được, manifest không có `MANAGE_EXTERNAL_STORAGE`. Kiểm:
       `apkanalyzer manifest permissions`.
 
 ### E. Nội dung phát hành (D125, D126, D127, D129)
@@ -225,12 +225,12 @@ Quy tắc giữ suốt stage:
       (`-deststoretype PKCS12`) để **người dùng tự chạy và tự gõ mật khẩu** (không lấy mật khẩu từ chat). Người dùng đính
       kèm tệp `.p12` + mật khẩu vào trình quản lý mật khẩu. Kiểm: `keytool -list -v` trên bản `.p12` và trên bản tải lại
       từ trình quản lý mật khẩu ra cùng vân tay SHA-256; alias ghi vào Nhật ký cho `GUZZ_KEY_ALIAS`.
-- [ ] E3. Trang Giới thiệu: phiên bản, link GitHub và trang Releases (D126); "Giấy phép" mở danh sách, mỗi mục bấm vào
+- [x] E3. Trang Giới thiệu: phiên bản, link GitHub và trang Releases (D126); "Giấy phép" mở danh sách, mỗi mục bấm vào
       xem toàn văn (tệp trong `assets/licenses/`): sherpa-onnx (Apache-2.0), ONNX Runtime (MIT, © Microsoft, tự thêm vì
       AAR không kèm), pyannote segmentation-3.0 (MIT, © 2022 CNRS, lấy `models/segmentation-3.0.LICENSE` trong cache
       guzz-deps), 3D-Speaker CAM++ (Apache-2.0), AndroidX / Compose, OkHttp, kotlinx (Apache-2.0); chính Guzz Mobile (MIT).
       Chuỗi vi / en. Kiểm: `ui_check.ps1` chụp trang ở vi / en, tối / sáng; `check_strings.ps1` sạch; lint sạch.
-- [ ] E4. Ghi chú quyền riêng tư (trang Giới thiệu + README): âm thanh được gửi lên Google AI Studio bằng key của người
+- [x] E4. Ghi chú quyền riêng tư (trang Giới thiệu + README): âm thanh được gửi lên Google AI Studio bằng key của người
       dùng, theo điều khoản của Google; tách giọng và làm sạch âm thanh chạy trên máy; app không có phân tích / theo dõi;
       log và bản chép lời chỉ nằm trên máy. Kiểm: chụp trang; nội dung khớp code (không có thư viện analytics trong
       `apkanalyzer dex packages`).
@@ -346,6 +346,57 @@ cần dùng.
   thành phần debug; `allowBackup="false"`, có `dataExtractionRules`, không `debuggable`, `usesCleartextTraffic="false"`.
   Sau các chỗ sửa: `.\gradlew test lint lintPlayDebug` xanh (`:feature:automation` thêm `SecretOnEnableTest`, ca `..` trong
   `ExtrasReaderTest`); máy ảo `guzz_15t`: test thiết bị của `:app` 12/12 (thêm `privateDataPathIsRejected`).
+- (2026-11-18, C1) Lint 0 cảnh báo ở mọi module: `Uri.parse` → `toUri()` (9 chỗ); `google_ai_check_ok`, `share_added`
+  thành `<plurals>`; `system_import_summary`, `queue_done_text` tiếng Anh viết lại cho khỏi cần số nhiều; `mutableIntStateOf`;
+  thêm `backup_rules.xml` (`fullBackupContent`, Android 8–11, loại trừ mọi thứ như `data_extraction_rules.xml`);
+  `AudioDebugStopReceiver` (chỉ bản debug) thêm quyền `DUMP`; tắt tại chỗ kèm lý do: `SdCardPath` ở `PathMapping` (phải
+  nhận `/sdcard/…` người dùng gõ), `UsableSpace` ở `StorageCheck`.
+- (2026-11-18, C2) Tạm bật `checkDependencies` + `UnusedResources` / `UnusedIds` cho `:app`: không còn tài nguyên thừa.
+  `usage.txt` của R8 quá nhiễu (R8 inline rồi bỏ cả lớp continuation, hằng số) nên tìm code thừa bằng script: khai báo mà tên
+  không có ở tệp nào khác (kể cả test, XML). Bỏ: `InMemoryApiKeyStore`, `CleanSettings.anyStep`, `Loudness.boostAndNormalize`
+  (golden "boost_and_normalize" vẫn chạy qua `gainFor` + `GainSource`), `ErrorKind.fromCode`, `DiarizationJson.toTurns`,
+  `PieceJson.readList`. Giữ: `Cx.minus` (toán tử, gọi bằng `-`), `PipelineConfig.CONFLICT_OVERWRITE` (liệt kê đủ giá trị của
+  `on_conflict`).
+- (2026-11-18, C3) `:core:diarization` bỏ plugin + thư viện kotlinx-serialization (không dùng). `:feature:automation` bỏ
+  `activity-compose` (không import gì) — nó là đường đến gián tiếp của `androidx.core` (`toUri`), nên khai báo thẳng
+  `androidx.core:core` 1.19.1 (từ 1.19 `core-ktx` đã gộp vào `core`; lint báo 1.19.1 là bản ổn định mới nhất, ra
+  2026-09-23). `:app` → `:core:media` giữ: code debug và androidTest dùng. Kiểm (máy chạy bó RAM: 2 worker, `-Xmx2g`,
+  Kotlin in-process): `test lint lintPlayDebug assembleSideloadDebug assembleSideloadRelease assemblePlayRelease` xanh,
+  `check_strings.ps1` sạch, máy ảo `guzz_15t`: test thiết bị của `:app` 9/9 + 3/3 Compose UI. Lần chạy đầu
+  `NavigationTest` treo như ghi ở Stage 8 (chạy trên APK cũ), lần sau qua: test giao diện chạy riêng một lượt.
+- (2026-11-18, D) `guzz = "1.0.0"` trong `libs.versions.toml`, versionCode tính ở `app/build.gradle.kts` (`apkanalyzer`:
+  `1.0.0` / `10000`); `-Pguzz.version` thử ở F2. Ký: thiếu `GUZZ_KEYSTORE` thì Gradle in cảnh báo "CHỈ ĐỂ THỬ" và ký bằng
+  khoá debug (`apksigner`: `CN=Android Debug`). R8 + shrink resources bật cho release; keep rules ở
+  `core/diarization/consumer-rules.pro` (AAR sherpa-onnx có `proguard.txt` rỗng): `mapping.txt` giữ nguyên tên 104 class
+  `com.k2fsa.sherpa.onnx.*` và `ProgressCallback.invoke(int,int,long)`; chạy thật tách giọng trên bản release ở F1.
+  `-Pguzz.emulatorAbi=true` thêm `x86_64` (PowerShell: phải để tham số trong ngoặc kép, không thì tách ở dấu chấm).
+- (2026-11-18, D4) APK `sideloadRelease` arm64: **43,9 MB** (41,9 MiB; tải về 43,4 MB) ≤ 50 MB (D128). Trong đó model
+  `campplus_zh_en_advanced.onnx` 25,8 MB nén / `segmentation-3.0.onnx` 5,5 MB, `libonnxruntime.so` 8,0 MB nén (22,2 MB),
+  `libsherpa-onnx-jni.so` 1,9 MB nén, `classes.dex` 2,0 MB nén (3,9 MB), `resources.arsc` 0,5 MB; không còn
+  `libsherpa-onnx-c-api.so` / `-cxx-api.so`. `playRelease` 43,9 MB; bản thêm x86_64 cho máy ảo 55,0 MB.
+- (2026-11-18, D5) `tools/release.ps1`: thử 4 nhánh từ chối, đều thoát mã 1 với thông báo rõ: số phiên bản sai dạng, cây git
+  bẩn, thiếu `GUZZ_KEYSTORE`, không thấy tệp keystore. Nhánh "APK ký bằng khoá debug" và lần chạy đủ thử ở G2.
+- (2026-11-18, D6, D7) `mapping.txt` của release không có class `…guzz.debug.*`, `FakeTranscriber`, `AudioDebug*`,
+  `QueueDebugReceiver`, `UnknownLengthProvider`; manifest release không có thành phần debug (B4), nên lệnh adb của bản debug
+  không tới được bản release. `playRelease` build được, không có `MANAGE_EXTERNAL_STORAGE` /
+  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` / `READ_EXTERNAL_STORAGE`.
+- (2026-11-18, E1) Icon vector vẽ lại từ `icon.png` desktop (đo màu và vị trí nét bằng PIL, tỉ lệ 0,27 dp/px, căn giữa
+  phần nét): 6 cột sóng âm, mũi tên xuống, vạch chữ dài + vạch ngắn mờ 70 %; nền gradient `#0497B1` → `#206BE2`; lớp
+  monochrome dùng chung lớp trước. Bản debug: cùng hình, nền `#E8710A` → `#B3261E`. Bỏ màu `ic_launcher_background` cũ.
+  Ảnh trên máy ảo (mặt nạ tròn, màn hình chờ bản debug): `D:\GuzzMobileData\stage-09\e1\`. Chờ người dùng duyệt + ảnh trên
+  Xiaomi 15T (F1).
+- (2026-11-18, E3, E4) Trang Thông tin: nút "Mã nguồn", "Bản mới (GitHub)" (mở trình duyệt); phần "Quyền riêng tư"; giấy
+  phép thành danh sách 8 mục, bấm vào mở hộp toàn văn từ `assets/licenses/` (Apache-2.0 dùng chung một tệp; dòng cắt cứng
+  được nối lại theo đoạn khi hiển thị). Toàn văn: Apache-2.0 từ LICENSE của `k2-fsa/sherpa-onnx` (trùng từng chữ với
+  OkHttp); MIT của segmentation-3.0 từ cache guzz-deps; ONNX Runtime: repo `microsoft/onnxruntime` trên GitHub trả 404 ngày
+  2026-11-18 và AAR / Maven không kèm LICENSE, nên dựng thân MIT chuẩn với câu "Copyright (c) Microsoft Corporation" (pom
+  Maven và PyPI ghi "MIT License"; Stage 1 đã ghi MIT © Microsoft). Ảnh máy ảo (tiếng Anh) ở `…\stage-09\e1\`. APK
+  release không có thư viện analytics / crash report (`mapping.txt`: không có firebase, gms.measurement, crashlytics,
+  sentry…).
+- (2026-11-18, E2) Đã tải `bcprov-jdk18on-1.87.jar` (Maven Central, SHA-1 khớp, OSV không có lỗ hổng) vào
+  `D:\GuzzMobileData\tools\bcprov`; lệnh chuyển BKS → PKCS12 đã soạn, chờ người dùng tự chạy.
+- (2026-11-18, E5) `LICENSE` MIT ghi "Copyright (c) 2026 CozyCode890" (tên tài khoản GitHub; repo desktop không có LICENSE
+  để theo); `README.md`, `CHANGELOG.md` (mục 1.0.0). Kiểm hiển thị trên GitHub ở G3.
 
 ## Phát sinh
 

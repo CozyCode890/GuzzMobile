@@ -190,8 +190,12 @@
     <string name="about_log_path">Nhật ký: %1$s</string>
     <string name="about_quota_note">Hạn mức chỉ đếm các yêu cầu gửi từ app này; Google đếm theo cả tài khoản, nên dùng chung key với Guzz desktop thì có thể bị 429 sớm hơn.</string>
     <string name="about_licenses">Giấy phép</string>
-    <string name="about_licenses_models">Tách giọng: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
-    <string name="about_licenses_libs">Thư viện: AndroidX và Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines và kotlinx.serialization (Apache-2.0).</string>
+    <string name="about_licenses_hint">Phần mềm và model đóng gói trong Guzz. Bấm một mục để xem toàn văn giấy phép.</string>
+    <string name="about_license_close">Đóng</string>
+    <string name="about_source">Mã nguồn</string>
+    <string name="about_releases">Bản mới (GitHub)</string>
+    <string name="about_privacy">Quyền riêng tư</string>
+    <string name="about_privacy_text">Âm thanh của tệp bạn chọn được gửi lên Google AI Studio bằng API key của chính bạn, theo điều khoản của Google; Guzz không gửi đi đâu khác. Làm sạch âm thanh và tách giọng chạy ngay trên máy. Guzz không có quảng cáo, không thu thập số liệu sử dụng. Bản chép lời, cài đặt và nhật ký chỉ nằm trên điện thoại.</string>
     <!-- Prompt sửa được (Stage 8 G3) -->
     <string name="prompt_main_title">Prompt chép lời</string>
     <string name="prompt_main_hint">Dặn model đa năng cách chép lời khi tắt nhận diện người nói. Áp dụng từ tệp chuyển tiếp theo.</string>

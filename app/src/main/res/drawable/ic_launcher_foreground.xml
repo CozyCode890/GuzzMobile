@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Chữ "G" tạm cho icon (Stage 0). Khung 108 dp của adaptive icon, nét nằm trong vùng an toàn 66 dp ở giữa. -->
+<!-- Icon chính thức (Stage 9 E1, D127): vẽ lại icon Guzz desktop (gui/assets/icon.png) — sóng âm, mũi tên xuống, hai vạch
+     chữ. Khung 108 dp của adaptive icon; nét nằm trong vòng tròn an toàn 66 dp ở giữa. Toạ độ đổi từ ảnh 256 px của
+     desktop (tỉ lệ 0,27 dp/px, căn giữa phần nét). Dùng luôn làm lớp monochrome (Android 13+ chỉ lấy độ trong suốt). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Vòng cung mở ở góc trên bên phải, từ 40° vòng ngược chiều kim đồng hồ tới 0°, rồi gạch ngang vào giữa. -->
+    <!-- Sóng âm: 6 cột bo tròn đầu. -->
     <path
-        android:pathData="M69.32,41.14 A20,20 0 1,0 74,54 L56,54"
-        android:strokeWidth="8"
+        android:pathData="M33.21,42.66 L33.21,47.79 M39.42,37.8 L39.42,52.92 M45.63,32.67 L45.63,57.78 M51.84,38.88 L51.84,51.57 M58.05,34.83 L58.05,55.62 M64.26,41.58 L64.26,49.14"
+        android:strokeWidth="3.78"
         android:strokeColor="#FFFFFF"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:strokeLineCap="round" />
+    <!-- Mũi tên xuống: âm thanh thành chữ. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M70.88,54.54 L76.81,54.54 L73.84,59.94 Z" />
+    <!-- Hai vạch chữ, vạch dưới ngắn hơn và mờ hơn như bản desktop. -->
+    <path
+        android:pathData="M33.34,68.17 L74.66,68.17"
+        android:strokeWidth="3.78"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M33.34,75.33 L60.62,75.33"
+        android:strokeAlpha="0.7"
+        android:strokeWidth="3.78"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
 </vector>

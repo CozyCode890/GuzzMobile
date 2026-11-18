@@ -170,8 +170,12 @@
     <string name="about_log_path">Logs: %1$s</string>
     <string name="about_quota_note">Quota only counts requests sent from this app; Google counts per account, so sharing a key with Guzz desktop can hit 429 sooner.</string>
     <string name="about_licenses">Licenses</string>
-    <string name="about_licenses_models">Speaker separation: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
-    <string name="about_licenses_libs">Libraries: AndroidX and Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines and kotlinx.serialization (Apache-2.0).</string>
+    <string name="about_licenses_hint">Software and models bundled in Guzz. Tap an item to read the full license.</string>
+    <string name="about_license_close">Close</string>
+    <string name="about_source">Source code</string>
+    <string name="about_releases">Updates (GitHub)</string>
+    <string name="about_privacy">Privacy</string>
+    <string name="about_privacy_text">The audio of the files you choose is sent to Google AI Studio with your own API key, under Google\'s terms; Guzz sends it nowhere else. Audio cleaning and speaker detection run on the phone. Guzz has no ads and collects no usage data. Transcripts, settings and logs stay on the phone.</string>
     <string name="prompt_main_title">Transcription prompt</string>
     <string name="prompt_main_hint">Tells general models how to transcribe when speaker recognition is off. Applies from the next file.</string>
     <string name="prompt_diarization_title">Speaker prompt</string>

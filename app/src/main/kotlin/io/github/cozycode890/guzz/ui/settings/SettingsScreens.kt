@@ -1,26 +1,37 @@
 package io.github.cozycode890.guzz.ui.settings
 
+import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.AppContainer
 import io.github.cozycode890.guzz.BuildConfig
 import io.github.cozycode890.guzz.R
@@ -38,6 +49,8 @@ import io.github.cozycode890.guzz.ui.components.SwitchSetting
 import io.github.cozycode890.guzz.ui.components.TextSetting
 import io.github.cozycode890.guzz.ui.nav.Routes
 import java.time.LocalDateTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /** Một mục của danh sách Cài đặt. */
 private data class Entry(val route: String, val title: Int, val summary: Int)
@@ -163,9 +176,32 @@ fun QueueSettingsScreen(settings: Settings, onBack: () -> Unit) {
     }
 }
 
-/** Cài đặt → Thông tin (C5): phiên bản, bản phân phối, giấy phép, nơi để nhật ký. */
+/** Một phần mềm / model đóng gói trong APK và tệp giấy phép của nó trong `assets/licenses/` (Stage 9 E3). */
+private data class LicenseEntry(val name: String, val license: String, val file: String)
+
+// Tên riêng và tên giấy phép, không dịch. Toàn văn: assets/licenses/ (Apache-2.0 dùng chung một tệp).
+private val licenseEntries = listOf(
+    LicenseEntry("Guzz Mobile", "MIT", "guzz-mobile.txt"),
+    LicenseEntry("sherpa-onnx", "Apache-2.0", "apache-2.0.txt"),
+    LicenseEntry("ONNX Runtime (© Microsoft)", "MIT", "onnxruntime.txt"),
+    LicenseEntry("pyannote segmentation-3.0 (© 2022 CNRS)", "MIT", "pyannote-segmentation-3.0.txt"),
+    LicenseEntry("3D-Speaker CAM++", "Apache-2.0", "apache-2.0.txt"),
+    LicenseEntry("AndroidX, Jetpack Compose", "Apache-2.0", "apache-2.0.txt"),
+    LicenseEntry("OkHttp, Okio", "Apache-2.0", "apache-2.0.txt"),
+    LicenseEntry("Kotlin, kotlinx.coroutines, kotlinx.serialization", "Apache-2.0", "apache-2.0.txt"),
+)
+
+private const val REPO_URL = "https://github.com/CozyCode890/GuzzMobile"
+
+/**
+ * Cài đặt → Thông tin (C5): phiên bản, bản phân phối, nơi để nhật ký. Stage 9 (E3, E4): link mã nguồn và trang
+ * Releases (D126: app không tự kiểm bản mới), ghi chú quyền riêng tư, giấy phép bấm vào xem toàn văn.
+ */
 @Composable
 fun AboutScreen(container: AppContainer, onBack: () -> Unit) {
+    val context = LocalContext.current
+    var shown by remember { mutableStateOf<LicenseEntry?>(null) }
+    fun open(url: String) = runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri())) }
     SettingsPage(stringResource(R.string.about_title), onBack) {
         SectionCard(stringResource(R.string.app_name)) {
             Text(stringResource(R.string.about_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE))
@@ -178,10 +214,55 @@ fun AboutScreen(container: AppContainer, onBack: () -> Unit) {
             Text(stringResource(R.string.about_android, Build.VERSION.RELEASE, Build.VERSION.SDK_INT))
             Hint(stringResource(R.string.about_log_path, container.logFile.parent.orEmpty()))
             Hint(stringResource(R.string.about_quota_note))
+            Row {
+                TextButton(onClick = { open(REPO_URL) }) { Text(stringResource(R.string.about_source)) }
+                TextButton(onClick = { open("$REPO_URL/releases") }) { Text(stringResource(R.string.about_releases)) }
+            }
+        }
+        SectionCard(stringResource(R.string.about_privacy)) {
+            Text(stringResource(R.string.about_privacy_text))
         }
         SectionCard(stringResource(R.string.about_licenses)) {
-            Text(stringResource(R.string.about_licenses_models))
-            Text(stringResource(R.string.about_licenses_libs))
+            Hint(stringResource(R.string.about_licenses_hint))
+            licenseEntries.forEach { entry ->
+                Column(
+                    Modifier.fillMaxWidth().clickable { shown = entry }.padding(vertical = 6.dp),
+                ) {
+                    Text(entry.name, style = MaterialTheme.typography.bodyMedium)
+                    Text(entry.license, style = MaterialTheme.typography.bodySmall)
+                }
+            }
         }
     }
+    shown?.let { entry -> LicenseDialog(entry) { shown = null } }
 }
+
+/** Toàn văn giấy phép đọc từ assets. */
+@Composable
+private fun LicenseDialog(entry: LicenseEntry, onClose: () -> Unit) {
+    val context = LocalContext.current
+    val text by produceState("", entry.file) {
+        value = withContext(Dispatchers.IO) {
+            runCatching { context.assets.open("licenses/${entry.file}").bufferedReader().use { it.readText() } }
+                .getOrDefault("")
+                .let(::reflowParagraphs)
+        }
+    }
+    AlertDialog(
+        onDismissRequest = onClose,
+        confirmButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.about_license_close)) } },
+        title = { Text(entry.name) },
+        text = {
+            Text(
+                text,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            )
+        },
+    )
+}
+
+/** Tệp giấy phép cắt dòng cứng ở ~80 ký tự: nối các dòng trong một đoạn để màn hình hẹp tự xuống dòng cho đẹp. */
+private fun reflowParagraphs(text: String): String =
+    text.replace("\r\n", "\n").split(Regex("\n\\s*\n"))
+        .joinToString("\n\n") { it.trim().replace(Regex("\\s+"), " ") }
