@@ -395,6 +395,13 @@ cần dùng.
   sentry…).
 - (2026-11-18, E2) Đã tải `bcprov-jdk18on-1.87.jar` (Maven Central, SHA-1 khớp, OSV không có lỗ hổng) vào
   `D:\GuzzMobileData\tools\bcprov`; lệnh chuyển BKS → PKCS12 đã soạn, chờ người dùng tự chạy.
+- (2026-11-18, E2) Người dùng tự chạy `keytool -importkeystore`: lần đầu lỗi `KeyStore integrity check failed` vì
+  `Morphe.keystore` không có mật khẩu cấp tệp ("Morphe" là mật khẩu của khoá). Lần hai bỏ trống mật khẩu nguồn, gõ
+  mật khẩu khoá khi được hỏi: nhập được 1 khoá → `D:\GuzzMobileData\keys\guzz-release.p12` (mật khẩu mới người dùng tự
+  đặt; PKCS12 dùng chung mật khẩu đó cho khoá, nên không cần `GUZZ_KEY_PASSWORD`). Khoá: alias `Morphe`, `CN=Morphe`,
+  RSA 4096, SHA256withRSA, hạn tới 2218, SHA-256 chứng chỉ
+  `3A:28:19:DB:0F:0E:62:F1:C4:55:21:ED:0D:94:4D:3C:40:C4:9C:42:E3:E2:D0:43:B7:D9:F1:7E:F0:5D:F7:72`. Còn: người dùng cất
+  `.p12` + mật khẩu vào trình quản lý mật khẩu và thử khôi phục (vân tay phải trùng số trên).
 - (2026-11-18, E5) `LICENSE` MIT ghi "Copyright (c) 2026 CozyCode890" (tên tài khoản GitHub; repo desktop không có LICENSE
   để theo); `README.md`, `CHANGELOG.md` (mục 1.0.0). Kiểm hiển thị trên GitHub ở G3.
 
