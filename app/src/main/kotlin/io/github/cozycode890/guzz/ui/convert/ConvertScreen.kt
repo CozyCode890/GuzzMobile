@@ -61,6 +61,7 @@ import io.github.cozycode890.guzz.core.pipeline.QueueItem
 import io.github.cozycode890.guzz.core.pipeline.StartProblem
 import io.github.cozycode890.guzz.core.pipeline.Transcript
 import io.github.cozycode890.guzz.feature.queue.QueueService
+import io.github.cozycode890.guzz.feature.queue.errorText
 import io.github.cozycode890.guzz.openWithOtherApp
 import io.github.cozycode890.guzz.shareTranscript
 import io.github.cozycode890.guzz.ui.audio.presetFlow
@@ -372,7 +373,7 @@ private fun QueueRow(
             if (item.status == ItemStatus.RUNNING) {
                 LinearProgressIndicator(progress = { item.progress.toFloat() }, modifier = Modifier.fillMaxWidth().padding(top = 6.dp))
             }
-            item.error?.let {
+            errorText(LocalContext.current, item)?.let {
                 Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall, maxLines = 4, overflow = TextOverflow.Ellipsis)
             }
         }

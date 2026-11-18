@@ -11,11 +11,13 @@ import io.github.cozycode890.guzz.core.audio.ChunkSettings
 import io.github.cozycode890.guzz.core.audio.CleanSettings
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.media.AudioPreparation
+import io.github.cozycode890.guzz.core.media.InsufficientStorageException
 import io.github.cozycode890.guzz.core.media.MediaInput
+import io.github.cozycode890.guzz.core.media.MediaReadException
 import io.github.cozycode890.guzz.core.media.NoAudioException
 import io.github.cozycode890.guzz.core.media.PreparationListener
-import io.github.cozycode890.guzz.core.media.label
 import io.github.cozycode890.guzz.core.pipeline.ChunkSource
+import io.github.cozycode890.guzz.core.pipeline.ErrorCodes
 import io.github.cozycode890.guzz.core.pipeline.NoAudioTrackException
 import io.github.cozycode890.guzz.core.pipeline.OutputFolder
 import io.github.cozycode890.guzz.core.pipeline.PipelineException
@@ -80,10 +82,10 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
         listener: SourceListener,
     ): ChunkList {
         val l = object : PreparationListener {
-            override fun onProgress(fraction: Double) = listener.onProgress(DECODE_WEIGHT * fraction, "giải mã")
+            override fun onProgress(fraction: Double) = listener.onProgress(DECODE_WEIGHT * fraction, STEP_DECODE)
 
             override fun onProgress(step: PrepareStep, fraction: Double) = listener.onProgress(
-                DECODE_WEIGHT + (1 - DECODE_WEIGHT) * (step.ordinal + fraction) / PrepareStep.entries.size, step.label,
+                DECODE_WEIGHT + (1 - DECODE_WEIGHT) * (step.ordinal + fraction) / PrepareStep.entries.size, step.code,
             )
 
             override fun checkCancelled() = listener.checkCancelled()
@@ -94,6 +96,15 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
             AudioPreparation(context).run(mediaInputOf(source), audioTrack, chunk, folder, l, digest, clean, saveClean).chunks
         } catch (e: NoAudioException) {
             throw NoAudioTrackException(e.message ?: "Tệp không có luồng âm thanh nào.")
+        } catch (e: MediaReadException) {
+            // Chi tiết cho giao diện: thông báo gốc của hệ thống (vd "Failed to instantiate extractor"), không lặp câu tiếng Việt.
+            val detail = (e.cause?.message ?: e.message).orEmpty()
+            throw PipelineException(e.message.orEmpty(), cause = e, code = ErrorCodes.MEDIA_READ, args = listOf(detail))
+        } catch (e: InsufficientStorageException) {
+            throw PipelineException(
+                e.message.orEmpty(), cause = e, code = ErrorCodes.STORAGE,
+                args = listOf((e.neededBytes / 1_000_000).toString(), (e.freeBytes / 1_000_000).toString()),
+            )
         }
     }
 
@@ -129,7 +140,7 @@ class SafOutputFolder(private val context: Context, private val tree: Uri) : Out
         } catch (e: Exception) {
             throw PipelineException(
                 "Không mở được thư mục lưu bản chép lời ($label): ${e.message}. Chọn lại thư mục lưu.", stopQueue = true,
-                cause = e,
+                cause = e, code = ErrorCodes.OUTPUT_FOLDER, args = listOf(label),
             )
         }
         return result
@@ -144,13 +155,22 @@ class SafOutputFolder(private val context: Context, private val tree: Uri) : Out
             val mime = mimeFromName(name) ?: "application/octet-stream"
             DocumentsContract.createDocument(resolver, treeDoc, mime, name)
         } catch (e: Exception) {
-            throw PipelineException("Không tạo được $name trong thư mục lưu ($label): ${e.message}", stopQueue = true, cause = e)
-        } ?: throw PipelineException("Không tạo được $name trong thư mục lưu ($label).", stopQueue = true)
+            throw PipelineException(
+                "Không tạo được $name trong thư mục lưu ($label): ${e.message}", stopQueue = true, cause = e,
+                code = ErrorCodes.OUTPUT_WRITE, args = listOf(name, label),
+            )
+        } ?: throw PipelineException(
+            "Không tạo được $name trong thư mục lưu ($label).", stopQueue = true, code = ErrorCodes.OUTPUT_WRITE,
+            args = listOf(name, label),
+        )
         try {
             (resolver.openOutputStream(doc, "wt") ?: throw FileNotFoundException("không mở được để ghi")).use { it.write(bytes) }
         } catch (e: Exception) {
             if (created) runCatching { DocumentsContract.deleteDocument(resolver, doc) }
-            throw PipelineException("Không ghi được $name ($label): ${e.message}", cause = e)
+            throw PipelineException(
+                "Không ghi được $name ($label): ${e.message}", cause = e, code = ErrorCodes.OUTPUT_WRITE,
+                args = listOf(name, label),
+            )
         }
         return doc.toString()
     }
@@ -162,15 +182,24 @@ class SafOutputFolder(private val context: Context, private val tree: Uri) : Out
         val doc = existing ?: try {
             DocumentsContract.createDocument(resolver, treeDoc, mimeFromName(name) ?: "application/octet-stream", name)
         } catch (e: Exception) {
-            throw PipelineException("Không tạo được $name trong thư mục lưu ($label): ${e.message}", stopQueue = true, cause = e)
-        } ?: throw PipelineException("Không tạo được $name trong thư mục lưu ($label).", stopQueue = true)
+            throw PipelineException(
+                "Không tạo được $name trong thư mục lưu ($label): ${e.message}", stopQueue = true, cause = e,
+                code = ErrorCodes.OUTPUT_WRITE, args = listOf(name, label),
+            )
+        } ?: throw PipelineException(
+            "Không tạo được $name trong thư mục lưu ($label).", stopQueue = true, code = ErrorCodes.OUTPUT_WRITE,
+            args = listOf(name, label),
+        )
         try {
             (resolver.openOutputStream(doc, "wt") ?: throw FileNotFoundException("không mở được để ghi")).use { os ->
                 source.inputStream().use { it.copyTo(os, 1 shl 16) }
             }
         } catch (e: Exception) {
             if (created) runCatching { DocumentsContract.deleteDocument(resolver, doc) }
-            throw PipelineException("Không ghi được $name ($label): ${e.message}", cause = e)
+            throw PipelineException(
+                "Không ghi được $name ($label): ${e.message}", cause = e, code = ErrorCodes.OUTPUT_WRITE,
+                args = listOf(name, label),
+            )
         }
         return doc.toString()
     }

@@ -30,6 +30,7 @@ import io.github.cozycode890.guzz.core.gemini.GeminiConfig
 import io.github.cozycode890.guzz.core.gemini.QuotaView
 import io.github.cozycode890.guzz.core.gemini.UsageEventKind
 import io.github.cozycode890.guzz.core.gemini.parseQuotaLines
+import io.github.cozycode890.guzz.feature.queue.googleErrorKindText
 import io.github.cozycode890.guzz.ui.components.AdvancedSection
 import io.github.cozycode890.guzz.ui.components.ConfirmDialog
 import io.github.cozycode890.guzz.ui.components.Hint
@@ -55,16 +56,7 @@ private fun reasonText(context: android.content.Context, reason: String?): Strin
 }
 
 /** Loại lỗi → chữ (`use_err_*`). */
-private fun errorText(context: android.content.Context, kind: String?): String = when (kind) {
-    "qua_tai" -> context.getString(R.string.quota_err_overloaded)
-    "han_muc" -> context.getString(R.string.quota_err_minute)
-    "han_muc_ngay" -> context.getString(R.string.quota_err_daily)
-    "bi_chan" -> context.getString(R.string.quota_err_blocked)
-    "model" -> context.getString(R.string.quota_err_model)
-    "cau_hinh" -> context.getString(R.string.quota_err_config)
-    "tam_thoi" -> context.getString(R.string.quota_err_network)
-    else -> context.getString(R.string.quota_err_other)
-}
+private fun errorText(context: android.content.Context, kind: String?): String = googleErrorKindText(context, kind)
 
 /** Việc cần hỏi lại trước khi làm. */
 private enum class Pending { FORGET, RESET, CLEAR }

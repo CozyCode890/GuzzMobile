@@ -44,14 +44,6 @@
     <string name="quota_reason_blocked">Google\'s filters blocked this chunk</string>
     <string name="quota_reason_wait_tpm">the previous model had to wait for its tokens/min limit</string>
     <string name="quota_reason_preferred">back to the preferred model</string>
-    <string name="quota_err_overloaded">overloaded</string>
-    <string name="quota_err_minute">per-minute quota</string>
-    <string name="quota_err_daily">daily quota</string>
-    <string name="quota_err_blocked">blocked by filters</string>
-    <string name="quota_err_model">model not found</string>
-    <string name="quota_err_config">config / key</string>
-    <string name="quota_err_network">network</string>
-    <string name="quota_err_other">other</string>
 
     <string name="logs_title">Logs</string>
     <string name="logs_search">Search logs</string>

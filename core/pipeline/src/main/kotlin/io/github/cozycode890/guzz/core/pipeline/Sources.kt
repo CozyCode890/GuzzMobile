@@ -66,8 +66,13 @@ class NoAudioTrackException(message: String) : RuntimeException(message)
  * Lỗi của pipeline mà không phải lỗi Google AI: cấu hình (mẫu tên tệp sai, bật nhận diện người nói khi chưa có), thư mục
  * lưu không dùng được… [stopQueue]: tệp nào cũng sẽ lỗi như vậy, dừng cả hàng đợi.
  */
-class PipelineException(message: String, val stopQueue: Boolean = false, cause: Throwable? = null) :
-    RuntimeException(message, cause)
+class PipelineException(
+    message: String,
+    val stopQueue: Boolean = false,
+    cause: Throwable? = null,
+    val code: String? = null,
+    val args: List<String> = emptyList(),
+) : RuntimeException(message, cause)
 
 /**
  * Thư mục lưu bản chép lời: trên máy là thư mục SAF người dùng chọn (D59), test và lệnh adb của bản debug dùng thư mục
@@ -98,8 +103,12 @@ class DirectoryOutputFolder(val dir: File) : OutputFolder {
     override val label: String get() = dir.path
 
     override fun listNames(): Collection<String> {
-        if (!dir.isDirectory && !dir.mkdirs()) throw PipelineException("Không tạo được thư mục lưu $dir.", stopQueue = true)
-        return dir.list()?.toList() ?: throw PipelineException("Không đọc được thư mục lưu $dir.", stopQueue = true)
+        if (!dir.isDirectory && !dir.mkdirs()) throw PipelineException(
+            "Không tạo được thư mục lưu $dir.", stopQueue = true, code = ErrorCodes.OUTPUT_FOLDER, args = listOf(label),
+        )
+        return dir.list()?.toList() ?: throw PipelineException(
+            "Không đọc được thư mục lưu $dir.", stopQueue = true, code = ErrorCodes.OUTPUT_FOLDER, args = listOf(label),
+        )
     }
 
     override fun write(name: String, bytes: ByteArray, overwrite: Boolean): String {
@@ -112,7 +121,9 @@ class DirectoryOutputFolder(val dir: File) : OutputFolder {
             if (!tmp.renameTo(target)) throw IOException("Không đổi tên được $tmp")
         } catch (e: IOException) {
             tmp.delete()
-            throw PipelineException("Không ghi được $target: ${e.message}", cause = e)
+            throw PipelineException(
+                "Không ghi được $target: ${e.message}", cause = e, code = ErrorCodes.OUTPUT_WRITE, args = listOf(name, label),
+            )
         }
         return target.path
     }
@@ -127,7 +138,9 @@ class DirectoryOutputFolder(val dir: File) : OutputFolder {
             if (!tmp.renameTo(target)) throw IOException("Không đổi tên được $tmp")
         } catch (e: IOException) {
             tmp.delete()
-            throw PipelineException("Không ghi được $target: ${e.message}", cause = e)
+            throw PipelineException(
+                "Không ghi được $target: ${e.message}", cause = e, code = ErrorCodes.OUTPUT_WRITE, args = listOf(name, label),
+            )
         }
         return target.path
     }

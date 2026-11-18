@@ -16,4 +16,38 @@
     <string name="queue_done_error">Queue stopped by an error: %1$s</string>
     <string name="queue_timeout_title">Guzz: stopped by the system</string>
     <string name="queue_timeout_text">Android ran out of background time. Open Guzz to continue from the current chunk.</string>
+
+    <string name="step_decode">decoding</string>
+    <string name="step_bandpass">band-pass filter</string>
+    <string name="step_transients">taming bumps</string>
+    <string name="step_denoise">noise reduction</string>
+    <string name="step_level">volume leveling</string>
+    <string name="step_normalize">normalizing volume</string>
+    <string name="step_trim">trimming silence</string>
+    <string name="step_write_clean">writing clean audio</string>
+    <string name="step_write_chunks">writing chunks</string>
+
+    <string name="google_err_overloaded">overloaded</string>
+    <string name="google_err_minute">per-minute quota</string>
+    <string name="google_err_daily">daily quota</string>
+    <string name="google_err_blocked">blocked by filters</string>
+    <string name="google_err_model">model not found</string>
+    <string name="google_err_config">config / key</string>
+    <string name="google_err_network">network</string>
+    <string name="google_err_other">other</string>
+
+    <string name="err_config">Could not read settings: %1$s</string>
+    <string name="err_overrides">This file\'s setting overrides are invalid: %1$s</string>
+    <string name="err_google_ai">Google AI returned an error (%1$s).</string>
+    <string name="err_constraint_on_device">The \"On-device diarization + prompt\" speaker method needs a model that accepts prompts, but the selected model is %1$s (*-transcribe). Change the model or pick Combined / Gemini identifies speakers.</string>
+    <string name="err_constraint_google">The selected speaker method separates voices on Google and needs a *-transcribe model, but the selected model is %1$s. Change the model or pick On-device diarization + prompt.</string>
+    <string name="err_filename_template">Invalid file name template: %1$s. Fix it in Settings → Transcripts.</string>
+    <string name="err_no_diarization">This build has no on-device speaker separation.</string>
+    <string name="err_output_folder">The transcript folder can\'t be used (%1$s). Choose the folder again.</string>
+    <string name="err_output_write">Could not write %1$s to the transcript folder (%2$s).</string>
+    <string name="err_source_missing">Could not read %1$s: the file was deleted or Guzz lost access. Add it again.</string>
+    <string name="err_no_speech">No speech left after cleaning.</string>
+    <string name="err_no_audio">The file has no audio track.</string>
+    <string name="err_media_read">Could not decode the file: it is damaged or this device can\'t read the format. Details: %1$s</string>
+    <string name="err_storage">Not enough free space: about %1$s MB needed for temporary files, only %2$s MB left.</string>
 </resources>

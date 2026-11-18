@@ -20,4 +20,44 @@
     <string name="queue_done_error">Hàng đợi dừng vì lỗi: %1$s</string>
     <string name="queue_timeout_title">Guzz: hệ thống bắt dừng</string>
     <string name="queue_timeout_text">Android đã hết thời gian cho phép chạy nền. Mở Guzz để làm tiếp từ đoạn đang dở.</string>
+
+    <!-- Bước xử lý âm thanh (Stage 8 G1) -->
+    <string name="step_decode">giải mã</string>
+    <string name="step_bandpass">lọc dải tần</string>
+    <string name="step_transients">ghìm tiếng động</string>
+    <string name="step_denoise">khử ồn</string>
+    <string name="step_level">cân bằng âm lượng</string>
+    <string name="step_normalize">chuẩn hoá âm lượng</string>
+    <string name="step_trim">cắt lặng</string>
+    <string name="step_write_clean">ghi âm thanh sạch</string>
+    <string name="step_write_chunks">ghi các đoạn</string>
+
+    <!-- Loại lỗi Google AI (cũng dùng ở tab Hạn mức) -->
+    <string name="google_err_overloaded">quá tải</string>
+    <string name="google_err_minute">hạn mức phút</string>
+    <string name="google_err_daily">hạn mức ngày</string>
+    <string name="google_err_blocked">bị bộ lọc chặn</string>
+    <string name="google_err_model">model không tồn tại</string>
+    <string name="google_err_config">cấu hình / key</string>
+    <string name="google_err_network">mạng</string>
+    <string name="google_err_other">khác</string>
+
+    <!-- Lỗi của một tệp (Stage 8 G1) -->
+    <string name="err_config">Không đọc được cài đặt: %1$s</string>
+    <string name="err_overrides">Ghi đè cài đặt của tệp này không hợp lệ: %1$s</string>
+    <!-- %1$s: loại lỗi (quá tải, hạn mức ngày…) -->
+    <string name="err_google_ai">Google AI báo lỗi (%1$s).</string>
+    <string name="err_constraint_on_device">Cách nhận diện \"Tách giọng trên máy + Prompt\" cần model nhận được prompt, nhưng model đang chọn là %1$s (*-transcribe). Đổi model hoặc chọn cách Kết hợp / Gemini tự nhận diện.</string>
+    <string name="err_constraint_google">Cách nhận diện đang chọn tách giọng trên Google nên cần model *-transcribe, nhưng model đang chọn là %1$s. Đổi model hoặc chọn Tách giọng trên máy + Prompt.</string>
+    <string name="err_filename_template">Mẫu tên tệp không hợp lệ: %1$s. Sửa ở Cài đặt → Bản chép lời.</string>
+    <string name="err_no_diarization">Bản này không có tách giọng trên máy.</string>
+    <string name="err_output_folder">Không dùng được thư mục lưu bản chép lời (%1$s). Chọn lại thư mục lưu.</string>
+    <string name="err_output_write">Không ghi được %1$s vào thư mục lưu (%2$s).</string>
+    <string name="err_source_missing">Không đọc được %1$s: tệp đã xoá hoặc Guzz mất quyền đọc. Thêm lại tệp.</string>
+    <string name="err_no_speech">Sau khi làm sạch không còn đoạn nào có tiếng.</string>
+    <string name="err_no_audio">Tệp không có luồng âm thanh nào.</string>
+    <!-- %1$s: chi tiết kỹ thuật -->
+    <string name="err_media_read">Không giải mã được tệp: tệp hỏng hoặc máy không đọc được định dạng này. Chi tiết: %1$s</string>
+    <!-- %1$s / %2$s: MB -->
+    <string name="err_storage">Không đủ chỗ trống: cần khoảng %1$s MB cho tệp tạm, chỉ còn %2$s MB.</string>
 </resources>

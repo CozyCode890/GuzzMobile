@@ -257,9 +257,9 @@ và B7 (Compose UI test).
 
 ### G. Phần đụng pipeline / hàng đợi — chờ Stage 6 gộp vào `main`
 
-- [ ] G0. Rebase nhánh Stage 8 lên `main` đã có Stage 6; giải xung đột theo bảng ở trên. Kiểm: `.\gradlew test lint` và B7
+- [x] G0. Rebase nhánh Stage 8 lên `main` đã có Stage 6; giải xung đột theo bảng ở trên. Kiểm: `.\gradlew test lint` và B7
       xanh.
-- [ ] G1. Mã lỗi và tên bước (Phát sinh Stage 4): `PrepareStep` hiển thị qua `strings.xml` (`:app` / `:feature:queue` ghép
+- [x] G1. Mã lỗi và tên bước (Phát sinh Stage 4): `PrepareStep` hiển thị qua `strings.xml` (`:app` / `:feature:queue` ghép
       tên từ mã); lỗi của pipeline / hàng đợi có thêm mã + tham số (vd `QueueItem.errorCode`, `errorArgs`) bên cạnh `error`
       tiếng Việt (giữ cho log và cho sự kiện `FILE_FAILED` của Stage 6). Giao diện có mã thì dùng `strings.xml`, không có
       mã thì hiện `error`. Thông báo của `QueueService` cũng vậy. Kiểm: test `:core:pipeline` cho mã lỗi; máy ảo tiếng Anh
@@ -334,6 +334,20 @@ và B7 (Compose UI test).
   - Sự cố: `gradlew installSideloadDebug` chạy khi chưa đặt `ANDROID_SERIAL` đã cài đè bản stage-8 lên máy ảo
     `guzz_15t_s6` của session Stage 6 (đã báo session đó). Từ đó luôn đặt `ANDROID_SERIAL`.
   - Nhóm G, H chờ Stage 6 gộp vào `main`.
+- 2026-11-18, G0–G1 (sau khi Stage 6 gộp vào `main`, 1272805):
+  - G0: dùng `git merge main` (theo lời giao việc), không rebase. Xung đột chỉ ở `MainActivity.kt` (giữ bản Stage 8: mục
+    "Tự động hoá" Stage 6 thêm vào menu ⋮ của QueueScreen cũ, H1 làm lại thành route) và manifest (giữ cả service ngôn
+    ngữ lẫn `AutomationActivity`). `test lint` xanh, B7 3/3, cả 11 test thiết bị của `:app` qua. Một lần chạy cả bộ, test
+    đổi ngôn ngữ treo ở `waitForIdle` của Compose (stack: luồng test chờ Espresso idle); chạy lại riêng 3 lần, ghép với
+    `AutomationIntentTest`, rồi cả bộ đều qua: coi là lỗi chập chờn của máy ảo, theo dõi ở I5.
+  - G1: `QueueItem.errorCode` / `errorArgs` (mã ở `ErrorCodes`, `errorInfoOf` trong `:core:pipeline`); `error` tiếng Việt
+    giữ nguyên cho log và `FILE_FAILED`. Thêm mã `media_read` (tệp hỏng, không có trong plan): thiếu nó thì ca thử "tệp
+    hỏng" vẫn hiện tiếng Việt; chi tiết là thông báo gốc của hệ thống. Lỗi Google AI: loại lỗi dịch + chi tiết nguyên
+    văn (câu của client / Google, không dịch từng câu). `QueueItem.step` lưu mã (`decode`, `bandpass`…), hàng đợi cũ có
+    chữ tiếng Việt thì hiện nguyên văn. Chuỗi loại lỗi Google chuyển từ `quota_err_*` (`:app`) sang `google_err_*`
+    (`:feature:queue`), tab Hạn mức dùng chung. Thử trên máy ảo: tệp rác `hong.m4a` → "Could not decode the file…
+    Details: Failed to instantiate extractor."; đang chạy L1_20m hiện "Processing audio: decoding 33%", đổi sang tiếng
+    Việt giữa chừng thì thành "Xử lý âm thanh: giải mã 37%" và hàng đợi chạy tiếp.
 
 ## Phát sinh
 

@@ -323,7 +323,7 @@ class QueueService : Service() {
         /** Chi tiết tiến độ một tệp để hiện ở thông báo và màn hình Hàng đợi. */
         fun describe(context: Context, item: QueueItem): String = when (item.stage) {
             Stage.CLEAN.code -> context.getString(
-                R.string.queue_detail_audio, item.step ?: "", (item.progress / 0.15 * 100).coerceAtMost(100.0).roundToInt(),
+                R.string.queue_detail_audio, stepText(context, item.step), (item.progress / 0.15 * 100).coerceAtMost(100.0).roundToInt(),
             )
             Stage.DIARIZE.code -> context.getString(
                 R.string.queue_detail_diarize, ((item.progress - 0.15) / 0.2 * 100).coerceIn(0.0, 100.0).roundToInt(),

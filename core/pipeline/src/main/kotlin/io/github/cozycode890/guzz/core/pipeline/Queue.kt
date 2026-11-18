@@ -62,6 +62,8 @@ data class QueueItem(
     val outName: String? = null,
     val error: String? = null,
     val errorKind: String? = null,
+    val errorCode: String? = null,
+    val errorArgs: List<String> = emptyList(),
     val tempDir: String? = null,
     val chunkDelaySec: Double = 0.0,
     val requestId: String? = null,
@@ -253,7 +255,7 @@ class QueueRunner(
 
     private fun resetForRun(item: QueueItem) = item.copy(
         status = ItemStatus.WAITING, progress = 0.0, stage = null, step = null, chunk = null, chunkTotal = null,
-        model = null, error = null, errorKind = null, charCount = null, modelsUsed = null,
+        model = null, error = null, errorKind = null, errorCode = null, errorArgs = emptyList(), charCount = null, modelsUsed = null,
     )
 
     /** Đánh dấu cách dừng sắp tới: `true` = dừng vì hệ thống, giữ cờ đang chạy để làm tiếp (D64). Gọi trước khi huỷ. */
@@ -323,7 +325,7 @@ class QueueRunner(
                 } catch (e: Exception) {
                     if (e is CancellationException) throw e
                     if (cfg == null) {
-                        fail(item, "Cài đặt: ${e.message}", "cau_hinh")
+                        fail(item, "Cài đặt: ${e.message}", "cau_hinh", ErrorInfo(ErrorCodes.CONFIG, listOf(e.message.orEmpty())))
                         failed++
                         break
                     }
@@ -336,14 +338,20 @@ class QueueRunner(
                 } catch (e: IllegalArgumentException) {
                     failed++
                     logger.error("Ghi đè cài đặt của ${item.displayName} không hợp lệ: ${e.message}")
-                    fail(item, "Ghi đè cài đặt không hợp lệ: ${e.message}", "cau_hinh")
+                    fail(
+                        item, "Ghi đè cài đặt không hợp lệ: ${e.message}", "cau_hinh",
+                        ErrorInfo(ErrorCodes.OVERRIDES, listOf(e.message.orEmpty())),
+                    )
                     current = null
                     continue
                 }
                 item.overrides?.takeUnless { it.isEmpty }?.let {
                     logger.info("${item.displayName}: ghi đè cài đặt ${it.describe()}.")
                 }
-                store.updateItem(item.id) { it.copy(status = ItemStatus.RUNNING, progress = 0.0, error = null, errorKind = null) }
+                store.updateItem(item.id) { it.copy(
+                        status = ItemStatus.RUNNING, progress = 0.0, error = null, errorKind = null, errorCode = null,
+                        errorArgs = emptyList(),
+                    ) }
                 val stop = try {
                     val source = env.source(item)
                     val info = source.info()
@@ -368,24 +376,24 @@ class QueueRunner(
                 } catch (e: GoogleAIException) {
                     failed++
                     logger.error("Google AI báo lỗi khi chuyển ${item.displayName}: ${e.message}")
-                    fail(item, e.message ?: "", e.kind.code)
+                    fail(item, e.message ?: "", e.kind.code, errorInfoOf(e, item.displayName, c))
                     if (e.stopQueue) logger.error("Lỗi này sẽ lặp lại ở mọi tệp: dừng hàng đợi.")
                     e.stopQueue || c.onFileError == PipelineConfig.ON_ERROR_STOP
                 } catch (e: ConstraintException) {
                     failed++
                     logger.error(e.message ?: "")
-                    fail(item, e.message ?: "", "rang_buoc")
+                    fail(item, e.message ?: "", "rang_buoc", errorInfoOf(e, item.displayName, c))
                     true
                 } catch (e: PipelineException) {
                     failed++
                     logger.error("Lỗi khi chuyển ${item.displayName}: ${e.message}")
-                    fail(item, e.message ?: "", if (e.stopQueue) "cau_hinh" else "khac")
+                    fail(item, e.message ?: "", if (e.stopQueue) "cau_hinh" else "khac", errorInfoOf(e, item.displayName, c))
                     if (e.stopQueue) logger.error("Lỗi này sẽ lặp lại ở mọi tệp: dừng hàng đợi.")
                     e.stopQueue || c.onFileError == PipelineConfig.ON_ERROR_STOP
                 } catch (e: Exception) {
                     failed++
                     logger.error("Lỗi khi chuyển ${item.displayName}: ${e.message}", e)
-                    fail(item, "${e.javaClass.simpleName}: ${e.message}", "khac")
+                    fail(item, "${e.javaClass.simpleName}: ${e.message}", "khac", errorInfoOf(e, item.displayName, c))
                     c.onFileError == PipelineConfig.ON_ERROR_STOP
                 }
                 current = null
@@ -413,8 +421,13 @@ class QueueRunner(
         return QueueSummary(done, failed, skipped, stopped = false)
     }
 
-    private fun fail(item: QueueItem, message: String, kind: String) {
-        store.updateItem(item.id) { it.copy(status = ItemStatus.ERROR, error = message, errorKind = kind, step = null) }
+    private fun fail(item: QueueItem, message: String, kind: String, info: ErrorInfo? = null) {
+        store.updateItem(item.id) {
+            it.copy(
+                status = ItemStatus.ERROR, error = message, errorKind = kind, errorCode = info?.code,
+                errorArgs = info?.args.orEmpty(), step = null,
+            )
+        }
     }
 
     /** Tiến độ: luôn cập nhật trong bộ nhớ, chỉ ghi tệp khi đổi bước hoặc đoạn (ghi thưa). */

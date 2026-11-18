@@ -54,14 +54,6 @@
     <string name="quota_reason_blocked">bộ lọc của Google chặn đoạn này</string>
     <string name="quota_reason_wait_tpm">model trước phải chờ hạn mức token/phút</string>
     <string name="quota_reason_preferred">quay lại model ưu tiên</string>
-    <string name="quota_err_overloaded">quá tải</string>
-    <string name="quota_err_minute">hạn mức phút</string>
-    <string name="quota_err_daily">hạn mức ngày</string>
-    <string name="quota_err_blocked">bị bộ lọc chặn</string>
-    <string name="quota_err_model">model không tồn tại</string>
-    <string name="quota_err_config">cấu hình / key</string>
-    <string name="quota_err_network">mạng</string>
-    <string name="quota_err_other">khác</string>
 
     <string name="logs_title">Nhật ký</string>
     <string name="logs_search">Tìm trong nhật ký</string>

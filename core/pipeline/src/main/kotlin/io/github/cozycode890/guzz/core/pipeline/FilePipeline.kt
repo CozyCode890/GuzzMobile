@@ -119,7 +119,9 @@ class FilePipeline(
         } else {
             startedAt
         }
-        OutputNaming.templateError(cfg.filenameTemplate)?.let { throw PipelineException(it, stopQueue = true) }
+        OutputNaming.templateError(cfg.filenameTemplate)?.let {
+            throw PipelineException(it, stopQueue = true, code = ErrorCodes.FILENAME_TEMPLATE, args = listOf(cfg.filenameTemplate))
+        }
         val outName = OutputNaming.outputFilename(
             cfg.filenameTemplate, info.displayName, recordedAt, startedAt, cfg.gemini.model, cfg.extension,
         )
@@ -144,7 +146,7 @@ class FilePipeline(
         // Báo sớm, trước khi mất vài phút xử lý âm thanh.
         constraintError(cfg.gemini)?.let { throw ConstraintException(it) }
         if (onDevice && diarizer == null) {
-            throw PipelineException("Bản này không có tách giọng trên máy.", stopQueue = true)
+            throw PipelineException("Bản này không có tách giọng trên máy.", stopQueue = true, code = ErrorCodes.NO_DIARIZATION)
         }
 
         val folder = tempDirFor(info)
