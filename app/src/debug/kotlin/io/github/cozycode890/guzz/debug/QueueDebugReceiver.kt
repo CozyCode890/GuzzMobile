@@ -110,9 +110,15 @@ class QueueDebugReceiver : BroadcastReceiver() {
                         }
                         if (intent.hasExtra("denoise")) s.set(SettingKeys.DENOISE, intent.getBooleanExtra("denoise", true))
                         if (intent.hasExtra("save_clean")) s.set(SettingKeys.SAVE_CLEAN_AUDIO, intent.getBooleanExtra("save_clean", false))
+                        // Stage 8 G2: lưu âm thanh tách từ video, chọn luồng âm thanh (auto | 0..3).
+                        if (intent.hasExtra("save_extracted")) {
+                            s.set(SettingKeys.SAVE_EXTRACTED, intent.getBooleanExtra("save_extracted", false))
+                        }
+                        intent.getStringExtra("track")?.let { s.set(SettingKeys.AUDIO_TRACK, it) }
                         GuzzLog.info(
                             "Lệnh adb: âm thanh ${AudioPresets.detect(AudioPresetValues.read(s))}, khử ồn ${s.get(SettingKeys.DENOISE)}, " +
-                                "lưu âm thanh sạch ${s.get(SettingKeys.SAVE_CLEAN_AUDIO)}.",
+                                "lưu âm thanh sạch ${s.get(SettingKeys.SAVE_CLEAN_AUDIO)}, " +
+                                "lưu âm thanh tách ${s.get(SettingKeys.SAVE_EXTRACTED)}, luồng ${s.get(SettingKeys.AUDIO_TRACK)}.",
                         )
                     }
                     "automation" -> {

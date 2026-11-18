@@ -9,6 +9,7 @@
 #   .\tools\device\queue_debug.ps1 -Speakers off
 #   .\tools\device\queue_debug.ps1 -Preset speakers_around -SaveClean on      # Stage 7: preset âm thanh, lưu .sach.flac
 #   .\tools\device\queue_debug.ps1 -Denoise off                               # tắt khử ồn (về đường của Stage 2)
+#   .\tools\device\queue_debug.ps1 -SaveExtracted on -Track 1                  # Stage 8: lưu .am_thanh.flac của video, luồng 2
 #
 # Tệp của -Add nằm sẵn trong files/input (adb push vào /sdcard/Android/data/<package>/files/input/) hoặc là đường dẫn
 # tuyệt đối. Chưa chọn thư mục lưu SAF thì bản chép lời ra files/output/. -ChunkDelayMin: chờ giữa các đoạn (D67).
@@ -30,6 +31,8 @@ param(
     [ValidateSet('near_lecturer', 'near_speaker', 'moving_lecturer', 'speakers_around')][string]$Preset,
     [ValidateSet('on', 'off')][string]$Denoise,
     [ValidateSet('on', 'off')][string]$SaveClean,
+    [ValidateSet('on', 'off')][string]$SaveExtracted,
+    [ValidateSet('auto', '0', '1', '2', '3')][string]$Track,
     [switch]$Wait,
     [int]$TimeoutMin = 180
 )
@@ -83,11 +86,13 @@ if ($Speakers -or $Model -or $Num -ge 0) {
     if ($Num -ge 0) { $extra += @('--ei', 'num', "$Num") }
     Send $extra
 }
-if ($Preset -or $Denoise -or $SaveClean) {
+if ($Preset -or $Denoise -or $SaveClean -or $SaveExtracted -or $Track) {
     $extra = @('--es', 'cmd', 'audio')
     if ($Preset) { $extra += @('--es', 'preset', $Preset) }
     if ($Denoise) { $extra += @('--ez', 'denoise', $(if ($Denoise -eq 'on') { 'true' } else { 'false' })) }
     if ($SaveClean) { $extra += @('--ez', 'save_clean', $(if ($SaveClean -eq 'on') { 'true' } else { 'false' })) }
+    if ($SaveExtracted) { $extra += @('--ez', 'save_extracted', $(if ($SaveExtracted -eq 'on') { 'true' } else { 'false' })) }
+    if ($Track) { $extra += @('--es', 'track', $Track) }
     Send $extra
 }
 if ($Clear) { Send @('--es', 'cmd', 'clear') }
@@ -135,6 +140,6 @@ if ($Wait) {
         if (((Get-Date) - $t0).TotalMinutes -gt $TimeoutMin) { throw "Quá $TimeoutMin phút" }
     }
 }
-if ($Status -or $Wait -or (-not ($Add -or $Start -or $Stop -or $Kill -or $Clear -or $Fake -or $Preset -or $Denoise -or $SaveClean))) {
+if ($Status -or $Wait -or (-not ($Add -or $Start -or $Stop -or $Kill -or $Clear -or $Fake -or $Preset -or $Denoise -or $SaveClean -or $SaveExtracted -or $Track))) {
     Show-Status (Read-Status)
 }

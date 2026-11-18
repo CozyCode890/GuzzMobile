@@ -264,7 +264,7 @@ và B7 (Compose UI test).
       tiếng Việt (giữ cho log và cho sự kiện `FILE_FAILED` của Stage 6). Giao diện có mã thì dùng `strings.xml`, không có
       mã thì hiện `error`. Thông báo của `QueueService` cũng vậy. Kiểm: test `:core:pipeline` cho mã lỗi; máy ảo tiếng Anh
       chạy hàng đợi Gemini giả với tệp hỏng → lỗi hiện tiếng Anh.
-- [ ] G2. `save_extracted` (D68, D120): nguồn là video và bật mục này thì trước khi xoá `goc.pcm` (D66) mã hoá FLAC vào thư
+- [x] G2. `save_extracted` (D68, D120): nguồn là video và bật mục này thì trước khi xoá `goc.pcm` (D66) mã hoá FLAC vào thư
       mục tạm; xong tệp thì ghi `<tên>.am_thanh.flac` cạnh bản chép lời (cùng `OutputSink`); đoạn lấy từ cache mà không còn
       PCM thì giải mã lại. Port theo `transcribe.py` (`save_extracted`). Kiểm: test `:core:pipeline` (có / không cache);
       máy ảo: `queue_debug.ps1 -Fake on`, thêm `testdata/media/two_tracks.mp4` → có tệp `.am_thanh.flac` mở được, đúng luồng đã chọn.
@@ -348,6 +348,12 @@ và B7 (Compose UI test).
     (`:feature:queue`), tab Hạn mức dùng chung. Thử trên máy ảo: tệp rác `hong.m4a` → "Could not decode the file…
     Details: Failed to instantiate extractor."; đang chạy L1_20m hiện "Processing audio: decoding 33%", đổi sang tiếng
     Việt giữa chừng thì thành "Xử lý âm thanh: giải mã 37%" và hàng đợi chạy tiếp.
+  - G2: `AudioPreparation` mã hoá `goc.pcm` thành `am_thanh.flac` trong thư mục tạm khi nguồn là video và bật
+    `save_extracted` (`ChunkSource.prepare` thêm tham số `saveExtracted`); cache thiếu tệp này thì xử lý lại; xong bài thì
+    chép `<tên>.am_thanh.flac` cạnh bản chép lời. Khác desktop: luôn FLAC 16 kHz một kênh (desktop giữ `extract_format` và
+    chất lượng gốc), vì máy chỉ có PCM đã giải mã về 16 kHz. `queue_debug.ps1` thêm `-SaveExtracted on|off` và
+    `-Track auto|0..3`. Thử trên máy ảo: `two_tracks.mp4`, luồng 2, Gemini giả → `two_tracks.am_thanh.flac` mở được bằng
+    ffmpeg (16 kHz mono, 3 s), đỉnh phổ 880 Hz (đúng luồng 2; luồng 1 là 440 Hz).
 
 ## Phát sinh
 

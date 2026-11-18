@@ -78,6 +78,7 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
         chunk: ChunkSettings,
         clean: CleanSettings,
         saveClean: Boolean,
+        saveExtracted: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList {
@@ -93,7 +94,9 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
             override fun log(message: String) = listener.log(message)
         }
         return try {
-            AudioPreparation(context).run(mediaInputOf(source), audioTrack, chunk, folder, l, digest, clean, saveClean).chunks
+            AudioPreparation(context).run(
+                mediaInputOf(source), audioTrack, chunk, folder, l, digest, clean, saveClean, saveExtracted,
+            ).chunks
         } catch (e: NoAudioException) {
             throw NoAudioTrackException(e.message ?: "Tệp không có luồng âm thanh nào.")
         } catch (e: MediaReadException) {

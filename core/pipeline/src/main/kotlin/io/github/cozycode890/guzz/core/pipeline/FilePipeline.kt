@@ -171,7 +171,7 @@ class FilePipeline(
         // ---- (1) xử lý âm thanh + cắt đoạn ----
         progress(Stage.CLEAN, 0.0)
         val chunkList = try {
-            prepareChunks(source, folder, audioKey, cfg, progress, keepPcm)
+            prepareChunks(source, folder, audioKey, cfg, progress, keepPcm, saveExtracted = cfg.saveExtracted && isVideo)
         } catch (e: NoAudioTrackException) {
             if (!cfg.skipSilent) throw e
             logger.warning("${e.message} Bỏ qua tệp này.")
@@ -246,6 +246,12 @@ class FilePipeline(
                 val cleanName = pySplitext(name).first + ".sach.flac"
                 output.copy(cleanName, cleanAudio, overwrite = names.any { it.equals(cleanName, ignoreCase = true) })
             }
+            val extracted = File(folder, ChunkSource.EXTRACTED_AUDIO_FILE)
+            if (cfg.saveExtracted && isVideo && nonEmpty(extracted)) {
+                // Port của transcribe.py: save_extracted. Desktop giữ định dạng extract_format; bản này luôn FLAC 16 kHz.
+                val extractedName = pySplitext(name).first + ".am_thanh.flac"
+                output.copy(extractedName, extracted, overwrite = names.any { it.equals(extractedName, ignoreCase = true) })
+            }
             if (minutes.isNotEmpty()) logger.info("Thời gian nói: " + SpeakerTranscript.minutesLog(minutes))
             logger.info("HOÀN THÀNH: ${written.second}")
             if (cfg.deleteTempWhenDone) folder.deleteRecursively()
@@ -273,12 +279,15 @@ class FilePipeline(
         cfg: PipelineConfig,
         progress: ProgressTracker,
         keepPcm: String? = null,
+        saveExtracted: Boolean = false,
     ): ChunkList {
         val existing = withContext(io) {
             ChunkCache.read(folder, digest)?.takeIf {
                 (keepPcm == null || nonEmpty(File(folder, keepPcm))) &&
                     // Như need_clean của desktop: cần lưu âm thanh sạch mà chưa có thì xử lý lại.
-                    (!cfg.saveCleanAudio || nonEmpty(File(folder, ChunkSource.CLEAN_AUDIO_FILE)))
+                    (!cfg.saveCleanAudio || nonEmpty(File(folder, ChunkSource.CLEAN_AUDIO_FILE))) &&
+                    // save_extracted: đoạn lấy từ cache mà không còn âm thanh tách thì giải mã lại (desktop: source.get()).
+                    (!saveExtracted || nonEmpty(File(folder, ChunkSource.EXTRACTED_AUDIO_FILE)))
             }
         }
         if (existing != null) {
@@ -292,7 +301,7 @@ class FilePipeline(
             try {
                 folder.mkdirs()
                 source.prepare(
-                    folder, digest, cfg.chunk, cfg.clean, cfg.saveCleanAudio, cfg.audioTrack,
+                    folder, digest, cfg.chunk, cfg.clean, cfg.saveCleanAudio, saveExtracted, cfg.audioTrack,
                     object : SourceListener {
                         override fun onProgress(fraction: Double, step: String) = progress(Stage.CLEAN, fraction, step = step)
                         override fun checkCancelled() = context.ensureActive()

@@ -162,6 +162,39 @@ class FilePipelineTest {
     }
 
     @Test
+    fun `save_extracted với video thì có am_thanh_flac cạnh bản chép lời, cache thiếu thì giải mã lại`() {
+        cfg = cfg.copy(saveExtracted = true, deleteTempWhenDone = false)
+        val video = SyntheticSource(name = "bai giang.mp4")
+        val client = FakeClient { _, _ -> text("x") }
+        fun runVideo() = runBlocking { pipeline.run(video, out, cfg, client) }
+        val r = runVideo()
+        assertEquals(true, video.lastSaveExtracted)
+        val saved = File(out.dir, r.outName!!.substringBeforeLast('.') + ".am_thanh.flac")
+        assertTrue(saved.isFile && saved.length() > 0, "không có $saved")
+        // Còn am_thanh.flac trong thư mục tạm: dùng lại đoạn đã cắt, vẫn ghi tệp ra (tên theo bản chép lời mới, "(2)").
+        val r2 = runVideo()
+        assertEquals(1, video.prepareCalls)
+        assertTrue(File(out.dir, r2.outName!!.substringBeforeLast('.') + ".am_thanh.flac").isFile)
+        // Đoạn lấy từ cache mà không còn âm thanh tách: giải mã lại.
+        File(pipeline.tempDirFor(video.info()), ChunkSource.EXTRACTED_AUDIO_FILE).delete()
+        runVideo()
+        assertEquals(2, video.prepareCalls)
+    }
+
+    @Test
+    fun `save_extracted bỏ qua tệp âm thanh, tắt thì không lưu`() {
+        cfg = cfg.copy(saveExtracted = true)
+        val r = run(FakeClient { _, _ -> text("x") })
+        assertEquals(false, source.lastSaveExtracted)
+        assertFalse(File(out.dir, r.outName!!.substringBeforeLast('.') + ".am_thanh.flac").exists())
+        cfg = cfg.copy(saveExtracted = false)
+        val video = SyntheticSource(name = "video.mp4")
+        val rv = runBlocking { pipeline.run(video, out, cfg, FakeClient { _, _ -> text("x") }) }
+        assertEquals(false, video.lastSaveExtracted)
+        assertFalse(File(out.dir, rv.outName!!.substringBeforeLast('.') + ".am_thanh.flac").exists())
+    }
+
+    @Test
     fun `video không có tiếng thì skip_silent bỏ qua tệp, tắt thì báo lỗi`() {
         val video = SyntheticSource(name = "video.mp4", noAudio = true)
         val r = runBlocking { pipeline.run(video, out, cfg, FakeClient { _, _ -> text("x") }) }

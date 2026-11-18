@@ -40,8 +40,9 @@ interface ChunkSource {
 
     /**
      * Làm sạch ([clean], Stage 7), cắt đoạn vào [folder] và ghi `danh_sach_doan.json` có khoá `ma` = [digest]. [saveClean]:
-     * ghi thêm âm thanh đã làm sạch [CLEAN_AUDIO_FILE] (FLAC) vào [folder] để chép ra cạnh bản chép lời. Video không có
-     * luồng âm thanh thì ném [NoAudioTrackException].
+     * ghi thêm âm thanh đã làm sạch [CLEAN_AUDIO_FILE] (FLAC) vào [folder] để chép ra cạnh bản chép lời. [saveExtracted]:
+     * ghi thêm âm thanh đã giải mã (trước làm sạch) [EXTRACTED_AUDIO_FILE]. Video không có luồng âm thanh thì ném
+     * [NoAudioTrackException].
      */
     fun prepare(
         folder: File,
@@ -49,6 +50,7 @@ interface ChunkSource {
         chunk: ChunkSettings,
         clean: CleanSettings,
         saveClean: Boolean,
+        saveExtracted: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList
@@ -56,6 +58,12 @@ interface ChunkSource {
     companion object {
         /** Âm thanh đã làm sạch trong thư mục tạm, như `CLEAN_AUDIO_FILE` của transcribe.py. */
         const val CLEAN_AUDIO_FILE = "sach.flac"
+
+        /**
+         * Âm thanh tách từ video (`goc.pcm` mã hoá FLAC, 16 kHz một kênh) trong thư mục tạm, để chép ra
+         * `<tên>.am_thanh.flac` như `save_extracted` của desktop (Stage 8 G2).
+         */
+        const val EXTRACTED_AUDIO_FILE = "am_thanh.flac"
     }
 }
 

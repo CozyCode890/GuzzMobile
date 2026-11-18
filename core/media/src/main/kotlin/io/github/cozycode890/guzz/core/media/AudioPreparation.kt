@@ -50,6 +50,7 @@ class AudioPreparation(private val context: Context) {
         digest: String = "",
         clean: CleanSettings = CleanSettings.OFF,
         saveClean: Boolean = false,
+        saveExtracted: Boolean = false,
     ): PreparationResult {
         folder.mkdirs()
         File(folder, ChunkPreparer.CHUNK_LIST_FILE).delete()
@@ -77,6 +78,13 @@ class AudioPreparation(private val context: Context) {
                 FlacEncoder().encode(clean, SampleRange(0, clean.size), SAMPLE_RATE, cleanFlac)
             }
         }
+        val extracted = File(folder, EXTRACTED_AUDIO_FILE)
+        extracted.delete()
+        if (saveExtracted) {
+            // save_extracted của desktop (Stage 8 G2): âm thanh đã giải mã, trước làm sạch. Mã hoá trước khi pipeline xoá
+            // goc.pcm (D66). Desktop giữ tần số gốc; ở đây là 16 kHz một kênh như goc.pcm, đủ để nghe lại lời nói.
+            Pcm16File(raw).use { pcm -> FlacEncoder().encode(pcm, SampleRange(0, pcm.size), SAMPLE_RATE, extracted) }
+        }
         val t2 = SystemClock.elapsedRealtime()
         return PreparationResult(tracks, track, decoded, chunks, t1 - t0, t2 - t1)
     }
@@ -84,6 +92,7 @@ class AudioPreparation(private val context: Context) {
     companion object {
         const val RAW_PCM_FILE = "goc.pcm"
         const val CLEAN_AUDIO_FILE = "sach.flac"
+        const val EXTRACTED_AUDIO_FILE = "am_thanh.flac"
 
         /** Tần số xử lý cố định (mục "Mặc định kỹ thuật" của Stage 2). */
         const val SAMPLE_RATE = 16_000

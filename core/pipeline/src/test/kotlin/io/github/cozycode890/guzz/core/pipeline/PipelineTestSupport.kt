@@ -77,6 +77,7 @@ class SyntheticSource(
 ) : ChunkSource {
     var prepareCalls = 0
     var lastClean: CleanSettings? = null
+    var lastSaveExtracted: Boolean? = null
 
     override fun info() = SourceInfo("/test/$name", name, samples.size * 2L + 44, modifiedMillis, mime)
 
@@ -86,6 +87,7 @@ class SyntheticSource(
         chunk: ChunkSettings,
         clean: CleanSettings,
         saveClean: Boolean,
+        saveExtracted: Boolean,
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList {
@@ -108,6 +110,8 @@ class SyntheticSource(
         ).also {
             // "Mã hoá" âm thanh sạch: chép sach.pcm (test không có FLAC).
             if (saveClean) File(folder, ChunkPreparer.CLEAN_PCM_FILE).copyTo(File(folder, ChunkSource.CLEAN_AUDIO_FILE), true)
+            if (saveExtracted) File(folder, ChunkCache.RAW_PCM_FILE).copyTo(File(folder, ChunkSource.EXTRACTED_AUDIO_FILE), true)
+            lastSaveExtracted = saveExtracted
         }
     }
 }

@@ -27,6 +27,8 @@ data class PipelineConfig(
     val chunk: ChunkSettings = ChunkSettings(),
     val clean: CleanSettings = CleanSettings(),
     val saveCleanAudio: Boolean = SettingKeys.SAVE_CLEAN_AUDIO.default,
+    /** `[VIDEO] save_extracted` (D68): nguồn là video thì lưu thêm `<tên>.am_thanh.flac` cạnh bản chép lời. */
+    val saveExtracted: Boolean = SettingKeys.SAVE_EXTRACTED.default,
     val chunkFormat: String = SettingKeys.CHUNK_FORMAT.default,
     val gemini: GeminiConfig = GeminiConfig(),
     val speakers: SpeakerConfig = SpeakerConfig(),
@@ -70,6 +72,7 @@ data class PipelineConfig(
             ),
             clean = CleanSettings.load(settings),
             saveCleanAudio = settings.get(SettingKeys.SAVE_CLEAN_AUDIO),
+            saveExtracted = settings.get(SettingKeys.SAVE_EXTRACTED),
             chunkFormat = settings.get(SettingKeys.CHUNK_FORMAT),
             gemini = GeminiConfig.load(settings),
             speakers = SpeakerConfig.load(settings),
