@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":core:media"))
     implementation(project(":core:gemini"))
     implementation(project(":feature:queue"))
+    implementation(project(":feature:automation"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material.icons.core)

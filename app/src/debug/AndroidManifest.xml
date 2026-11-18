@@ -22,6 +22,12 @@
             android:exported="true"
             android:permission="android.permission.DUMP" />
 
+        <!-- Test thiết bị Stage 6 (D3): provider trả độ dài không rõ. -->
+        <provider
+            android:name=".debug.UnknownLengthProvider"
+            android:authorities="${applicationId}.unknownlength"
+            android:exported="false" />
+
         <service
             android:name=".debug.AudioDebugService"
             android:exported="false"

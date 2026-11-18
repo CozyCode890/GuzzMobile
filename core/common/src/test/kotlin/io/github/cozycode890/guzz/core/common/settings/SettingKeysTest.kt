@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 class SettingKeysTest {
 
     // Cài đặt và trạng thái app nằm chung một tệp DataStore nên id phải khác nhau trên cả hai danh sách.
-    private val everyKey = SettingKeys.all + SettingKeys.appState
+    private val everyKey = SettingKeys.all + SettingKeys.appState + SettingKeys.deviceLocal
 
     @Test
     fun `id có dạng SECTION chấm key như config_default_txt`() {
@@ -33,6 +33,19 @@ class SettingKeysTest {
             assertFalse(key.sameAsDesktop, key.id)
             assertFalse(key in SettingKeys.all, key.id)
         }
+    }
+
+    @Test
+    fun `mục của máy này (mã bí mật, Thư mục nguồn) không nằm trong danh sách xuất nhập`() {
+        for (key in SettingKeys.deviceLocal) {
+            assertFalse(key.sameAsDesktop, key.id)
+            assertFalse(key in SettingKeys.all, key.id)
+        }
+        assertTrue(SettingKeys.AUTOMATION_SECRET in SettingKeys.deviceLocal)
+        // Mục [AUTOMATION] mặc định: tắt điều khiển từ app khác, có đường dẫn trong sự kiện, không lưu cạnh nguồn.
+        assertFalse(SettingKeys.AUTOMATION_ENABLED.default)
+        assertTrue(SettingKeys.AUTOMATION_INCLUDE_PATHS.default)
+        assertFalse(SettingKeys.SAVE_BESIDE_SOURCE.default)
     }
 
     @Test

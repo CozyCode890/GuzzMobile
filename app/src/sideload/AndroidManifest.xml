@@ -7,5 +7,11 @@
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <!-- Android 8–10 chưa có "Truy cập mọi tệp": đọc đường dẫn bằng quyền đọc bộ nhớ (Stage 6). -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <!-- Nút xin miễn tối ưu pin ở trang Tự động hoá (D69, Stage 6). Bản play không có: chính sách Play hạn chế quyền này. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
 </manifest>

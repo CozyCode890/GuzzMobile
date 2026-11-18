@@ -1,6 +1,6 @@
 # Stage 6 — Intent cho MacroDroid
 
-**Trạng thái:** 📝 đã plan chi tiết (2026-11-17) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
+**Trạng thái:** 🔨 đang làm (2026-11-17, nhánh `stage-6`, worktree `D:\GuzzMobile-stage6`) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
 D42). Làm song song với Stage 8, mỗi stage một worktree; Stage 6 gộp vào `main` trước (xem "Làm song song với Stage 8").
 
 ## Mục tiêu
@@ -103,6 +103,7 @@ Hỏi người dùng ngày 2026-11-17, người dùng chọn phương án Recomm
 | D102 | Broadcast bị chặn khởi động service | **Giữ tệp trong hàng đợi**, phát `ERROR` `background_blocked`, hiện thông báo "Bấm để bắt đầu" | Không mất lệnh; macro gửi lại bằng activity, mở app cũng tự chạy tiếp. |
 | D103 | Tệp được chia sẻ mà không giữ được quyền đọc bền | **Chép vào thư mục riêng của Guzz** (kiểm chỗ trống trước), xoá khi tệp xong hoặc bị bỏ khỏi danh sách; giữ được quyền bền thì đọc thẳng | Tự làm tiếp sau khi bị giết (D64) vẫn đọc được tệp. |
 | D104 | Bản play nhận đường dẫn | **"Thư mục nguồn" cấp qua SAF** ở trang Tự động hoá; đường dẫn nằm trong một thư mục đó thì đổi sang URI tài liệu, ngoài thì `FILE_FAILED` kèm hướng dẫn | Trigger "Tệp thay đổi" của MacroDroid chỉ cho đường dẫn. Thử bằng chính bản sideload khi chưa cấp "Truy cập mọi tệp". |
+| D105 | Gộp vào `main` khi nào (hỏi 2026-11-18, Stage 8 đang chờ) | **Gộp ngay sau A–E**, nhóm F làm sau trên `main`; Stage 6 vẫn 🔨 tới khi F xong | Stage 8 làm tiếp được nhóm G, H; F chủ yếu là thử trên máy thật. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -189,23 +190,23 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 
 ### A. Nền: module, cài đặt, hàng đợi mang `request_id` và ghi đè
 
-- [ ] **A1. Module `:feature:automation`** (convention plugin Android library), `:app` phụ thuộc; object `GuzzIntents`
+- [x] **A1. Module `:feature:automation`** (convention plugin Android library), `:app` phụ thuộc; object `GuzzIntents`
   (gốc tên D91, action, event, tên extra, `error_kind`).
   **Kiểm:** `.\gradlew assembleSideloadDebug assemblePlayDebug` xanh; test JVM: mọi tên trong `GuzzIntents` bắt đầu bằng
   `io.github.cozycode890.guzz.` và không trùng nhau.
-- [ ] **A2. Cài đặt `[AUTOMATION]`**: `enabled`, `secret`, `include_paths`, `save_beside_source`, `source_dirs` (mục "Mặc
+- [x] **A2. Cài đặt `[AUTOMATION]`**: `enabled`, `secret`, `include_paths`, `save_beside_source`, `source_dirs` (mục "Mặc
   định kỹ thuật"), cuối `SettingKeys`.
   **Kiểm:** `DesktopDefaultsTest` vẫn xanh (mục mobile-only được bỏ qua đúng); test đọc / ghi từng khoá với giá trị mặc định.
-- [ ] **A3. `QueueItem`** thêm `requestId`, `overrides`, `ownedCopy`, `charCount`; `QueueRunner` ghi `charCount` từ kết quả
+- [x] **A3. `QueueItem`** thêm `requestId`, `overrides`, `ownedCopy`, `charCount`; `QueueRunner` ghi `charCount` từ kết quả
   pipeline khi xong.
   **Kiểm:** test `:core:pipeline`: tệp `hang_doi.json` cũ (không có trường mới) đọc được; ghi rồi đọc lại giữ nguyên trường
   mới; tệp xong có `charCount` = độ dài bản chép lời của Gemini giả.
-- [ ] **A4. `ItemOverrides` + `PipelineConfig.withOverrides`** (D95): `speakers` (`off` → tắt; `device` / `pyannote` /
+- [x] **A4. `ItemOverrides` + `PipelineConfig.withOverrides`** (D95): `speakers` (`off` → tắt; `device` / `pyannote` /
   `gemini` / `hybrid`), `numSpeakers`, `preset` (áp `AudioPresets` lên phần làm sạch của cấu hình), `denoise`, `outputDir`;
   `QueueRunner` áp cho từng tệp. Không đụng cài đặt đã lưu.
   **Kiểm:** test `:core:pipeline`: mỗi ghi đè đổi đúng trường, trường khác giữ nguyên; hai tệp liền nhau, một có ghi đè một
   không, tệp sau dùng cài đặt app; đổi preset bằng ghi đè thì mã cache âm thanh đổi (như A3 của Stage 7).
-- [ ] **A5. Nơi lưu** (D96): `QueueEnvironment.output(cfg, item)` chọn theo thứ tự `outputDir` ghi đè → "cạnh tệp nguồn"
+- [x] **A5. Nơi lưu** (D96): `QueueEnvironment.output(cfg, item)` chọn theo thứ tự `outputDir` ghi đè → "cạnh tệp nguồn"
   (cài đặt `save_beside_source`) → thư mục SAF. "Cạnh tệp nguồn" / đường dẫn tuyệt đối chỉ dùng khi có "Truy cập mọi tệp"
   và nguồn là đường dẫn, không thì lùi về SAF và ghi log. Quy tắc chọn là hàm thuần (`OutputChoice`), `QueueController`
   chỉ dựng `DirectoryOutputFolder` / `SafOutputFolder`.
@@ -214,22 +215,22 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 
 ### B. Nhận lệnh
 
-- [ ] **B1. `ExtrasReader`** (Kotlin thuần, đọc `Map<String, Any?>`): chuỗi / số / boolean nhận cả dạng chuỗi; `paths` là
+- [x] **B1. `ExtrasReader`** (Kotlin thuần, đọc `Map<String, Any?>`): chuỗi / số / boolean nhận cả dạng chuỗi; `paths` là
   mảng, `ArrayList` hoặc chuỗi nhiều dòng; giá trị lạ (`speakers=abc`, `num_speakers=-1`, `preset` lạ, `start=maybe`) báo
   lỗi có tên extra.
   **Kiểm:** test JVM: thiếu extra, sai kiểu, chuỗi số, mảng rỗng, khoảng trắng thừa, `paths` nhiều dòng có dòng trống.
-- [ ] **B2. `CommandHandler`** (thuần, nhận interface hàng đợi / quyền / cài đặt): kiểm công tắc (`disabled`), mã bí mật
+- [x] **B2. `CommandHandler`** (thuần, nhận interface hàng đợi / quyền / cài đặt): kiểm công tắc (`disabled`), mã bí mật
   (D93: so sánh thời gian hằng, ô trống thì bỏ qua), đọc lệnh, trả danh sách việc + sự kiện trả lời (`ERROR`, `STATUS`,
   `FILE_FAILED` cho đường dẫn không đọc được, `duplicate`).
   **Kiểm:** test JVM: công tắc tắt; mã sai / thiếu / đúng / ô trống; TRANSCRIBE `start=false` chỉ thêm; STATUS trả số đúng
   với trạng thái giả; tệp trùng; log không chứa mã bí mật.
-- [ ] **B3. Đổi nguồn** (`SourceResolver`, thuần trừ lớp gọi Android): đường dẫn + "Truy cập mọi tệp" → đường dẫn; đường
+- [x] **B3. Đổi nguồn** (`SourceResolver`, thuần trừ lớp gọi Android): đường dẫn + "Truy cập mọi tệp" → đường dẫn; đường
   dẫn nằm trong một Thư mục nguồn SAF (D104) → URI tài liệu (`DocumentsContract.buildDocumentUriUsingTree`, so tiền tố
   `primary:` của URI cây với `/storage/emulated/0/`); `uri` / ClipData có cờ cấp quyền → giữ quyền bền nếu được, không thì
   chép (D103, dùng chung D2); không được thì `FILE_FAILED` `error_kind` `no_permission` / `not_found` kèm hướng dẫn.
   **Kiểm:** test JVM cho phép đổi đường dẫn ↔ URI cây (thư mục con, tên có dấu, khoảng trắng, đường dẫn ngoài thư mục, thẻ
   nhớ ngoài không phải `primary`).
-- [ ] **B4. `CommandReceiver` + `CommandActivity`** (D94), manifest exported, cùng gọi `CommandHandler` qua `goAsync()` /
+- [x] **B4. `CommandReceiver` + `CommandActivity`** (D94), manifest exported, cùng gọi `CommandHandler` qua `goAsync()` /
   coroutine; thêm tệp qua `QueueController` (thêm `addPath` / `addUris` có `requestId`, `overrides`), rồi `start()` nếu
   `start=true`. Receiver bắt `ForegroundServiceStartNotAllowedException` → D102: tệp giữ trong hàng đợi, phát `ERROR`
   `background_blocked`, thông báo "Bấm để bắt đầu" (mở màn hình chính, `resumeIfNeeded`). Lệnh tới mà hàng đợi bị giết dở
@@ -239,63 +240,63 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
   → chạy, không thấy cửa sổ nào (`android layout` ngay sau đó chỉ thấy app đang mở trước). Gỡ miễn tối ưu pin
   (`dumpsys deviceidle whitelist -io.github.cozycode890.guzz.debug`) rồi gửi broadcast lúc app ở nền → log
   `background_blocked`, có thông báo, bấm thông báo thì chạy; activity vẫn chạy được.
-- [ ] **B5. Thử ghi đè và nơi lưu trên máy ảo**: `speakers=off`, `preset=speakers_around`, `output_dir=source` (có / không
+- [x] **B5. Thử ghi đè và nơi lưu trên máy ảo**: `speakers=off`, `preset=speakers_around`, `output_dir=source` (có / không
   quyền "Truy cập mọi tệp": `appops set ... MANAGE_EXTERNAL_STORAGE allow|ignore`).
   **Kiểm:** log từng tệp ghi cấu hình đã áp; bản chép lời nằm cạnh tệp nguồn khi có quyền, nằm ở thư mục SAF khi không; cài
   đặt app không đổi (`queue_debug.ps1 -Status`).
-- [ ] **B6. Gemini giả theo tệp (chỉ debug)**: extra `fake_gemini=on|off` lưu vào ghi đè của tệp; `clientFactory` của bản
+- [x] **B6. Gemini giả theo tệp (chỉ debug)**: extra `fake_gemini=on|off` lưu vào ghi đè của tệp; `clientFactory` của bản
   debug ưu tiên giá trị này hơn cờ `gemini_gia`; bản release bỏ qua extra.
   **Kiểm:** máy ảo: cờ chung bật, một tệp `fake_gemini=off` → log thấy client thật được dựng cho tệp đó (không có key thì
   lỗi `NoApiKey` cho đúng tệp đó; **không gửi gì**); test JVM: release bỏ qua.
 
 ### C. Sự kiện
 
-- [ ] **C1. `EventTracker`** (thuần): so `QueueState` cũ / mới → `FILE_STARTED` (vào `dang_chay`), `FILE_DONE`, `FILE_FAILED`
+- [x] **C1. `EventTracker`** (thuần): so `QueueState` cũ / mới → `FILE_STARTED` (vào `dang_chay`), `FILE_DONE`, `FILE_FAILED`
   (`loi`), `QUEUE_FINISHED` (cờ chạy tắt sau một vòng, kèm số xong / lỗi / bỏ qua, `stopped`); bỏ đường dẫn khi tắt
   `include_paths` (D97). Không phát lại sự kiện cũ khi process mới khởi động (trạng thái đầu là mốc).
   **Kiểm:** test JVM: chuỗi trạng thái của một vòng 3 tệp (xong, lỗi, bỏ qua); Dừng giữa chừng; process mới đọc hàng đợi đã
   xong thì không phát gì; tắt `include_paths` thì không còn `source` / `output_path` / `output_uri`.
-- [ ] **C2. `EventBroadcaster`**: dựng `Intent` từ sự kiện (extra `package`), `sendBroadcast` ngầm; chạy trong
+- [x] **C2. `EventBroadcaster`**: dựng `Intent` từ sự kiện (extra `package`), `sendBroadcast` ngầm; chạy trong
   `AppContainer` nghe `QueueController.state` khi công tắc bật; trả lời `STATUS` / `ERROR` của B2 cũng qua đây. Log mỗi
   sự kiện phát (action, `request_id`).
   **Kiểm:** máy ảo: `logcat -s Guzz` thấy `FILE_STARTED` → `FILE_DONE` → `QUEUE_FINISHED` đúng `request_id`.
-- [ ] **C3. Bộ ghi sự kiện của bản debug**: receiver đăng ký lúc chạy trong `GuzzApp` (debug) cho mọi `P.event.*`, ghi
+- [x] **C3. Bộ ghi sự kiện của bản debug**: receiver đăng ký lúc chạy trong `GuzzApp` (debug) cho mọi `P.event.*`, ghi
   `files/debug-events/events.jsonl`.
   **Kiểm:** sau B4, kéo tệp về thấy đủ sự kiện, `request_id` khớp lệnh.
-- [ ] **C4. `tools/device/intent_debug.ps1`**: `-Transcribe <tệp> [-RequestId] [-Secret] [-Activity] [-Speakers] [-Preset]
+- [x] **C4. `tools/device/intent_debug.ps1`**: `-Transcribe <tệp> [-RequestId] [-Secret] [-Activity] [-Speakers] [-Preset]
   [-OutputDir] [-FakeGemini on|off]`, `-Start`, `-Stop`, `-Status`, `-Events` (in `events.jsonl`), `-Enable on|off` (bật
   công tắc qua lệnh `automation` mới của `QueueDebugReceiver`). Tệp tương đối thì lấy trong `files/input/` như `queue_debug.ps1`.
   **Kiểm:** chạy lại B4 bằng script; `-Status` in sự kiện STATUS có % và đoạn i/n lúc đang chạy.
-- [ ] **C5. Test thiết bị** (`:app`, `androidTest`): bật công tắc + Gemini giả, gửi broadcast TRANSCRIBE tới
+- [x] **C5. Test thiết bị** (`:app`, `androidTest`): bật công tắc + Gemini giả, gửi broadcast TRANSCRIBE tới
   `CommandReceiver` với một tệp ngắn trong `testdata/media`, receiver đăng ký trong test chờ `FILE_DONE` cùng
   `request_id` (≤ 60 s); ca mã bí mật sai → `ERROR` `bad_secret`, hàng đợi không đổi.
   **Kiểm:** chạy trên máy ảo theo cách cài tay ở `CLAUDE.md` (tiêu chí hoàn thành "Instrumented test").
 
 ### D. Chia sẻ tới Guzz
 
-- [ ] **D1. `ShareActivity`** (trong suốt, intent-filter `SEND` / `SEND_MULTIPLE` cho `audio/*`, `video/*`): đọc
+- [x] **D1. `ShareActivity`** (trong suốt, intent-filter `SEND` / `SEND_MULTIPLE` cho `audio/*`, `video/*`): đọc
   `EXTRA_STREAM`, thêm vào hàng đợi, `checkStart()` → bắt đầu (D98) hoặc báo lý do (thiếu key / thư mục lưu) bằng toast +
   mở màn hình chính; luôn mở màn hình chính sau cùng. Không cần công tắc cho phép.
   **Kiểm:** máy ảo: app Files → Chia sẻ một tệp `.m4a` tới "Guzz (debug)" (bấm bằng `android layout` / `android input
   tap`) → tệp chạy ngay; chia sẻ 2 tệp cùng lúc → cả hai vào hàng đợi; `adb shell am start -a android.intent.action.SEND
   -t audio/mp4 --eu android.intent.extra.STREAM content://media/...` cũng chạy.
-- [ ] **D2. Chép khi không giữ được quyền** (D103): thử `takePersistableUriPermission`; không được thì kiểm chỗ trống (D44)
+- [x] **D2. Chép khi không giữ được quyền** (D103): thử `takePersistableUriPermission`; không được thì kiểm chỗ trống (D44)
   rồi chép vào `files/inbox/<id>/<tên>` trong luồng nền **trước** khi Activity đóng (giữ Activity tới khi chép xong, có
   vòng chờ); `ownedCopy = true`; xoá khi tệp xong (theo `delete_temp_when_done`) hoặc bị bỏ khỏi danh sách.
   **Kiểm:** máy ảo: chia sẻ từ app Files rồi `am kill` app giữa chừng, mở app → tệp làm tiếp, đọc được; xong thì
   `files/inbox` trống; bỏ tệp lỗi khỏi danh sách thì bản chép bị xoá. Test JVM cho quy tắc xoá.
-- [ ] **D3. Test thiết bị đọc qua ContentProvider thật** (Phát sinh Stage 2): `MediaInput.Content` / `AndroidChunkSource`
+- [x] **D3. Test thiết bị đọc qua ContentProvider thật** (Phát sinh Stage 2): `MediaInput.Content` / `AndroidChunkSource`
   đọc tệp qua một `FileProvider` của test trả độ dài không rõ (−1), và qua MediaStore Downloads.
   **Kiểm:** `:core:media:connectedDebugAndroidTest` (hoặc `androidTest` của `:app`) xanh trên máy ảo.
 
 ### E. Trang Tự động hoá (D99)
 
-- [ ] **E1. `FileAccess`, `BatteryStatus`**: kiểm / xin "Truy cập mọi tệp" (sideload; Android 8–10 `READ_EXTERNAL_STORAGE`),
+- [x] **E1. `FileAccess`, `BatteryStatus`**: kiểm / xin "Truy cập mọi tệp" (sideload; Android 8–10 `READ_EXTERNAL_STORAGE`),
   Thư mục nguồn (thêm qua `OpenDocumentTree` + `takePersistableUriPermission`, bỏ thì trả quyền), miễn tối ưu pin (sideload
   có nút xin; play mở trang cài đặt pin), quyền thông báo.
   **Kiểm:** máy ảo: `appops set ... MANAGE_EXTERNAL_STORAGE ignore|allow` và `dumpsys deviceidle whitelist ±` → trạng thái
   trên trang đổi theo khi quay lại trang (`onResume`).
-- [ ] **E2. `AutomationSettingsScreen`** (Composable nhận `AutomationSettingsModel`) + `AutomationActivity` ở `:app`, nút mở
+- [x] **E2. `AutomationSettingsScreen`** (Composable nhận `AutomationSettingsModel`) + `AutomationActivity` ở `:app`, nút mở
   trên màn hình chính: công tắc cho phép; mã bí mật (ô + nút "Tạo mã ngẫu nhiên", ẩn / hiện); "Kèm đường dẫn trong sự
   kiện"; "Lưu cạnh tệp nguồn" (ẩn ở bản play); quyền tệp / Thư mục nguồn; pin; thông báo; danh sách action / event / tên
   lớp receiver, activity, mỗi dòng nút sao chép; nút "Gửi thử sự kiện" (phát `FILE_DONE` giả có `request_id` = `test`,
@@ -337,7 +338,7 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
   MacroDroid), bảng action / extra / event / `error_kind` (sinh từ `GuzzIntents` hoặc có test so khớp), ví dụ `adb`, 3 macro
   mẫu dạng bảng, máy đã thử (Android / hãng / kết quả đêm thử), giới hạn đã biết. Viết nháp trước F1, sửa theo F1–F5.
   **Kiểm:** test JVM: mọi action / event / extra trong `GuzzIntents` có mặt trong `docs/intents.md` và ngược lại.
-- [ ] **G2. `CLAUDE.md`**: khối lệnh "Intent (Stage 6)" cuối "Lệnh thường dùng" (`intent_debug.ps1`, test thiết bị C5, test
+- [x] **G2. `CLAUDE.md`**: khối lệnh "Intent (Stage 6)" cuối "Lệnh thường dùng" (`intent_debug.ps1`, test thiết bị C5, test
   `:feature:automation`).
   **Kiểm:** chạy lại từng lệnh trong khối trên máy ảo.
 - [ ] **G3. Gộp và đóng**: `.\gradlew test lint` xanh cả hai flavor; đánh dấu "Tiêu chí hoàn thành"; Stage 6 ✅ kèm ngày;
@@ -345,6 +346,25 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
   **Kiểm:** `git log main` có commit gộp; `.\gradlew test` trên `main` xanh.
 
 ## Nhật ký
+
+- (2026-11-17, A2) `secret` và `source_dirs` không nằm trong `SettingKeys.all` mà trong danh sách mới `SettingKeys.deviceLocal` (mục của máy này, không xuất / nhập). Stage 8 H3 chỉ cần xuất `all`.
+- (2026-11-17, A3) `QueueItem` thêm cả `modelsUsed` (cho extra `models` của FILE_DONE). `QueueEnvironment.cacheSalt` nhận cấu hình của tệp (`cacheSalt(cfg)`), vì Gemini giả có thể bật cho riêng một tệp (B6); `PipelineConfig` thêm `debugFakeGemini` và `saveBesideSource`. Ghi đè không hợp lệ chỉ làm tệp đó lỗi `cau_hinh`, hàng đợi chạy tiếp.
+- (2026-11-17, A5) `OutputChoice` nằm ở `:core:pipeline` (JVM thuần, test JUnit 5). Thư mục cha lấy bằng cắt chuỗi, không dùng `File.parent` (test trên Windows ra dấu gạch ngược).
+- (2026-11-17, B2–B3) Không tách lớp `SourceResolver`: phần thuần là `PathMapping` (đường dẫn ↔ mã tài liệu), phần Android nằm trong `Automation.resolvePath/resolveUri`. Thêm: tệp trong thư mục riêng của app (`files/input` của lệnh adb) đọc thẳng không cần quyền; URI của lệnh TRANSCRIBE không giữ được quyền bền thì cũng chép như tệp chia sẻ (D103), trừ URI tài liệu dưới một cây SAF. Tệp bỏ qua (on_conflict = skip) phát FILE_DONE với `skipped=true`.
+- (2026-11-17, E2) Trang là `AutomationSettingsScreen(state: AutomationUiState, actions: AutomationActions)`; dữ liệu ở `AutomationSettingsModel` (cài đặt + trạng thái quyền, `refresh()` ở `onResume`). Stage 8 H1 dựng lại bằng widget chung thì dùng `AutomationSettingsModel`.
+- (2026-11-17) Máy ảo `guzz_15t` (emulator-5554) đang được session Stage 8 dùng, nên Stage 6 thử trên AVD riêng `guzz_15t_s6` (cùng thông số, cổng 5558) để không cài đè app của nhau.
+
+- (2026-11-18, B4) Trên máy ảo API 36, app không đọc được tệp qua `/sdcard/…` dù cùng chỗ với `/storage/emulated/0/…`: tệp trong thư mục riêng của app và tệp khi có "Truy cập mọi tệp" được đổi sang đường dẫn thật. Bị chặn chạy nền (D102) thì ngoài thông báo còn bật cờ đang chạy của hàng đợi (`QueueController.markPendingStart`), nên mở app / bấm thông báo là tự bắt đầu; đã thử: gỡ miễn tối ưu pin → ERROR background_blocked + thông báo, mở app → FILE_STARTED → FILE_DONE.
+- (2026-11-18, C3) Bộ ghi `events.jsonl` của bản debug ghi ngay lúc phát, không qua receiver đăng ký trong chính process: Android 14+ hoãn broadcast tới process cached (vừa dừng service) nên receiver đó bỏ sót FILE_DONE / QUEUE_FINISHED. Việc broadcast tới được app khác do test thiết bị C5 kiểm.
+- (2026-11-18, B5–B6) Máy ảo `guzz_15t_s6`: `output_dir=source` không có quyền → `files/output` + log cảnh báo, có quyền (`appops … MANAGE_EXTERNAL_STORAGE allow`) → `B5test.txt` cạnh tệp nguồn; `speakers=off`, `preset=speakers_around` ghi trong log tệp; `fake_gemini=off` khi cờ chung bật → client thật, lỗi "Chưa có API key" (máy ảo không có key, không gửi gì). Tệp tạo bằng `adb shell cp` app không đọc được (chủ là shell): đẩy từ PC bằng `adb push`.
+
+- (2026-11-18, D1) `querySource` (:feature:queue) hỏi cột `last_modified` nên MediaStore ném IllegalArgumentException ("Invalid column"): đổi sang projection `null`, chỉ đọc cột có mặt. `ShareActivity` nhận URI ở cả ClipData lẫn `data` (`am start --grant-read-uri-permission` chỉ cấp quyền cho data / ClipData, không cho extra STREAM). Đã thử: `am start -a SEND -d content://media/…`, chia sẻ hai tệp từ app Files của máy ảo (SEND_MULTIPLE), giết app giữa chừng rồi mở lại → làm tiếp từ bản chép, xong thì `files/inbox` trống.
+- (2026-11-18, D3) Test ở `:app` (`ContentSourceTest`), không ở `:core:media`, vì cần cả `querySource` của :feature:queue. Provider trả độ dài không rõ là `UnknownLengthProvider` chỉ có ở bản debug (không exported).
+
+- (2026-11-18, E) Máy ảo: trang hiện đủ mục ở bản sideload; bản play ẩn "Truy cập mọi tệp" và "Lưu cạnh tệp nguồn". `appops` / `deviceidle` đổi thì quay lại trang thấy ✓ / ✗ đổi theo; bấm dòng thì có toast "Đã sao chép …" (shell không đọc được clipboard nên kiểm bằng ảnh chụp); "Gửi thử sự kiện" ghi FILE_DONE `request_id=test`. Thư mục nguồn (D104) thử luôn trên bản play: chọn Music qua SAF, `/sdcard/Music/chia_se_2.m4a` đọc qua URI tài liệu (sự kiện mang URI đó ở `source`, không phải đường dẫn gốc), `/sdcard/Download/…` → FILE_FAILED `no_permission`.
+- (2026-11-18, E2) Lint: `URLDecoder.decode(String, Charset)` cần API 33, đổi sang bản nhận tên bảng mã. Còn 6 cảnh báo (KTX `toUri`, plurals cho `share_added`, `/sdcard` trong PathMapping) để Stage 8 xét cùng phần văn phong.
+
+- (2026-11-18, G1) Bản nháp `docs/intents.md` xong, `IntentsDocTest` so khớp với `GuzzIntents` (tài liệu là input của task test). Tên mục MacroDroid, mục "Máy đã thử" và tệp `docs/macrodroid/*.macro` chờ nhóm F trên máy thật.
 
 ## Phát sinh
 

@@ -37,9 +37,10 @@ fun querySource(context: Context, source: String): SourceInfo = when (val input 
     }
     is MediaInput.Content -> {
         val resolver = context.contentResolver
-        val cols = arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE, DocumentsContract.Document.COLUMN_LAST_MODIFIED)
         val row = try {
-            resolver.query(input.uri, cols, null, null, null)?.use { c ->
+            // Projection null: provider không phải tài liệu (MediaStore) ném IllegalArgumentException khi hỏi cột nó không
+            // có (`last_modified`, Stage 6 D1); đọc mọi cột rồi chỉ lấy cột có mặt.
+            resolver.query(input.uri, null, null, null, null)?.use { c ->
                 if (!c.moveToFirst()) return@use null
                 fun col(name: String) = c.getColumnIndex(name).takeIf { it >= 0 && !c.isNull(it) }
                 Triple(

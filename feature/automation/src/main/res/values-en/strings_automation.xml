@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="automation_title">Automation</string>
+    <string name="automation_intro">MacroDroid, Tasker and similar apps send commands to Guzz with intents and get events back when a transcript is ready. Guide and sample macros: docs/intents.md.</string>
+    <string name="automation_enabled">Allow other apps to control Guzz</string>
+    <string name="automation_enabled_hint">When off, Guzz ignores every command and sends no events. Share to Guzz still works.</string>
+    <string name="automation_secret">Secret code (optional)</string>
+    <string name="automation_secret_hint">Leave empty to skip the check. When set, commands must include a matching secret extra.</string>
+    <string name="automation_secret_generate">Generate random code</string>
+    <string name="automation_secret_show">Show</string>
+    <string name="automation_secret_hide">Hide</string>
+    <string name="automation_include_paths">Include file paths in events</string>
+    <string name="automation_include_paths_hint">Any app on the device can receive events. When off, events only carry the file name and request_id.</string>
+    <string name="automation_beside_source">Save transcripts next to the source file</string>
+    <string name="automation_beside_source_hint">Only with \"All files access\" and a path source; otherwise saved to the chosen folder.</string>
+
+    <string name="automation_section_access">Permissions</string>
+    <string name="automation_all_files">All files access</string>
+    <string name="automation_all_files_on">Granted: absolute paths are accepted.</string>
+    <string name="automation_all_files_off">Not granted: only files in Source folders or URIs with a grant can be read.</string>
+    <string name="automation_grant">Grant</string>
+    <string name="automation_source_dirs">Source folders</string>
+    <string name="automation_source_dirs_hint">Paths inside these folders can be read without \"All files access\" (e.g. Recordings).</string>
+    <string name="automation_source_dirs_empty">No folders yet.</string>
+    <string name="automation_source_add">Add folder</string>
+    <string name="automation_source_remove">Remove</string>
+    <string name="automation_battery">Battery optimization exemption</string>
+    <string name="automation_battery_on">Exempt: broadcast commands can start the queue with the screen off.</string>
+    <string name="automation_battery_off">Not exempt: Android blocks broadcast commands from starting the queue while Guzz is in the background.</string>
+    <string name="automation_notifications">Notifications</string>
+    <string name="automation_notifications_on">On.</string>
+    <string name="automation_notifications_off">Off: the queue still runs but shows no progress notification and no Stop button.</string>
+    <string name="automation_fix">Turn on</string>
+
+    <string name="automation_section_api">Commands and events</string>
+    <string name="automation_api_hint">Tap a line to copy it. Package of this build: %1$s</string>
+    <string name="automation_label_package">Package</string>
+    <string name="automation_label_receiver">Class (Broadcast)</string>
+    <string name="automation_label_activity">Class (Activity, fallback)</string>
+    <string name="automation_label_commands">Commands sent to Guzz</string>
+    <string name="automation_label_events">Events sent by Guzz</string>
+    <string name="automation_copied">Copied %1$s</string>
+    <string name="automation_test_event">Send test event</string>
+    <string name="automation_test_event_hint">Sends a fake FILE_DONE with request_id = test, to try a macro that listens for events.</string>
+    <string name="automation_test_event_sent">Test FILE_DONE sent.</string>
+    <string name="automation_test_event_disabled">Turn on \"Allow other apps to control Guzz\" first.</string>
+
+    <string name="automation_channel">Commands from other apps</string>
+    <string name="automation_blocked_title">Guzz could not start the file it just received</string>
+    <string name="automation_blocked_text">Android does not let Guzz run in the background right now. The file is still in the queue: tap to open Guzz and start. Exempt Guzz from battery optimization so it starts on its own next time.</string>
+
+    <string name="share_label">Transcribe with Guzz</string>
+    <string name="share_added">Added %1$d file(s) to the queue.</string>
+    <string name="share_failed">Could not read: %1$s</string>
+    <string name="share_problem">Added to the queue but not started: %1$s</string>
+</resources>

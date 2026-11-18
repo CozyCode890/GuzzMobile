@@ -9,6 +9,8 @@ import io.github.cozycode890.guzz.core.gemini.GeminiClient
 import io.github.cozycode890.guzz.core.gemini.QuotaTracker
 import io.github.cozycode890.guzz.core.gemini.RateLimiters
 import io.github.cozycode890.guzz.feature.queue.FakeTranscriber
+import io.github.cozycode890.guzz.core.pipeline.PipelineConfig
+import io.github.cozycode890.guzz.feature.automation.Automation
 import io.github.cozycode890.guzz.feature.queue.QueueController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,17 +73,29 @@ class AppContainer(appContext: Context) {
 
     fun fakeGeminiEnabled(): Boolean = BuildConfig.DEBUG && fakeGeminiFlag.exists()
 
+    /** Gemini giả cho một tệp: extra `fake_gemini` của lệnh (Stage 6, B6) thắng cờ chung; bản release luôn `false`. */
+    private fun fakeGeminiFor(cfg: PipelineConfig): Boolean = BuildConfig.DEBUG && (cfg.debugFakeGemini ?: fakeGeminiFlag.exists())
+
     /** Hàng đợi của cả app (Stage 4). Client Gemini dựng lại mỗi tệp, đọc lại key và timeout như desktop. */
     val queueController: QueueController by lazy {
         QueueController(
             context, settings, { quotaTracker },
             clientFactory = { cfg ->
-                if (fakeGeminiEnabled()) FakeTranscriber() else geminiClient(timeoutSeconds = cfg.gemini.timeoutSeconds)
+                if (fakeGeminiFor(cfg)) FakeTranscriber() else geminiClient(timeoutSeconds = cfg.gemini.timeoutSeconds)
             },
             // Bản debug: chưa chọn thư mục SAF thì lệnh adb ghi vào files/output (D2).
             fallbackOutput = if (BuildConfig.DEBUG) File(context.getExternalFilesDir(null) ?: context.filesDir, "output") else null,
             // Kết quả đoạn của Gemini giả lưu dưới mã riêng: tắt giả rồi chạy thật thì không dùng lại "Đoạn i." giả.
-            cacheSalt = { if (fakeGeminiEnabled()) "gemini_gia" else "" },
+            cacheSalt = { cfg -> if (fakeGeminiFor(cfg)) "gemini_gia" else "" },
+            allFilesAccess = { automation.fileAccess.hasAllFilesAccess() },
+        ).also { automation.attach(it) }
+    }
+
+    /** Intent cho MacroDroid / Tasker, Chia sẻ tới Guzz, trang Tự động hoá (Stage 6). */
+    val automation: Automation by lazy {
+        Automation(
+            context, settings, { queueController }, appScope,
+            allFilesFlavor = BuildConfig.ALL_FILES_ACCESS, debug = BuildConfig.DEBUG,
         )
     }
 

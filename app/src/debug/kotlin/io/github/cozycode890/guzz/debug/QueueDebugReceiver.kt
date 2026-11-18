@@ -30,6 +30,8 @@ import java.io.File
  * - `start` (chỉ được khi app đã được miễn tối ưu pin, D69: Android 12+ không cho app ở nền khởi động foreground
  *   service), `stop`, `clear` (bỏ mọi tệp không chạy), `status` (ghi `files/debug-queue/trang_thai.json`).
  * - `fake` với `--es value on|off`: Gemini giả (không gọi mạng).
+ * - `automation` (Stage 6): `--es enabled on|off`, `--es secret <mã>` (rỗng = bỏ), `--es include_paths on|off`,
+ *   `--es beside_source on|off`, `--es clear_events 1` (xoá `files/debug-events/events.jsonl`).
  *
  * Lệnh nào cũng ghi lại `trang_thai.json` khi xong.
  */
@@ -111,6 +113,24 @@ class QueueDebugReceiver : BroadcastReceiver() {
                         GuzzLog.info(
                             "Lệnh adb: âm thanh ${AudioPresets.detect(AudioPresetValues.read(s))}, khử ồn ${s.get(SettingKeys.DENOISE)}, " +
                                 "lưu âm thanh sạch ${s.get(SettingKeys.SAVE_CLEAN_AUDIO)}.",
+                        )
+                    }
+                    "automation" -> {
+                        // Stage 6: bật / tắt điều khiển từ app khác và các mục [AUTOMATION] bằng adb (intent_debug.ps1).
+                        val s = container.settings
+                        fun flag(name: String) = intent.getStringExtra(name)?.let { it == "on" || it == "1" || it == "true" }
+                        flag("enabled")?.let { s.set(SettingKeys.AUTOMATION_ENABLED, it) }
+                        flag("include_paths")?.let { s.set(SettingKeys.AUTOMATION_INCLUDE_PATHS, it) }
+                        flag("beside_source")?.let { s.set(SettingKeys.SAVE_BESIDE_SOURCE, it) }
+                        if (intent.hasExtra("secret")) s.set(SettingKeys.AUTOMATION_SECRET, intent.getStringExtra("secret").orEmpty())
+                        if (intent.hasExtra("clear_events")) {
+                            File(context.getExternalFilesDir(null), "debug-events/events.jsonl").delete()
+                        }
+                        GuzzLog.info(
+                            "Lệnh adb: tự động hoá ${if (s.get(SettingKeys.AUTOMATION_ENABLED)) "BẬT" else "tắt"}, " +
+                                "mã bí mật ${if (s.get(SettingKeys.AUTOMATION_SECRET).isEmpty()) "không" else "có"}, " +
+                                "kèm đường dẫn ${s.get(SettingKeys.AUTOMATION_INCLUDE_PATHS)}, " +
+                                "cạnh tệp nguồn ${s.get(SettingKeys.SAVE_BESIDE_SOURCE)}.",
                         )
                     }
                     "status", null -> Unit

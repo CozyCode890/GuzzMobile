@@ -39,6 +39,10 @@ enum class ItemStatus {
  * @param stage / [step] / [chunk] / [chunkTotal] / [model]: chi tiết tiến độ để giao diện hiện (`go_chu`, đoạn 2/6…).
  * @param tempDir thư mục tạm của tệp (biết khi bắt đầu chạy), để xoá khi bỏ khỏi danh sách (D66).
  * @param chunkDelaySec chỉ bản debug (D67): chờ giữa các đoạn.
+ * @param requestId mã do app khác gửi kèm lệnh TRANSCRIBE (Stage 6), trả lại trong sự kiện; `null` khi thêm bằng tay.
+ * @param overrides cài đặt ghi đè cho riêng tệp này (Stage 6, D95).
+ * @param ownedCopy [source] là bản Guzz tự chép (tệp được chia sẻ mà không giữ được quyền đọc, D103): xoá khi xong / bỏ.
+ * @param charCount / [modelsUsed]: số ký tự bản chép lời và các model đã dùng, khi tệp xong (cho sự kiện `FILE_DONE`).
  */
 @Serializable
 data class QueueItem(
@@ -60,6 +64,11 @@ data class QueueItem(
     val errorKind: String? = null,
     val tempDir: String? = null,
     val chunkDelaySec: Double = 0.0,
+    val requestId: String? = null,
+    val overrides: ItemOverrides? = null,
+    val ownedCopy: Boolean = false,
+    val charCount: Int? = null,
+    val modelsUsed: List<String>? = null,
 )
 
 /** Cả hàng đợi. [running]: đang chạy (hoặc bị giết giữa chừng); mở lại app thì tự chạy tiếp (D64). */
@@ -138,8 +147,11 @@ interface QueueEnvironment {
     /** Thư mục lưu theo cài đặt; chưa chọn hoặc không dùng được thì ném [PipelineException] (dừng hàng đợi). */
     fun output(cfg: PipelineConfig, item: QueueItem): OutputFolder
 
-    /** Khác rỗng khi dùng Gemini giả (bản debug): kết quả đoạn giả lưu dưới mã riêng, không lẫn với kết quả thật. */
-    fun cacheSalt(): String = ""
+    /**
+     * Khác rỗng khi dùng Gemini giả (bản debug): kết quả đoạn giả lưu dưới mã riêng, không lẫn với kết quả thật. Nhận
+     * cấu hình của tệp vì Gemini giả có thể bật cho riêng một tệp ([PipelineConfig.debugFakeGemini]).
+     */
+    fun cacheSalt(cfg: PipelineConfig): String = ""
 }
 
 /** Lý do không bắt đầu được hàng đợi. Port các bước kiểm của gui/pages/transcribe.py: `_start`. */
@@ -241,7 +253,7 @@ class QueueRunner(
 
     private fun resetForRun(item: QueueItem) = item.copy(
         status = ItemStatus.WAITING, progress = 0.0, stage = null, step = null, chunk = null, chunkTotal = null,
-        model = null, error = null, errorKind = null,
+        model = null, error = null, errorKind = null, charCount = null, modelsUsed = null,
     )
 
     /** Đánh dấu cách dừng sắp tới: `true` = dừng vì hệ thống, giữ cờ đang chạy để làm tiếp (D64). Gọi trước khi huỷ. */
@@ -318,14 +330,26 @@ class QueueRunner(
                     logger.error("Không đọc được cài đặt (${e.message}), dùng cài đặt cũ.")
                     cfg
                 }
-                val c = cfg!!
+                // Ghi đè của riêng tệp (Stage 6, D95) áp lên cài đặt app, không đổi `cfg` của tệp sau.
+                val c = try {
+                    cfg!!.withOverrides(item.overrides)
+                } catch (e: IllegalArgumentException) {
+                    failed++
+                    logger.error("Ghi đè cài đặt của ${item.displayName} không hợp lệ: ${e.message}")
+                    fail(item, "Ghi đè cài đặt không hợp lệ: ${e.message}", "cau_hinh")
+                    current = null
+                    continue
+                }
+                item.overrides?.takeUnless { it.isEmpty }?.let {
+                    logger.info("${item.displayName}: ghi đè cài đặt ${it.describe()}.")
+                }
                 store.updateItem(item.id) { it.copy(status = ItemStatus.RUNNING, progress = 0.0, error = null, errorKind = null) }
                 val stop = try {
                     val source = env.source(item)
                     val info = source.info()
                     store.updateItem(item.id) { it.copy(tempDir = pipeline.tempDirFor(info).path) }
                     val output = env.output(c, item)
-                    val result = pipeline.run(source, output, c, env.client(c), item.chunkDelaySec, env.cacheSalt()) { p ->
+                    val result = pipeline.run(source, output, c, env.client(c), item.chunkDelaySec, env.cacheSalt(c)) { p ->
                         onProgress(item.id, p)
                     }
                     store.updateItem(item.id) {
@@ -333,6 +357,8 @@ class QueueRunner(
                             status = if (result.skipped) ItemStatus.SKIPPED else ItemStatus.DONE, progress = 1.0,
                             outFile = result.outFile ?: it.outFile, outName = result.outName ?: it.outName,
                             stage = null, step = null,
+                            charCount = result.charCount.takeUnless { result.skipped },
+                            modelsUsed = result.models.keys.toList().takeUnless { result.skipped },
                         )
                     }
                     if (result.skipped) skipped++ else done++
