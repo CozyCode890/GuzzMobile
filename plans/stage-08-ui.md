@@ -47,10 +47,10 @@ có tiếng Việt / tiếng Anh, giao diện sáng / tối.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Không còn chuỗi giao diện viết cứng trong code: lint `HardcodedText` / `MissingTranslation` sạch, và
+- [x] Không còn chuỗi giao diện viết cứng trong code: lint `HardcodedText` / `MissingTranslation` sạch, và
       `tools/check_strings.ps1` (bắt chuỗi viết cứng trong Compose, lint không thấy) không báo gì.
-- [ ] Đổi ngôn ngữ và chủ đề không cần khởi động lại app.
-- [ ] Màn hình nhỏ (360 dp) và cỡ chữ lớn không bị vỡ bố cục.
+- [x] Đổi ngôn ngữ và chủ đề không cần khởi động lại app.
+- [x] Màn hình nhỏ (360 dp) và cỡ chữ lớn không bị vỡ bố cục.
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -300,9 +300,9 @@ và B7 (Compose UI test).
       `D:\GuzzMobileData\stage-08`). Kiểm: tiêu chí 360 dp / cỡ chữ lớn.
 - [x] I3. Đổi ngôn ngữ và chủ đề lúc hàng đợi đang chạy (Gemini giả): giao diện đổi ngay, hàng đợi không dừng. Kiểm: tiêu chí
       "không cần khởi động lại".
-- [ ] I4. Điện thoại thật (Xiaomi 15T) một lượt: thẻ Thiết lập ban đầu với HyperOS (pin, thông báo), đổi ngôn ngữ trong
+- [x] I4. Điện thoại thật (Xiaomi 15T) một lượt: thẻ Thiết lập ban đầu với HyperOS (pin, thông báo), đổi ngôn ngữ trong
       Cài đặt hệ thống, sáng / tối theo hệ thống. Kiểm: người dùng xem cùng.
-- [ ] I5. `.\gradlew test lint`, `tools\check_strings.ps1`, B7 xanh; `CLAUDE.md` thêm khối lệnh "Giao diện (Stage 8)"
+- [x] I5. `.\gradlew test lint`, `tools\check_strings.ps1`, B7 xanh; `CLAUDE.md` thêm khối lệnh "Giao diện (Stage 8)"
       (`ui_check.ps1`, `check_strings.ps1`, `gen_config.py`, B7); đánh dấu tiêu chí hoàn thành, Stage 8 ✅ kèm ngày.
 
 ## Nhật ký
@@ -389,6 +389,16 @@ và B7 (Compose UI test).
   - I3: đang chạy L1_20m (Gemini giả), đổi chủ đề Tối → Sáng → Theo hệ thống ở trang Hệ thống: giao diện đổi ngay, cùng
     PID, hàng đợi vẫn tiến (2% → 3%). Đổi ngôn ngữ giữa chừng đã thử ở G1.
   - Kiểm của I5: `.\gradlew test lint` xanh, `check_strings.ps1` sạch, B7 3/3; `CLAUDE.md` có khối "Giao diện (Stage 8)".
+- 2026-11-18, I4 trên Xiaomi 15T (USB, người dùng xem cùng), bản debug cài đè (giữ dữ liệu):
+  - Thẻ Thiết lập ban đầu: pin (HyperOS "Không hạn chế") và thông báo đã đạt; còn mục "Truy cập mọi tệp" (đã bật Tự động
+    hoá). Lỗi tìm thấy: nút của thẻ là `FilledTonalButton`, cùng màu nền `secondaryContainer` với thẻ nên gần như vô hình.
+    Sửa: nút đặc màu chính (`Button`). Bấm "Cấp quyền" mở đúng trang `AppManageExternalStorageActivity` của hệ thống,
+    Back về Guzz.
+  - Ngôn ngữ riêng của app đặt từ hệ thống (`cmd locale set-app-locales … vi`, như trang Ngôn ngữ ứng dụng): app sang
+    tiếng Việt, mục Ngôn ngữ giao diện hiện "Tiếng Việt" (đồng bộ về `GUI.language`). Chủ đề "Theo hệ thống": máy chuyển
+    sáng (`cmd uimode night no`) thì app sáng ngay, cùng PID. Đã trả máy về tối và ngôn ngữ app về theo máy.
+  - Khởi động nguội (`am start -W`): khoảng 0,7 s (3 lần: 716 / 697 / 696 ms); 2,5 s trên máy ảo là do máy ảo.
+  - Đóng stage: đủ tiêu chí hoàn thành.
 
 ## Phát sinh
 

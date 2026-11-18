@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -152,7 +152,8 @@ fun SetupList(
                 Text(stringResource(label), modifier = Modifier.weight(1f).padding(horizontal = 8.dp))
             }
             if (!done) {
-                FilledTonalButton(modifier = Modifier.align(Alignment.End), onClick = {
+                // Nút đặc màu chính: nút tonal cùng màu nền secondaryContainer của thẻ nên gần như vô hình (I4).
+                Button(modifier = Modifier.align(Alignment.End), onClick = {
                     when (item) {
                         SetupItem.API_KEY -> open(Routes.GOOGLE_AI)
                         SetupItem.OUTPUT_FOLDER -> onPickFolder()
