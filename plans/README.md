@@ -54,7 +54,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D18 | 2026-10-31 | Dữ liệu golden (Stage 0) | **Commit vào `testdata/golden/`** (WAV 16-bit nhỏ + JSON) | `gradlew test` chạy trên mọi bản clone, không cần Guzz desktop. |
 | D19 | 2026-10-31 | JDK cho Gradle (Stage 0) | **Temurin 21 có sẵn**, `JAVA_HOME` của tài khoản trỏ về đó, ghim bằng `gradle-daemon-jvm.properties` | `JAVA_HOME` cũ trỏ tới JDK 25 đã bị gỡ; JDK 21 hợp Gradle/AGP. |
 | D20 | 2026-10-31 | Cài Android SDK (Stage 0) | **Chỉ cmdline-tools**, `%LOCALAPPDATA%\Android\Sdk` | Cài bằng lệnh, ghi lại được, nhẹ. Android Studio để sau nếu cần. |
-| D21 | 2026-10-31 | GitHub (Stage 0) | **Private `CozyCode890/GuzzMobile`**, có thể public ở Stage 9 | An toàn khi đang làm. |
+| D21 | 2026-10-31 | GitHub (Stage 0) | **Private `CozyCode890/GuzzMobile`**, có thể public ở Stage 9 (→ public, D123) | An toàn khi đang làm. |
 | D22 | 2026-10-31 | Máy thật để thử (Stage 0) | **Xiaomi 15T**: MediaTek MT6899, 8 nhân, RAM 12 GB, Android 16 (API 36), HyperOS 3.0, chỉ `arm64-v8a` | Đặt mục tiêu hiệu năng ở Stage 1; Xiaomi giết app nền mạnh nên thử chạy nền có ý nghĩa. |
 | D23 | 2026-10-31 | `SYSTEM.old_log_count = 0` (Stage 0) | **Đầy thì xoá trắng `guzz.log`**, không giữ tệp cũ | Python với `backupCount = 0` không bao giờ xoay; trên điện thoại dung lượng log phải bị chặn. |
 | D24 | 2026-10-31 | Bộ phiên bản Gradle / AGP (Stage 0) | **AGP 9.3.3 + Gradle 9.7.1**, Kotlin 2.4.21 | Nằm trong bảng tương thích của Kotlin 2.4.21; AGP 9.5 để sau khi Kotlin 2.5 ra. |
@@ -154,6 +154,20 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D119 | 2026-11-17 | `languages` cho `*-transcribe` (Stage 8) | **Gợi ý bấm để điền `vi-VN, en-US`**, mặc định giữ trống như desktop, không gửi thử | Không đổi mặc định, không gửi gì lên Google. |
 | D120 | 2026-11-17 | `[VIDEO] save_extracted` (Stage 8, D68) | **Làm, thử bằng Gemini giả** | Lưu FLAC không phụ thuộc Gemini. |
 | D121 | 2026-11-17 | Kiểm giao diện (Stage 8) | **Máy ảo + `ui_check.ps1` (`android layout`, ảnh) + vài Compose UI test**, không thư viện screenshot | Đủ kiểm tiêu chí, không thêm phụ thuộc. |
+| D122 | 2026-11-18 | Build release ở đâu (Stage 9) | **Build tay trên PC** bằng `tools/release.ps1` (test, lint, build, ký, `apksigner verify`, SHA-256), không CI | Keystore không rời máy; ít việc thiết lập nhất. |
+| D123 | 2026-11-18 | Repo khi phát hành (Stage 9, đổi D21) | **Chuyển `CozyCode890/GuzzMobile` sang public**, hỏi ngay trước khi chuyển | Ai cũng tải được APK ở Releases. |
+| D124 | 2026-11-18 | Lịch sử git khi public (Stage 9) | **Giữ lịch sử**; gitleaks sạch thì chỉ đưa IP Tailscale / đường dẫn cá nhân ở tệp hiện tại sang `CLAUDE.local.md`; có bí mật thật thì dừng, hỏi | Email tác giả đã công khai qua repo desktop; không đổi mã commit. |
+| D125 | 2026-11-18 | Giấy phép mã nguồn (Stage 9) | **MIT** | Ngắn, hợp với mọi phụ thuộc. |
+| D126 | 2026-11-18 | Tự kiểm tra bản mới (Stage 9) | **Không**; trang Giới thiệu có link tới Releases | Không thêm kết nối mạng ngầm. |
+| D127 | 2026-11-18 | Tên và icon (Stage 9) | **"Guzz" + icon desktop** vẽ lại thành adaptive icon vector, có lớp monochrome | Hai app trông giống nhau. |
+| D128 | 2026-11-18 | Dung lượng APK (Stage 9) | **≤ 50 MB, nén `.so`**, bỏ `.so` C API thừa | Tải qua GitHub nhẹ hơn (~45 MB); tốn thêm ~27 MB bộ nhớ máy khi cài. |
+| D129 | 2026-11-18 | Keystore (Stage 9) | **Ngoài repo + bản sao trong trình quản lý mật khẩu**; mật khẩu qua biến môi trường; người dùng tự chạy `keytool` | Mất keystore là không cài đè được nữa. |
+| D130 | 2026-11-18 | Số phiên bản (Stage 9) | **1.0.0, tag `v1.0.0`**; `versionCode = MAJOR×10000 + MINOR×100 + PATCH`, khai một chỗ | versionCode luôn tăng, không sửa tay. |
+| D131 | 2026-11-18 | Thử máy (Stage 9) | **Xiaomi 15T + máy ảo API 26 và API 30**; đo bài 2 giờ trên bản release lúc thử | Chỉ có một máy thật; phủ minSdk 26. |
+| D132 | 2026-11-18 | Rà lỗ hổng (Stage 9) | **Checklist Android + đọc kỹ mặt tấn công, gitleaks, osv-scanner**; không review toàn bộ bằng agent | Phủ phần app khác gọi vào và thứ sắp công khai, ít token. |
+| D133 | 2026-11-18 | Tinh gọn (Stage 9) | **Code chết, tài nguyên, phụ thuộc thừa, hết cảnh báo lint, code debug không lọt release**; không dọn `spikes/`, không `/simplify` | Theo công cụ, ít rủi ro sửa nhầm. |
+| D134 | 2026-11-18 | Nâng AGP / Gradle / thư viện (Stage 9) | **Bộ mới nhất Kotlin đã phủ**, commit riêng đầu stage | Theo Phát sinh Stage 0. |
+| D135 | 2026-11-18 | Pin và nhiệt (Stage 9) | **Không thêm tính năng, chỉ đo** bài 2 giờ trên bản release | Đã có ô số luồng; người dùng ít thời gian. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
@@ -221,7 +235,7 @@ sherpa-onnx, service, intent) mới nằm ở module Android. Stage 0 có thể 
 | 6 | [Intent cho MacroDroid](stage-06-intents.md) | Lệnh + sự kiện, Chia sẻ tới Guzz, hai chế độ quyền đọc tệp, tài liệu + macro mẫu | 4 |
 | 7 | [Làm sạch âm thanh đầy đủ](stage-07-audio-cleaning.md) | DSP + preset như desktop, khớp bản Python | 4 |
 | 8 | [Hoàn thiện giao diện](stage-08-ui.md) | Đủ các trang cài đặt, hạn mức, nhật ký; vi / en; sáng / tối | 5, 6, 7 |
-| 9 | [Đóng gói & phát hành](stage-09-release.md) | APK release đã ký trên GitHub Releases, đã tối ưu dung lượng và pin | 8 |
+| 9 | [Đóng gói & phát hành](stage-09-release.md) | APK release đã ký trên GitHub Releases (repo public), đã rà lỗ hổng, tinh gọn, đo dung lượng và pin | 8 |
 | 10 | [(Tuỳ chọn) Plugin Tasker/Locale](stage-10-tasker-plugin.md) | Guzz hiện trong danh sách plugin của MacroDroid / Tasker | 6 |
 
 Stage 3 không cần Stage 1 và 2, nên làm song song được với hai stage đó.

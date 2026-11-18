@@ -7,16 +7,17 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** chưa có; Stage 9 (đóng gói & phát hành) chờ plan chi tiết. Stage 6 (Intent cho MacroDroid) xong ngày
-2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
+**Stage hiện tại:** Stage 9 (đóng gói & phát hành), đã plan chi tiết ngày 2026-11-18 (D122–D135), chưa làm.
+Stage 6 (Intent cho MacroDroid) xong ngày 2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
 thử theo D107; Chia sẻ tới Guzz nhận cả Zalo, D106). Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
 (D110–D121; một Activity, 3 tab, đủ trang cài đặt, tiếng Việt / tiếng Anh, xuất / nhập config.txt). Stage 7 (làm sạch âm
 thanh đầy đủ) xong ngày 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, bài 79 phút thêm 3,5 phút trên Xiaomi 15T; tiêu chí
 nghe thử chấp nhận theo số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật
 gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày
 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** plan chi tiết Stage 9 (đóng gói & phát hành). Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay
-trước khi gửi.
+**Việc tiếp theo:** làm Stage 9 theo [stage-09-release.md](plans/stage-09-release.md), bắt đầu từ nhóm A (nâng AGP /
+Gradle), rồi B (rà lỗ hổng) và C (tinh gọn) trước phần cấu hình release. Gửi bất cứ thứ gì lên Google, chuyển repo public,
+push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -29,7 +30,7 @@ trước khi gửi.
 | 6 | Intent cho MacroDroid | ✅ 2026-11-18 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
-| 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |
+| 9 | Đóng gói & phát hành | 📝 | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
 
 Ký hiệu: ⬜ chưa plan chi tiết · 📝 đã plan chi tiết · 🔨 đang làm · ✅ xong (ghi ngày) · ⏸ hoãn
