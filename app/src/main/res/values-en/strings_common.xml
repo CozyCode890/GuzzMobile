@@ -25,4 +25,9 @@
     <string name="setup_notifications">Allow notifications (progress, Stop button)</string>
     <string name="setup_allow">Allow</string>
     <string name="setup_battery">Turn off battery optimization for Guzz (Battery → Unrestricted) so it keeps running with the screen off</string>
+    <string name="setup_all_files">Give Guzz All files access (so MacroDroid / Tasker can send file paths)</string>
+    <string name="setup_source_dirs">Choose source folders (so MacroDroid / Tasker can send file paths)</string>
+    <string name="setup_grant">Grant</string>
+    <string name="setup_choose_dirs">Choose folders</string>
+    <string name="setup_fix">Fix</string>
 </resources>

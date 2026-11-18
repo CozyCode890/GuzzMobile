@@ -9,6 +9,7 @@
     <string name="settings_output_summary">Tên tệp, đuôi tệp, trùng tên, bảng mã</string>
     <string name="settings_queue_title">Hàng đợi</string>
     <string name="settings_queue_summary">Khi tệp lỗi, thông báo khi xong</string>
+    <string name="settings_automation_summary">MacroDroid, Tasker gọi Guzz chép lời; quyền đọc tệp, Thư mục nguồn</string>
     <string name="settings_system_title">Hệ thống</string>
     <string name="settings_system_summary">Ngôn ngữ, chủ đề, thiết lập ban đầu, xuất / nhập cài đặt</string>
     <string name="settings_logs_summary">Xem và chia sẻ nhật ký hoạt động</string>

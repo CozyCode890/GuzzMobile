@@ -60,7 +60,7 @@ class NavigationTest {
 
         rule.onNodeWithTag("tab:${Routes.SETTINGS}").performClick()
         val pages = listOf(
-            Routes.GOOGLE_AI, Routes.AUDIO, Routes.SPEAKERS, Routes.OUTPUT, Routes.QUEUE, Routes.SYSTEM, Routes.LOGS, Routes.ABOUT,
+            Routes.GOOGLE_AI, Routes.AUDIO, Routes.SPEAKERS, Routes.OUTPUT, Routes.QUEUE, Routes.AUTOMATION, Routes.SYSTEM, Routes.LOGS, Routes.ABOUT,
         )
         for (route in pages) {
             waitForTag("entry:$route")

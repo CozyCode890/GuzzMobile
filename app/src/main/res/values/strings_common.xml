@@ -32,4 +32,9 @@
     <string name="setup_notifications">Cho phép thông báo (xem tiến độ, nút Dừng)</string>
     <string name="setup_allow">Cho phép</string>
     <string name="setup_battery">Tắt tối ưu pin cho Guzz (Pin → Không hạn chế) để không bị dừng khi tắt màn hình</string>
+    <string name="setup_all_files">Cho Guzz quyền Truy cập mọi tệp (để MacroDroid / Tasker gửi đường dẫn tệp)</string>
+    <string name="setup_source_dirs">Chọn Thư mục nguồn (để MacroDroid / Tasker gửi đường dẫn tệp)</string>
+    <string name="setup_grant">Cấp quyền</string>
+    <string name="setup_choose_dirs">Chọn thư mục</string>
+    <string name="setup_fix">Sửa</string>
 </resources>

@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.ui.nav.GuzzRoot
+import io.github.cozycode890.guzz.ui.nav.Routes
 import io.github.cozycode890.guzz.ui.theme.GuzzTheme
 import io.github.cozycode890.guzz.ui.theme.isDarkTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,11 +66,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleIntent(intent)
+        handleIntent(intent, fromNewIntent = true)
     }
 
-    private fun handleIntent(intent: Intent?) {
-        intent?.getStringExtra(EXTRA_ROUTE)?.let { openRoute.value = it }
+    /**
+     * Extra [EXTRA_ROUTE] (bản debug, `ui_check.ps1`) mở thẳng trang đó. Intent launcher tới khi app đang mở (Chia sẻ tới
+     * Guzz, thông báo "Bấm để bắt đầu" của Stage 6, thông báo tiến độ: đều dùng `getLaunchIntentForPackage`) thì về tab
+     * Chuyển đổi để thấy hàng đợi (Stage 8 H4); `singleTop` nên không mở chồng màn hình mới.
+     */
+    private fun handleIntent(intent: Intent?, fromNewIntent: Boolean = false) {
+        val route = intent?.getStringExtra(EXTRA_ROUTE)
+            ?: Routes.CONVERT.takeIf {
+                fromNewIntent && intent?.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
+            }
+        route?.let { openRoute.value = it }
     }
 
     /**

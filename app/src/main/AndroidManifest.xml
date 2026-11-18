@@ -62,13 +62,6 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
-
-        <!-- Stage 6; Stage 8 H1 đưa vào trang Cài đặt và bỏ Activity này. -->
-        <activity
-            android:name=".AutomationActivity"
-            android:exported="false"
-            android:label="@string/automation_title"
-            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

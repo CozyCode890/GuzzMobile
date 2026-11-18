@@ -27,6 +27,7 @@ import io.github.cozycode890.guzz.R
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
 import io.github.cozycode890.guzz.core.pipeline.OutputNaming
+import io.github.cozycode890.guzz.feature.automation.R as AutomationR
 import io.github.cozycode890.guzz.ui.components.AdvancedSection
 import io.github.cozycode890.guzz.ui.components.ChoiceSettingRow
 import io.github.cozycode890.guzz.ui.components.Hint
@@ -47,6 +48,7 @@ private val entries = listOf(
     Entry(Routes.SPEAKERS, R.string.speakers_title, R.string.settings_speakers_summary),
     Entry(Routes.OUTPUT, R.string.settings_output_title, R.string.settings_output_summary),
     Entry(Routes.QUEUE, R.string.settings_queue_title, R.string.settings_queue_summary),
+    Entry(Routes.AUTOMATION, AutomationR.string.automation_title, R.string.settings_automation_summary),
     Entry(Routes.SYSTEM, R.string.settings_system_title, R.string.settings_system_summary),
     Entry(Routes.LOGS, R.string.logs_title, R.string.settings_logs_summary),
     Entry(Routes.ABOUT, R.string.about_title, R.string.settings_about_summary),

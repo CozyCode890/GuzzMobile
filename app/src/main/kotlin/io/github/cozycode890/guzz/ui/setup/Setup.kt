@@ -1,12 +1,8 @@
 package io.github.cozycode890.guzz.ui.setup
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.os.PowerManager
 import android.provider.Settings as AndroidSettings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,8 +35,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.cozycode890.guzz.AppContainer
+import io.github.cozycode890.guzz.GuzzApp
 import io.github.cozycode890.guzz.R
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
+import io.github.cozycode890.guzz.ui.automation.openSystemPage
 import io.github.cozycode890.guzz.ui.components.Hint
 import io.github.cozycode890.guzz.ui.nav.Routes
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +46,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 /** Một việc của Thiết lập ban đầu (D116). */
-enum class SetupItem { API_KEY, OUTPUT_FOLDER, NOTIFICATIONS, BATTERY }
+enum class SetupItem { API_KEY, OUTPUT_FOLDER, NOTIFICATIONS, BATTERY, FILE_ACCESS }
 
 /** Trạng thái các việc của Thiết lập ban đầu; `true` = đã xong. */
 data class SetupState(val done: Map<SetupItem, Boolean>) {
@@ -60,32 +58,32 @@ private object SetupDismissed {
     var value = false
 }
 
-/** Đã được miễn tối ưu pin chưa (D69). Stage 6 có `BatteryStatus` riêng: khi gộp (H2) thì dùng chung một chỗ. */
-private fun isBatteryExempt(context: Context): Boolean =
-    context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)
-
-private fun hasNotificationPermission(context: Context): Boolean =
-    Build.VERSION.SDK_INT < 33 ||
-        context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-
 /** Đọc lại trạng thái khi [resumes] đổi (quay về từ trang Cài đặt hệ thống) hoặc khi cài đặt đổi. */
 @Composable
 fun rememberSetupState(container: AppContainer, resumes: StateFlow<Int>, refresh: Int = 0): SetupState? {
     val context = LocalContext.current
     val resumeTick by resumes.collectAsState()
     val outputDir by container.settings.flow(SettingKeys.OUTPUT_DIR).collectAsState(initial = null)
+    val automationOn by container.settings.flow(SettingKeys.AUTOMATION_ENABLED).collectAsState(initial = false)
+    val sourceDirs by container.settings.flow(SettingKeys.AUTOMATION_SOURCE_DIRS).collectAsState(initial = "")
     var state by remember { mutableStateOf<SetupState?>(null) }
-    LaunchedEffect(resumeTick, outputDir, refresh) {
+    LaunchedEffect(resumeTick, outputDir, refresh, automationOn, sourceDirs) {
         val folder = outputDir ?: return@LaunchedEffect
         val hasKey = withContext(Dispatchers.IO) { container.apiKeyStore.read() != null }
-        state = SetupState(
-            mapOf(
-                SetupItem.API_KEY to (hasKey || container.fakeGeminiEnabled()),
-                SetupItem.OUTPUT_FOLDER to folder.isNotBlank(),
-                SetupItem.NOTIFICATIONS to hasNotificationPermission(context),
-                SetupItem.BATTERY to isBatteryExempt(context),
-            ),
+        // Pin, thông báo, quyền đọc tệp: dùng chung lớp của Stage 6 với trang Tự động hoá (D69, D6).
+        val automation = container.automation
+        val files = automation.fileAccess
+        val done = mutableMapOf(
+            SetupItem.API_KEY to (hasKey || container.fakeGeminiEnabled()),
+            SetupItem.OUTPUT_FOLDER to folder.isNotBlank(),
+            SetupItem.NOTIFICATIONS to automation.battery.notificationsEnabled(),
+            SetupItem.BATTERY to automation.battery.isIgnoringBatteryOptimizations(),
         )
+        // Quyền đọc tệp chỉ cần khi app khác gửi đường dẫn tệp (Tự động hoá); thêm tệp bằng tay đi qua trình chọn tệp.
+        if (automationOn) {
+            done[SetupItem.FILE_ACCESS] = if (files.allFilesFlavor) files.hasAllFilesAccess() else files.hasUsableSourceDir()
+        }
+        state = SetupState(done)
     }
     return state
 }
@@ -125,7 +123,10 @@ fun SetupList(
     onChanged: () -> Unit,
 ) {
     val context = LocalContext.current
+    val container = (context.applicationContext as GuzzApp).container
+    val files = container.automation.fileAccess
     val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { onChanged() }
+    val askRead = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { onChanged() }
     for (item in SetupItem.entries) {
         val done = state.done[item] ?: continue
         if (onlyPending && done) continue
@@ -133,7 +134,12 @@ fun SetupList(
             SetupItem.API_KEY -> R.string.setup_api_key to R.string.setup_api_key_action
             SetupItem.OUTPUT_FOLDER -> R.string.setup_folder to R.string.queue_choose_folder
             SetupItem.NOTIFICATIONS -> R.string.setup_notifications to R.string.setup_allow
-            SetupItem.BATTERY -> R.string.setup_battery to R.string.queue_open_app_info
+            SetupItem.BATTERY -> R.string.setup_battery to R.string.setup_fix
+            SetupItem.FILE_ACCESS -> if (files.allFilesFlavor) {
+                R.string.setup_all_files to R.string.setup_grant
+            } else {
+                R.string.setup_source_dirs to R.string.setup_choose_dirs
+            }
         }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().testTag("setup:${item.name}")) {
             Icon(
@@ -149,11 +155,23 @@ fun SetupList(
                         SetupItem.OUTPUT_FOLDER -> onPickFolder()
                         SetupItem.NOTIFICATIONS -> if (Build.VERSION.SDK_INT >= 33) {
                             askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            openSystemPage(
+                                context,
+                                Intent(AndroidSettings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                    .putExtra(AndroidSettings.EXTRA_APP_PACKAGE, context.packageName),
+                            )
                         }
-                        // Trang thông tin app: HyperOS đặt "Không hạn chế" ở mục Pin của trang này (D69).
-                        SetupItem.BATTERY -> context.startActivity(
-                            Intent(AndroidSettings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}")),
-                        )
+                        SetupItem.BATTERY -> openSystemPage(context, container.automation.battery.requestIntent())
+                        // Bản sideload: "Truy cập mọi tệp" (Android 11+) hoặc quyền đọc bộ nhớ; bản play: thêm Thư mục nguồn.
+                        SetupItem.FILE_ACCESS -> {
+                            val intent = files.allFilesAccessIntent()
+                            when {
+                                intent != null -> openSystemPage(context, intent)
+                                files.needsRuntimePermission -> askRead.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                else -> open(Routes.AUTOMATION)
+                            }
+                        }
                     }
                 }) { Text(stringResource(action)) }
             }

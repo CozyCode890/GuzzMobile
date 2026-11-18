@@ -10,7 +10,7 @@ tệp được thêm vào hàng đợi và chạy ngay.
 
 ## 1. Cài đặt một lần
 
-1. Mở Guzz → menu ⋮ → **Tự động hoá**:
+1. Mở Guzz → tab **Cài đặt** → **Tự động hoá**:
    - bật **Cho phép app khác điều khiển Guzz** (mặc định tắt: lệnh bị từ chối, không phát sự kiện);
    - **Mã bí mật** (tuỳ chọn): để trống thì không kiểm; có mã thì mọi lệnh phải gửi kèm extra `secret` đúng mã;
    - **Kèm đường dẫn tệp trong sự kiện** (mặc định bật): app nào trên máy cũng nghe được sự kiện; tắt thì sự kiện chỉ còn

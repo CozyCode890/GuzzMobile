@@ -8,12 +8,11 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -123,64 +122,68 @@ class AutomationSettingsModel(private val automation: Automation, private val se
     }
 }
 
-/** Trang Tự động hoá gọn (Stage 6, D99). Stage 8 (H1) gắn vào điều hướng và hoàn thiện giao diện. */
+/**
+ * Nội dung trang Tự động hoá (Stage 6, D99), đặt trong trang cài đặt của `:app` (Stage 8 H1): trang chủ lo cuộn, lề và
+ * thanh trên. [advanced]: phần gập "Nâng cao" của app (D117), chứa mục ít dùng (tên lệnh / sự kiện để chép, gửi thử).
+ */
 @Composable
-fun AutomationSettingsScreen(state: AutomationUiState, actions: AutomationActions, modifier: Modifier = Modifier) {
+fun ColumnScope.AutomationSettingsScreen(
+    state: AutomationUiState,
+    actions: AutomationActions,
+    advanced: @Composable (content: @Composable ColumnScope.() -> Unit) -> Unit,
+) {
     val context = LocalContext.current
-    Column(
-        modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(stringResource(R.string.automation_intro), style = MaterialTheme.typography.bodyMedium)
+    Text(stringResource(R.string.automation_intro), style = MaterialTheme.typography.bodyMedium)
 
-        SectionCard {
-            SwitchRow(stringResource(R.string.automation_enabled), stringResource(R.string.automation_enabled_hint), state.enabled, actions.setEnabled)
-            SecretField(state.secret, actions.setSecret)
+    SectionCard {
+        SwitchRow(stringResource(R.string.automation_enabled), stringResource(R.string.automation_enabled_hint), state.enabled, actions.setEnabled)
+        SecretField(state.secret, actions.setSecret)
+        SwitchRow(
+            stringResource(R.string.automation_include_paths), stringResource(R.string.automation_include_paths_hint),
+            state.includePaths, actions.setIncludePaths,
+        )
+        if (state.allFilesFlavor) {
             SwitchRow(
-                stringResource(R.string.automation_include_paths), stringResource(R.string.automation_include_paths_hint),
-                state.includePaths, actions.setIncludePaths,
-            )
-            if (state.allFilesFlavor) {
-                SwitchRow(
-                    stringResource(R.string.automation_beside_source), stringResource(R.string.automation_beside_source_hint),
-                    state.saveBesideSource, actions.setSaveBesideSource,
-                )
-            }
-        }
-
-        Text(stringResource(R.string.automation_section_access), style = MaterialTheme.typography.titleMedium)
-        SectionCard {
-            if (state.allFilesFlavor) {
-                StatusRow(
-                    stringResource(R.string.automation_all_files),
-                    stringResource(if (state.allFilesAccess) R.string.automation_all_files_on else R.string.automation_all_files_off),
-                    ok = state.allFilesAccess, actionLabel = stringResource(R.string.automation_grant), onAction = actions.requestAllFiles,
-                )
-            }
-            Text(stringResource(R.string.automation_source_dirs), style = MaterialTheme.typography.titleSmall)
-            Text(stringResource(R.string.automation_source_dirs_hint), style = MaterialTheme.typography.bodySmall)
-            if (state.sourceDirs.isEmpty()) {
-                Text(stringResource(R.string.automation_source_dirs_empty), style = MaterialTheme.typography.bodySmall)
-            }
-            for (dir in state.sourceDirs) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(FileAccess.describeTree(dir), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                    TextButton(onClick = { actions.removeSourceDir(dir) }) { Text(stringResource(R.string.automation_source_remove)) }
-                }
-            }
-            OutlinedButton(onClick = actions.addSourceDir) { Text(stringResource(R.string.automation_source_add)) }
-            StatusRow(
-                stringResource(R.string.automation_battery),
-                stringResource(if (state.batteryExempt) R.string.automation_battery_on else R.string.automation_battery_off),
-                ok = state.batteryExempt, actionLabel = stringResource(R.string.automation_fix), onAction = actions.requestBattery,
-            )
-            StatusRow(
-                stringResource(R.string.automation_notifications),
-                stringResource(if (state.notificationsOn) R.string.automation_notifications_on else R.string.automation_notifications_off),
-                ok = state.notificationsOn, actionLabel = stringResource(R.string.automation_fix), onAction = actions.requestNotifications,
+                stringResource(R.string.automation_beside_source), stringResource(R.string.automation_beside_source_hint),
+                state.saveBesideSource, actions.setSaveBesideSource,
             )
         }
+    }
 
+    Text(stringResource(R.string.automation_section_access), style = MaterialTheme.typography.titleMedium)
+    SectionCard {
+        if (state.allFilesFlavor) {
+            StatusRow(
+                stringResource(R.string.automation_all_files),
+                stringResource(if (state.allFilesAccess) R.string.automation_all_files_on else R.string.automation_all_files_off),
+                ok = state.allFilesAccess, actionLabel = stringResource(R.string.automation_grant), onAction = actions.requestAllFiles,
+            )
+        }
+        Text(stringResource(R.string.automation_source_dirs), style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.automation_source_dirs_hint), style = MaterialTheme.typography.bodySmall)
+        if (state.sourceDirs.isEmpty()) {
+            Text(stringResource(R.string.automation_source_dirs_empty), style = MaterialTheme.typography.bodySmall)
+        }
+        for (dir in state.sourceDirs) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(FileAccess.describeTree(dir), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                TextButton(onClick = { actions.removeSourceDir(dir) }) { Text(stringResource(R.string.automation_source_remove)) }
+            }
+        }
+        OutlinedButton(onClick = actions.addSourceDir) { Text(stringResource(R.string.automation_source_add)) }
+        StatusRow(
+            stringResource(R.string.automation_battery),
+            stringResource(if (state.batteryExempt) R.string.automation_battery_on else R.string.automation_battery_off),
+            ok = state.batteryExempt, actionLabel = stringResource(R.string.automation_fix), onAction = actions.requestBattery,
+        )
+        StatusRow(
+            stringResource(R.string.automation_notifications),
+            stringResource(if (state.notificationsOn) R.string.automation_notifications_on else R.string.automation_notifications_off),
+            ok = state.notificationsOn, actionLabel = stringResource(R.string.automation_fix), onAction = actions.requestNotifications,
+        )
+    }
+
+    advanced {
         Text(stringResource(R.string.automation_section_api), style = MaterialTheme.typography.titleMedium)
         SectionCard {
             Text(stringResource(R.string.automation_api_hint, state.packageName), style = MaterialTheme.typography.bodySmall)

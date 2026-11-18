@@ -35,6 +35,7 @@ import androidx.navigation.navArgument
 import io.github.cozycode890.guzz.AppContainer
 import io.github.cozycode890.guzz.R
 import io.github.cozycode890.guzz.ui.audio.AudioScreen
+import io.github.cozycode890.guzz.ui.automation.AutomationRoute
 import io.github.cozycode890.guzz.ui.convert.ConvertScreen
 import io.github.cozycode890.guzz.ui.googleai.GoogleAiScreen
 import io.github.cozycode890.guzz.ui.logs.LogsScreen
@@ -58,6 +59,7 @@ object Routes {
     const val SPEAKERS = "settings/speakers"
     const val OUTPUT = "settings/output"
     const val QUEUE = "settings/queue"
+    const val AUTOMATION = "settings/automation"
     const val SYSTEM = "settings/system"
     const val LOGS = "settings/logs"
     const val ABOUT = "settings/about"
@@ -65,7 +67,7 @@ object Routes {
     const val TRANSCRIPT_PATTERN = "$TRANSCRIPT?location={location}&name={name}"
 
     /** Mọi trang mở thẳng được bằng extra `route` của bản debug (`tools/device/ui_check.ps1`). */
-    val pages = listOf(CONVERT, QUOTA, SETTINGS, GOOGLE_AI, AUDIO, SPEAKERS, OUTPUT, QUEUE, SYSTEM, LOGS, ABOUT)
+    val pages = listOf(CONVERT, QUOTA, SETTINGS, GOOGLE_AI, AUDIO, SPEAKERS, OUTPUT, QUEUE, AUTOMATION, SYSTEM, LOGS, ABOUT)
 
     fun transcript(location: String, name: String?): String =
         "$TRANSCRIPT?location=${Uri.encode(location)}&name=${Uri.encode(name.orEmpty())}"
@@ -167,6 +169,7 @@ fun GuzzRoot(container: AppContainer, resumes: StateFlow<Int>, openRoute: StateF
             composable(Routes.SPEAKERS) { SpeakersScreen(container.settings, back) }
             composable(Routes.OUTPUT) { OutputScreen(container.settings, back) }
             composable(Routes.QUEUE) { QueueSettingsScreen(container.settings, back) }
+            composable(Routes.AUTOMATION) { AutomationRoute(container, resumes, back) }
             composable(Routes.SYSTEM) { SystemScreen(container, resumes, back) { nav.navigate(it) } }
             composable(Routes.LOGS) { LogsScreen(container, back) }
             composable(Routes.ABOUT) { AboutScreen(container, back) }

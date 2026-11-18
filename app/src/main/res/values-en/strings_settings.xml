@@ -7,6 +7,7 @@
     <string name="settings_output_summary">File name, extension, conflicts, encoding</string>
     <string name="settings_queue_title">Queue</string>
     <string name="settings_queue_summary">When a file fails, notify when done</string>
+    <string name="settings_automation_summary">Let MacroDroid, Tasker run Guzz; file access, source folders</string>
     <string name="settings_system_title">System</string>
     <string name="settings_system_summary">Language, theme, getting started, export / import settings</string>
     <string name="settings_logs_summary">View and share the activity log</string>

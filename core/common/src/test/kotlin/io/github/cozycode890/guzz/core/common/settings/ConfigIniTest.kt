@@ -103,4 +103,33 @@ class ConfigIniTest {
             scope.cancel()
         }
     }
+
+    @Test
+    fun `mục AUTOMATION xuất không có secret và source_dirs, nhập giữ hai mục này của máy`() = runBlocking {
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        try {
+            val a = Settings.create(File(dir, "a.preferences_pb"), scope)
+            a.set(SettingKeys.AUTOMATION_ENABLED, true)
+            a.set(SettingKeys.AUTOMATION_SECRET, "ma-bi-mat-khong-xuat")
+            a.set(SettingKeys.AUTOMATION_SOURCE_DIRS, "content://may-a/tree")
+            val text = ConfigIni.export(a, SettingKeys.all, emptySet(), emptyList())
+            assertTrue("[AUTOMATION]" in text && "enabled = true" in text, text)
+            assertTrue("secret" !in text && "ma-bi-mat" !in text && "source_dirs" !in text, text)
+
+            // Tệp sửa tay có secret / source_dirs: bỏ qua, không ghi đè giá trị của máy nhập.
+            val b = Settings.create(File(dir, "b.preferences_pb"), scope)
+            b.set(SettingKeys.AUTOMATION_SECRET, "ma-cua-may-b")
+            b.set(SettingKeys.AUTOMATION_SOURCE_DIRS, "content://may-b/tree")
+            val edited = text.replace("[AUTOMATION]\n", "[AUTOMATION]\nsecret = ma-khac\nsource_dirs = content://may-a/tree\n")
+            assertTrue(edited != text)
+            val plan = ConfigIni.plan(ConfigIni.parse(edited), SettingKeys.all, emptySet())
+            assertTrue(plan.report.skipped.containsAll(listOf("AUTOMATION.secret", "AUTOMATION.source_dirs")), plan.report.toString())
+            ConfigIni.apply(b, plan)
+            assertEquals(true, b.get(SettingKeys.AUTOMATION_ENABLED))
+            assertEquals("ma-cua-may-b", b.get(SettingKeys.AUTOMATION_SECRET))
+            assertEquals("content://may-b/tree", b.get(SettingKeys.AUTOMATION_SOURCE_DIRS))
+        } finally {
+            scope.cancel()
+        }
+    }
 }

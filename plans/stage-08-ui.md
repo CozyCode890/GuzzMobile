@@ -275,17 +275,17 @@ và B7 (Compose UI test).
 
 ### H. Phần dùng API intent của Stage 6 — chờ Stage 6 gộp vào `main`
 
-- [ ] H1. `AutomationSettingsScreen(model: AutomationSettingsModel)` của `:feature:automation` thành route trong tab Cài đặt
+- [x] H1. `AutomationSettingsScreen(model: AutomationSettingsModel)` của `:feature:automation` thành route trong tab Cài đặt
       (D114); bỏ `AutomationActivity` và nút mở nó trên màn hình chính. Nếu cần, chỉnh trang dùng widget chung B4 và đưa
       mục ít dùng vào Nâng cao (sửa trong `:feature:automation`, chuỗi vẫn ở `strings_automation.xml`, đủ en). Kiểm: B7 thêm
       bước mở trang này; `ui_check.ps1` chạy trên trang này.
-- [ ] H2. Thiết lập ban đầu (F1) thêm mục quyền đọc tệp theo D6: bản sideload "Truy cập mọi tệp" (`MANAGE_EXTERNAL_STORAGE`),
+- [x] H2. Thiết lập ban đầu (F1) thêm mục quyền đọc tệp theo D6: bản sideload "Truy cập mọi tệp" (`MANAGE_EXTERNAL_STORAGE`),
       bản play Thư mục nguồn SAF, dùng `FileAccess` của Stage 6; mục pin đổi sang `BatteryStatus`. Kiểm: máy ảo thu hồi
       quyền (`appops set … MANAGE_EXTERNAL_STORAGE ignore`) thì mục hiện lại.
-- [ ] H3. Xuất / nhập (F2) gồm mục `[AUTOMATION]` của Stage 6, **trừ `secret`** (như API key); nhập không ghi đè
+- [x] H3. Xuất / nhập (F2) gồm mục `[AUTOMATION]` của Stage 6, **trừ `secret`** (như API key); nhập không ghi đè
       `source_dirs` (URI SAF chỉ có nghĩa trên máy đã cấp, như `OUTPUT.output_dir`). Kiểm: xuất ra không có `secret`; nhập
       lại giữ công tắc cho phép, `source_dirs` không đổi.
-- [ ] H4. Lối vào từ ngoài sau khi đổi sang một Activity: `ShareActivity` (và thông báo "Bấm để bắt đầu" của Stage 6) mở
+- [x] H4. Lối vào từ ngoài sau khi đổi sang một Activity: `ShareActivity` (và thông báo "Bấm để bắt đầu" của Stage 6) mở
       màn hình chính bằng intent launcher → vào đúng tab Chuyển đổi, không mở chồng `MainActivity` khi app đang mở
       (`launchMode="singleTop"` hoặc cờ intent, xử lý `onNewIntent` chọn tab). Kiểm: `adb shell am start -a
       android.intent.action.SEND` với một tệp âm thanh lúc app đang mở ở tab Cài đặt và lúc đã đóng; macro mẫu của Stage 6
@@ -361,6 +361,24 @@ và B7 (Compose UI test).
     giả ghi prompt ở mức DEBUG. Thử trên máy ảo: đặt mức log DEBUG và sửa prompt qua giao diện → `files/prompts/prompt.txt`;
     chạy `B1_1m.m4a` với `gemini-3.5-flash` → log "Gemini GIẢ: prompt = PROMPT_THU_G3 …"; đổi sang
     `gemini-3.5-transcribe` thì ô của trang Người nói bị khoá, có lý do (tiếng Anh).
+- 2026-11-18, H1–H4:
+  - H1: route `settings/automation` (`ui/automation/AutomationRoute.kt` cấp launcher, đọc lại quyền khi app quay lại),
+    mục "Tự động hoá" ở tab Cài đặt; bỏ `AutomationActivity`. `AutomationSettingsScreen` thành nội dung của trang chung
+    (`ColumnScope`, trang chủ lo cuộn / lề / thanh trên) và nhận khe `advanced`: mục tên lệnh / sự kiện để chép và nút
+    gửi sự kiện thử vào "Nâng cao". Widget riêng của trang vẫn ở `:feature:automation` (module này không dùng được
+    widget của `:app`). `docs/intents.md` đổi đường vào thành "tab Cài đặt → Tự động hoá". B7 thêm trang này (3/3 qua);
+    ảnh `ui_check.ps1` mặc định và 360 dp / chữ ×2 ở `D:\GuzzMobileData\stage-08\h1`.
+  - H2: thẻ Thiết lập ban đầu dùng `BatteryStatus` (pin: `requestIntent()`, thông báo: `notificationsEnabled()`) và
+    `FileAccess`. Khác plan: mục quyền đọc tệp (sideload "Truy cập mọi tệp", play Thư mục nguồn) chỉ hiện khi đã bật Tự
+    động hoá, vì quyền này chỉ dùng cho đường dẫn tệp do app khác gửi; thêm tệp bằng tay đi qua trình chọn tệp. Thử trên
+    máy ảo: bật Tự động hoá, `appops set … MANAGE_EXTERNAL_STORAGE ignore` → mục hiện, `allow` → mục mất.
+  - H3: không cần sửa code: `SettingKeys.all` của Stage 6 có `enabled`, `include_paths`, `save_beside_source`, còn
+    `secret` và `source_dirs` ở `SettingKeys.deviceLocal`. Thêm test `ConfigIniTest`: xuất không có hai mục này, tệp sửa
+    tay có chúng thì nhập bỏ qua, giữ giá trị của máy.
+  - H4: `MainActivity.onNewIntent` nhận intent launcher (Chia sẻ, thông báo "Bấm để bắt đầu", thông báo tiến độ đều dùng
+    `getLaunchIntentForPackage`) thì về tab Chuyển đổi. Thử trên máy ảo: đang ở Cài đặt → Hệ thống, `am start -a SEND -d
+    content://media/external/audio/media/40` → về tab Chuyển đổi, vẫn một `MainActivity`, tệp vào hàng đợi và chạy; app
+    đã đóng thì mở ở tab Chuyển đổi; `intent_debug.ps1 -Transcribe B1_1m.m4a -RequestId h4` → `FILE_DONE request_id=h4`.
 
 ## Phát sinh
 
