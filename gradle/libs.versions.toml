@@ -1,14 +1,16 @@
 # Phiên bản chốt ở Stage 0 bước C1 (2026-10-31), D24 và D25. Nguồn ghi trong Nhật ký của plans/stage-00-setup.md.
 
 [versions]
+# D130: phiên bản của Guzz Mobile (SemVer); versionCode tính ở app/build.gradle.kts.
+guzz = "1.0.0"
 agp = "9.3.3"
 kotlin = "2.4.21"
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"
-datastore = "1.3.0"
-coroutines = "1.11.0"
 # Stage 9 C3: khai báo thẳng (trước đến gián tiếp qua activity-compose). Từ 1.19, core-ktx đã gộp vào core.
 core = "1.19.1"
+datastore = "1.3.0"
+coroutines = "1.11.0"
 # Stage 9 (A2, 2026-11-18): 1.13.0 bỏ thay đổi phá vỡ của 1.12.0 (bọc ngoại lệ của serializer), vẫn dựa trên Kotlin 2.4.
 serialization = "1.13.0"
 junit = "6.1.3"
@@ -37,9 +39,9 @@ jvmTarget = "17"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-core = { module = "androidx.core:core", version.ref = "core" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-androidx-core = { module = "androidx.core:core", version.ref = "core" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }

@@ -28,3 +28,6 @@ __pycache__/
 
 # AAR sherpa-onnx của app spike (49 MB, tải bằng spikes/diarization/fetch_models.ps1)
 spikes/android/app/libs/
+
+# Bản phát hành (tools/release.ps1, Stage 9)
+dist/

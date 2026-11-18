@@ -11,6 +11,8 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Stage 9 D3: keep rules đi theo module tới bản release của :app.
+        consumerProguardFiles("consumer-rules.pro")
     }
 }
 

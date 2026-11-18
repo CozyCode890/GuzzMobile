@@ -35,8 +35,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
                     }
                     // Điện thoại thật chỉ cần arm64-v8a; bỏ ABI khác cho APK nhẹ (README §6, rủi ro 7).
+                    // -Pguzz.emulatorAbi=true thêm x86_64 để thử bản release trên máy ảo (Stage 9 F3), không phát hành.
                     getByName("release") {
                         ndk { abiFilters += listOf("arm64-v8a") }
+                        if (providers.gradleProperty("guzz.emulatorAbi").orNull == "true") {
+                            ndk { abiFilters += listOf("x86_64") }
+                        }
                     }
                 }
             }
