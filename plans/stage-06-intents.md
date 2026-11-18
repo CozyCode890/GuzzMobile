@@ -365,6 +365,8 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 - (2026-11-18, E2) Lint: `URLDecoder.decode(String, Charset)` cần API 33, đổi sang bản nhận tên bảng mã. Còn 6 cảnh báo (KTX `toUri`, plurals cho `share_added`, `/sdcard` trong PathMapping) để Stage 8 xét cùng phần văn phong.
 
 - (2026-11-18, G1) Bản nháp `docs/intents.md` xong, `IntentsDocTest` so khớp với `GuzzIntents` (tài liệu là input của task test). Tên mục MacroDroid, mục "Máy đã thử" và tệp `docs/macrodroid/*.macro` chờ nhóm F trên máy thật.
+- (2026-11-18, F, Xiaomi 15T, thử ban ngày theo người dùng) Claude tạo 5 macro qua adb (tên không dấu: Guzz thu broadcast / activity, Guzz nhan DONE / loi, Guzz Gemini that 13h; tệp ghi ở `Documents/guzz_done.txt`, `guzz_loi.txt` vì SAF không cho chọn gốc Download). Thử tay: broadcast, activity → DONE; tệp không có → `not_found`. F2 đạt (thu hồi Truy cập mọi tệp, Recordings trong Thư mục nguồn → DONE; Music → `no_permission`; đã cấp lại). F4 đạt với app Ghi âm HyperOS (chép vào inbox, xong thì xoá). Macro Gemini thật dời sang 13:00 thứ Tư 2026-11-18. Đêm thử chuyển thành buổi chiều tắt màn hình tới ~15:00, chưa đếm. Chi tiết: ghi chú `stage6-F-dem-thu.md` của session điều phối.
+- (2026-11-18, F4) Zalo chia sẻ m4a với kiểu `application/octet-stream` nên Guzz không hiện trong bảng Chia sẻ. Người dùng chọn (D106): nhận thêm `application/octet-stream`, lọc theo đuôi tệp âm thanh / video, tệp khác thì báo không hỗ trợ và không thêm vào hàng đợi. **Chưa làm** (dừng vì hết token).
 
 ## Phát sinh
 
