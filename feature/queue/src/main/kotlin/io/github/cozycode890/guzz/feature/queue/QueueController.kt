@@ -73,7 +73,12 @@ class QueueController(
             // D96: output_dir của lệnh / "Lưu cạnh tệp nguồn" chỉ khi có quyền "Truy cập mọi tệp"; không thì thư mục SAF.
             val choice = OutputChoice.choose(item.source, item.overrides?.outputDir, cfg.saveBesideSource, allFilesAccess())
             choice.note?.let { logger.warning("${item.displayName}: $it.") }
-            (choice.target as? OutputChoice.Directory)?.let { return DirectoryOutputFolder(File(it.dir)) }
+            (choice.target as? OutputChoice.Directory)?.let {
+                val dir = File(it.dir)
+                // Stage 9 B1: `output_dir` của app khác không được ghi vào thư mục dữ liệu trong của Guzz.
+                if (!isInsidePrivateData(dir)) return DirectoryOutputFolder(dir)
+                logger.warning("${item.displayName}: không ghi vào thư mục riêng của Guzz (${it.dir}), lưu vào thư mục đã chọn.")
+            }
             return when {
                 cfg.outputDir.isNotBlank() -> SafOutputFolder(context, Uri.parse(cfg.outputDir))
                 fallbackOutput != null -> DirectoryOutputFolder(fallbackOutput)
@@ -175,6 +180,15 @@ class QueueController(
         }
     } catch (e: Exception) {
         null
+    }
+
+    /** [dir] nằm (sau khi giải symlink) trong thư mục dữ liệu trong của app (`/data/user/0/<package>`). */
+    private fun isInsidePrivateData(dir: File): Boolean = try {
+        val data = File(context.applicationInfo.dataDir).canonicalPath
+        val target = dir.canonicalPath
+        target == data || target.startsWith("$data/")
+    } catch (e: java.io.IOException) {
+        true
     }
 
     fun remove(id: String) {

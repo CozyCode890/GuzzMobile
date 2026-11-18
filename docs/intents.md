@@ -12,7 +12,8 @@ tệp được thêm vào hàng đợi và chạy ngay.
 
 1. Mở Guzz → tab **Cài đặt** → **Tự động hoá**:
    - bật **Cho phép app khác điều khiển Guzz** (mặc định tắt: lệnh bị từ chối, không phát sự kiện);
-   - **Mã bí mật** (tuỳ chọn): để trống thì không kiểm; có mã thì mọi lệnh phải gửi kèm extra `secret` đúng mã;
+   - **Mã bí mật**: mọi lệnh phải gửi kèm extra `secret` đúng mã. Bật công tắc mà ô đang trống thì Guzz tự tạo mã (bấm
+     "Hiện" để chép vào macro); xoá trắng thì không kiểm, app nào trên máy cũng gửi lệnh được;
    - **Kèm đường dẫn tệp trong sự kiện** (mặc định bật): app nào trên máy cũng nghe được sự kiện; tắt thì sự kiện chỉ còn
      tên tệp và `request_id`.
 2. **Quyền đọc tệp** (một trong hai):

@@ -5,7 +5,7 @@
     <string name="automation_enabled">Allow other apps to control Guzz</string>
     <string name="automation_enabled_hint">When off, Guzz ignores every command and sends no events. Share to Guzz still works.</string>
     <string name="automation_secret">Secret code (optional)</string>
-    <string name="automation_secret_hint">Leave empty to skip the check. When set, commands must include a matching secret extra.</string>
+    <string name="automation_secret_hint">Commands must include a matching secret extra. Guzz creates one when you turn on the switch with this field empty. Clear it to skip the check: any app on the phone can then control Guzz.</string>
     <string name="automation_secret_generate">Generate random code</string>
     <string name="automation_secret_show">Show</string>
     <string name="automation_secret_hide">Hide</string>

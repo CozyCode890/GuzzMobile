@@ -104,7 +104,10 @@ class AutomationSettingsModel(private val automation: Automation, private val se
         )
     }
 
-    suspend fun setEnabled(v: Boolean) = settings.set(SettingKeys.AUTOMATION_ENABLED, v)
+    suspend fun setEnabled(v: Boolean) {
+        secretOnEnable(v, settings.get(SettingKeys.AUTOMATION_SECRET))?.let { settings.set(SettingKeys.AUTOMATION_SECRET, it) }
+        settings.set(SettingKeys.AUTOMATION_ENABLED, v)
+    }
     suspend fun setSecret(v: String) = settings.set(SettingKeys.AUTOMATION_SECRET, v)
     suspend fun setIncludePaths(v: Boolean) = settings.set(SettingKeys.AUTOMATION_INCLUDE_PATHS, v)
     suspend fun setSaveBesideSource(v: Boolean) = settings.set(SettingKeys.SAVE_BESIDE_SOURCE, v)
@@ -113,6 +116,13 @@ class AutomationSettingsModel(private val automation: Automation, private val se
     suspend fun sendTestEvent() = automation.sendTestEvent()
 
     companion object {
+        /**
+         * Stage 9 B1 (D138): bật "Cho phép app khác điều khiển Guzz" mà mã bí mật đang trống thì tự tạo mã, để không phải
+         * mọi app trên máy đều gửi lệnh được. Trả về mã mới, `null` = giữ nguyên. Người dùng vẫn xoá trắng được sau đó.
+         */
+        fun secretOnEnable(enabled: Boolean, current: String, generate: () -> String = ::randomSecret): String? =
+            if (enabled && current.isBlank()) generate() else null
+
         /** Mã bí mật ngẫu nhiên: 16 ký tự chữ thường + số, dễ dán vào MacroDroid. */
         fun randomSecret(): String {
             val chars = "abcdefghijkmnpqrstuvwxyz23456789"

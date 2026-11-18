@@ -117,4 +117,25 @@ class AutomationIntentTest {
         assertEquals(GuzzIntents.Kind.BAD_SECRET, error!!.getStringExtra(GuzzIntents.EXTRA_ERROR_KIND))
         assertEquals(before, container.queueController.state.value.items.size)
     }
+
+    /** Stage 9 B1: lệnh không được trỏ vào thư mục dữ liệu trong của Guzz, kể cả khi tệp có thật. */
+    @Test
+    fun privateDataPathIsRejected() {
+        val private = File(context.filesDir, "b1_${UUID.randomUUID()}.wav")
+        input.copyTo(private)
+        try {
+            val before = container.queueController.state.value.items.size
+            val id = "b1-${UUID.randomUUID()}"
+            send(
+                GuzzIntents.ACTION_TRANSCRIBE, GuzzIntents.EXTRA_PATH to private.path, GuzzIntents.EXTRA_REQUEST_ID to id,
+                GuzzIntents.EXTRA_START to "false",
+            )
+            val failed = await(GuzzIntents.EVENT_FILE_FAILED, id, 20)
+            assertNotNull("không nhận được FILE_FAILED", failed)
+            assertEquals(GuzzIntents.Kind.NO_PERMISSION, failed!!.getStringExtra(GuzzIntents.EXTRA_ERROR_KIND))
+            assertEquals(before, container.queueController.state.value.items.size)
+        } finally {
+            private.delete()
+        }
+    }
 }

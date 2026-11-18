@@ -1,0 +1,3 @@
+# gitleaks (Stage 9 B2): phát hiện giả đã xét.
+# Key giả "TestKey-…" trong dữ liệu golden của hàm che key (mask_api_key), không phải key thật.
+76e83f652749b524f49a229103a79bb4605c2540:testdata/golden/gemini/requests.json:generic-api-key:9947

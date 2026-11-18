@@ -6,7 +6,7 @@
     <string name="automation_enabled">Cho phép app khác điều khiển Guzz</string>
     <string name="automation_enabled_hint">Tắt thì Guzz bỏ qua mọi lệnh và không phát sự kiện. Chia sẻ tới Guzz vẫn dùng được.</string>
     <string name="automation_secret">Mã bí mật (tuỳ chọn)</string>
-    <string name="automation_secret_hint">Để trống thì không kiểm. Có mã thì lệnh phải gửi kèm extra secret đúng mã này.</string>
+    <string name="automation_secret_hint">Lệnh phải gửi kèm extra secret đúng mã này. Bật công tắc mà ô đang trống thì Guzz tự tạo mã. Xoá trắng thì không kiểm: app nào trên máy cũng điều khiển được Guzz.</string>
     <string name="automation_secret_generate">Tạo mã ngẫu nhiên</string>
     <string name="automation_secret_show">Hiện</string>
     <string name="automation_secret_hide">Ẩn</string>

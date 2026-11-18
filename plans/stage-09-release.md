@@ -94,6 +94,7 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 | D135 | Pin và nhiệt | **Không thêm tính năng, chỉ đo** bài 2 giờ trên bản release (giữ ô số luồng hiện có); bất thường thì hỏi lại | Người dùng ít thời gian; đã có ô số luồng. |
 | D136 | Nâng AGP / Gradle khi Kotlin 2.4.21 (ổn định mới nhất, 2.5.0 mới RC) chỉ phủ tới AGP 9.3.1 / Gradle 9.7.0 (A1) | **Giữ AGP 9.3.3 / Gradle 9.7.1**, chỉ nâng appcompat 1.8.0 và kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` kèm lý do | Đúng D134: bộ hiện tại đã là mức cao nhất Kotlin phủ. |
 | D137 | Khoá ký (thay phần tạo khoá mới của D129) | **Dùng khoá Morphe có sẵn** (`Downloads\Morphe.keystore`, dạng BKS của Morphe Manager): người dùng tự chạy lệnh chuyển sang PKCS12 (cần thư viện BouncyCastle cho `keytool`) ra `D:\GuzzMobileData\keys\`, tự gõ mật khẩu; sao lưu như D129 | Người dùng chọn, không tạo khoá mới. Gradle / apksigner không đọc BKS. |
+| D138 | Mã bí mật mặc định trống (B1): khi bật lệnh từ app khác, mọi app trên máy gửi được TRANSCRIBE | **Tự tạo mã khi bật công tắc mà ô đang trống**; vẫn cho xoá trắng | Không phải app nào trên máy cũng dùng được key và hạn mức của người dùng; người cần thì vẫn bỏ được. |
 
 ## Kế hoạch chi tiết
 
@@ -136,36 +137,36 @@ Quy tắc giữ suốt stage:
 
 ### B. Rà lỗ hổng bảo mật (D132)
 
-- [ ] B1. Checklist Android, đọc kỹ từng mục trên code và `AndroidManifest.xml` đã gộp (`apkanalyzer manifest print` trên
+- [x] B1. Checklist Android, đọc kỹ từng mục trên code và `AndroidManifest.xml` đã gộp (`apkanalyzer manifest print` trên
       APK `sideloadRelease` chưa ký, build với `-x lint` nếu cần). Mỗi mục ghi kết quả (đạt / đã sửa / chấp nhận + lý do)
       vào Nhật ký:
-  - [ ] thành phần `exported`: liệt kê đủ; mỗi cái đúng ý định (`CommandReceiver`, `CommandActivity`, Chia sẻ tới Guzz,
+  - [x] thành phần `exported`: liệt kê đủ; mỗi cái đúng ý định (`CommandReceiver`, `CommandActivity`, Chia sẻ tới Guzz,
         `MainActivity`), không có provider / service exported ngoài ý muốn;
-  - [ ] lệnh từ app khác: thiếu / sai mã bí mật thì từ chối; so mã không lộ qua log; extra lạ hoặc quá dài không làm
+  - [x] lệnh từ app khác: thiếu / sai mã bí mật thì từ chối; so mã không lộ qua log; extra lạ hoặc quá dài không làm
         chết app;
-  - [ ] đường dẫn do app khác truyền vào (TRANSCRIBE, `output_dir`, Chia sẻ): không ghi ra ngoài chỗ được phép (path
+  - [x] đường dẫn do app khác truyền vào (TRANSCRIBE, `output_dir`, Chia sẻ): không ghi ra ngoài chỗ được phép (path
         traversal `..`, symlink), không đọc được tệp riêng của app (`/data/data/…`) rồi gửi lên Gemini;
-  - [ ] sự kiện phát ngược (FILE_DONE…): gửi tới ai, có mang nội dung bản chép lời / đường dẫn ra cho mọi app không;
-  - [ ] API key: chỉ lưu bằng Keystore (Stage 3), không vào log, không vào `config.txt` xuất ra (D112), không nằm trong
+  - [x] sự kiện phát ngược (FILE_DONE…): gửi tới ai, có mang nội dung bản chép lời / đường dẫn ra cho mọi app không;
+  - [x] API key: chỉ lưu bằng Keystore (Stage 3), không vào log, không vào `config.txt` xuất ra (D112), không nằm trong
         URL log của OkHttp; `grep` log thật trên máy (`guzz.log*`) không thấy `AIza`;
-  - [ ] mạng: chỉ HTTPS; minSdk 26 cho phép cleartext mặc định ở API 26–27 → đặt `android:usesCleartextTraffic="false"`
+  - [x] mạng: chỉ HTTPS; minSdk 26 cho phép cleartext mặc định ở API 26–27 → đặt `android:usesCleartextTraffic="false"`
         nếu chưa có;
-  - [ ] `PendingIntent` đều `FLAG_IMMUTABLE` (trừ chỗ cần mutable, ghi lý do); FileProvider (nếu có) không mở rộng hơn
+  - [x] `PendingIntent` đều `FLAG_IMMUTABLE` (trừ chỗ cần mutable, ghi lý do); FileProvider (nếu có) không mở rộng hơn
         thư mục cần;
-  - [ ] `allowBackup="false"` + `dataExtractionRules` còn trên bản release; `debuggable` không bật;
-  - [ ] log ở `Android/data/<package>/files/logs/` không chứa nội dung bản chép lời hay key.
+  - [x] `allowBackup="false"` + `dataExtractionRules` còn trên bản release; `debuggable` không bật;
+  - [x] log ở `Android/data/<package>/files/logs/` không chứa nội dung bản chép lời hay key.
       Kiểm: checklist đủ dấu; mỗi chỗ sửa có test JVM hoặc test thiết bị nếu thử được (vd đường dẫn `..` bị từ chối).
-- [ ] B2. Quét bí mật trong lịch sử git bằng gitleaks (hỏi trước khi tải bản Windows từ GitHub Releases của gitleaks; giải
+- [x] B2. Quét bí mật trong lịch sử git bằng gitleaks (hỏi trước khi tải bản Windows từ GitHub Releases của gitleaks; giải
       nén vào thư mục riêng ngoài repo). Chạy trên toàn lịch sử mọi nhánh: `gitleaks git --log-opts="--all" -v`, cộng
       liệt kê blob lớn (`git rev-list --objects --all` + `git cat-file --batch-check`) để chắc không có bản ghi thật.
       Kiểm: 0 phát hiện thật (phát hiện giả ghi lý do vào Nhật ký, thêm `.gitleaksignore` nếu cần). Có bí mật thật: dừng,
       hỏi người dùng (thu hồi key + cách xử lý lịch sử) trước khi làm tiếp G.
-- [ ] B3. Quét lỗ hổng thư viện bằng osv-scanner (hỏi trước khi tải). Tạo tạm `gradle/verification-metadata.xml`
+- [x] B3. Quét lỗ hổng thư viện bằng osv-scanner (hỏi trước khi tải). Tạo tạm `gradle/verification-metadata.xml`
       (`.\gradlew --write-verification-metadata sha256 help`) làm danh sách phụ thuộc, `osv-scanner scan source -r .`,
       xong xoá tệp tạm. Phần không có trên Maven (AAR sherpa-onnx 2.0.1, ONNX Runtime trong AAR) tra tay advisory của
       `k2-fsa/sherpa-onnx` và `microsoft/onnxruntime` bằng `gh api`. Kiểm: không còn High / Critical chưa xử lý; nâng
       được thì nâng (chạy lại `test`), không nâng được thì ghi lý do chấp nhận vào Nhật ký.
-- [ ] B4. Gộp các chỗ sửa của B1–B3. Kiểm: `.\gradlew test lint` xanh; test thiết bị liên quan (`AutomationIntentTest`,
+- [x] B4. Gộp các chỗ sửa của B1–B3. Kiểm: `.\gradlew test lint` xanh; test thiết bị liên quan (`AutomationIntentTest`,
       `ContentSourceTest`) qua trên máy ảo. Commit "Stage 9 B: …".
 
 ### C. Tinh gọn (D133)
@@ -304,6 +305,47 @@ cần dùng.
   (9 + 3); `:app` 11/11 qua. Lần chạy đầu `AutomationIntentTest.transcribeThenFileDoneWithSameRequestId` trượt ba lần liền
   vì hàng đợi của máy ảo còn sót bài `L1_20m.m4a` (20 phút) từ lần thử trước, chạy trước tệp 8 s của test nên quá 90 s;
   `queue_debug.ps1 -Stop`, `-Clear` rồi chạy lại cả bộ thì qua. Không liên quan bản nâng.
+- (2026-11-18, B1) Checklist, đọc code + manifest (`app`, `feature/automation`, `feature/queue`, `core/diarization`,
+  `core/gemini`):
+  - exported ở main: `MainActivity` (launcher), `CommandReceiver`, `CommandActivity`, `ShareActivity`, đều cố ý. Provider
+    (FileProvider, `files/output`, `files/logs` ngoài) và service (`QueueService`, `DiarizeService`, service ngôn ngữ)
+    không exported. Chỉ bản debug: `AudioDebugActivity`, `AudioDebugStopReceiver` (exported, không quyền → C1 thêm quyền
+    `DUMP`), `QueueDebugReceiver` (quyền `DUMP`). Kiểm lại trên APK release ở B4.
+  - Mã bí mật so bằng `MessageDigest.isEqual`, không vào log. **Tìm ra:** mã mặc định trống → D138 (tự tạo khi bật).
+  - **Tìm ra:** Chia sẻ tới Guzz nhận cả `file://` (data / ClipData): `resolveUri` mở bằng quyền của Guzz rồi chép vào
+    `inbox` → chỉ nhận `content://`. Lệnh TRANSCRIBE: đường dẫn có `..` bị từ chối (`ExtrasReader`, test JVM);
+    đường dẫn trong thư mục dữ liệu trong của Guzz (sau `canonicalPath`) bị từ chối (`no_permission`, test thiết bị
+    `privateDataPathIsRejected`); `appOwnedPath` chỉ còn thư mục riêng trên bộ nhớ ngoài. `output_dir`: cũng chặn `..` và
+    thư mục dữ liệu trong.
+  - **Tìm ra:** extra `route` của `MainActivity` (exported) có tác dụng cả ở release; route lạ làm Navigation ném lỗi →
+    chỉ bản debug đọc.
+  - Sự kiện phát bằng broadcast ngầm: app nào đăng ký cũng nghe được tên tệp, `request_id`, và đường dẫn khi bật "Kèm
+    đường dẫn" (D97). **Chấp nhận**: MacroDroid / Tasker không giữ được quyền riêng; tài liệu đã nói rõ, có công tắc tắt
+    đường dẫn. Lệnh bị từ chối vẫn phát ERROR (không chứa gì riêng).
+  - API key: chỉ ở header `x-goog-api-key`, thông điệp lỗi che key (`KeyLeakTest`); không có logging interceptor của
+    OkHttp; log không ghi nội dung bản chép lời (chỉ độ dài, thời gian nói). Xuất `config.txt` không có key (D112).
+  - Mạng: thêm `android:usesCleartextTraffic="false"` (Android 8–8.1 mặc định vẫn cho HTTP).
+  - `PendingIntent` (3 chỗ) đều `FLAG_IMMUTABLE`. `allowBackup="false"` + `dataExtractionRules` có ở manifest main.
+  - Bản release bỏ extra `fake_gemini` (`Automation.handle`) và cờ `gemini_gia` (`BuildConfig.DEBUG` trong
+    `AppContainer`).
+- (2026-11-18, B2) gitleaks 8.30.1 (tải từ GitHub Releases, SHA-256 khớp, để ở `D:\GuzzMobileData\tools`), 81 commit mọi
+  nhánh: 1 phát hiện `generic-api-key` ở `testdata/golden/gemini/requests.json`, là key giả `TestKey-…` của golden hàm
+  che key → `.gitleaksignore`; quét lại: 0. Quét thư mục làm việc: thêm 8 phát hiện trong `spikes/android/app/build/`
+  (không commit), bỏ qua. Blob lớn nhất trong lịch sử là golden JSON 1,7 MB; tệp âm thanh / video trong lịch sử đều là tệp
+  tổng hợp của `testdata/` (sinh bằng `tools/golden`, seed cố định), không có bản ghi thật.
+- (2026-11-18, B3) osv-scanner 2.7.1 (SHA-256 khớp). Danh sách phụ thuộc: `.\gradlew --write-verification-metadata
+  sha256` kèm `test lint assembleSideloadRelease` và `dependencies` của mọi module (655 thành phần), chép ra
+  `D:\GuzzMobileData\stage-09\` rồi xoá khỏi repo; osv-scanner chỉ nhận tệp này khi nằm trong thư mục `gradle/`. Kết quả:
+  14 gói có lỗ hổng (netty 4.1.93 / 4.1.110, BouncyCastle 1.79, guava 32–33, jdom2 2.0.6, httpclient 4.5.6, jose4j 0.9.5,
+  commons-lang3 3.16.0, kotlin-gradle-plugin 2.4.0 kéo theo), **không gói nào nằm trong `sideloadReleaseRuntimeClasspath`
+  của `:app`** (141 gói) → đều là công cụ build của AGP / lint / Kotlin, chạy trên PC với mã của chính repo. **Chấp nhận**:
+  chỉ hết khi nâng AGP (D136). Phần không có trên Maven: ONNX Runtime trong AAR là 1.28.2 (chuỗi phiên bản trong
+  `libonnxruntime.so`), sherpa-onnx 2.0.1: GitHub Advisory Database và OSV (PyPI) không có lỗ hổng nào.
+- (2026-11-18, B4) Manifest APK `sideloadRelease` (chưa ký, `apkanalyzer manifest print`): exported chỉ `MainActivity`,
+  `CommandReceiver`, `CommandActivity`, `ShareActivity` (+ `ProfileInstallReceiver` của AndroidX, quyền `DUMP`); không có
+  thành phần debug; `allowBackup="false"`, có `dataExtractionRules`, không `debuggable`, `usesCleartextTraffic="false"`.
+  Sau các chỗ sửa: `.\gradlew test lint lintPlayDebug` xanh (`:feature:automation` thêm `SecretOnEnableTest`, ca `..` trong
+  `ExtrasReaderTest`); máy ảo `guzz_15t`: test thiết bị của `:app` 12/12 (thêm `privateDataPathIsRejected`).
 
 ## Phát sinh
 

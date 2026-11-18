@@ -60,6 +60,16 @@ class ExtrasReaderTest {
     }
 
     @Test
+    fun `đường dẫn có dấu hai chấm chấm bị từ chối, cả dạng file URI`() {
+        assertTrue(bad(G.EXTRA_PATH to "/sdcard/../../data/data/x/files/a.m4a").contains(".."))
+        assertTrue(bad(G.EXTRA_PATHS to "/sdcard/a.m4a\n/sdcard/Music/../b.m4a").contains(".."))
+        assertTrue(bad(G.EXTRA_PATH to "file:///sdcard/%2E%2E/b.m4a").contains(".."))
+        assertTrue(bad(G.EXTRA_PATH to "/sdcard/a.m4a", G.EXTRA_OUTPUT_DIR to "/sdcard/x/../../data").contains(".."))
+        // Tên tệp chứa ".." nhưng không phải cả một đoạn thì vẫn nhận.
+        assertEquals(listOf("/sdcard/bai..1.m4a"), transcribe(G.EXTRA_PATH to "/sdcard/bai..1.m4a").paths)
+    }
+
+    @Test
     fun `ghi đè nhận chuỗi, số, boolean, device là pyannote`() {
         val c = transcribe(
             G.EXTRA_PATH to "/a", G.EXTRA_REQUEST_ID to 42, G.EXTRA_START to "false",

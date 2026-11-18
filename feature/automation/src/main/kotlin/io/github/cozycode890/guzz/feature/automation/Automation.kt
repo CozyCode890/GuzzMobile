@@ -9,6 +9,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.StatFs
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.log.Logger
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
@@ -142,6 +143,9 @@ class Automation(
 
     /** Đường dẫn: có quyền thì đọc thẳng; không thì tìm trong Thư mục nguồn (D104). */
     private suspend fun resolvePath(path: String): Resolved {
+        if (isPrivateDataPath(path)) {
+            return Resolved.Failed(G.Kind.NO_PERMISSION, "không đọc tệp trong thư mục riêng của Guzz: $path")
+        }
         appOwnedPath(path)?.let { own ->
             return if (File(own).isFile) Resolved.Path(own) else Resolved.Failed(G.Kind.NOT_FOUND, "không thấy tệp $path")
         }
@@ -171,7 +175,13 @@ class Automation(
 
     /** content:// URI: giữ được quyền bền, hoặc là URI tài liệu trong Thư mục nguồn, thì đọc thẳng; không thì chép (D103). */
     private fun resolveUri(source: String): Resolved {
-        val uri = Uri.parse(source)
+        val uri = source.toUri()
+        // Stage 9 B1: `file://` (Chia sẻ tới Guzz nhận cả data / ClipData của intent) sẽ được ContentResolver mở bằng quyền
+        // của chính Guzz, kể cả tệp riêng của app hay tệp mà app gửi không đọc được. Android 7+ không cho app chia sẻ
+        // `file://` nữa, nên chỉ nhận content://.
+        if (uri.scheme != "content") {
+            return Resolved.Failed(G.Kind.NO_PERMISSION, "chỉ nhận content:// URI: $source")
+        }
         val persisted = try {
             context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             true
@@ -220,7 +230,8 @@ class Automation(
      */
     private fun appOwnedPath(path: String): String? {
         val target = PathMapping.volumeAndRelative(path)
-        for (dir in listOfNotNull(context.getExternalFilesDir(null), context.filesDir)) {
+        // Chỉ thư mục riêng trên bộ nhớ ngoài (files/input của lệnh adb); thư mục trong (`/data/…`) bị chặn ở [isPrivateDataPath].
+        for (dir in listOfNotNull(context.getExternalFilesDir(null))) {
             if (path.startsWith(dir.path + "/")) return path
             val d = PathMapping.volumeAndRelative(dir.path) ?: continue
             if (target != null && target.first == d.first && target.second.startsWith(d.second + "/")) {
@@ -228,6 +239,19 @@ class Automation(
             }
         }
         return null
+    }
+
+    /**
+     * Stage 9 B1: tệp nằm (sau khi giải symlink) trong thư mục dữ liệu trong của Guzz (`/data/user/0/<package>`: cài đặt,
+     * key đã mã hoá, sổ hạn mức). Có "Truy cập mọi tệp" thì `File` vẫn đọc được chỗ này bằng quyền của chính Guzz, nên lệnh
+     * từ app khác không được trỏ vào.
+     */
+    private fun isPrivateDataPath(path: String): Boolean = try {
+        val data = File(context.applicationInfo.dataDir).canonicalPath
+        val target = File(path).canonicalPath
+        target == data || target.startsWith("$data/")
+    } catch (e: java.io.IOException) {
+        true
     }
 
     private fun add(r: Resolved, requestId: String?, overrides: ItemOverrides?): Boolean {

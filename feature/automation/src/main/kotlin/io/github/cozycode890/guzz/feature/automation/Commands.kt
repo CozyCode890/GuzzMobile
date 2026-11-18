@@ -67,6 +67,10 @@ object ExtrasReader {
             s.startsWith("/") -> paths += s
             else -> throw BadExtraException("`$s` không phải đường dẫn tuyệt đối hay content:// URI")
         }
+        // Stage 9 B1: `..` có thể đưa đường dẫn ra khỏi chỗ được phép (vd từ bộ nhớ chung về thư mục riêng của Guzz).
+        paths.firstOrNull { p -> p.split('/').any { it == ".." } }?.let {
+            throw BadExtraException("`$it`: đường dẫn không được có `..`")
+        }
         return Command.Transcribe(
             paths = paths.distinct(), uris = uris.distinct(), requestId = id,
             start = bool(extras, G.EXTRA_START) ?: true, overrides = overrides(extras),
@@ -94,6 +98,9 @@ object ExtrasReader {
         val outputDir = stringOrNull(extras, G.EXTRA_OUTPUT_DIR)?.also {
             if (it != ItemOverrides.OUTPUT_BESIDE_SOURCE && !it.startsWith("/")) {
                 throw BadExtraException("`output_dir` = `$it`: chỉ nhận `source` hoặc đường dẫn tuyệt đối")
+            }
+            if (it.split('/').any { part -> part == ".." }) {
+                throw BadExtraException("`output_dir` = `$it`: đường dẫn không được có `..`")
             }
         }
         val o = ItemOverrides(

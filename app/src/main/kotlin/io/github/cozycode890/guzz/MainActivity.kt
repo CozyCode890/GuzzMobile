@@ -73,9 +73,12 @@ class MainActivity : AppCompatActivity() {
      * Extra [EXTRA_ROUTE] (bản debug, `ui_check.ps1`) mở thẳng trang đó. Intent launcher tới khi app đang mở (Chia sẻ tới
      * Guzz, thông báo "Bấm để bắt đầu" của Stage 6, thông báo tiến độ: đều dùng `getLaunchIntentForPackage`) thì về tab
      * Chuyển đổi để thấy hàng đợi (Stage 8 H4); `singleTop` nên không mở chồng màn hình mới.
+     *
+     * Bản release bỏ qua [EXTRA_ROUTE] (Stage 9 B1): MainActivity exported, app nào cũng gửi được extra này, và route lạ
+     * làm Navigation ném lỗi.
      */
     private fun handleIntent(intent: Intent?, fromNewIntent: Boolean = false) {
-        val route = intent?.getStringExtra(EXTRA_ROUTE)
+        val route = intent?.getStringExtra(EXTRA_ROUTE)?.takeIf { BuildConfig.DEBUG }
             ?: Routes.CONVERT.takeIf {
                 fromNewIntent && intent?.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
             }
