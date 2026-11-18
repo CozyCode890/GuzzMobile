@@ -7,15 +7,16 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 6 (Intent cho MacroDroid), đang làm (D91–D105): A–E và G2 xong trên máy ảo, đã gộp vào `main`
-(D105); còn nhóm F (MacroDroid trên Xiaomi 15T, đêm thử) và G1, G3. Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
+**Stage hiện tại:** chưa có; Stage 9 (đóng gói & phát hành) chờ plan chi tiết. Stage 6 (Intent cho MacroDroid) xong ngày
+2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
+thử theo D107; Chia sẻ tới Guzz nhận cả Zalo, D106). Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
 (D110–D121; một Activity, 3 tab, đủ trang cài đặt, tiếng Việt / tiếng Anh, xuất / nhập config.txt). Stage 7 (làm sạch âm
 thanh đầy đủ) xong ngày 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, bài 79 phút thêm 3,5 phút trên Xiaomi 15T; tiêu chí
 nghe thử chấp nhận theo số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật
 gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày
 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** Stage 6 nhóm F trên máy thật (trên `main`); plan chi tiết Stage 9 (đóng gói & phát hành). Gửi bất
-cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi.
+**Việc tiếp theo:** plan chi tiết Stage 9 (đóng gói & phát hành). Gửi bất cứ thứ gì lên Google thì hỏi người dùng ngay
+trước khi gửi.
 
 | Stage | Tên | Trạng thái | Tệp |
 | --- | --- | --- | --- |
@@ -25,7 +26,7 @@ cứ thứ gì lên Google thì hỏi người dùng ngay trước khi gửi.
 | 3 | Client Gemini, hạn mức, đổi model | ✅ 2026-11-11 | [stage-03-gemini-client.md](plans/stage-03-gemini-client.md) |
 | 4 | Pipeline + hàng đợi nền — **MVP** | ✅ 2026-11-14 | [stage-04-pipeline-mvp.md](plans/stage-04-pipeline-mvp.md) |
 | 5 | Tách giọng trên máy | ✅ 2026-11-15 | [stage-05-diarization.md](plans/stage-05-diarization.md) |
-| 6 | Intent cho MacroDroid | 🔨 | [stage-06-intents.md](plans/stage-06-intents.md) |
+| 6 | Intent cho MacroDroid | ✅ 2026-11-18 | [stage-06-intents.md](plans/stage-06-intents.md) |
 | 7 | Làm sạch âm thanh đầy đủ | ✅ 2026-11-17 | [stage-07-audio-cleaning.md](plans/stage-07-audio-cleaning.md) |
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ⬜ | [stage-09-release.md](plans/stage-09-release.md) |

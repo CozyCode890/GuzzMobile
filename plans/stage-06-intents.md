@@ -1,6 +1,6 @@
 # Stage 6 — Intent cho MacroDroid
 
-**Trạng thái:** 🔨 đang làm (2026-11-17, nhánh `stage-6`, worktree `D:\GuzzMobile-stage6`) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
+**Trạng thái:** ✅ xong 2026-11-18 (làm từ 2026-11-17, nhánh `stage-6` gộp vào `main` theo D105) · **Cần xong trước:** 4 (phép thử chạy nền của Stage 1 chuyển vào đây,
 D42). Làm song song với Stage 8, mỗi stage một worktree; Stage 6 gộp vào `main` trước (xem "Làm song song với Stage 8").
 
 ## Mục tiêu
@@ -70,8 +70,8 @@ tự chép lời → thông báo hoặc mở bản chép lời.
 
 ## Tiêu chí hoàn thành
 
-- [ ] Unit test đọc extra (thiếu extra, sai kiểu, mã bí mật sai).
-- [ ] Instrumented test: gửi intent → tệp vào hàng đợi → nhận sự kiện `FILE_DONE`.
+- [x] Unit test đọc extra (thiếu extra, sai kiểu, mã bí mật sai).
+- [x] Instrumented test: gửi intent → tệp vào hàng đợi → nhận sự kiện `FILE_DONE`.
 - [x] Thử thật với MacroDroid ở cả hai chế độ quyền tệp, lúc màn hình tắt (đêm thử đạt D35: ≥ 1 cách 10/10). Chấp nhận
   kết quả buổi chiều 2026-11-18 thay cho 10/10 (D107).
 
@@ -107,6 +107,7 @@ Hỏi người dùng ngày 2026-11-17, người dùng chọn phương án Recomm
 | D105 | Gộp vào `main` khi nào (hỏi 2026-11-18, Stage 8 đang chờ) | **Gộp ngay sau A–E**, nhóm F làm sau trên `main`; Stage 6 vẫn 🔨 tới khi F xong | Stage 8 làm tiếp được nhóm G, H; F chủ yếu là thử trên máy thật. |
 | D106 | Zalo chia sẻ m4a với kiểu `application/octet-stream` (hỏi 2026-11-18) | **Nhận thêm mọi kiểu `application/…`, lọc theo đuôi tệp** âm thanh / video (lúc đầu chỉ octet-stream; thử trên máy thì Zalo gửi kiểu khác, vd `application/m4a`, người dùng chọn mở rộng); tệp khác báo không hỗ trợ, không thêm vào hàng đợi | Nhận `*/*` thì Guzz hiện ở mọi lần chia sẻ (ảnh, chữ), dễ bấm nhầm |
 | D107 | Đêm thử D35 (hỏi 2026-11-18) | **Chấp nhận buổi chiều 2026-11-18**: 28/28 lệnh DONE, 11 lần màn hình tắt (broadcast 6/6, activity 5/5), không lần nào hỏng | Chưa cách nào 10/10 lúc màn hình tắt; người dùng không muốn thử thêm một đêm |
+| D108 | Tệp `.macro` của F5 (hỏi 2026-11-18) | **Bỏ tệp `.macro`, chỉ giữ bảng** trong `docs/intents.md` (thêm bảng macro thử đã chạy trên Xiaomi) | 3 macro mẫu chưa có trên máy, tạo qua adb tốn nhiều lượt; bảng đủ để làm theo |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -312,39 +313,39 @@ Tự động hoá) → F (máy thật, MacroDroid, đêm thử) → G (tài li�
 Trước nhóm này: người dùng cài bản debug mới, MacroDroid đã có pin "No restrictions", Autostart, quyền "Hiển thị trên ứng
 dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có quyền thông báo.
 
-- [ ] **F1. Macro theo `docs/intents.md` (bản nháp từ G1)**: tạo 3 macro mẫu + 3 macro thử: "Thử broadcast" / "Thử activity"
+- [x] **F1. Macro theo `docs/intents.md` (bản nháp từ G1)**: tạo 3 macro mẫu + 3 macro thử: "Thử broadcast" / "Thử activity"
   (Regular Interval 30 phút, **dùng báo thức**, lệch nhau 15 phút; TRANSCRIBE một tệp 1 phút có sẵn trong Recordings,
   `request_id` = giờ hệ thống, `fake_gemini=on`), "Nhận DONE" (Intent Received `P.event.FILE_DONE` → ghi một dòng giờ +
   `request_id` vào tệp). Ghi lại MacroDroid gửi extra kiểu gì.
   **Kiểm:** màn hình bật, bấm chạy tay từng macro: tệp vào hàng đợi, "Nhận DONE" ghi đúng `request_id`; macro mẫu "chép xong
   thì mở tệp" mở được bản chép lời.
-- [ ] **F2. Hai chế độ quyền tệp**: (a) có "Truy cập mọi tệp": macro mẫu "theo dõi Recordings" gửi đường dẫn; (b) thu hồi quyền
+- [x] **F2. Hai chế độ quyền tệp**: (a) có "Truy cập mọi tệp": macro mẫu "theo dõi Recordings" gửi đường dẫn; (b) thu hồi quyền
   đó, thêm Recordings làm Thư mục nguồn (D104): cùng macro vẫn chạy; tệp ngoài Thư mục nguồn → MacroDroid nhận
   `FILE_FAILED` `no_permission`.
   **Kiểm:** cả hai chế độ ra bản chép lời (Gemini giả); log ghi nguồn là đường dẫn ở (a), URI tài liệu ở (b).
-- [ ] **F3. Đêm thử** (D35, D42): máy đã cài đặt, rút cáp, `adb disconnect`, vuốt Guzz khỏi đa nhiệm, màn hình tắt cả đêm.
+- [x] **F3. Đêm thử** (D35, D42): máy đã cài đặt, rút cáp, `adb disconnect`, vuốt Guzz khỏi đa nhiệm, màn hình tắt cả đêm.
   "Thử broadcast" và "Thử activity" mỗi cách ≥ 10 lần. Một lần trong đêm (macro một lần lúc ~03:00) gửi **một bài 1–3
   phút thật** (`fake_gemini=off`, ≤ 3 yêu cầu, D100) — **hỏi người dùng trước khi bật macro này**.
   **Kiểm:** sáng hôm sau đếm: lần gửi (nhật ký MacroDroid) / lần nhận (log Guzz) / lần FGS chạy xong / dòng "Nhận DONE";
   log nhịp ghi "Doze có" ở các lần chạy. **Đạt D35** khi ≥ 1 cách 10/10; sự kiện: "Nhận DONE" ≥ 3 dòng lúc màn hình tắt,
   `request_id` khớp; bài thật có bản chép lời và log thấy gửi trong Doze (trả lời Phát sinh F1 của Stage 4). Bảng số ghi
   vào Nhật ký. Không đạt thì ghi lý do và hỏi người dùng trước khi đổi hướng.
-- [ ] **F4. Chia sẻ tới Guzz trên máy thật**: chia sẻ một bản ghi từ app Ghi âm của HyperOS và từ trình quản lý tệp.
+- [x] **F4. Chia sẻ tới Guzz trên máy thật**: chia sẻ một bản ghi từ app Ghi âm của HyperOS và từ trình quản lý tệp.
   **Kiểm:** chạy ngay; app Ghi âm nào không cho giữ quyền bền thì log thấy chép vào `files/inbox` và tệp được xoá khi xong.
-- [ ] **F5. Xuất macro** (D101): người dùng xuất 3 macro mẫu (bỏ macro thử) ra `.macro`, Claude `adb pull` về
+- [x] **F5. Xuất macro** (D101): người dùng xuất 3 macro mẫu (bỏ macro thử) ra `.macro`, Claude `adb pull` về
   `docs/macrodroid/`, kiểm không chứa mã bí mật thật (thay bằng `DOI_MA_NAY` nếu có).
   **Kiểm:** nhập lại một tệp `.macro` vào MacroDroid chạy được; `git grep` không thấy mã bí mật đã dùng.
 
 ### G. Tài liệu và đóng stage
 
-- [ ] **G1. `docs/intents.md`**: cài đặt một lần (bật công tắc, pin, thông báo, quyền tệp / Thư mục nguồn, quyền của
+- [x] **G1. `docs/intents.md`**: cài đặt một lần (bật công tắc, pin, thông báo, quyền tệp / Thư mục nguồn, quyền của
   MacroDroid), bảng action / extra / event / `error_kind` (sinh từ `GuzzIntents` hoặc có test so khớp), ví dụ `adb`, 3 macro
   mẫu dạng bảng, máy đã thử (Android / hãng / kết quả đêm thử), giới hạn đã biết. Viết nháp trước F1, sửa theo F1–F5.
   **Kiểm:** test JVM: mọi action / event / extra trong `GuzzIntents` có mặt trong `docs/intents.md` và ngược lại.
 - [x] **G2. `CLAUDE.md`**: khối lệnh "Intent (Stage 6)" cuối "Lệnh thường dùng" (`intent_debug.ps1`, test thiết bị C5, test
   `:feature:automation`).
   **Kiểm:** chạy lại từng lệnh trong khối trên máy ảo.
-- [ ] **G3. Gộp và đóng**: `.\gradlew test lint` xanh cả hai flavor; đánh dấu "Tiêu chí hoàn thành"; Stage 6 ✅ kèm ngày;
+- [x] **G3. Gộp và đóng**: `.\gradlew test lint` xanh cả hai flavor; đánh dấu "Tiêu chí hoàn thành"; Stage 6 ✅ kèm ngày;
   gộp nhánh `stage-06` vào `main` (hỏi người dùng trước khi gộp / push), báo session Stage 8 để rebase.
   **Kiểm:** `git log main` có commit gộp; `.\gradlew test` trên `main` xanh.
 
@@ -371,6 +372,7 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 - (2026-11-18, F, Xiaomi 15T, thử ban ngày theo người dùng) Claude tạo 5 macro qua adb (tên không dấu: Guzz thu broadcast / activity, Guzz nhan DONE / loi, Guzz Gemini that 13h; tệp ghi ở `Documents/guzz_done.txt`, `guzz_loi.txt` vì SAF không cho chọn gốc Download). Thử tay: broadcast, activity → DONE; tệp không có → `not_found`. F2 đạt (thu hồi Truy cập mọi tệp, Recordings trong Thư mục nguồn → DONE; Music → `no_permission`; đã cấp lại). F4 đạt với app Ghi âm HyperOS (chép vào inbox, xong thì xoá). Macro Gemini thật dời sang 13:00 thứ Tư 2026-11-18. Đêm thử chuyển thành buổi chiều tắt màn hình tới ~15:00, chưa đếm. Chi tiết: ghi chú `stage6-F-dem-thu.md` của session điều phối.
 - (2026-11-18, F4) Zalo chia sẻ m4a với kiểu `application/octet-stream` nên Guzz không hiện trong bảng Chia sẻ. Người dùng chọn (D106): nhận thêm `application/octet-stream`, lọc theo đuôi tệp âm thanh / video, tệp khác thì báo không hỗ trợ và không thêm vào hàng đợi. Đã làm cùng ngày: `ShareFilter` (JVM, `ShareFilterTest`), ShareActivity lọc theo kiểu MIME của URI hoặc đuôi tên, tệp bị bỏ thì toast `share_unsupported`. Trên Xiaomi: `query-activities` kiểu octet-stream có ShareActivity, kiểu image/jpeg không có. Zalo vẫn không hiện Guzz: bảng của Zalo đúng bằng tập app nhận `application/*` (Termux, Notion…), app chỉ nhận đúng octet-stream (Shizuku) cũng không hiện, nên Zalo gửi kiểu `application/<đuôi>`. Đổi filter sang `application/*`; `query-activities -t application/m4a` có Shareactivity, `image/jpeg` không. Người dùng chia sẻ m4a từ Zalo (16:50): "Chép lời bằng Guzz" hiện, tệp được chép vào inbox và chạy (Gemini giả).
 - (2026-11-18, F3 buổi chiều) Rút cáp 09:48 → cắm lại 16:34 (batterystats). Hai macro 30 phút lệch 15 phút: broadcast 14/14, activity 14/14 lệnh đều nhận và ra FILE_DONE (`guzz_done.txt` đủ mọi mốc 09:45–16:30, `request_id` khớp, thường xong sau 13–25 s; một lần báo thức trễ 10:30 → 10:33). Lúc gửi màn hình tắt: broadcast 6 lần, activity 5 lần, đều DONE; có Doze full xen giữa (10:01–10:56, 11:01), báo thức "Use alarm" đánh thức máy. Phần còn lại máy đang được dùng (màn hình bật). D35 chưa đạt đủ: đã có ≥ 3 DONE lúc màn hình tắt, nhưng chưa có cách nào 10/10 lần **màn hình tắt** (6/6 và 5/5), không có lần nào hỏng. Gemini thật 13:00 (`that-03h`) **không gửi**: macro broadcast cũng gửi cùng tệp lúc 13:00 nên lệnh bị từ chối `duplicate` (đúng thiết kế); không gửi gì lên Google. Lần sau dùng tệp riêng cho bài Gemini thật hoặc lệch giờ.
+- (2026-11-18, F1–F5, G1) F1 làm 5 macro thử (không làm 3 macro mẫu, D108); MacroDroid gửi extra dạng chuỗi ("Auto Detect Type"), Guzz đọc đúng. F3 chấp nhận theo D107; bài Gemini thật không gửi (trùng tệp), không thử lại. F5 thay bằng bảng (D108). `docs/intents.md`: tên mục MacroDroid tiếng Anh theo máy thật, mục 5.4 macro thử, bảng máy đã thử có Xiaomi 15T, giới hạn `duplicate` và chia sẻ `application/…`.
 
 ## Phát sinh
 

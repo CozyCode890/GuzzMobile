@@ -119,21 +119,22 @@ adb shell am broadcast -n io.github.cozycode890.guzz.debug/io.github.cozycode890
 
 ## 5. Macro MacroDroid mẫu
 
-Tệp nhập được: `docs/macrodroid/*.macro` (MacroDroid → Macro → Nhập). Sửa Package nếu dùng bản debug.
+Tên mục theo MacroDroid bản tiếng Anh (trong ngoặc là tên tiếng Việt gần đúng). Bản debug thì Package là
+`io.github.cozycode890.guzz.debug`. Không có tệp `.macro` nhập sẵn (D108): tạo theo bảng.
 
 ### 5.1 Ghi âm xong → chép lời → thông báo
 
 | Phần | Cài đặt |
 | --- | --- |
-| Trigger | **Thay đổi tệp** (File Change): thư mục `Recordings`, loại "Tệp được tạo" |
-| Action 1 | **Gửi Intent** (Send Intent): Target **Broadcast**; Action `io.github.cozycode890.guzz.action.TRANSCRIBE`; Package `io.github.cozycode890.guzz`; Class `io.github.cozycode890.guzz.feature.automation.CommandReceiver`; Extra `path` = đường dẫn tệp (magic text của trigger), `request_id` = giờ hệ thống |
+| Trigger | **File Changed** (Thay đổi tệp): thư mục `Recordings`, loại "Tệp được tạo" |
+| Action 1 | **Send Intent** (nhóm Device Actions): Target **Broadcast**; Action `io.github.cozycode890.guzz.action.TRANSCRIBE`; Package `io.github.cozycode890.guzz`; Class `io.github.cozycode890.guzz.feature.automation.CommandReceiver`; Extra `path` = đường dẫn tệp (magic text của trigger), `request_id` = magic text `{system_time}` |
 
 Macro nhận kết quả (riêng):
 
 | Phần | Cài đặt |
 | --- | --- |
-| Trigger | **Nhận Intent** (Intent Received): Action `io.github.cozycode890.guzz.event.FILE_DONE`, lưu extra `name`, `output_path` vào biến |
-| Action | **Hiện thông báo**: "Đã chép lời {name}" |
+| Trigger | **Intent Received**: Action `io.github.cozycode890.guzz.event.FILE_DONE`; ADD EXTRA `name`, giá trị `*`, Save to variable (biến cục bộ, nút +) |
+| Action | **Display Notification**: "Đã chép lời {lv=name}" |
 
 ### 5.2 Theo dõi thư mục Recordings
 
@@ -144,17 +145,30 @@ Thêm macro nhận `FILE_FAILED` → thông báo `error` để biết tệp nào
 
 | Phần | Cài đặt |
 | --- | --- |
-| Trigger | **Nhận Intent**: `io.github.cozycode890.guzz.event.FILE_DONE`, lưu `output_path` (và `output_uri`) vào biến |
-| Action | **Mở tệp** (Open File) với biến `output_path`; lưu vào thư mục SAF thì dùng `output_uri` |
+| Trigger | **Intent Received**: `io.github.cozycode890.guzz.event.FILE_DONE`, extra `output_path` (và `output_uri`) giá trị `*` lưu vào biến |
+| Action | **Open File** với biến `output_path`; lưu vào thư mục SAF thì dùng `output_uri` |
 
 Cần "Kèm đường dẫn tệp trong sự kiện" đang bật.
+
+### 5.4 Macro thử đã chạy trên Xiaomi 15T
+
+Dùng để kiểm Guzz nhận lệnh lúc màn hình tắt. Thử xong thì tắt, vì mỗi lần chạy sinh một bản chép lời.
+
+| Macro | Trigger | Action |
+| --- | --- | --- |
+| Thử broadcast | **Regular Interval** 30 phút, mốc 00:00, bật **Use alarm** | Send Intent, Target Broadcast, Class `…CommandReceiver`; extra `path`, `request_id` = `b-{system_time}`, `fake_gemini` = `on` |
+| Thử activity | Regular Interval 30 phút, mốc 00:15, Use alarm | Send Intent, Target Activity, Class `…CommandActivity`; extra như trên, `request_id` = `a-{system_time}` |
+| Nhận DONE | Intent Received `…event.FILE_DONE`, extra `request_id` = `*` → biến `rid` | **Write to File** (Storage Access Framework, thư mục `Documents`, Append): `{datetime} DONE {lv=rid}` + xuống dòng |
+| Nhận lỗi | Hai trigger Intent Received: `…event.ERROR` và `…event.FILE_FAILED`, extra `request_id` → `rid`, `error_kind` → `kind` | Write to File `guzz_loi.txt`: `{datetime} LOI {lv=rid} {lv=kind}` |
+
+Write to File qua SAF không chọn được gốc thư mục `Download` (Android chặn), nên dùng `Documents` hoặc một thư mục con.
 
 ## 6. Máy đã thử
 
 | Máy | Android | Kết quả |
 | --- | --- | --- |
 | Máy ảo `guzz_15t_s6` (giống Xiaomi 15T) | 16 (API 36) | Lệnh qua broadcast và activity, sự kiện, Chia sẻ tới Guzz, Thư mục nguồn (bản play), bị chặn chạy nền → thông báo |
-| Xiaomi 15T, HyperOS 3.0 | 16 | Chưa thử (đêm thử MacroDroid của Stage 6) |
+| Xiaomi 15T, HyperOS 3.0, MacroDroid | 16 | 2026-11-18, rút cáp 09:48–16:34: broadcast 14/14, activity 14/14 lệnh ra `FILE_DONE`, `request_id` khớp; 11 lần lúc màn hình tắt (có Doze) đều xong. Hai chế độ quyền tệp (Truy cập mọi tệp / Thư mục nguồn). Chia sẻ từ app Ghi âm HyperOS và Zalo |
 
 ## 7. Giới hạn đã biết
 
@@ -164,4 +178,7 @@ Cần "Kèm đường dẫn tệp trong sự kiện" đang bật.
   tạm thời bằng cỡ tệp), xoá khi xong. Lệnh `uri` qua broadcast cũng vậy, và Android chỉ cho receiver khoảng 10 giây:
   tệp rất lớn nên gửi bằng `path` hoặc Activity.
 - Tệp trong Thư mục nguồn được đọc qua URI tài liệu: sự kiện mang URI đó ở `source`, không phải đường dẫn đã gửi.
+- Gửi cùng một tệp khi tệp đó còn trong hàng đợi thì lệnh bị từ chối: sự kiện `ERROR` với `error_kind` `duplicate`.
+- Zalo chia sẻ tệp với kiểu `application/<đuôi>` (vd `application/m4a`), nên "Chép lời bằng Guzz" hiện cả khi chia sẻ
+  tệp `application/…` khác (pdf, docx…); Guzz xem đuôi tệp và bỏ tệp không phải âm thanh / video (D106).
 - Sự kiện là broadcast mọi app đều nghe được; tắt "Kèm đường dẫn tệp trong sự kiện" nếu không muốn lộ tên thư mục.
