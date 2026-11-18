@@ -53,4 +53,5 @@
     <string name="share_added">Added %1$d file(s) to the queue.</string>
     <string name="share_failed">Could not read: %1$s</string>
     <string name="share_problem">Added to the queue but not started: %1$s</string>
+    <string name="share_unsupported">Guzz only transcribes audio / video files, skipped: %1$s</string>
 </resources>

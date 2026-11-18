@@ -72,7 +72,8 @@ tự chép lời → thông báo hoặc mở bản chép lời.
 
 - [ ] Unit test đọc extra (thiếu extra, sai kiểu, mã bí mật sai).
 - [ ] Instrumented test: gửi intent → tệp vào hàng đợi → nhận sự kiện `FILE_DONE`.
-- [ ] Thử thật với MacroDroid ở cả hai chế độ quyền tệp, lúc màn hình tắt (đêm thử đạt D35: ≥ 1 cách 10/10).
+- [x] Thử thật với MacroDroid ở cả hai chế độ quyền tệp, lúc màn hình tắt (đêm thử đạt D35: ≥ 1 cách 10/10). Chấp nhận
+  kết quả buổi chiều 2026-11-18 thay cho 10/10 (D107).
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -104,6 +105,8 @@ Hỏi người dùng ngày 2026-11-17, người dùng chọn phương án Recomm
 | D103 | Tệp được chia sẻ mà không giữ được quyền đọc bền | **Chép vào thư mục riêng của Guzz** (kiểm chỗ trống trước), xoá khi tệp xong hoặc bị bỏ khỏi danh sách; giữ được quyền bền thì đọc thẳng | Tự làm tiếp sau khi bị giết (D64) vẫn đọc được tệp. |
 | D104 | Bản play nhận đường dẫn | **"Thư mục nguồn" cấp qua SAF** ở trang Tự động hoá; đường dẫn nằm trong một thư mục đó thì đổi sang URI tài liệu, ngoài thì `FILE_FAILED` kèm hướng dẫn | Trigger "Tệp thay đổi" của MacroDroid chỉ cho đường dẫn. Thử bằng chính bản sideload khi chưa cấp "Truy cập mọi tệp". |
 | D105 | Gộp vào `main` khi nào (hỏi 2026-11-18, Stage 8 đang chờ) | **Gộp ngay sau A–E**, nhóm F làm sau trên `main`; Stage 6 vẫn 🔨 tới khi F xong | Stage 8 làm tiếp được nhóm G, H; F chủ yếu là thử trên máy thật. |
+| D106 | Zalo chia sẻ m4a với kiểu `application/octet-stream` (hỏi 2026-11-18) | **Nhận thêm `application/octet-stream`, lọc theo đuôi tệp** âm thanh / video; tệp khác báo không hỗ trợ, không thêm vào hàng đợi | Nhận `*/*` thì Guzz hiện ở mọi lần chia sẻ (ảnh, chữ), dễ bấm nhầm |
+| D107 | Đêm thử D35 (hỏi 2026-11-18) | **Chấp nhận buổi chiều 2026-11-18**: 28/28 lệnh DONE, 11 lần màn hình tắt (broadcast 6/6, activity 5/5), không lần nào hỏng | Chưa cách nào 10/10 lúc màn hình tắt; người dùng không muốn thử thêm một đêm |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
@@ -366,7 +369,7 @@ dụng khác" (Phát sinh Stage 1); Guzz đã miễn tối ưu pin (D69) và có
 
 - (2026-11-18, G1) Bản nháp `docs/intents.md` xong, `IntentsDocTest` so khớp với `GuzzIntents` (tài liệu là input của task test). Tên mục MacroDroid, mục "Máy đã thử" và tệp `docs/macrodroid/*.macro` chờ nhóm F trên máy thật.
 - (2026-11-18, F, Xiaomi 15T, thử ban ngày theo người dùng) Claude tạo 5 macro qua adb (tên không dấu: Guzz thu broadcast / activity, Guzz nhan DONE / loi, Guzz Gemini that 13h; tệp ghi ở `Documents/guzz_done.txt`, `guzz_loi.txt` vì SAF không cho chọn gốc Download). Thử tay: broadcast, activity → DONE; tệp không có → `not_found`. F2 đạt (thu hồi Truy cập mọi tệp, Recordings trong Thư mục nguồn → DONE; Music → `no_permission`; đã cấp lại). F4 đạt với app Ghi âm HyperOS (chép vào inbox, xong thì xoá). Macro Gemini thật dời sang 13:00 thứ Tư 2026-11-18. Đêm thử chuyển thành buổi chiều tắt màn hình tới ~15:00, chưa đếm. Chi tiết: ghi chú `stage6-F-dem-thu.md` của session điều phối.
-- (2026-11-18, F4) Zalo chia sẻ m4a với kiểu `application/octet-stream` nên Guzz không hiện trong bảng Chia sẻ. Người dùng chọn (D106): nhận thêm `application/octet-stream`, lọc theo đuôi tệp âm thanh / video, tệp khác thì báo không hỗ trợ và không thêm vào hàng đợi. **Chưa làm** (dừng vì hết token).
+- (2026-11-18, F4) Zalo chia sẻ m4a với kiểu `application/octet-stream` nên Guzz không hiện trong bảng Chia sẻ. Người dùng chọn (D106): nhận thêm `application/octet-stream`, lọc theo đuôi tệp âm thanh / video, tệp khác thì báo không hỗ trợ và không thêm vào hàng đợi. Đã làm cùng ngày: `ShareFilter` (JVM, `ShareFilterTest`), ShareActivity lọc theo kiểu MIME của URI hoặc đuôi tên, tệp bị bỏ thì toast `share_unsupported`. Trên Xiaomi: `query-activities` kiểu octet-stream có ShareActivity, kiểu image/jpeg không có.
 - (2026-11-18, F3 buổi chiều) Rút cáp 09:48 → cắm lại 16:34 (batterystats). Hai macro 30 phút lệch 15 phút: broadcast 14/14, activity 14/14 lệnh đều nhận và ra FILE_DONE (`guzz_done.txt` đủ mọi mốc 09:45–16:30, `request_id` khớp, thường xong sau 13–25 s; một lần báo thức trễ 10:30 → 10:33). Lúc gửi màn hình tắt: broadcast 6 lần, activity 5 lần, đều DONE; có Doze full xen giữa (10:01–10:56, 11:01), báo thức "Use alarm" đánh thức máy. Phần còn lại máy đang được dùng (màn hình bật). D35 chưa đạt đủ: đã có ≥ 3 DONE lúc màn hình tắt, nhưng chưa có cách nào 10/10 lần **màn hình tắt** (6/6 và 5/5), không có lần nào hỏng. Gemini thật 13:00 (`that-03h`) **không gửi**: macro broadcast cũng gửi cùng tệp lúc 13:00 nên lệnh bị từ chối `duplicate` (đúng thiết kế); không gửi gì lên Google. Lần sau dùng tệp riêng cho bài Gemini thật hoặc lệch giờ.
 
 ## Phát sinh

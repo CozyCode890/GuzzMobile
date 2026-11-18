@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.widget.Toast
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import kotlinx.coroutines.CoroutineScope
@@ -66,23 +67,40 @@ class CommandActivity : Activity() {
 class ShareActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val uris = sharedUris(intent)
-        if (uris.isEmpty()) {
+        val all = sharedUris(intent)
+        if (all.isEmpty()) {
             GuzzLog.warning("Chia sẻ tới Guzz: không có tệp (${intent.action}, ${intent.type}).")
+            finishQuietly()
+            return
+        }
+        // D106: Zalo… gửi kiểu chung application/octet-stream, nên xem từng tệp có phải âm thanh / video không.
+        val (uris, rejected) = all.map { it to displayName(it) }
+            .partition { (uri, name) -> ShareFilter.isMedia(safeType(uri) ?: intent.type, name) }
+        val rejectedNames = rejected.map { (uri, name) -> name ?: uri.lastPathSegment ?: uri.toString() }
+        if (rejectedNames.isNotEmpty()) {
+            GuzzLog.warning("Chia sẻ tới Guzz: bỏ tệp không phải âm thanh / video: ${rejectedNames.joinToString(", ")}.")
+        }
+        if (uris.isEmpty()) {
+            Toast.makeText(
+                applicationContext, getString(R.string.share_unsupported, rejectedNames.joinToString(", ")),
+                Toast.LENGTH_LONG,
+            ).show()
             finishQuietly()
             return
         }
         entryScope.launch {
             val outcome = try {
-                automation.share(uris)
+                automation.share(uris.map { it.first })
             } catch (e: Exception) {
                 GuzzLog.error("Chia sẻ tới Guzz lỗi: ${e.message}", e)
-                Automation.ShareOutcome(0, uris.map { it.toString() }, e.message)
+                Automation.ShareOutcome(0, uris.map { it.first.toString() }, e.message)
             }
             withContext(Dispatchers.Main) {
                 val text = when {
                     outcome.problem != null -> getString(R.string.share_problem, outcome.problem)
                     outcome.failed.isNotEmpty() -> getString(R.string.share_failed, outcome.failed.joinToString(", "))
+                    rejectedNames.isNotEmpty() -> getString(R.string.share_added, outcome.added) + "\n" +
+                        getString(R.string.share_unsupported, rejectedNames.joinToString(", "))
                     else -> getString(R.string.share_added, outcome.added)
                 }
                 Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
@@ -93,6 +111,15 @@ class ShareActivity : Activity() {
             }
         }
     }
+
+    private fun safeType(uri: Uri): String? = runCatching { contentResolver.getType(uri) }.getOrNull()
+
+    private fun displayName(uri: Uri): String? = runCatching {
+        if (uri.scheme == "file") return@runCatching uri.lastPathSegment
+        contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+            if (c.moveToFirst() && !c.isNull(0)) c.getString(0) else null
+        }
+    }.getOrNull() ?: uri.lastPathSegment
 
     @Suppress("DEPRECATION")
     private fun sharedUris(intent: Intent): List<Uri> {

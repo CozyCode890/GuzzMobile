@@ -139,6 +139,8 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D103 | 2026-11-17 | Tệp chia sẻ không giữ được quyền đọc bền (Stage 6) | **Chép vào thư mục riêng của Guzz**, xoá khi xong / bỏ | Tự làm tiếp sau khi bị giết (D64) vẫn đọc được. |
 | D104 | 2026-11-17 | Bản play nhận đường dẫn (Stage 6) | **"Thư mục nguồn" cấp qua SAF**, đường dẫn trong đó đổi sang URI tài liệu | Trigger "Tệp thay đổi" của MacroDroid chỉ cho đường dẫn. |
 | D105 | 2026-11-18 | Gộp Stage 6 vào `main` khi nào (Stage 8 đang chờ) | **Gộp ngay sau A–E** (thử trên máy ảo), nhóm F (MacroDroid trên máy thật, đêm thử) làm sau trên `main` | Stage 8 làm tiếp được nhóm G, H; F chủ yếu là thử. |
+| D106 | 2026-11-18 | Zalo chia sẻ tệp với kiểu `application/octet-stream` (Stage 6) | **Nhận thêm octet-stream, lọc theo đuôi tệp** âm thanh / video | `*/*` làm Guzz hiện ở mọi lần chia sẻ |
+| D107 | 2026-11-18 | Tiêu chí đêm thử D35 (Stage 6) | **Chấp nhận buổi chiều 2026-11-18**: 28/28 DONE, 11 lần màn hình tắt, không hỏng | Chưa đủ 10/10 lúc màn hình tắt, không thử thêm đêm |
 | D110 | 2026-11-17 | Điều hướng (Stage 8) | **Thanh dưới 3 tab**: Chuyển đổi · Hạn mức · Cài đặt (danh sách trang con) | Một tay bấm được, vừa 360 dp. |
 | D111 | 2026-11-17 | Màu (Stage 8) | **Material You + bộ màu Guzz dự phòng** cho máy dưới Android 12, không công tắc | Ít việc nhất. |
 | D112 | 2026-11-17 | Xuất / nhập cài đặt (Stage 8) | **INI như `config.txt` desktop**, nhập được `config.txt` desktop, không xuất API key, golden với `configparser` | Một định dạng cho cả hai app; key đã theo desktop (D16). |
