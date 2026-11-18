@@ -141,15 +141,18 @@ fun SetupList(
                 R.string.setup_source_dirs to R.string.setup_choose_dirs
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().testTag("setup:${item.name}")) {
-            Icon(
-                if (done) Icons.Filled.CheckCircle else Icons.Filled.Warning,
-                contentDescription = stringResource(if (done) R.string.setup_done else R.string.setup_todo),
-                tint = if (done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-            )
-            Text(stringResource(label), modifier = Modifier.weight(1f).padding(horizontal = 8.dp))
+        // Nút nằm dưới nhãn, căn phải: màn 360 dp chữ to mà để cùng hàng thì nút chiếm hết chỗ, nhãn vỡ từng chữ (I2).
+        Column(Modifier.fillMaxWidth().testTag("setup:${item.name}")) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    if (done) Icons.Filled.CheckCircle else Icons.Filled.Warning,
+                    contentDescription = stringResource(if (done) R.string.setup_done else R.string.setup_todo),
+                    tint = if (done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                )
+                Text(stringResource(label), modifier = Modifier.weight(1f).padding(horizontal = 8.dp))
+            }
             if (!done) {
-                FilledTonalButton(onClick = {
+                FilledTonalButton(modifier = Modifier.align(Alignment.End), onClick = {
                     when (item) {
                         SetupItem.API_KEY -> open(Routes.GOOGLE_AI)
                         SetupItem.OUTPUT_FOLDER -> onPickFolder()

@@ -295,10 +295,10 @@ và B7 (Compose UI test).
 
 - [x] I1. Dọn `strings.xml` cũ (chuỗi hết dùng sau B6, G1) — một commit riêng. Kiểm: lint `UnusedResources` không báo
       chuỗi của `:app`.
-- [ ] I2. `ui_check.ps1` cho mọi trang ở 4 cấu hình: mặc định; `-Small -FontScale 2.0`; `-Dark -Lang en`; `-Landscape`. Xem
+- [x] I2. `ui_check.ps1` cho mọi trang ở 4 cấu hình: mặc định; `-Small -FontScale 2.0`; `-Dark -Lang en`; `-Landscape`. Xem
       ảnh: không chữ bị cắt, không nút tràn, không cuộn ngang. Ghi thư mục ảnh vào Nhật ký (ngoài repo,
       `D:\GuzzMobileData\stage-08`). Kiểm: tiêu chí 360 dp / cỡ chữ lớn.
-- [ ] I3. Đổi ngôn ngữ và chủ đề lúc hàng đợi đang chạy (Gemini giả): giao diện đổi ngay, hàng đợi không dừng. Kiểm: tiêu chí
+- [x] I3. Đổi ngôn ngữ và chủ đề lúc hàng đợi đang chạy (Gemini giả): giao diện đổi ngay, hàng đợi không dừng. Kiểm: tiêu chí
       "không cần khởi động lại".
 - [ ] I4. Điện thoại thật (Xiaomi 15T) một lượt: thẻ Thiết lập ban đầu với HyperOS (pin, thông báo), đổi ngôn ngữ trong
       Cài đặt hệ thống, sáng / tối theo hệ thống. Kiểm: người dùng xem cùng.
@@ -379,6 +379,16 @@ và B7 (Compose UI test).
     `getLaunchIntentForPackage`) thì về tab Chuyển đổi. Thử trên máy ảo: đang ở Cài đặt → Hệ thống, `am start -a SEND -d
     content://media/external/audio/media/40` → về tab Chuyển đổi, vẫn một `MainActivity`, tệp vào hàng đợi và chạy; app
     đã đóng thì mở ở tab Chuyển đổi; `intent_debug.ps1 -Transcribe B1_1m.m4a -RequestId h4` → `FILE_DONE request_id=h4`.
+- 2026-11-18, I1–I3, I5 (phần kiểm):
+  - I1: bỏ 6 chuỗi hết dùng của `:app`; lint `UnusedResources` của `:app` sạch.
+  - I2: `ui_check.ps1` mọi trang (thêm `settings/automation` vào danh sách mặc định) ở 4 cấu hình, ảnh và cây giao diện
+    ở `D:\GuzzMobileData\stage-08\i2` (48 trang). Quét cây giao diện: không phần tử nào vượt bề ngang màn hình. Xem ảnh
+    thì thấy một lỗi ở 360 dp / chữ ×2: hàng của thẻ Thiết lập ban đầu để nút cùng hàng nên nhãn bị ép, vỡ từng vài chữ
+    cái. Sửa: nút xuống dưới nhãn, căn phải. Màn ngang: thanh dưới chiếm khá nhiều chiều cao nhưng không vỡ (D113 không
+    làm bố cục riêng). Gọi `ui_check.ps1` từ pwsh con với `-Pages` là mảng thì mất trang: gọi thẳng bằng `&`.
+  - I3: đang chạy L1_20m (Gemini giả), đổi chủ đề Tối → Sáng → Theo hệ thống ở trang Hệ thống: giao diện đổi ngay, cùng
+    PID, hàng đợi vẫn tiến (2% → 3%). Đổi ngôn ngữ giữa chừng đã thử ở G1.
+  - Kiểm của I5: `.\gradlew test lint` xanh, `check_strings.ps1` sạch, B7 3/3; `CLAUDE.md` có khối "Giao diện (Stage 8)".
 
 ## Phát sinh
 

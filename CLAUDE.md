@@ -202,6 +202,24 @@ D:\Guzz\runtime\python\python.exe -B -s tools\device\compare_ffmpeg.py --pcm <go
 .\tools\device\intent_debug.ps1 -Status ; .\tools\device\intent_debug.ps1 -Events
 # Test thiết bị của :app gồm AutomationIntentTest (lệnh → FILE_DONE, mã bí mật sai) và ContentSourceTest (MediaStore,
 # provider độ dài không rõ): cài tay hai APK như mục "Test thiết bị của :app" ở trên rồi am instrument
+
+# Giao diện (Stage 8). Chạy script bằng pwsh (PowerShell 5 đọc sai tệp UTF-8 không BOM). Chụp mọi trang (cây giao diện
+# .json + ảnh .png) ở các cấu hình màn hình; xong thì -Reset. Mở thẳng một trang của bản debug: extra route.
+pwsh .\tools\device\ui_check.ps1 -Out D:\GuzzMobileData\stage-08\mac_dinh
+pwsh .\tools\device\ui_check.ps1 -Small -FontScale 2.0 -Out D:\GuzzMobileData\stage-08\nho_chu_to   # 360 dp, chữ ×2
+pwsh .\tools\device\ui_check.ps1 -Dark -Lang en -Out D:\GuzzMobileData\stage-08\toi_en
+pwsh .\tools\device\ui_check.ps1 -Reset
+adb shell am start -n io.github.cozycode890.guzz.debug/io.github.cozycode890.guzz.MainActivity --es route settings/automation
+# Chuỗi giao diện viết cứng trong code Compose (lint HardcodedText không thấy); thoát mã 1 nếu còn
+pwsh .\tools\check_strings.ps1
+# Golden xuất / nhập cài đặt dạng config.txt của desktop (configparser), rồi test
+D:\Guzz\runtime\python\python.exe -B -s tools\golden\gen_config.py
+.\gradlew :core:common:test --tests "*ConfigIniTest" --rerun
+# Compose UI test (B7: điều hướng, đổi ngôn ngữ, ô số): cài tay hai APK như mục "Test thiết bị của :app", rồi
+adb shell am instrument -w -e class 'io.github.cozycode890.guzz.ui.NavigationTest,io.github.cozycode890.guzz.ui.NumberSettingTest' io.github.cozycode890.guzz.debug.test/androidx.test.runner.AndroidJUnitRunner
+# Sổ hạn mức mẫu cho tab Hạn mức (tự tắt app rồi đẩy vào files/quota/); lưu âm thanh tách từ video, chọn luồng 2
+python -X utf8 tools\device\quota_fixture.py
+.\tools\device\queue_debug.ps1 -SaveExtracted on -Track 1
 ```
 
 ### Cài môi trường một lần
