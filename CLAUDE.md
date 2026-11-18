@@ -7,13 +7,14 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** Stage 6 (Intent cho MacroDroid), đã plan chi tiết ngày 2026-11-17 (D91–D104). Stage 7 (làm sạch âm thanh đầy đủ) xong ngày
+**Stage hiện tại:** Stage 6 (Intent cho MacroDroid), đang làm (D91–D105): A–E và G2 xong trên máy ảo, đã gộp vào `main`
+(D105); còn nhóm F (MacroDroid trên Xiaomi 15T, đêm thử) và G1, G3. Stage 7 (làm sạch âm thanh đầy đủ) xong ngày
 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, bài 79 phút thêm 3,5 phút trên Xiaomi 15T; tiêu chí nghe thử chấp nhận theo
 số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật gần desktop" trượt ở B4,
 D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày 2026-11-11, Stage 1 xong ngày
 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** làm Stage 6 và Stage 8 song song, mỗi stage một worktree; Stage 6 gộp vào `main` trước, Stage 8
-rebase rồi mới làm nhóm G, H (mục "Làm song song" ở cả hai tệp stage). Gửi bất cứ thứ gì lên Google
+**Việc tiếp theo:** Stage 6 nhóm F trên máy thật (trên `main`); Stage 8 rebase lên `main` rồi làm nhóm G, H (mục "Làm
+song song" ở cả hai tệp stage). Gửi bất cứ thứ gì lên Google
 thì hỏi người dùng ngay trước khi gửi.
 
 | Stage | Tên | Trạng thái | Tệp |

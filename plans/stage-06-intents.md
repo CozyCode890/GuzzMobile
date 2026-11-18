@@ -103,6 +103,7 @@ Hỏi người dùng ngày 2026-11-17, người dùng chọn phương án Recomm
 | D102 | Broadcast bị chặn khởi động service | **Giữ tệp trong hàng đợi**, phát `ERROR` `background_blocked`, hiện thông báo "Bấm để bắt đầu" | Không mất lệnh; macro gửi lại bằng activity, mở app cũng tự chạy tiếp. |
 | D103 | Tệp được chia sẻ mà không giữ được quyền đọc bền | **Chép vào thư mục riêng của Guzz** (kiểm chỗ trống trước), xoá khi tệp xong hoặc bị bỏ khỏi danh sách; giữ được quyền bền thì đọc thẳng | Tự làm tiếp sau khi bị giết (D64) vẫn đọc được tệp. |
 | D104 | Bản play nhận đường dẫn | **"Thư mục nguồn" cấp qua SAF** ở trang Tự động hoá; đường dẫn nằm trong một thư mục đó thì đổi sang URI tài liệu, ngoài thì `FILE_FAILED` kèm hướng dẫn | Trigger "Tệp thay đổi" của MacroDroid chỉ cho đường dẫn. Thử bằng chính bản sideload khi chưa cấp "Truy cập mọi tệp". |
+| D105 | Gộp vào `main` khi nào (hỏi 2026-11-18, Stage 8 đang chờ) | **Gộp ngay sau A–E**, nhóm F làm sau trên `main`; Stage 6 vẫn 🔨 tới khi F xong | Stage 8 làm tiếp được nhóm G, H; F chủ yếu là thử trên máy thật. |
 
 **Mặc định kỹ thuật** (không hỏi, chỉ là chi tiết thực hiện; đổi thì ghi vào Nhật ký):
 
