@@ -293,7 +293,7 @@ và B7 (Compose UI test).
 
 ### I. Kiểm cuối và đóng stage
 
-- [ ] I1. Dọn `strings.xml` cũ (chuỗi hết dùng sau B6, G1) — một commit riêng. Kiểm: lint `UnusedResources` không báo
+- [x] I1. Dọn `strings.xml` cũ (chuỗi hết dùng sau B6, G1) — một commit riêng. Kiểm: lint `UnusedResources` không báo
       chuỗi của `:app`.
 - [ ] I2. `ui_check.ps1` cho mọi trang ở 4 cấu hình: mặc định; `-Small -FontScale 2.0`; `-Dark -Lang en`; `-Landscape`. Xem
       ảnh: không chữ bị cắt, không nút tràn, không cuộn ngang. Ghi thư mục ảnh vào Nhật ký (ngoài repo,

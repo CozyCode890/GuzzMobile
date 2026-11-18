@@ -3,7 +3,6 @@
 <resources>
     <!-- Bản debug đè tên này ở src/debug (D10). -->
     <string name="app_name" translatable="false">Guzz</string>
-    <string name="main_open_google_ai">Google AI</string>
 
     <!-- Trang Google AI (Stage 3, D56). -->
     <string name="google_ai_title">Google AI</string>
@@ -28,8 +27,7 @@
     <string name="google_ai_model_pick">Chọn từ danh sách model của key:</string>
     <string name="google_ai_model_invalid">Tên model chỉ gồm chữ thường, số, dấu chấm, gạch dưới, gạch ngang (vd gemini-3.5-flash-lite). API key thì nhập ở ô API key phía trên.</string>
 
-    <!-- Màn hình Hàng đợi (Stage 4, E1–E3). -->
-    <string name="queue_title">Hàng đợi</string>
+    <!-- Tab Chuyển đổi: hàng đợi (Stage 4, E1–E3; Stage 8 B1). -->
     <string name="queue_add">Thêm tệp</string>
     <string name="queue_start">Bắt đầu</string>
     <string name="queue_stop_button">Dừng</string>
@@ -37,10 +35,6 @@
     <string name="queue_menu_debug">Màn hình thử (debug)</string>
     <string name="queue_empty">Chưa có tệp nào. Bấm Thêm tệp để chọn bài ghi âm hoặc video.</string>
     <string name="queue_banner_fake">Gemini GIẢ đang bật (bản debug): không gửi gì lên Google.</string>
-    <string name="queue_banner_no_key">Chưa có API key của Google AI Studio.</string>
-    <string name="queue_banner_no_folder">Chưa chọn thư mục lưu bản chép lời.</string>
-    <string name="queue_banner_battery">Guzz chưa được miễn tối ưu pin: tắt màn hình lâu thì việc nền có thể bị dừng. Chọn Pin → Không hạn chế.</string>
-    <string name="queue_open_app_info">Mở cài đặt</string>
     <string name="queue_choose_folder">Chọn thư mục</string>
     <!-- %1$s: tên thư mục -->
     <string name="queue_folder">Lưu vào: %1$s</string>

@@ -278,6 +278,8 @@ private fun CopyLine(label: String?, value: String) {
 }
 
 private fun copy(context: Context, value: String) {
-    context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Guzz", value))
+    // Nhãn của clip là tên kỹ thuật, không hiện lên giao diện.
+    val clip = ClipData.newPlainText("Guzz", value) // strings-ok
+    context.getSystemService(ClipboardManager::class.java).setPrimaryClip(clip)
     Toast.makeText(context, context.getString(R.string.automation_copied, value), Toast.LENGTH_SHORT).show()
 }

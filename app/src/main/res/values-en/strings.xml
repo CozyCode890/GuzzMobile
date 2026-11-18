@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="main_open_google_ai">Google AI</string>
 
     <string name="google_ai_title">Google AI</string>
     <string name="google_ai_key_saved">API key saved: %1$s</string>
@@ -22,7 +21,6 @@
     <string name="google_ai_model_pick">Pick from the key\'s models:</string>
     <string name="google_ai_model_invalid">A model name has only lowercase letters, digits, dots, underscores and dashes (e.g. gemini-3.5-flash-lite). Enter API keys in the API key box above.</string>
 
-    <string name="queue_title">Queue</string>
     <string name="queue_add">Add files</string>
     <string name="queue_start">Start</string>
     <string name="queue_stop_button">Stop</string>
@@ -30,10 +28,6 @@
     <string name="queue_menu_debug">Test screen (debug)</string>
     <string name="queue_empty">No files yet. Tap Add files to pick a recording or a video.</string>
     <string name="queue_banner_fake">FAKE Gemini is on (debug build): nothing is sent to Google.</string>
-    <string name="queue_banner_no_key">No Google AI Studio API key yet.</string>
-    <string name="queue_banner_no_folder">No folder chosen for transcripts.</string>
-    <string name="queue_banner_battery">Guzz is not exempt from battery optimization: long screen-off runs may be stopped. Choose Battery → No restrictions.</string>
-    <string name="queue_open_app_info">Open settings</string>
     <string name="queue_choose_folder">Choose folder</string>
     <string name="queue_folder">Save to: %1$s</string>
     <string name="queue_folder_none">(not chosen)</string>
