@@ -215,7 +215,7 @@ Quy tắc giữ suốt stage:
 
 ### E. Nội dung phát hành (D125, D126, D127, D129)
 
-- [ ] E1. Icon (D127): vẽ lại `D:\Guzz\gui\assets\icon.png` thành vector — nền gradient xanh (`ic_launcher_background`),
+- [x] E1. Icon (D127): vẽ lại `D:\Guzz\gui\assets\icon.png` thành vector — nền gradient xanh (`ic_launcher_background`),
       sóng âm + hai vạch chữ trắng trong vùng an toàn 66 dp (`ic_launcher_foreground`), lớp `monochrome`; bản debug giữ
       cùng hình, khác màu nền để phân biệt. Kiểm: ảnh chụp launcher trên máy ảo (tròn, vuông, icon theo chủ đề Android
       13+) và trên Xiaomi 15T; người dùng xem ảnh và đồng ý.
@@ -383,8 +383,8 @@ cần dùng.
 - (2026-11-18, E1) Icon vector vẽ lại từ `icon.png` desktop (đo màu và vị trí nét bằng PIL, tỉ lệ 0,27 dp/px, căn giữa
   phần nét): 6 cột sóng âm, mũi tên xuống, vạch chữ dài + vạch ngắn mờ 70 %; nền gradient `#0497B1` → `#206BE2`; lớp
   monochrome dùng chung lớp trước. Bản debug: cùng hình, nền `#E8710A` → `#B3261E`. Bỏ màu `ic_launcher_background` cũ.
-  Ảnh trên máy ảo (mặt nạ tròn, màn hình chờ bản debug): `D:\GuzzMobileData\stage-09\e1\`. Chờ người dùng duyệt + ảnh trên
-  Xiaomi 15T (F1).
+  Ảnh trên máy ảo (mặt nạ tròn, màn hình chờ bản debug): `D:\GuzzMobileData\stage-09\e1\`. Người dùng duyệt icon
+  (2026-11-18); ảnh trên Xiaomi 15T chụp kèm F1.
 - (2026-11-18, E3, E4) Trang Thông tin: nút "Mã nguồn", "Bản mới (GitHub)" (mở trình duyệt); phần "Quyền riêng tư"; giấy
   phép thành danh sách 8 mục, bấm vào mở hộp toàn văn từ `assets/licenses/` (Apache-2.0 dùng chung một tệp; dòng cắt cứng
   được nối lại theo đoạn khi hiển thị). Toàn văn: Apache-2.0 từ LICENSE của `k2-fsa/sherpa-onnx` (trùng từng chữ với
