@@ -9,6 +9,7 @@ import io.github.cozycode890.guzz.core.gemini.ConstraintException
 import io.github.cozycode890.guzz.core.gemini.ErrorKind
 import io.github.cozycode890.guzz.core.gemini.FakeGemini
 import io.github.cozycode890.guzz.core.gemini.GoogleAIException
+import io.github.cozycode890.guzz.core.gemini.PromptKind
 import io.github.cozycode890.guzz.core.gemini.LockReason
 import io.github.cozycode890.guzz.core.gemini.Quota
 import io.github.cozycode890.guzz.core.gemini.QuotaTracker
@@ -159,6 +160,24 @@ class FilePipelineTest {
         cfg = cfg.copy(saveCleanAudio = false)
         run(client)
         assertEquals(2, source.prepareCalls)
+    }
+
+    @Test
+    fun `prompt lấy từ PromptSource, đổi prompt thì gửi lại thay vì dùng kết quả cũ`() {
+        cfg = cfg.copy(gemini = cfg.gemini.copy(model = "gemini-3.5-flash"), deleteTempWhenDone = false)
+        var custom = "Chép lời đúng từng chữ (prompt đã sửa)."
+        val p = FilePipeline(File(tmp, "tmp"), logger, sleep = {}, prompts = { kind ->
+            if (kind == PromptKind.TRANSCRIBE) custom else kind.default
+        })
+        val client = FakeClient { _, _ -> text("x") }
+        runBlocking { p.run(source, out, cfg, client) }
+        val first = client.calls.size
+        assertTrue(first > 0 && client.calls.all { it.prompt == custom })
+        // Prompt nằm trong khoá cache: sửa prompt thì các đoạn được gửi lại với prompt mới.
+        custom = "Prompt khác."
+        runBlocking { p.run(source, out, cfg, client) }
+        assertEquals(2 * first, client.calls.size)
+        assertTrue(client.calls.drop(first).all { it.prompt == "Prompt khác." })
     }
 
     @Test

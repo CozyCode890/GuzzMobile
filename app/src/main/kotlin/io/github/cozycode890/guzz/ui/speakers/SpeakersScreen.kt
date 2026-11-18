@@ -28,7 +28,10 @@ import io.github.cozycode890.guzz.core.gemini.isTranscribeModel
 import io.github.cozycode890.guzz.core.gemini.validDiarizationMethods
 import io.github.cozycode890.guzz.core.speaker.Paragraph
 import io.github.cozycode890.guzz.core.speaker.Speakers
+import io.github.cozycode890.guzz.core.gemini.PromptKind
+import io.github.cozycode890.guzz.core.pipeline.SpeakerTranscript
 import io.github.cozycode890.guzz.ui.components.AdvancedSection
+import io.github.cozycode890.guzz.ui.components.PromptEditor
 import io.github.cozycode890.guzz.ui.components.ChoiceSettingRow
 import io.github.cozycode890.guzz.ui.components.Hint
 import io.github.cozycode890.guzz.ui.components.NumberSetting
@@ -173,6 +176,12 @@ fun SpeakersScreen(settings: Settings, onBack: () -> Unit) {
         }
 
         AdvancedSection {
+            PromptEditor(
+                PromptKind.DIARIZATION, stringResource(R.string.prompt_diarization_title),
+                stringResource(R.string.prompt_diarization_hint),
+                lockedReason = if (isTranscribeModel(model)) stringResource(R.string.prompt_locked_transcribe, model) else null,
+                requiredText = SpeakerTranscript.SPEAKERS_PLACEHOLDERS.first(),
+            )
             SectionCard(stringResource(R.string.speakers_smooth_section), hint = stringResource(R.string.speakers_smooth_hint)) {
                 SwitchSetting(settings, SettingKeys.SMOOTH, stringResource(R.string.speakers_smooth))
                 NumberSetting(settings, SettingKeys.SANDWICH_MAX_SEC, stringResource(R.string.speakers_sandwich_max))

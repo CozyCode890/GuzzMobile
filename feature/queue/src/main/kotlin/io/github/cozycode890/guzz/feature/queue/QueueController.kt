@@ -61,6 +61,7 @@ class QueueController(
     // Tách giọng trên máy (Stage 5): sherpa-onnx trong process :diarize, Dừng thì giết process đó.
     private val pipeline = FilePipeline(
         tempRoot, logger, diarizer = AndroidSpeakerDiarizer(context, log = { logger.info(it) }),
+        prompts = promptSource(context),
     )
 
     private val env = object : QueueEnvironment {

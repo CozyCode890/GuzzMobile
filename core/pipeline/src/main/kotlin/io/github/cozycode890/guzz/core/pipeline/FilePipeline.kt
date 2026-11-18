@@ -8,7 +8,8 @@ import io.github.cozycode890.guzz.core.common.log.Logger
 import io.github.cozycode890.guzz.core.gemini.ChunkDispatcher
 import io.github.cozycode890.guzz.core.gemini.ChunkTranscriber
 import io.github.cozycode890.guzz.core.gemini.ConstraintException
-import io.github.cozycode890.guzz.core.gemini.DefaultPrompt
+import io.github.cozycode890.guzz.core.gemini.PromptKind
+import io.github.cozycode890.guzz.core.gemini.PromptSource
 import io.github.cozycode890.guzz.core.gemini.ErrorKind
 import io.github.cozycode890.guzz.core.gemini.GeminiConfig
 import io.github.cozycode890.guzz.core.gemini.GoogleAIException
@@ -88,6 +89,8 @@ class FilePipeline(
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val io: CoroutineDispatcher = Dispatchers.IO,
     private val diarizer: SpeakerDiarizer? = null,
+    /** Prompt người dùng sửa (Stage 8 G3); mặc định là prompt đóng gói. */
+    private val prompts: PromptSource = PromptSource.DEFAULT,
 ) {
     fun tempDirFor(info: SourceInfo): File = File(tempRoot, CacheKeys.tempDirName(info.displayName, fingerprint(info)))
 
@@ -380,8 +383,10 @@ class FilePipeline(
     ): List<ChunkResult> {
         constraintError(cfg)?.let { throw ConstraintException(it) }
         val dispatcher = ChunkDispatcher(cfg, client, sleep, logger)
-        fun promptFor(model: String): String? = if (isTranscribeModel(model)) null else DefaultPrompt.text
-        val speakerPrompt = if (method == DiarizationMethod.PYANNOTE) DefaultPrompt.diarization else null
+        // Đọc một lần cho cả tệp: sửa prompt giữa chừng không làm các đoạn của cùng tệp khác nhau.
+        val mainPrompt = prompts.read(PromptKind.TRANSCRIBE)
+        fun promptFor(model: String): String? = if (isTranscribeModel(model)) null else mainPrompt
+        val speakerPrompt = if (method == DiarizationMethod.PYANNOTE) prompts.read(PromptKind.DIARIZATION) else null
         if (method == DiarizationMethod.GEMINI || method == DiarizationMethod.HYBRID) {
             if (cfg.vocabulary.isNotEmpty()) {
                 logger.warning("Từ vựng chuyên ngành bị bỏ qua: Google không cho dùng cùng tách người nói / mốc từng từ.")

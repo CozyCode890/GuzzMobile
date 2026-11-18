@@ -268,7 +268,7 @@ và B7 (Compose UI test).
       mục tạm; xong tệp thì ghi `<tên>.am_thanh.flac` cạnh bản chép lời (cùng `OutputSink`); đoạn lấy từ cache mà không còn
       PCM thì giải mã lại. Port theo `transcribe.py` (`save_extracted`). Kiểm: test `:core:pipeline` (có / không cache);
       máy ảo: `queue_debug.ps1 -Fake on`, thêm `testdata/media/two_tracks.mp4` → có tệp `.am_thanh.flac` mở được, đúng luồng đã chọn.
-- [ ] G3. Prompt sửa được: `FilePipeline` đọc prompt qua một `PromptSource` (tệp `files/prompts/*.txt`, trống thì
+- [x] G3. Prompt sửa được: `FilePipeline` đọc prompt qua một `PromptSource` (tệp `files/prompts/*.txt`, trống thì
       `DefaultPrompt` / prompt người nói mặc định). Ô sửa prompt ở Google AI và Người nói (Nâng cao), nút Khôi phục mặc
       định; ô bị khoá khi model là `*-transcribe` (không nhận prompt), ghi rõ lý do. Kiểm: test `:core:pipeline` dùng prompt
       tệp; Gemini giả ghi prompt vào log DEBUG thấy nội dung mới.
@@ -354,6 +354,13 @@ và B7 (Compose UI test).
     chất lượng gốc), vì máy chỉ có PCM đã giải mã về 16 kHz. `queue_debug.ps1` thêm `-SaveExtracted on|off` và
     `-Track auto|0..3`. Thử trên máy ảo: `two_tracks.mp4`, luồng 2, Gemini giả → `two_tracks.am_thanh.flac` mở được bằng
     ffmpeg (16 kHz mono, 3 s), đỉnh phổ 880 Hz (đúng luồng 2; luồng 1 là 440 Hz).
+  - G3: `PromptSource` / `FilePromptSource` / `PromptKind` ở `:core:gemini` (JVM thuần); `FilePipeline` nhận
+    `prompts`, đọc một lần mỗi tệp (prompt nằm trong khoá cache nên sửa prompt thì các đoạn được gửi lại). Lưu trống hoặc
+    trùng mặc định thì xoá tệp (về mặc định, prompt mặc định của bản sau vẫn áp dụng). Ô sửa ở Nâng cao của trang Google
+    AI (prompt chép lời) và Người nói (prompt người nói, nhắc khi thiếu `{speakers}`), khoá khi model `*-transcribe`. Gemini
+    giả ghi prompt ở mức DEBUG. Thử trên máy ảo: đặt mức log DEBUG và sửa prompt qua giao diện → `files/prompts/prompt.txt`;
+    chạy `B1_1m.m4a` với `gemini-3.5-flash` → log "Gemini GIẢ: prompt = PROMPT_THU_G3 …"; đổi sang
+    `gemini-3.5-transcribe` thì ô của trang Người nói bị khoá, có lý do (tiếng Anh).
 
 ## Phát sinh
 

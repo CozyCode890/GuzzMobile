@@ -171,4 +171,14 @@
     <string name="about_licenses">Licenses</string>
     <string name="about_licenses_models">Speaker separation: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
     <string name="about_licenses_libs">Libraries: AndroidX and Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines and kotlinx.serialization (Apache-2.0).</string>
+    <string name="prompt_main_title">Transcription prompt</string>
+    <string name="prompt_main_hint">Tells general models how to transcribe when speaker recognition is off. Applies from the next file.</string>
+    <string name="prompt_diarization_title">Speaker prompt</string>
+    <string name="prompt_diarization_hint">Only used by On-device diarization + prompt. {speakers} is replaced with the names of the speakers in the chunk. Applies from the next file.</string>
+    <string name="prompt_locked_transcribe">The selected model (%1$s) is a *-transcribe model: it takes no prompt, so this can\'t be edited. Choose a general model on the Google AI page to use prompts.</string>
+    <string name="prompt_missing_placeholder">The prompt has no %1$s: the model will not know the speaker names in the chunk.</string>
+    <string name="prompt_state_default">Using the default prompt.</string>
+    <string name="prompt_state_custom">Using your edited prompt.</string>
+    <string name="prompt_save">Save prompt</string>
+    <string name="prompt_reset">Restore default</string>
 </resources>

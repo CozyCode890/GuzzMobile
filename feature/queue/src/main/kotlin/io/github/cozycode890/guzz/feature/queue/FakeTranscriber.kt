@@ -35,6 +35,8 @@ class FakeTranscriber(private val delayMs: Long = 3_000) : ChunkTranscriber {
     ): JsonObject {
         val index = Regex("doan_(\\d+)").find(audio.name)?.groupValues?.get(1)?.toInt() ?: 0
         GuzzLog.info("Gemini GIẢ: ${audio.name} (${audio.length() / 1024} KB, ${options.model}), không gọi mạng.")
+        // Stage 8 G3: thấy được prompt đã sửa có tới pipeline không.
+        GuzzLog.debug("Gemini GIẢ: prompt = ${prompt?.replace('\n', '⏎')?.take(300) ?: "(không có)"}")
         delay(delayMs)
         val seconds = audioSeconds ?: 60.0
         val map = options.attachedText ?: options.attachment?.takeIf { it.isFile }?.readText(Charsets.UTF_8)

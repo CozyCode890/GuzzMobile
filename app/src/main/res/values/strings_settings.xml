@@ -191,4 +191,17 @@
     <string name="about_licenses">Giấy phép</string>
     <string name="about_licenses_models">Tách giọng: sherpa-onnx (Apache-2.0), pyannote segmentation-3.0 (MIT), 3D-Speaker CAM++ (Apache-2.0).</string>
     <string name="about_licenses_libs">Thư viện: AndroidX và Jetpack Compose (Apache-2.0), OkHttp (Apache-2.0), kotlinx.coroutines và kotlinx.serialization (Apache-2.0).</string>
+    <!-- Prompt sửa được (Stage 8 G3) -->
+    <string name="prompt_main_title">Prompt chép lời</string>
+    <string name="prompt_main_hint">Dặn model đa năng cách chép lời khi tắt nhận diện người nói. Áp dụng từ tệp chuyển tiếp theo.</string>
+    <string name="prompt_diarization_title">Prompt người nói</string>
+    <string name="prompt_diarization_hint">Chỉ dùng cho cách Tách giọng trên máy + Prompt. {speakers} được thay bằng tên người nói trong đoạn. Áp dụng từ tệp chuyển tiếp theo.</string>
+    <!-- %1$s: model -->
+    <string name="prompt_locked_transcribe">Model đang chọn (%1$s) là *-transcribe: không nhận prompt, nên chưa sửa được. Chọn model đa năng ở trang Google AI để dùng prompt.</string>
+    <!-- %1$s: biến, vd {speakers} -->
+    <string name="prompt_missing_placeholder">Prompt chưa có %1$s: model sẽ không biết tên người nói trong đoạn.</string>
+    <string name="prompt_state_default">Đang dùng prompt mặc định.</string>
+    <string name="prompt_state_custom">Đang dùng prompt đã sửa.</string>
+    <string name="prompt_save">Lưu prompt</string>
+    <string name="prompt_reset">Khôi phục mặc định</string>
 </resources>

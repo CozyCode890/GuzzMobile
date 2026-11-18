@@ -42,10 +42,12 @@ import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.gemini.ErrorKind
 import io.github.cozycode890.guzz.core.gemini.GoogleAIException
+import io.github.cozycode890.guzz.core.gemini.PromptKind
 import io.github.cozycode890.guzz.core.gemini.isTranscribeModel
 import io.github.cozycode890.guzz.core.gemini.isValidModelName
 import io.github.cozycode890.guzz.core.gemini.maskApiKey
 import io.github.cozycode890.guzz.ui.components.AdvancedSection
+import io.github.cozycode890.guzz.ui.components.PromptEditor
 import io.github.cozycode890.guzz.ui.components.ChoiceSettingRow
 import io.github.cozycode890.guzz.ui.components.Hint
 import io.github.cozycode890.guzz.ui.components.NumberSetting
@@ -247,6 +249,10 @@ fun GoogleAiScreen(container: AppContainer, onBack: () -> Unit) {
         }
 
         AdvancedSection {
+            PromptEditor(
+                PromptKind.TRANSCRIBE, stringResource(R.string.prompt_main_title), stringResource(R.string.prompt_main_hint),
+                lockedReason = if (isTranscribeModel(model)) stringResource(R.string.prompt_locked_transcribe, model) else null,
+            )
             SectionCard(stringResource(R.string.google_ai_request_section)) {
                 SwitchSetting(settings, SettingKeys.STORE_ON_SERVER, stringResource(R.string.google_ai_store))
                 SwitchSetting(settings, SettingKeys.DELETE_REMOTE_FILE, stringResource(R.string.google_ai_delete_remote))
