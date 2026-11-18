@@ -49,8 +49,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="audio/*" />
                 <data android:mimeType="video/*" />
-                <!-- D106: Zalo, Telegram… chia sẻ tệp với kiểu chung; ShareActivity tự lọc theo đuôi tệp. -->
-                <data android:mimeType="application/octet-stream" />
+                <!-- D106: Zalo chia sẻ m4a với kiểu application/… (không phải audio/*); ShareActivity tự lọc theo đuôi tệp. -->
+                <data android:mimeType="application/*" />
             </intent-filter>
         </activity>
     </application>
