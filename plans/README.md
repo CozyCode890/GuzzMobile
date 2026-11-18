@@ -171,6 +171,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D136 | 2026-11-18 | Nâng AGP / Gradle khi Kotlin 2.4.21 chỉ phủ tới AGP 9.3.1 / Gradle 9.7.0 (Stage 9) | **Giữ AGP 9.3.3 / Gradle 9.7.1**, chỉ nâng appcompat 1.8.0, kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` | Bộ hiện tại đã là mức cao nhất Kotlin phủ (D134). |
 | D137 | 2026-11-18 | Khoá ký (Stage 9, thay phần tạo khoá của D129) | **Dùng khoá Morphe có sẵn**, người dùng tự chuyển BKS → PKCS12 ra ngoài repo, sao lưu như D129 | Người dùng chọn, không tạo khoá mới. |
 | D138 | 2026-11-18 | Mã bí mật trống khi bật lệnh từ app khác (Stage 9 B1) | **Tự tạo mã khi bật công tắc mà ô đang trống**, vẫn cho xoá trắng | Không để mọi app trên máy dùng key và hạn mức của người dùng. |
+| D139 | 2026-11-19 | Thử máy ảo (Stage 9 F3, thay một phần D131) | **Chỉ API 26, chỉ giao diện**, không gửi Gemini, bỏ API 30 | Đỡ RAM; luồng đủ đã thử trên Xiaomi 15T. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

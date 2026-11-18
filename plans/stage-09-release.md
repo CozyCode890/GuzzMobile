@@ -95,6 +95,7 @@ Có APK release đã ký, phát hành qua GitHub Releases. Trước khi phát h�
 | D136 | Nâng AGP / Gradle khi Kotlin 2.4.21 (ổn định mới nhất, 2.5.0 mới RC) chỉ phủ tới AGP 9.3.1 / Gradle 9.7.0 (A1) | **Giữ AGP 9.3.3 / Gradle 9.7.1**, chỉ nâng appcompat 1.8.0 và kotlinx-serialization 1.13.0; tắt lint `AndroidGradlePluginVersion` kèm lý do | Đúng D134: bộ hiện tại đã là mức cao nhất Kotlin phủ. |
 | D137 | Khoá ký (thay phần tạo khoá mới của D129) | **Dùng khoá Morphe có sẵn** (`Downloads\Morphe.keystore`, dạng BKS của Morphe Manager): người dùng tự chạy lệnh chuyển sang PKCS12 (cần thư viện BouncyCastle cho `keytool`) ra `D:\GuzzMobileData\keys\`, tự gõ mật khẩu; sao lưu như D129 | Người dùng chọn, không tạo khoá mới. Gradle / apksigner không đọc BKS. |
 | D138 | Mã bí mật mặc định trống (B1): khi bật lệnh từ app khác, mọi app trên máy gửi được TRANSCRIBE | **Tự tạo mã khi bật công tắc mà ô đang trống**; vẫn cho xoá trắng | Không phải app nào trên máy cũng dùng được key và hạn mức của người dùng; người cần thì vẫn bỏ được. |
+| D139 | Thử máy ảo (F3, thay một phần D131) | **Chỉ máy ảo API 26 (Android 8.0, image AOSP `default`), chỉ giao diện**: cài bản release, mở 3 tab + 9 trang Cài đặt + "Nâng cao" của Google AI; không gửi Gemini (phải dán key vào máy ảo), bỏ API 30 | Người dùng chọn, đỡ RAM laptop; giải mã / tách giọng / gửi đã thử thật trên Xiaomi (Android 16). |
 
 ## Kế hoạch chi tiết
 
@@ -253,10 +254,10 @@ cần dùng.
 - [x] F2. Cài đè: có cài đặt đã đổi, key, sổ hạn mức, hàng đợi có tệp, lịch sử → build `-Pguzz.version=1.0.1`,
       `adb install -r`. Kiểm: cài đặt, key, hạn mức, hàng đợi, lịch sử còn nguyên; log ghi `last_version_code`
       10000 → 10001; hàng đợi làm tiếp được.
-- [ ] F3. Máy ảo API 26 và API 30 (`x86_64`, build `-Pguzz.emulatorAbi=true`; hỏi trước khi tải system image, nêu dung
+- [x] F3. Máy ảo API 26 và API 30 (`x86_64`, build `-Pguzz.emulatorAbi=true`; hỏi trước khi tải system image, nêu dung
       lượng): cài mới, mở mọi tab, chọn tệp `B1_1m.m4a`, chạy với tách giọng bật (người dùng nhập key; gửi thật: hỏi
       trước), đổi ngôn ngữ. Kiểm: ra `.txt`; không crash (`adb logcat -b crash` trống).
-- [ ] F4. Đo bài 2 giờ trên bản release (D135, Phát sinh Stage 4): Xiaomi 15T rút cáp, `L1_120m.m4a`, tách giọng bật,
+- [x] F4. Đo bài 2 giờ trên bản release (D135, Phát sinh Stage 4): Xiaomi 15T rút cáp, `L1_120m.m4a`, tách giọng bật,
       màn hình tắt (gửi thật: hỏi trước). Ghi thời gian từng bước (giải mã, làm sạch, tách giọng, gửi) từ log, pin đầu /
       cuối, nhiệt cao nhất (`measure_diarize.ps1 -Package …`). Kiểm: số đo vào Nhật ký, so với mốc debug (xử lý âm thanh
       346 s / PSS 114 MB ở Stage 2; tách giọng 22,9 phút, −8 % pin, 41,1 °C ở Stage 1). Nóng / tốn pin bất thường
@@ -425,6 +426,23 @@ cần dùng.
   quyền tệp, hạn mức (`gemini-3.1-flash-lite`: 5 yêu cầu, 8.754 token) còn nguyên (máy tự bấm qua giao diện bằng
   uiautomator theo lời người dùng). Đạt tiêu chí "cài đè giữ nguyên dữ liệu và cài đặt" với khoá debug; G2 cài bản ký khoá
   thật sẽ phải gỡ bản thử (khác chữ ký).
+- (2026-11-19, F4) Xiaomi 15T, bản release 1.0.1 (khoá debug), `L1_120m.m4a` (2 giờ) nạp bằng Chia sẻ tới Guzz qua adb
+  (`am start … ShareActivity --eu android.intent.extra.STREAM content://media/external/file/<id>`; tệp được chép vào
+  `inbox`, D103), cách người nói "trên máy", preset "Moving speaker", `gemini-3.1-flash-lite`; gửi thật 9 đoạn (người dùng
+  đồng ý). adb qua Wi-Fi (`adb tcpip 5555`, `192.168.1.6:5555`) + `dumpsys battery unplug` (người dùng bảo tự chạy), xong
+  `dumpsys battery reset` + `adb usb`. Script mới `tools/device/measure_release.ps1` (không cần receiver debug) +
+  bộ ghi nhiệt riêng. Kết quả: **41,3 phút** tổng; xử lý âm thanh + cắt đoạn **339 s** (đủ chuỗi làm sạch Stage 7; mốc bản
+  debug Stage 2 chỉ cắt lặng + chuẩn hoá: 346 s), tách giọng **1568 s = 26,1 phút** (1135 lượt, 2 người; mốc Stage 1:
+  22,9 phút), 9 đoạn Gemini 22–77 s mỗi đoạn; PSS cao nhất app 169 MB, `:diarize` **507 MB** (mốc 556 MB); nhiệt
+  (`dumpsys thermalservice`) pin / bề mặt 37,6 → **39,6 °C**, CPU tối đa 70 °C (mốc 41,1 °C). Ra
+  `L1_120m (2).txt` (81 KB). **Pin không đo được**: cáp USB vẫn cắm (log: 76 → 72 → 73 %), và `dumpsys battery` bị đóng
+  băng khi đang `unplug` (76 % / 33,4 °C suốt lượt) → script đổi sang đọc nhiệt ở `thermalservice`, ghi chú phải rút cáp
+  thật. Không nóng / tốn RAM bất thường nên không hỏi thêm (D135). Màn hình bật suốt lượt (người dùng dùng máy).
+- (2026-11-19, F3) D139: tải `system-images;android-26;default;x86_64` (người dùng đồng ý; 3,2 GB trên đĩa), tạo máy ảo
+  `guzz_api26` (RAM 2 GB), tắt `guzz_15t` trước. Bản release `-Pguzz.emulatorAbi=true` từ HEAD (có bản sửa `f79b795`):
+  cài được trên Android 8.0.0; bấm qua 3 tab, 9 trang Cài đặt (nhãn "Output" thật là "Transcripts"), phần "Nâng cao" của
+  Transcripts và của Google AI (chỗ crash ở F1): app sống, `logcat -b crash` trống. Ảnh: `…\stage-09\f3_api26_b\`. Không
+  gửi Gemini trên máy ảo, không thử API 30 (D139). Tắt máy ảo sau khi thử.
 
 ## Phát sinh
 
