@@ -11,7 +11,7 @@ android {
 
 dependencies {
     api(project(":feature:queue"))
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core)
 }
 
 // IntentsDocTest đọc docs/intents.md: khai báo để sửa tài liệu thì test chạy lại, không lấy kết quả cũ từ cache.

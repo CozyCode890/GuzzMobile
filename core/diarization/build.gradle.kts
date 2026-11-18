@@ -2,7 +2,6 @@ import io.github.cozycode890.guzz.buildlogic.GuzzDeps
 
 plugins {
     alias(libs.plugins.guzz.android.library)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 // Tách giọng trên máy bằng sherpa-onnx (JNI): một phần âm thanh, process `:diarize`, bản Android của SpeakerDiarizer.
@@ -67,7 +66,6 @@ dependencies {
     api(project(":core:speaker"))
     api(project(":core:audio"))
     implementation("${GuzzDeps.SHERPA_GROUP}:${GuzzDeps.SHERPA_ARTIFACT}:${GuzzDeps.SHERPA_VERSION}")
-    implementation(libs.kotlinx.serialization.json)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

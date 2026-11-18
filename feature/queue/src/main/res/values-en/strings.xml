@@ -12,7 +12,7 @@
     <string name="queue_detail_transcribe">Transcribing</string>
     <string name="queue_detail_merge">Assembling the transcript</string>
     <string name="queue_done_title">Guzz: queue finished</string>
-    <string name="queue_done_text">%1$d done, %2$d failed, %3$d skipped.</string>
+    <string name="queue_done_text">Done: %1$d, failed: %2$d, skipped: %3$d.</string>
     <string name="queue_done_error">Queue stopped by an error: %1$s</string>
     <string name="queue_timeout_title">Guzz: stopped by the system</string>
     <string name="queue_timeout_text">Android ran out of background time. Open Guzz to continue from the current chunk.</string>

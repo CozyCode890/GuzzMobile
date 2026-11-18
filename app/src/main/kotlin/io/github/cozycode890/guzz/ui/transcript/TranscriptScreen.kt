@@ -1,7 +1,6 @@
 package io.github.cozycode890.guzz.ui.transcript
 
 import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.R
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.openWithOtherApp
@@ -45,7 +45,7 @@ private fun readParagraphs(context: Context, location: String): List<String> {
     val bytes = if (location.startsWith("/")) {
         File(location).readBytes()
     } else {
-        context.contentResolver.openInputStream(Uri.parse(location))?.use { it.readBytes() } ?: ByteArray(0)
+        context.contentResolver.openInputStream(location.toUri())?.use { it.readBytes() } ?: ByteArray(0)
     }
     return bytes.toString(Charsets.UTF_8).removePrefix(BOM).replace("\r\n", "\n")
         .split("\n\n").map { it.trimEnd() }.filter { it.isNotEmpty() }

@@ -148,7 +148,7 @@
     <string name="system_export_done">Settings exported.</string>
     <string name="system_transfer_failed">Could not read / write the file.</string>
     <string name="system_import_done">Settings imported</string>
-    <string name="system_import_summary">Applied %1$d settings, skipped %2$d not used on the phone, %3$d invalid (previous value kept).</string>
+    <string name="system_import_summary">Applied: %1$d. Skipped (not used on the phone): %2$d. Invalid (previous value kept): %3$d.</string>
     <string name="system_import_errors">Invalid:</string>
     <string name="system_import_skipped">Skipped:</string>
     <string name="system_logs_section">Logs</string>

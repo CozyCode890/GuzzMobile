@@ -14,7 +14,9 @@
     <string name="google_ai_delete">Xoá key</string>
     <string name="google_ai_check">Kiểm tra kết nối</string>
     <string name="google_ai_checking">Đang kiểm tra…</string>
-    <string name="google_ai_check_ok">Kết nối được: key dùng được %1$d model.</string>
+    <plurals name="google_ai_check_ok">
+        <item quantity="other">Kết nối được: key dùng được %1$d model.</item>
+    </plurals>
     <string name="google_ai_error_config">Key sai hoặc không có quyền.</string>
     <string name="google_ai_error_network">Không kết nối được tới Google AI (mạng).</string>
     <string name="google_ai_error_quota">Đã hết hạn mức.</string>

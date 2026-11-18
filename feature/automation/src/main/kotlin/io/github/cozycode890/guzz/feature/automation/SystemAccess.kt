@@ -12,6 +12,7 @@ import android.os.Environment
 import android.os.PowerManager
 import android.provider.DocumentsContract
 import android.provider.Settings as AndroidSettings
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ class FileAccess(private val context: Context, private val settings: Settings, v
     /** Trang cài đặt "Truy cập mọi tệp" của Guzz (Android 11+, bản sideload); `null` khi không dùng được. */
     @SuppressLint("InlinedApi")
     fun allFilesAccessIntent(): Intent? = if (allFilesFlavor && Build.VERSION.SDK_INT >= 30) {
-        Intent(AndroidSettings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:${context.packageName}"))
+        Intent(AndroidSettings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, "package:${context.packageName}".toUri())
     } else {
         null
     }
@@ -88,7 +89,7 @@ class BatteryStatus(private val context: Context, private val canRequestDirectly
 
     @SuppressLint("BatteryLife")
     fun requestIntent(): Intent = if (canRequestDirectly) {
-        Intent(AndroidSettings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${context.packageName}"))
+        Intent(AndroidSettings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:${context.packageName}".toUri())
     } else {
         Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
     }

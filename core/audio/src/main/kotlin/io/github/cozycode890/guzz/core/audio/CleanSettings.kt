@@ -21,9 +21,6 @@ data class CleanSettings(
     val levelWindowSec: Double = 3.0,
     val transientClampDb: Double = 0.0,
 ) {
-    /** Có bước nào ngoài chuẩn hoá và cắt lặng phải chạy không; không thì đi đúng đường của Stage 2. */
-    val anyStep: Boolean get() = denoise || levelWindowSec > 0 || transientClampDb > 0
-
     companion object {
         /** Tắt hết: chỉ chuẩn hoá âm lượng và cắt lặng như Stage 2 (D7). */
         val OFF = CleanSettings(denoise = false, levelWindowSec = 0.0, transientClampDb = 0.0)

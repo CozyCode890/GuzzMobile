@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.AppContainer
 import io.github.cozycode890.guzz.BuildConfig
 import io.github.cozycode890.guzz.R
@@ -203,7 +204,7 @@ fun ConvertScreen(container: AppContainer, resumes: StateFlow<Int>, open: (Strin
                 // ---- cài đặt nhanh (Stage 4 E2)
                 item(key = "quick") {
                     QuickSettings(
-                        outputLabel = outputDir?.takeIf { it.isNotBlank() }?.let { Uri.parse(it).lastPathSegment?.substringAfter(':') ?: it },
+                        outputLabel = outputDir?.takeIf { it.isNotBlank() }?.let { it.toUri().lastPathSegment?.substringAfter(':') ?: it },
                         model = model,
                         audioLabel = audioPreset?.let { presetLabel(context, it) } ?: "",
                         onAudio = { open(Routes.AUDIO) },

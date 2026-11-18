@@ -50,7 +50,10 @@
     <string name="automation_blocked_text">Android does not let Guzz run in the background right now. The file is still in the queue: tap to open Guzz and start. Exempt Guzz from battery optimization so it starts on its own next time.</string>
 
     <string name="share_label">Transcribe with Guzz</string>
-    <string name="share_added">Added %1$d file(s) to the queue.</string>
+    <plurals name="share_added">
+        <item quantity="one">Added %1$d file to the queue.</item>
+        <item quantity="other">Added %1$d files to the queue.</item>
+    </plurals>
     <string name="share_failed">Could not read: %1$s</string>
     <string name="share_problem">Added to the queue but not started: %1$s</string>
     <string name="share_unsupported">Guzz only transcribes audio / video files, skipped: %1$s</string>

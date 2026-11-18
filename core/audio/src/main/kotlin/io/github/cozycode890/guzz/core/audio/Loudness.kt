@@ -1,6 +1,5 @@
 package io.github.cozycode890.guzz.core.audio
 
-import io.github.cozycode890.guzz.core.audio.pcm.GainSource
 import io.github.cozycode890.guzz.core.audio.pcm.SampleSource
 import io.github.cozycode890.guzz.core.audio.pcm.forEachBlock
 import kotlin.math.log10
@@ -39,15 +38,5 @@ object Loudness {
     fun gainFor(currentDbfs: Double, targetDbfs: Double): Float? {
         if (currentDbfs == Double.NEGATIVE_INFINITY) return null
         return 10.0.pow((targetDbfs - currentDbfs) / 20.0).toFloat()
-    }
-
-    /**
-     * Đưa âm lượng tổng thể về [targetDbfs] rồi kẹp [-1, 1]. Port của audio_processing.py: `boost_and_normalize`.
-     *
-     * Không ghi ra tín hiệu mới: trả về [GainSource] tính lại mỗi lần đọc, nên bài dài bao nhiêu RAM cũng không đổi.
-     */
-    fun boostAndNormalize(source: SampleSource, targetDbfs: Double): SampleSource {
-        val gain = gainFor(measureDbfs(source), targetDbfs) ?: return source
-        return GainSource(source, gain)
     }
 }

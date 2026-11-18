@@ -15,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import io.github.cozycode890.guzz.core.common.log.GuzzLog
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
@@ -114,7 +115,7 @@ fun shareableUri(context: Context, location: String): Uri =
     if (location.startsWith("/")) {
         FileProvider.getUriForFile(context, "${context.packageName}.files", File(location))
     } else {
-        Uri.parse(location)
+        location.toUri()
     }
 
 /** Mở bản chép lời bằng app khác (D61). */

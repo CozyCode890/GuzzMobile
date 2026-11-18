@@ -37,10 +37,6 @@ enum class ErrorKind(val code: String) {
 
     /** Lỗi riêng của một model: còn model dự phòng thì đổi model thay vì báo tệp lỗi. Port của `MODEL_FALLBACK_ERRORS`. */
     val switchesModel: Boolean get() = this == OVERLOAD || this == QUOTA || this == BLOCKED || this == MODEL
-
-    companion object {
-        fun fromCode(code: String): ErrorKind? = entries.firstOrNull { it.code == code }
-    }
 }
 
 /** Đơn vị của một hạn mức Google báo. [code] là chuỗi của desktop (`ngay` / `phut`). */

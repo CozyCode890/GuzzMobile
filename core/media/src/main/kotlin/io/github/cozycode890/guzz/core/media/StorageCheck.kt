@@ -1,5 +1,6 @@
 package io.github.cozycode890.guzz.core.media
 
+import android.annotation.SuppressLint
 import java.io.File
 
 /** Không đủ chỗ trống cho thư mục tạm của bài. */
@@ -27,6 +28,9 @@ object StorageCheck {
         if (freeBytes < need) throw InsufficientStorageException(need, freeBytes)
     }
 
+    // `StorageManager.getAllocatableBytes` tính cả cache có thể dọn của app khác, cần Context và UUID ổ; ở đây chỉ cần ước
+    // lượng thận trọng chỗ trống cho thư mục tạm, nên đọc `usableSpace` là đủ.
+    @SuppressLint("UsableSpace")
     private fun usableSpace(dir: File): Long {
         var d: File? = dir
         while (d != null && !d.exists()) d = d.parentFile

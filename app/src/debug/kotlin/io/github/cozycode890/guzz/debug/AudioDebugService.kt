@@ -14,6 +14,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
 import android.provider.OpenableColumns
+import androidx.core.net.toUri
 import io.github.cozycode890.guzz.GuzzApp
 import io.github.cozycode890.guzz.R
 import io.github.cozycode890.guzz.core.audio.CleanSettings
@@ -93,7 +94,7 @@ class AudioDebugService : Service() {
     }
 
     private fun inputFrom(intent: Intent): MediaInput? {
-        intent.getStringExtra(EXTRA_URI)?.let { return MediaInput.Content(Uri.parse(it)) }
+        intent.getStringExtra(EXTRA_URI)?.let { return MediaInput.Content(it.toUri()) }
         val path = intent.getStringExtra(EXTRA_PATH) ?: return null
         // Tên trơn = tệp trong files/input của app (adb push vào đó, đọc không cần quyền).
         val file = if (path.startsWith("/")) File(path) else File(getExternalFilesDir("input"), path)

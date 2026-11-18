@@ -53,7 +53,9 @@
 
     <!-- Chia sẻ tới Guzz (D98). -->
     <string name="share_label">Chép lời bằng Guzz</string>
-    <string name="share_added">Đã thêm %1$d tệp vào hàng đợi.</string>
+    <plurals name="share_added">
+        <item quantity="other">Đã thêm %1$d tệp vào hàng đợi.</item>
+    </plurals>
     <string name="share_failed">Không đọc được: %1$s</string>
     <string name="share_problem">Đã thêm vào hàng đợi nhưng chưa bắt đầu: %1$s</string>
     <string name="share_unsupported">Guzz chỉ chép lời tệp âm thanh / video, bỏ qua: %1$s</string>

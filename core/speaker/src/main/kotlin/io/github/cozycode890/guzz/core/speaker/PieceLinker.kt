@@ -50,10 +50,6 @@ data class PieceJson(
 
         fun read(file: File): PieceJson = json.decodeFromString(serializer(), file.readText(Charsets.UTF_8))
 
-        /** `.pieces.json` của `run_sherpa.py` (cả bài). */
-        fun readList(file: File): List<PieceJson> =
-            json.decodeFromString(kotlinx.serialization.builtins.ListSerializer(serializer()), file.readText(Charsets.UTF_8))
-
         /** Ghi `.tmp` rồi đổi tên: process `:diarize` bị giết giữa chừng không để lại tệp dở. */
         fun write(file: File, p: PieceJson) {
             val tmp = File(file.path + ".tmp")

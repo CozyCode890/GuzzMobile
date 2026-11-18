@@ -16,16 +16,3 @@ interface ApiKeyStore {
 
     fun clear()
 }
-
-/** Giữ key trong bộ nhớ, cho test. */
-class InMemoryApiKeyStore(private var key: String? = null) : ApiKeyStore {
-    override fun read(): String? = key
-
-    override fun save(key: String) {
-        this.key = key.trim().ifEmpty { null }
-    }
-
-    override fun clear() {
-        key = null
-    }
-}

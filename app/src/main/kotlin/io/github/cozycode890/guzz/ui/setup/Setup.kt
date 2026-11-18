@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -91,7 +92,7 @@ fun rememberSetupState(container: AppContainer, resumes: StateFlow<Int>, refresh
 /** Thẻ "Thiết lập ban đầu" trên tab Chuyển đổi (D116): chỉ hiện khi còn việc chưa xong và chưa bấm "Để sau". */
 @Composable
 fun SetupCard(container: AppContainer, resumes: StateFlow<Int>, open: (String) -> Unit, onPickFolder: () -> Unit) {
-    var refresh by remember { mutableStateOf(0) }
+    var refresh by remember { mutableIntStateOf(0) }
     var dismissed by remember { mutableStateOf(SetupDismissed.value) }
     val state = rememberSetupState(container, resumes, refresh) ?: return
     if (dismissed || state.pending.isEmpty()) return

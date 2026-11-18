@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- D55, Android 8–11: như data_extraction_rules.xml, không sao lưu gì (allowBackup="false" đã tắt; tệp này cho chắc và
+     để lint DataExtractionRules không báo). -->
+<full-backup-content>
+    <exclude domain="root" path="." />
+    <exclude domain="file" path="." />
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="external" path="." />
+</full-backup-content>

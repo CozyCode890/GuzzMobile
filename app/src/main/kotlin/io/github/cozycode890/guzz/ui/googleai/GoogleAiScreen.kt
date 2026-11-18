@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -180,7 +181,7 @@ fun GoogleAiScreen(container: AppContainer, onBack: () -> Unit) {
                 CheckState.Running -> Text(stringResource(R.string.google_ai_checking))
                 is CheckState.Ok -> Text(
                     if (model.isNotBlank() && model !in c.models) stringResource(R.string.google_ai_check_model_missing, model)
-                    else stringResource(R.string.google_ai_check_ok, c.models.size),
+                    else pluralStringResource(R.plurals.google_ai_check_ok, c.models.size, c.models.size),
                     color = MaterialTheme.colorScheme.primary,
                 )
                 is CheckState.Failed -> Text(

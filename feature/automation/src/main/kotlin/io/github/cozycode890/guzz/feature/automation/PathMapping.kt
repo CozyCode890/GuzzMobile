@@ -1,11 +1,15 @@
 package io.github.cozycode890.guzz.feature.automation
 
+import android.annotation.SuppressLint
+
 /**
  * Đổi đường dẫn tuyệt đối sang mã tài liệu (document id) của `ExternalStorageProvider` trong một "Thư mục nguồn" cấp qua
  * SAF (Stage 6, D104). Mã tài liệu của provider này có dạng `<ổ>:<đường dẫn tương đối>`: bộ nhớ trong là `primary`
  * (`/storage/emulated/0`, `/sdcard`), thẻ nhớ là mã ổ (`/storage/1A2B-3C4D`). Hàm thuần để test trên PC.
  */
 object PathMapping {
+    // MacroDroid / người dùng gõ đường dẫn dạng `/sdcard/…`: phải nhận đúng chuỗi đó, không phải hỏi đường dẫn của máy.
+    @SuppressLint("SdCardPath")
     private val PRIMARY_ROOTS = listOf("/storage/emulated/0", "/sdcard", "/storage/self/primary", "/mnt/sdcard")
 
     /** (ổ, đường dẫn tương đối không có `/` đầu) của một đường dẫn; `null` khi không nằm trong bộ nhớ dùng chung. */

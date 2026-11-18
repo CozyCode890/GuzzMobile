@@ -9,7 +9,10 @@
     <string name="google_ai_delete">Delete key</string>
     <string name="google_ai_check">Test connection</string>
     <string name="google_ai_checking">Testing…</string>
-    <string name="google_ai_check_ok">Connected: the key can use %1$d models.</string>
+    <plurals name="google_ai_check_ok">
+        <item quantity="one">Connected: the key can use %1$d model.</item>
+        <item quantity="other">Connected: the key can use %1$d models.</item>
+    </plurals>
     <string name="google_ai_error_config">Wrong key or no permission.</string>
     <string name="google_ai_error_network">Cannot reach Google AI (network).</string>
     <string name="google_ai_error_quota">Quota exhausted.</string>

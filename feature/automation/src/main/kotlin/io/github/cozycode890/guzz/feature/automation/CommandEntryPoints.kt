@@ -99,9 +99,9 @@ class ShareActivity : Activity() {
                 val text = when {
                     outcome.problem != null -> getString(R.string.share_problem, outcome.problem)
                     outcome.failed.isNotEmpty() -> getString(R.string.share_failed, outcome.failed.joinToString(", "))
-                    rejectedNames.isNotEmpty() -> getString(R.string.share_added, outcome.added) + "\n" +
+                    rejectedNames.isNotEmpty() -> resources.getQuantityString(R.plurals.share_added, outcome.added, outcome.added) + "\n" +
                         getString(R.string.share_unsupported, rejectedNames.joinToString(", "))
-                    else -> getString(R.string.share_added, outcome.added)
+                    else -> resources.getQuantityString(R.plurals.share_added, outcome.added, outcome.added)
                 }
                 Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
                 packageManager.getLaunchIntentForPackage(packageName)?.let {

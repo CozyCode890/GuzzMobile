@@ -36,8 +36,6 @@ data class DiarizationJson(
     @SerialName("doan") val turns: List<TurnJson>,
     val sherpa: JsonElement? = null,
 ) {
-    fun toTurns(): List<SpeakerTurn> = turns.map { SpeakerTurn(it.start, it.end, it.speaker) }.sortedBy { it.start }
-
     companion object {
         private val json = Json { ignoreUnknownKeys = true; prettyPrint = true; prettyPrintIndent = " "; encodeDefaults = true }
 

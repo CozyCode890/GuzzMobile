@@ -258,7 +258,7 @@ class Automation(
         val c = queue()
         return when (r) {
             is Resolved.Path -> c.addPath(File(r.path), requestId = requestId, overrides = overrides).isNotEmpty()
-            is Resolved.Uri -> c.addUris(listOf(Uri.parse(r.uri)), requestId, overrides).isNotEmpty()
+            is Resolved.Uri -> c.addUris(listOf(r.uri.toUri()), requestId, overrides).isNotEmpty()
             is Resolved.Copy -> c.addPath(
                 File(r.path), requestId = requestId, overrides = overrides, ownedCopy = true, displayName = r.name,
             ).isNotEmpty()
