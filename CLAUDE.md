@@ -16,7 +16,8 @@ thanh đầy đủ) xong ngày 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, 
 nghe thử chấp nhận theo số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật
 gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày
 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** Stage 10 (tuỳ chọn, plugin Tasker/Locale) chờ plan chi tiết, hoặc dừng ở 1.0.0. Bản sau: sửa,
+**Việc tiếp theo:** Stage 11 (xử lý âm thanh trên server Modal, D140–D148) đã plan chi tiết ngày 2026-11-21, làm từ
+bước A1. Stage 10 (tuỳ chọn, plugin Tasker/Locale) vẫn chờ plan. Bản sau: sửa,
 ghi `CHANGELOG.md`, nâng `guzz` trong `gradle/libs.versions.toml`, chạy `tools/release.ps1` (mục "Phát hành" ở
 dưới). Gửi bất cứ thứ gì lên Google, push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 
@@ -33,6 +34,7 @@ dưới). Gửi bất cứ thứ gì lên Google, push tag hay tạo Release th�
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ✅ 2026-11-19 | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
+| 11 | Xử lý âm thanh trên server (Modal) | 📝 2026-11-21 | [stage-11-server.md](plans/stage-11-server.md) |
 
 Ký hiệu: ⬜ chưa plan chi tiết · 📝 đã plan chi tiết · 🔨 đang làm · ✅ xong (ghi ngày) · ⏸ hoãn
 
@@ -47,6 +49,8 @@ Bảng đầy đủ kèm lý do: [plans/README.md §2](plans/README.md#2-quyết
 - Đọc tệp: có quyền "Truy cập mọi tệp" thì nhận đường dẫn tuyệt đối, không có thì nhận SAF / content:// URI.
 - Làm sạch âm thanh theo bậc: MVP chỉ cắt lặng và chuẩn hoá âm lượng, Stage 7 port đủ DSP.
 - Sau MVP làm tách giọng trên máy trước.
+- Stage 11: làm sạch, cắt đoạn, tách giọng (sherpa-onnx) chạy trên server Modal bằng chính code Kotlin; điện thoại vẫn
+  gửi Gemini và tự xử lý khi server lỗi. Deploy lần đầu và tải bài thật lên Modal lần đầu thì hỏi trước (D148).
 
 ## Cách làm việc giữa các session
 

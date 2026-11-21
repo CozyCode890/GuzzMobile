@@ -172,6 +172,15 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D137 | 2026-11-18 | Khoá ký (Stage 9, thay phần tạo khoá của D129) | **Dùng khoá Morphe có sẵn**, người dùng tự chuyển BKS → PKCS12 ra ngoài repo, sao lưu như D129 | Người dùng chọn, không tạo khoá mới. |
 | D138 | 2026-11-18 | Mã bí mật trống khi bật lệnh từ app khác (Stage 9 B1) | **Tự tạo mã khi bật công tắc mà ô đang trống**, vẫn cho xoá trắng | Không để mọi app trên máy dùng key và hạn mức của người dùng. |
 | D139 | 2026-11-19 | Thử máy ảo (Stage 9 F3, thay một phần D131) | **Chỉ API 26, chỉ giao diện**, không gửi Gemini, bỏ API 30 | Đỡ RAM; luồng đủ đã thử trên Xiaomi 15T. |
+| D140 | 2026-11-21 | Server miễn phí để xử lý âm thanh (Stage 11) | **Modal** (Starter, $30 tín dụng / tháng, không thẻ); tách giọng giữ sherpa-onnx (D3), pyannote để sau | Chỉ chạy khi có việc; Oracle Always Free đã cắt còn 2 nhân / 12 GB, CPU miễn phí của HF Spaces không còn đáng tin. |
+| D141 | 2026-11-21 | Server làm phần nào (Stage 11) | **Làm sạch + cắt đoạn + tách giọng**; điện thoại là dự phòng | Bỏ hết phần nặng khỏi máy (bài 2 giờ trên máy: 41 phút, 39,6 °C). |
+| D142 | 2026-11-21 | Ai gửi Google AI Studio (Stage 11) | **Điện thoại**; server trả đoạn FLAC + lượt nói | Key, hạn mức, đổi model, cache chép lời giữ nguyên; server không tốn tín dụng chờ hạn mức. |
+| D143 | 2026-11-21 | Code server (Stage 11) | **Kotlin**: `:core:audio`, `:core:speaker` + sherpa-onnx Java API, giải mã ffmpeg; Modal là vỏ Python gọi `.jar` | Giống hệt đường dự phòng, dùng lại golden test. |
+| D144 | 2026-11-21 | Điện thoại tải gì lên (Stage 11) | **Tách luồng âm thanh, không giải mã** (MediaMuxer); tệp âm thanh gửi nguyên | Vài giây, gần như không tốn pin. |
+| D145 | 2026-11-21 | Khi nào điện thoại tự làm (Stage 11) | **Tự chuyển khi server lỗi**, có công tắc "Xử lý trên server"; Dừng thì không chuyển | Lúc nào cũng ra bản chép lời. |
+| D146 | 2026-11-21 | Dùng server qua mạng di động (Stage 11) | **Có**, không thêm công tắc Wi-Fi | Như D118. |
+| D147 | 2026-11-21 | Lưu tệp trên server (Stage 11) | **Tệp gốc xoá khi xong; kết quả xoá khi điện thoại nhận; dọn mọi thứ > 24 giờ mỗi ngày** | Nối lại được khi bị giết, không giữ bản ghi lâu. |
+| D148 | 2026-11-21 | Thử bằng bài thật trên Modal (Stage 11) | **Hỏi trước lần đầu** tải bài thật và lần deploy đầu, sau đó không hỏi lại | Đo được thời gian, chi phí thật; Modal là bên thứ ba. |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 
@@ -198,6 +207,10 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
                       hàng đợi (lưu JSON, D63) và cách chạy lần lượt              JVM thuần (nhận interface)
 :feature:queue        foreground service, thông báo, SAF, QueueController          Android
 :feature:automation   intent nhận lệnh / phát sự kiện; (Stage 10) plugin Tasker    Android
+:core:remote          (Stage 11) giao thức job + client OkHttp của server         JVM thuần
+:server               (Stage 11) xử lý âm thanh trên server: ffmpeg + :core:audio +
+                      :core:speaker + sherpa-onnx Java API, đóng gói .jar           JVM (Linux)
+server/               (Stage 11) vỏ Modal (Python) gọi .jar, API job, dọn tệp
 ```
 
 Nguyên tắc: **thuật toán port từ Python nằm ở module JVM thuần**, nên chạy test ngay trên máy tính được và so với kết quả
@@ -241,6 +254,7 @@ sherpa-onnx, service, intent) mới nằm ở module Android. Stage 0 có thể 
 | 8 | [Hoàn thiện giao diện](stage-08-ui.md) | Đủ các trang cài đặt, hạn mức, nhật ký; vi / en; sáng / tối | 5, 6, 7 |
 | 9 | [Đóng gói & phát hành](stage-09-release.md) | APK release đã ký trên GitHub Releases (repo public), đã rà lỗ hổng, tinh gọn, đo dung lượng và pin | 8 |
 | 10 | [(Tuỳ chọn) Plugin Tasker/Locale](stage-10-tasker-plugin.md) | Guzz hiện trong danh sách plugin của MacroDroid / Tasker | 6 |
+| 11 | [Xử lý âm thanh trên server (Modal)](stage-11-server.md) | Làm sạch, cắt đoạn, tách giọng chạy trên Modal; điện thoại tải lên, nhận đoạn + lượt nói, gửi Gemini; server lỗi thì tự làm trên máy | 5, 7, 9 |
 
 Stage 3 không cần Stage 1 và 2, nên làm song song được với hai stage đó.
 
@@ -266,3 +280,5 @@ Stage 3 không cần Stage 1 và 2, nên làm song song được với hai stage
 6. **Giấy phép model.** → Trước khi đóng gói, kiểm lại giấy phép từng tệp model (segmentation-3.0: MIT, 3D-Speaker:
    Apache-2.0). Tránh model chỉ cho dùng phi thương mại (vd reverb-diarization).
 7. **APK nặng** vì ONNX Runtime + model + Compose. → Chỉ đóng gói `arm64-v8a`, bật R8, đo ở Stage 9.
+8. **Server miễn phí đổi điều kiện hoặc hết tín dụng** (Stage 11). → Điện thoại luôn giữ đường xử lý trên máy (D145);
+   phần chính là `.jar` + ffmpeg, chuyển được sang chỗ khác (Docker trên PC nhà).
