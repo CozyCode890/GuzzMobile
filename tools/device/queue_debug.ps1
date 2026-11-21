@@ -10,6 +10,8 @@
 #   .\tools\device\queue_debug.ps1 -Preset speakers_around -SaveClean on      # Stage 7: preset âm thanh, lưu .sach.flac
 #   .\tools\device\queue_debug.ps1 -Denoise off                               # tắt khử ồn (về đường của Stage 2)
 #   .\tools\device\queue_debug.ps1 -SaveExtracted on -Track 1                  # Stage 8: lưu .am_thanh.flac của video, luồng 2
+#   .\tools\device\queue_debug.ps1 -Server on -ServerUrl https://... -ServerTokenFile D:\GuzzMobileData\keys\modal-proxy.json
+#                                                                             # Stage 11: bật server, URL, nạp token
 #
 # Tệp của -Add nằm sẵn trong files/input (adb push vào /sdcard/Android/data/<package>/files/input/) hoặc là đường dẫn
 # tuyệt đối. Chưa chọn thư mục lưu SAF thì bản chép lời ra files/output/. -ChunkDelayMin: chờ giữa các đoạn (D67).
@@ -33,6 +35,10 @@ param(
     [ValidateSet('on', 'off')][string]$SaveClean,
     [ValidateSet('on', 'off')][string]$SaveExtracted,
     [ValidateSet('auto', '0', '1', '2', '3')][string]$Track,
+    [ValidateSet('on', 'off')][string]$Server,
+    [string]$ServerUrl,
+    # JSON của `modal workspace proxy-tokens create --json` (lấy Modal-Key.Modal-Secret) hoặc tệp một dòng token.
+    [string]$ServerTokenFile,
     [switch]$Wait,
     [int]$TimeoutMin = 180
 )
@@ -93,6 +99,25 @@ if ($Preset -or $Denoise -or $SaveClean -or $SaveExtracted -or $Track) {
     if ($SaveClean) { $extra += @('--ez', 'save_clean', $(if ($SaveClean -eq 'on') { 'true' } else { 'false' })) }
     if ($SaveExtracted) { $extra += @('--ez', 'save_extracted', $(if ($SaveExtracted -eq 'on') { 'true' } else { 'false' })) }
     if ($Track) { $extra += @('--es', 'track', $Track) }
+    Send $extra
+}
+if ($Server -or $ServerUrl -or $ServerTokenFile) {
+    $extra = @('--es', 'cmd', 'server')
+    if ($Server) { $extra += @('--es', 'enabled', $Server) }
+    if ($ServerUrl) { $extra += @('--es', 'url', $ServerUrl) }
+    if ($ServerTokenFile) {
+        # Token đi qua tệp tạm (adb push), không nằm trên dòng lệnh của máy; app đọc xong thì xoá.
+        $raw = Get-Content -Raw -Encoding UTF8 $ServerTokenFile
+        $token = try { $j = $raw | ConvertFrom-Json; "$($j.'Modal-Key').$($j.'Modal-Secret')" } catch { $raw.Trim() }
+        $tmp = New-TemporaryFile
+        try {
+            [IO.File]::WriteAllText($tmp, $token)
+            adb push $tmp "$files/server_token.txt" | Out-Null
+        } finally {
+            Remove-Item $tmp
+        }
+        $extra += @('--es', 'token_file', 'server_token.txt')
+    }
     Send $extra
 }
 if ($Clear) { Send @('--es', 'cmd', 'clear') }

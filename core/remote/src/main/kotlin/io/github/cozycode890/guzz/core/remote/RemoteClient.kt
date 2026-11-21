@@ -1,8 +1,11 @@
 package io.github.cozycode890.guzz.core.remote
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -238,15 +241,22 @@ class RemoteClient(
             onProgress(RemoteSteps.DOWNLOAD, 0.0)
             val call = http.newCall(request(url("jobs", id, "result")).get().build())
             val response = call.await()
-            response.use { r ->
-                if (!r.isSuccessful) throw httpError(r.code)
-                withContext(kotlinx.coroutines.Dispatchers.IO) {
-                    var done = 0L
-                    Tar.extract(r.body.byteStream(), tmpDir, listed.toSet()) { n ->
-                        done += n
-                        onProgress(RemoteSteps.DOWNLOAD, done.toDouble() / total)
+            // Đọc thân là việc chặn luồng, huỷ coroutine không cắt được: Dừng thì huỷ luôn cuộc gọi để luồng đọc thoát
+            // ngay, rồi xoá job (G1: trước đó phải chờ tải hết mới dừng).
+            val onCancel = currentCoroutineContext()[Job]?.invokeOnCompletion { if (it != null) call.cancel() }
+            try {
+                response.use { r ->
+                    if (!r.isSuccessful) throw httpError(r.code)
+                    withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        var done = 0L
+                        Tar.extract(r.body.byteStream(), tmpDir, listed.toSet()) { n ->
+                            done += n
+                            onProgress(RemoteSteps.DOWNLOAD, done.toDouble() / total)
+                        }
                     }
                 }
+            } finally {
+                onCancel?.dispose()
             }
             for (f in files) {
                 val got = File(tmpDir, f.name)
@@ -263,6 +273,8 @@ class RemoteClient(
             onProgress(RemoteSteps.DOWNLOAD, 1.0)
         } catch (e: IOException) {
             if (e is RemoteUnavailableException) throw e
+            // Lỗi do chính Dừng gây ra (cuộc gọi bị huỷ): báo Dừng, không báo "server lỗi".
+            currentCoroutineContext().ensureActive()
             throw RemoteUnavailableException(Reasons.NETWORK, "Tải kết quả lỗi: ${e.message}", e)
         } finally {
             tmpDir.deleteRecursively()
@@ -282,6 +294,7 @@ class RemoteClient(
         val r = try {
             http.newCall(req).await()
         } catch (e: IOException) {
+            currentCoroutineContext().ensureActive()
             throw RemoteUnavailableException(Reasons.NETWORK, "Không tới được server: ${e.message}", e)
         }
         if (r.isSuccessful) return r

@@ -32,6 +32,8 @@ import java.io.File
  * - `fake` với `--es value on|off`: Gemini giả (không gọi mạng).
  * - `automation` (Stage 6): `--es enabled on|off`, `--es secret <mã>` (rỗng = bỏ), `--es include_paths on|off`,
  *   `--es beside_source on|off`, `--es clear_events 1` (xoá `files/debug-events/events.jsonl`).
+ * - `server` (Stage 11): `--es enabled on|off`, `--es url <URL>`, `--es token_file <tên tệp trong files/>`: đọc token
+ *   từ tệp đã adb push (không đưa token vào dòng lệnh), lưu Keystore rồi xoá tệp; `--es token_file -` = xoá token.
  *
  * Lệnh nào cũng ghi lại `trang_thai.json` khi xong.
  */
@@ -137,6 +139,29 @@ class QueueDebugReceiver : BroadcastReceiver() {
                                 "mã bí mật ${if (s.get(SettingKeys.AUTOMATION_SECRET).isEmpty()) "không" else "có"}, " +
                                 "kèm đường dẫn ${s.get(SettingKeys.AUTOMATION_INCLUDE_PATHS)}, " +
                                 "cạnh tệp nguồn ${s.get(SettingKeys.SAVE_BESIDE_SOURCE)}.",
+                        )
+                    }
+                    "server" -> {
+                        // Stage 11 G1: bật server, đặt URL, nạp token từ tệp (xoá tệp ngay sau khi đọc).
+                        val s = container.settings
+                        intent.getStringExtra("enabled")?.let { s.set(SettingKeys.SERVER_ENABLED, it == "on" || it == "1" || it == "true") }
+                        intent.getStringExtra("url")?.let { s.set(SettingKeys.SERVER_URL, it) }
+                        intent.getStringExtra("token_file")?.let { name ->
+                            if (name == "-") {
+                                container.serverTokenStore.clear()
+                            } else {
+                                val f = File(context.getExternalFilesDir(null), name)
+                                try {
+                                    container.serverTokenStore.save(f.readText().trim())
+                                } finally {
+                                    f.delete()
+                                }
+                            }
+                        }
+                        GuzzLog.info(
+                            "Lệnh adb: server ${if (s.get(SettingKeys.SERVER_ENABLED)) "BẬT" else "tắt"}, " +
+                                "URL ${s.get(SettingKeys.SERVER_URL).ifEmpty { "(trống)" }}, " +
+                                "token ${if (container.serverTokenStore.read() != null) "có" else "không"}.",
                         )
                     }
                     "status", null -> Unit

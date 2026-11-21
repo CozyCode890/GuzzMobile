@@ -246,10 +246,17 @@ def web():
         ext = Path(body.get("fileName", "")).suffix.lower()[:8] or ".bin"
         name = "input" + ext
         n = 0
-        with open(d / name, "wb") as f:
-            async for chunk in request.stream():
-                n += len(chunk)
-                f.write(chunk)
+        try:
+            with open(d / name, "wb") as f:
+                async for chunk in request.stream():
+                    n += len(chunk)
+                    f.write(chunk)
+        except BaseException:
+            # Điện thoại huỷ / mất mạng giữa lúc tải lên (G1): không để lại tệp tải dở trên Volume (D147).
+            shutil.rmtree(d, ignore_errors=True)
+            volume.commit()
+            log(f"job {job_id}: tải lên bị huỷ sau {n} byte")
+            raise
         if n == 0:
             shutil.rmtree(d, ignore_errors=True)
             raise HTTPException(400, "tệp rỗng")
@@ -282,18 +289,22 @@ def web():
             raise HTTPException(410, "kết quả không còn")
 
         def gen():
-            # tar không nén (FLAC đã nén), ghi theo từng khối để không giữ cả tệp trong RAM.
-            r, w = os.pipe()
-            def writer():
-                with os.fdopen(w, "wb") as fw, tarfile.open(fileobj=fw, mode="w|") as t:
-                    for n in names:
-                        t.add(out / n, arcname=n)
-            th = threading.Thread(target=writer, daemon=True)
-            th.start()
-            with os.fdopen(r, "rb") as fr:
-                for b in iter(lambda: fr.read(1 << 16), b""):
-                    yield b
-            th.join()
+            # tar không nén (FLAC đã nén), ghi tay từng khối ngay trong generator: điện thoại ngắt giữa chừng (Dừng) thì
+            # generator bị đóng, tệp đóng theo `with`, DELETE commit Volume được (G1). Không dùng luồng ghi + pipe:
+            # luồng đó kẹt ở pipe khi client ngắt và giữ tệp mở mãi.
+            for n in names:
+                p = out / n
+                info = tarfile.TarInfo(n)
+                info.size = p.stat().st_size
+                info.mtime = int(p.stat().st_mtime)
+                yield info.tobuf(format=tarfile.USTAR_FORMAT)
+                with open(p, "rb") as f:
+                    for b in iter(lambda: f.read(1 << 16), b""):
+                        yield b
+                pad = (512 - info.size % 512) % 512
+                if pad:
+                    yield b"\0" * pad
+            yield b"\0" * 1024
 
         return StreamingResponse(gen(), media_type="application/x-tar")
 
@@ -311,9 +322,19 @@ def web():
                     modal.FunctionCall.from_id(call_id).cancel()
             except Exception as e:
                 log(f"job {job_id}: huỷ lỗi {type(e).__name__}")
-        shutil.rmtree(d, ignore_errors=True)
-        volume.commit()
         statuses.pop(job_id, None)
+        # Một yêu cầu tải kết quả vừa bị ngắt có thể còn giữ tệp mở thêm chốc lát: thử commit lại vài lần. Vẫn lỗi thì
+        # việc dọn hằng ngày xoá sau ≤ 24 giờ (D147).
+        for attempt in range(10):
+            shutil.rmtree(d, ignore_errors=True)
+            try:
+                volume.commit()
+                break
+            except RuntimeError as e:
+                if attempt == 9:
+                    log(f"job {job_id}: chưa xoá được ({e}), để việc dọn hằng ngày")
+                    return {"deleted": job_id, "pending": True}
+                time.sleep(1)
         log(f"job {job_id}: đã xoá")
         return {"deleted": job_id}
 

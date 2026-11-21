@@ -14,7 +14,7 @@
 param(
     [string]$Out,
     [string[]]$Pages = @('convert', 'quota', 'settings', 'settings/google_ai', 'settings/audio', 'settings/speakers',
-        'settings/output', 'settings/queue', 'settings/automation', 'settings/system', 'settings/logs', 'settings/about'),
+        'settings/output', 'settings/queue', 'settings/automation', 'settings/server', 'settings/system', 'settings/logs', 'settings/about'),
     [switch]$Small,
     [double]$FontScale = 0,
     [switch]$Dark,

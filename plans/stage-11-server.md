@@ -137,9 +137,9 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### B. Code dùng chung (JVM)
 
-- [ ] B1. Chuyển `Downmix` (không phụ thuộc Android) từ `:core:media` sang `:core:audio`. Kiểm: `:core:media` và
+- [x] B1. Chuyển `Downmix` (không phụ thuộc Android) từ `:core:media` sang `:core:audio`. Kiểm: `:core:media` và
   `:core:audio` test qua, `connectedDebugAndroidTest` của `:core:media` qua trên máy ảo.
-- [ ] B2. Phần chung của `SherpaPieceDiarizer` không phụ thuộc kiểu API (lấy embedding trung bình ≤ 30 s, chuẩn hoá L2,
+- [x] B2. Phần chung của `SherpaPieceDiarizer` không phụ thuộc kiểu API (lấy embedding trung bình ≤ 30 s, chuẩn hoá L2,
   dựng `Piece`) chuyển vào `:core:speaker`, để bản Android và bản JVM gọi chung. Kiểm: `:core:speaker:test` qua;
   `DiarizationDeviceTest` qua trên máy ảo.
 - [x] B3. Module mới `:core:remote` (JVM, kotlinx.serialization): `JobRequest` (phiên bản giao thức, `audioKey`,
@@ -191,10 +191,10 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] E2. Client OkHttp (`:core:remote`): tải lên dạng stream (không đọc cả tệp vào RAM), mỗi 5 giây hỏi trạng thái,
   tải tar về `.tmp` rồi giải nén, kiểm kích thước + SHA-256, xong thì `DELETE`. Kiểm: MockWebServer cho 401, 413,
   5xx, ngắt giữa lúc tải lên / tải về, tar thiếu tệp, khác phiên bản giao thức → đúng loại lỗi để E1 chuyển sang máy.
-- [ ] E3. Làm tiếp (D64): mã job lưu `server_job.json` trong thư mục tạm. Chạy lại thì hỏi trạng thái job đó trước;
+- [x] E3. Làm tiếp (D64): mã job lưu `server_job.json` trong thư mục tạm. Chạy lại thì hỏi trạng thái job đó trước;
   job không còn (404) thì tải lên lại. Kiểm: test JVM; trên máy ảo giết app lúc server đang xử lý rồi mở lại thì log
   ghi "nối lại job", không có lần tải lên thứ hai.
-- [ ] E4. Chuẩn bị tệp tải lên (`:core:media`): tệp âm thanh thì stream nguyên từ URI / đường dẫn; video thì chọn luồng
+- [x] E4. Chuẩn bị tệp tải lên (`:core:media`): tệp âm thanh thì stream nguyên từ URI / đường dẫn; video thì chọn luồng
   theo `cfg.audioTrack` (`AudioTracks`), tách bằng MediaMuxer (AAC → `.m4a`; Opus / Vorbis → WebM / OGG khi API cho
   phép). Codec khác thì chạy trên máy và log lý do. Kiểm: test thiết bị với video trong `testdata/media`: độ dài luồng
   tách ra lệch ≤ 0,05 s so với gốc; video 1 giờ tách xong ≤ 10 giây.
@@ -207,15 +207,15 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] F1. `SettingKeys`: `SERVER.enabled` (mặc định tắt), `SERVER.url`. Token lưu Keystore như `ApiKeyStore`. Xuất
   `config.txt`: có URL, không có token (như D112). Kiểm: `ConfigIniTest` qua; nhập `config.txt` desktop (không có mục
   `SERVER`) không lỗi.
-- [ ] F2. Trang Cài đặt → "Server xử lý": công tắc, URL, token, nút Kiểm tra kết nối (`/health`, báo phiên bản / lỗi
+- [x] F2. Trang Cài đặt → "Server xử lý": công tắc, URL, token, nút Kiểm tra kết nối (`/health`, báo phiên bản / lỗi
   401 / không tới được), một dòng giải thích dự phòng. Chuỗi trong `strings.xml` vi / en. Kiểm:
   `pwsh .\tools\check_strings.ps1`; `ui_check.ps1` mặc định, `-Small -FontScale 2.0`, `-Dark -Lang en`.
-- [ ] F3. Chuyển sang máy thì log ghi lý do; thông báo của mục ghi "Server lỗi (<lý do>), đang xử lý trên máy". Kiểm:
+- [x] F3. Chuyển sang máy thì log ghi lý do; thông báo của mục ghi "Server lỗi (<lý do>), đang xử lý trên máy". Kiểm:
   máy ảo với URL sai.
 
 ### G. Thử và đo
 
-- [ ] G1. Máy ảo `guzz_15t`, Gemini giả, server thật, tệp tổng hợp: luồng đủ ra `.txt`; năm kiểu lỗi ở Tiêu chí đều
+- [x] G1. Máy ảo `guzz_15t`, Gemini giả, server thật, tệp tổng hợp: luồng đủ ra `.txt`; năm kiểu lỗi ở Tiêu chí đều
   chuyển sang máy; Dừng giữa lúc tải lên / server xử lý / tải về thì không chuyển, và job trên server bị `DELETE`;
   E3 nối lại job.
 - [ ] G2. (Hỏi trước lần đầu tải bài thật lên Modal, D148.) B1–B5 qua server: SNR đoạn FLAC và mốc cắt so với đường
@@ -289,6 +289,26 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   job cũ 404 thì tải lên lại, Dừng thì DELETE, tar có header pax); MockWebServer cắt socket lúc tải lên vẫn có thể trả
   200 rỗng nên ca đó chấp nhận `network` hoặc `server` (đều chuyển sang máy). `RemotePipelineTest` 8 ca. `.\gradlew test
   assembleSideloadDebug`: 1754 test qua.
+- 2026-11-22 G1 (máy ảo `guzz_15t`, Gemini giả, server thật, tệp tổng hợp ở `D:\GuzzMobileData\stage-11`: mẫu 4 người
+  57 s của sherpa-onnx, bản ghép 20 phút của nó, `two_tracks.mp4`, video 1 giờ hình đen + sin; không dùng bản ghi của
+  người dùng). Thêm lệnh adb `server` cho bản debug (`queue_debug.ps1 -Server on -ServerUrl … -ServerTokenFile …`:
+  token đi qua tệp tạm, app đọc xong thì xoá). Kết quả:
+  - luồng đủ (`four.wav`, tách giọng `pyannote`): tải lên 1,8 MB, server xong sau 27 s (tính cả khởi động lạnh), không
+    cắt đoạn / tách giọng trên máy, ra `.txt`. Bài ghép 20 phút: tải lên 10,3 MB ~46 s (mạng của máy ảo), server ~2 phút;
+  - chuyển sang máy, log ghi lý do: host không có (`network`), token sai (`auth`, 401), URL sai đường dẫn (`http`, 404).
+    5xx, quá giờ, khác phiên bản giao thức chỉ thử bằng test JVM (`RemoteClientTest`), không dựng được trên server thật;
+  - Dừng lúc tải lên / server đang xử lý / tải về: không chuyển sang máy, job bị xoá (GET → 404). Lỗi tìm ra và sửa:
+    (1) huỷ tải lên để lại thư mục tải dở trên Volume → `POST /jobs` xoá thư mục khi luồng đọc lỗi; (2) Dừng lúc tải về:
+    luồng ghi tar của server kẹt ở pipe, giữ tệp mở nên `DELETE` không commit được Volume (500) → ghi tar ngay trong
+    generator, `DELETE` thử commit lại tối đa 10 lần; (3) điện thoại đọc nốt cả phần tải về rồi mới dừng (~27 s) →
+    `RemoteClient` huỷ cuộc gọi khi coroutine bị huỷ, và lỗi do chính Dừng gây ra không ghi thành "Server lỗi". Sau sửa:
+    Dừng lúc tải về dừng trong 1 s, job bị xoá;
+  - E3: giết app lúc server đang xử lý, hệ thống khởi động lại service → log "Nối lại job …", chỉ một lần tải lên;
+  - E4: `two_tracks.mp4` với `audio_track` = 1 qua server: `am_thanh.flac` là luồng 880 Hz (luồng thứ 2), dài 3,008 s so
+    với 3,0 s. Video 1 giờ: tách luồng AAC 44 MB mất **33 s trên máy ảo** (tiêu chí ≤ 10 s): đo lại trên Xiaomi 15T ở G3;
+  - B1, B2: `:core:media` 9/9, `:core:diarization` 3/3 test thiết bị trên máy ảo; F2: `check_strings.ps1` sạch, trang
+    Server xử lý chụp ở chữ ×2 / 360 dp và tối / tiếng Anh, không cắt chữ (ảnh ở `D:\GuzzMobileData\stage-11\f2`).
+  - C2 (so `goc.pcm` của server với điện thoại) chưa làm riêng: gộp vào G2, so SNR đoạn FLAC của hai đường trên B1–B5.
 
 ## Phát sinh
 
