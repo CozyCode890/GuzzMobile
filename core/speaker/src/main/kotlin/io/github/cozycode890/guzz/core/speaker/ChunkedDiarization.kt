@@ -1,6 +1,7 @@
 package io.github.cozycode890.guzz.core.speaker
 
 import kotlinx.coroutines.ensureActive
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -31,7 +32,11 @@ data class DiarizeRequest(val pcm: File, val outFile: File, val bounds: SpeakerB
     val workDir: File get() = outFile.absoluteFile.parentFile
 }
 
-/** Cấu hình sherpa-onnx và chia phần (Stage 1, D80). Đổi bất kỳ số nào thì [signature] đổi, nên mã cache đổi. */
+/**
+ * Cấu hình sherpa-onnx và chia phần (Stage 1, D80). Đổi bất kỳ số nào (trừ [threads]) thì [signature] đổi, nên mã
+ * cache đổi. `@Serializable`: đi trong yêu cầu job gửi server (Stage 11).
+ */
+@Serializable
 data class DiarizationSettings(
     val segmentation: String = "segmentation-3.0",
     val embedding: String = "campplus_zh_en_advanced",

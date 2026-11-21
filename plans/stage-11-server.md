@@ -1,6 +1,6 @@
 # Stage 11 — Xử lý âm thanh trên server (Modal)
 
-**Trạng thái:** 📝 đã plan chi tiết 2026-11-21 · **Cần xong trước:** 5, 7, 9
+**Trạng thái:** 🔨 đang làm (plan chi tiết 2026-11-21) · **Cần xong trước:** 5, 7, 9
 
 ## Mục tiêu
 
@@ -124,9 +124,9 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### A. Tài khoản và những thứ phải kiểm trước
 
-- [ ] A1. Người dùng tạo tài khoản Modal (Starter). Cài CLI `modal` vào venv `D:\GuzzMobileData\tools\modal-venv`.
+- [x] A1. Người dùng tạo tài khoản Modal (Starter). Cài CLI `modal` vào venv `D:\GuzzMobileData\tools\modal-venv`.
   Người dùng tự chạy `modal token new` (đăng nhập bằng trình duyệt). Kiểm: `modal profile current` ra đúng workspace.
-- [ ] A2. Kiểm GitHub Releases của sherpa-onnx v2.0.1 có jar Java API và JNI cho `linux-x64` và `win-x64` không. Có thì
+- [x] A2. Kiểm GitHub Releases của sherpa-onnx v2.0.1 có jar Java API và JNI cho `linux-x64` và `win-x64` không. Có thì
   thêm vào `gradle/guzz-deps.txt` kèm SHA-256 (D79). Kiểm: build tải về và khớp mã băm; một test JVM nhỏ nạp
   `OfflineSpeakerDiarization` rồi chạy `0-four-speakers-zh.wav` ra 4 người. Không có thì ghi Nhật ký và hỏi (Rủi ro 1).
 - [ ] A3. (Hỏi trước lần deploy đầu, D148.) Spike `server/spike_app.py`: image debian-slim + ffmpeg + JRE 21, một
@@ -141,7 +141,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [ ] B2. Phần chung của `SherpaPieceDiarizer` không phụ thuộc kiểu API (lấy embedding trung bình ≤ 30 s, chuẩn hoá L2,
   dựng `Piece`) chuyển vào `:core:speaker`, để bản Android và bản JVM gọi chung. Kiểm: `:core:speaker:test` qua;
   `DiarizationDeviceTest` qua trên máy ảo.
-- [ ] B3. Module mới `:core:remote` (JVM, kotlinx.serialization): `JobRequest` (phiên bản giao thức, `audioKey`,
+- [x] B3. Module mới `:core:remote` (JVM, kotlinx.serialization): `JobRequest` (phiên bản giao thức, `audioKey`,
   `speakerKey`, `ChunkSettings`, `CleanSettings`, `saveClean`, bật / tắt tách giọng, `SpeakerBounds`,
   `DiarizationSettings`, `runOnOriginal`, tên tệp gốc), `JobStatus` (`queued` / `running` / `done` / `failed`, bước,
   phần trăm, mã lỗi), `JobResult` (danh sách tệp, kích thước, SHA-256). Kiểm: test JSON đi rồi về; mẫu JSON trong
@@ -149,18 +149,18 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### C. Server `:server` (JVM, chạy trên PC trước)
 
-- [ ] C1. Module `:server` (Kotlin JVM, `application`) có task `serverJar` gom thành một `.jar`. Lệnh:
+- [x] C1. Module `:server` (Kotlin JVM, `application`) có task `serverJar` gom thành một `.jar`. Lệnh:
   `java -jar guzz-server.jar process --in <tệp> --request req.json --out <thư mục> --status status.json`. Kiểm: chạy
   trên tệp thử `testdata/media` ra đủ tệp.
 - [ ] C2. Giải mã: ffmpeg ra float, giữ tần số mẫu và số kênh gốc → `Downmix` → `SincResampler` → `goc.pcm`, như
   `AudioPreparation`. Kiểm: so với `goc.pcm` điện thoại kéo về bằng `audio_debug.ps1 -PullPcm` (tệp thử và `L1_20m`):
   SNR ≥ 50 dB, độ dài lệch ≤ 0,02 s.
-- [ ] C3. `ChunkEncoder` gọi `ffmpeg -c:a flac` (PCM đẩy vào stdin), rồi `ChunkPreparer` như trên máy. Kiểm: FLAC giải
+- [x] C3. `ChunkEncoder` gọi `ffmpeg -c:a flac` (PCM đẩy vào stdin), rồi `ChunkPreparer` như trên máy. Kiểm: FLAC giải
   mã lại trùng từng bit với đoạn PCM; danh sách đoạn / TimeMap trùng với chạy `ChunkPreparer` trên cùng `goc.pcm`.
 - [ ] C4. `SherpaJvmPieceEngine` (Java API) + `ChunkedDiarization`, số luồng = số nhân của container. Ra
   `nguoi_noi.<speakerKey>.json`. Kiểm: tệp thử có golden Stage 5 ra đúng; có `GUZZ_SPIKE_DATA` thì B1–B5: DER so với
   lượt nói điện thoại (Stage 5) ≤ 5%.
-- [ ] C5. Tiến độ ghi `status.json` (ghi tệp tạm rồi đổi tên); nhận SIGTERM thì dừng ở điểm kiểm tiếp theo, thoát mã
+- [x] C5. Tiến độ ghi `status.json` (ghi tệp tạm rồi đổi tên); nhận SIGTERM thì dừng ở điểm kiểm tiếp theo, thoát mã
   riêng; lỗi "không có luồng âm thanh" / "không còn tiếng nói" có mã riêng. Kiểm: test JVM cho từng mã thoát.
 
 ### D. Vỏ Modal (`server/modal_app.py`)
@@ -232,6 +232,25 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [ ] H3. Đổi trạng thái sang ✅ ở CLAUDE.md và README, cập nhật "Stage hiện tại" / "Việc tiếp theo".
 
 ## Nhật ký
+
+- 2026-11-21 A1: CLI `modal` 1.6.4 cài bằng `uv` vào `D:\GuzzMobileData	ools\modal-venv` (Python 3.12); người dùng
+  tự chạy `modal token new`, `modal profile current` ra workspace của người dùng.
+- 2026-11-21 A2: release v2.0.1 có `sherpa-onnx-jvm-2.0.1.jar` (Java API, builder thay cho tham số đặt tên của AAR) và
+  `sherpa-onnx-native-lib-{linux,win}-x64-2.0.1.jar` (JNI + onnxruntime, `LibraryUtils` tự giải nén từ classpath).
+  Mã băm lấy từ trường `digest` của asset trong GitHub API, khớp với tệp tải về; thêm 3 dòng `jvm`, `jni-linux`,
+  `jni-win` vào `gradle/guzz-deps.txt`. Test JVM ra trùng `run_sherpa.py` (±2 ms, cùng nhãn) với cả 4 cụm cố định (4
+  người) lẫn ngưỡng 1,1 (tệp 57 s này ra 1 người, golden cũng vậy; kế hoạch ghi "ra 4 người" là với số cụm = 4). Java
+  API mặc định `debug = true` (in cấu hình ra stderr): đặt `setDebug(false)`.
+- 2026-11-21 B3: `ChunkSettings`, `CleanSettings`, `SpeakerBounds`, `DiarizationSettings` thêm `@Serializable` để đi
+  thẳng trong `JobRequest`. Thêm so với kế hoạch: `streamIndex` (luồng âm thanh thứ mấy, `-map 0:a:N`), `saveExtracted`
+  (`am_thanh.flac`, vì cache điện thoại đòi tệp này khi bật lưu âm thanh tách từ video), `sourceName` (khoá `nguon`).
+  `JobStatus` mang luôn `JobResult` khi xong. Mẫu JSON nằm ở `docs/server.md`, test đọc lại bằng chính các class.
+- 2026-11-21 C1–C5: `:server` nằm ở `server/` (cùng thư mục với vỏ Modal sau này). Giải mã: ffmpeg ra WAV float ra
+  stdout (tần số / số kênh đọc từ tiêu đề, không cần ffprobe vì ffmpeg của desktop không kèm ffprobe), rồi `Downmix` →
+  `SincResampler` → `Pcm16.fromFloatRounded` như `AudioDecoder`. Mã thoát: 0 xong, 1 lỗi khác, 2 yêu cầu sai, 3 huỷ,
+  4 không có luồng âm thanh, 5 không còn tiếng nói. SIGTERM bắt bằng `sun.misc.Signal` (shutdown hook không đổi được
+  mã thoát), sherpa-onnx không dừng giữa một phần được nên sau 20 s thì `halt`. Số luồng sherpa-onnx = số nhân JVM thấy
+  (không nằm trong `signature`, mã cache không đổi). Log server không ghi tên tệp.
 
 ## Phát sinh
 

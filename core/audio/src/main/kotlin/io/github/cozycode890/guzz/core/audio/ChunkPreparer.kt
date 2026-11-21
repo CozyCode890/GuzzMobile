@@ -13,7 +13,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
 
-/** Cài đặt của bước làm sạch tối giản + cắt đoạn (mục `[AUDIO]`, `[CHUNKING]`). Mặc định = `config.default.txt`. */
+/**
+ * Cài đặt của bước làm sạch tối giản + cắt đoạn (mục `[AUDIO]`, `[CHUNKING]`). Mặc định = `config.default.txt`.
+ * `@Serializable`: đi trong yêu cầu job gửi server (Stage 11, `:core:remote`).
+ */
+@Serializable
 data class ChunkSettings(
     val targetDbfs: Double = -16.0,
     val trimSilence: Boolean = true,

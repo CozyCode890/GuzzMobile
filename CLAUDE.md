@@ -7,7 +7,7 @@ Kế hoạch tổng: [plans/README.md](plans/README.md). Mỗi stage có một t
 
 ## Đang ở đâu
 
-**Stage hiện tại:** chưa có. Stage 9 (đóng gói & phát hành) xong ngày 2026-11-19 (D122–D139): bản 1.0.0 đã ký
+**Stage hiện tại:** 11 (xử lý âm thanh trên server Modal), đang làm. Stage 9 (đóng gói & phát hành) xong ngày 2026-11-19 (D122–D139): bản 1.0.0 đã ký
 và đăng ở [GitHub Releases](https://github.com/CozyCode890/GuzzMobile/releases/tag/v1.0.0), repo chuyển public.
 Stage 6 (Intent cho MacroDroid) xong ngày 2026-11-18 (D91–D108; MacroDroid trên Xiaomi 15T 28/28 lệnh ra FILE_DONE, 11 lần lúc màn hình tắt, chấp nhận thay đêm
 thử theo D107; Chia sẻ tới Guzz nhận cả Zalo, D106). Stage 8 (hoàn thiện giao diện) xong ngày 2026-11-18
@@ -34,7 +34,7 @@ dưới). Gửi bất cứ thứ gì lên Google, push tag hay tạo Release th�
 | 8 | Hoàn thiện giao diện | ✅ 2026-11-18 | [stage-08-ui.md](plans/stage-08-ui.md) |
 | 9 | Đóng gói & phát hành | ✅ 2026-11-19 | [stage-09-release.md](plans/stage-09-release.md) |
 | 10 | (Tuỳ chọn) Plugin Tasker/Locale | ⬜ | [stage-10-tasker-plugin.md](plans/stage-10-tasker-plugin.md) |
-| 11 | Xử lý âm thanh trên server (Modal) | 📝 2026-11-21 | [stage-11-server.md](plans/stage-11-server.md) |
+| 11 | Xử lý âm thanh trên server (Modal) | 🔨 | [stage-11-server.md](plans/stage-11-server.md) |
 
 Ký hiệu: ⬜ chưa plan chi tiết · 📝 đã plan chi tiết · 🔨 đang làm · ✅ xong (ghi ngày) · ⏸ hoãn
 

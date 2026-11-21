@@ -2,6 +2,7 @@ package io.github.cozycode890.guzz.core.audio
 
 import io.github.cozycode890.guzz.core.common.settings.SettingKeys
 import io.github.cozycode890.guzz.core.common.settings.Settings
+import kotlinx.serialization.Serializable
 
 /**
  * Cài đặt của các bước làm sạch đầy đủ (Stage 7, mục `[AUDIO]`), là tham số của audio_processing.py: `clean_audio`
@@ -11,7 +12,10 @@ import io.github.cozycode890.guzz.core.common.settings.Settings
  * @param noiseSampleSec cửa sổ (giây) ước lượng sàn ồn, là `time_constant_s` của noisereduce (tối thiểu 0,2).
  * @param levelWindowSec cửa sổ cân bằng âm lượng theo thời gian, 0 = tắt.
  * @param transientClampDb ghìm tiếng động to hơn mức thường quá số dB này, 0 = tắt.
+ *
+ * `@Serializable`: đi trong yêu cầu job gửi server (Stage 11, `:core:remote`).
  */
+@Serializable
 data class CleanSettings(
     val denoise: Boolean = true,
     val noiseSampleSec: Double = 1.5,

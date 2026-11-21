@@ -4,7 +4,8 @@
 #
 # Mỗi dòng: <tên> <sha256> <đường dẫn trong cache> <URL | tar:<tên tệp tar>:<đường dẫn trong tar>>
 # Nguồn của mã băm: AAR như stage-01-spike.md ("Thông tin bên ngoài"); embedding như checksum.txt của release
-# speaker-recongition-models; còn lại như spikes/diarization/models.sha256 (Stage 1 A5).
+# speaker-recongition-models; còn lại như spikes/diarization/models.sha256 (Stage 1 A5). Jar Java API và native-lib
+# (Stage 11 A2, cho :server): như trường digest của asset trong GitHub API release v2.0.1.
 
 aar        a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7 download/sherpa-onnx-2.0.1.aar https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-2.0.1.aar
 seg-tar    24615ee884c897d9d2ba09bb4d30da6bb1b15e685065962db5b02e76e4996488 download/sherpa-onnx-pyannote-segmentation-3-0.tar.bz2 https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-segmentation-models/sherpa-onnx-pyannote-segmentation-3-0.tar.bz2
@@ -13,3 +14,6 @@ seg-int8   d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d mode
 seg-license - models/segmentation-3.0.LICENSE tar:seg-tar:sherpa-onnx-pyannote-segmentation-3-0/LICENSE
 emb        aa3cfc16963a10586a9393f5035d6d6b57e98d358b347f80c2a30bf4f00ceba2 models/campplus_zh_en_advanced.onnx https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx
 test-wav   bedf036caed208386c67b4ef4b11f83d74dd0d420b102163a1c33cd09cde7010 testwav/0-four-speakers-zh.wav https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-segmentation-models/0-four-speakers-zh.wav
+jvm        8320e2457b6e38dd624fb619d3552e11ef78ffeb394622056126b16f2fd99d12 download/sherpa-onnx-jvm-2.0.1.jar https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-jvm-2.0.1.jar
+jni-linux  744330a68a7024d9412f029c23b06f847b8444787c94e5118e0fdaf1b4b2cb3f download/sherpa-onnx-native-lib-linux-x64-2.0.1.jar https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-linux-x64-2.0.1.jar
+jni-win    536f1c09025996a780b22f972b2e56e0e8b2064e1ceb534456ea7eba0a6ae4cd download/sherpa-onnx-native-lib-win-x64-2.0.1.jar https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-win-x64-2.0.1.jar

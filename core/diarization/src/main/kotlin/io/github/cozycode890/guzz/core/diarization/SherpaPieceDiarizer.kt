@@ -10,10 +10,9 @@ import com.k2fsa.sherpa.onnx.SpeakerEmbeddingExtractor
 import com.k2fsa.sherpa.onnx.SpeakerEmbeddingExtractorConfig
 import io.github.cozycode890.guzz.core.audio.pcm.Pcm16File
 import io.github.cozycode890.guzz.core.speaker.DiarizationSettings
-import io.github.cozycode890.guzz.core.speaker.Exclusive
 import io.github.cozycode890.guzz.core.speaker.LabeledTurn
 import io.github.cozycode890.guzz.core.speaker.Piece
-import io.github.cozycode890.guzz.core.speaker.PieceLinker
+import io.github.cozycode890.guzz.core.speaker.SherpaPiece
 import java.io.Closeable
 import java.io.File
 
@@ -58,40 +57,24 @@ class SherpaPieceDiarizer(
 
     /**
      * Tách giọng mẫu [a, b) của [pcm]: lượt nói đã bỏ chồng lấn (giây trên toàn bài) và embedding trung bình (≤ 30 s
-     * tiếng nói, chuẩn hoá L2) của từng nhãn, như `run_sherpa.py`.
+     * tiếng nói, chuẩn hoá L2) của từng nhãn, như `run_sherpa.py`. Phần dựng kết quả dùng chung với server ([SherpaPiece]).
      */
     fun run(pcm: File, a: Long, b: Long, numClusters: Int, onProgress: (Int, Int) -> Unit): Piece {
         val sr = settings.sampleRate
         val samples = FloatArray((b - a).toInt())
         Pcm16File(pcm).use { it.read(a, samples, 0, samples.size) }
         val raw = engine(numClusters).processWithCallback(samples, ProgressCallback(onProgress), 0L)
-            .sortedBy { it.start }
             .map { LabeledTurn(it.start.toDouble(), it.end.toDouble(), it.speaker) }
-        val excl = Exclusive.toExclusive(raw)
-        val emb = LinkedHashMap<Int, DoubleArray?>()
-        for (l in excl.map { it.label }.distinct().sorted()) {
-            val ranges = Exclusive.embeddingRanges(excl.filter { it.label == l }.map { it.start to it.end }, sr, samples.size)
-            emb[l] = embedding(samples, ranges)
-        }
-        val off = a.toDouble() / sr
-        return Piece(off, b.toDouble() / sr, excl.map { LabeledTurn(it.start + off, it.end + off, it.label) }, emb)
+        return SherpaPiece.build(samples, a, b, sr, raw, ::embedding)
     }
 
-    private fun embedding(samples: FloatArray, ranges: List<IntRange>): DoubleArray? {
-        if (ranges.isEmpty()) return null
-        val all = FloatArray(ranges.sumOf { it.last - it.first + 1 })
-        var p = 0
-        for (r in ranges) {
-            samples.copyInto(all, p, r.first, r.last + 1)
-            p += r.last - r.first + 1
-        }
+    private fun embedding(all: FloatArray): FloatArray? {
         val stream = extractor.createStream()
         try {
             stream.acceptWaveform(all, settings.sampleRate)
             stream.inputFinished()
             if (!extractor.isReady(stream)) return null
-            val v = extractor.compute(stream)
-            return PieceLinker.normalize(DoubleArray(v.size) { v[it].toDouble() })
+            return extractor.compute(stream)
         } finally {
             stream.release()
         }

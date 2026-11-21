@@ -1,5 +1,7 @@
 package io.github.cozycode890.guzz.core.speaker
 
+import kotlinx.serialization.Serializable
+
 /**
  * Tách giọng một phần: [numClusters] `> 0` = số cụm cố định, `≤ 0` = phân cụm bằng ngưỡng. Bản Android chạy sherpa-onnx
  * trong process `:diarize` và dùng lại tệp `phan_NN.json` đã có.
@@ -12,6 +14,7 @@ fun interface PieceRunner {
  * Số người nói mong muốn (D72, D80): [min]..[max], `0` = không giới hạn phía đó. Biết chính xác số người
  * (`num_speakers` > 0) thì `min = max = num_speakers`.
  */
+@Serializable
 data class SpeakerBounds(val min: Int, val max: Int) {
     companion object {
         /** Như cài đặt `[SPEAKERS]` của desktop: `num_speakers` > 0 thắng `min_speakers` / `max_speakers`. */

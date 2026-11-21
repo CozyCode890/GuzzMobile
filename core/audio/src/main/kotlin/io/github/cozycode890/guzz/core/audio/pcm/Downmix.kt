@@ -1,11 +1,13 @@
-package io.github.cozycode890.guzz.core.media
+package io.github.cozycode890.guzz.core.audio.pcm
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
  * Trộn PCM xen kênh từ bộ giải mã về mono float [-1, 1]: trung bình các kênh (như `-ac 1` của ffmpeg với stereo, mỗi
- * kênh × 0,5). Đọc thẳng từ ByteBuffer theo chỉ số tuyệt đối, không tạo ShortBuffer / FloatBuffer view cho từng mẫu.
+  * kênh × 0,5). Đọc thẳng từ ByteBuffer theo chỉ số tuyệt đối, không tạo ShortBuffer / FloatBuffer view cho từng mẫu.
+ *
+ * JVM thuần (Stage 11 B1): bộ giải mã MediaCodec của điện thoại và ffmpeg trên server (`:server`) dùng chung.
  */
 object Downmix {
 
