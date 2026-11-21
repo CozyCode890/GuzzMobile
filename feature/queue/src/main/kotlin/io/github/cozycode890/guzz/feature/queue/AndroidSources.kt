@@ -16,6 +16,7 @@ import io.github.cozycode890.guzz.core.media.MediaInput
 import io.github.cozycode890.guzz.core.media.MediaReadException
 import io.github.cozycode890.guzz.core.media.NoAudioException
 import io.github.cozycode890.guzz.core.media.PreparationListener
+import io.github.cozycode890.guzz.core.media.UploadPreparation
 import io.github.cozycode890.guzz.core.pipeline.ChunkSource
 import io.github.cozycode890.guzz.core.pipeline.ErrorCodes
 import io.github.cozycode890.guzz.core.pipeline.NoAudioTrackException
@@ -23,6 +24,8 @@ import io.github.cozycode890.guzz.core.pipeline.OutputFolder
 import io.github.cozycode890.guzz.core.pipeline.PipelineException
 import io.github.cozycode890.guzz.core.pipeline.SourceInfo
 import io.github.cozycode890.guzz.core.pipeline.SourceListener
+import io.github.cozycode890.guzz.core.pipeline.Transcript
+import io.github.cozycode890.guzz.core.remote.UploadSource
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -109,6 +112,20 @@ class AndroidChunkSource(private val context: Context, private val source: Strin
                 args = listOf((e.neededBytes / 1_000_000).toString(), (e.freeBytes / 1_000_000).toString()),
             )
         }
+    }
+
+    /** Stage 11 E4: tệp âm thanh gửi nguyên, video tách luồng âm thanh bằng MediaMuxer ([UploadPreparation]). */
+    override fun upload(folder: File, audioTrack: String, listener: SourceListener): UploadSource? {
+        val info = info()
+        val f = try {
+            UploadPreparation.prepare(
+                context, mediaInputOf(source), info.displayName, info.size.takeIf { it > 0 } ?: -1,
+                Transcript.isVideo(info.displayName, info.mimeType), audioTrack, folder, listener::checkCancelled,
+            )
+        } catch (e: NoAudioException) {
+            throw NoAudioTrackException(e.message ?: "Tệp không có luồng âm thanh nào.")
+        } ?: return null
+        return UploadSource(f.name, f.length, f.streamIndex, cleanup = { f.temp?.delete() }, open = f.open)
     }
 
     private companion object {

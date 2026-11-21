@@ -85,10 +85,16 @@ Chia sẻ (khi đó `request_id` rỗng). Không có sự kiện tiến độ: c
 | `io.github.cozycode890.guzz.event.FILE_DONE` | Xong một tệp | `request_id`, `name`, `source`*, `output_path`* (bản chép lời là đường dẫn) hoặc `output_uri`* (thư mục SAF), `duration_sec`, `chars`, `models` (cách nhau dấu phẩy), `skipped` (`true` khi bỏ qua vì trùng tên) |
 | `io.github.cozycode890.guzz.event.FILE_FAILED` | Tệp lỗi, hoặc tệp của lệnh không đọc được | `request_id`, `name`, `source`*, `error`, `error_kind` |
 | `io.github.cozycode890.guzz.event.QUEUE_FINISHED` | Hàng đợi chạy xong / dừng | `done`, `failed`, `skipped`, `stopped` |
-| `io.github.cozycode890.guzz.event.STATUS` | Trả lời lệnh STATUS | `request_id`, `running`, `waiting`, `done`, `failed`, `current`, `progress` (0–100), `chunk`, `chunk_total` |
+| `io.github.cozycode890.guzz.event.STATUS` | Trả lời lệnh STATUS | `request_id`, `running`, `waiting`, `done`, `failed`, `current`, `progress` (0–100), `chunk`, `chunk_total`, `step` (bước con, xem dưới) |
 | `io.github.cozycode890.guzz.event.ERROR` | Lệnh bị từ chối / không chạy được | `request_id`, `command`, `error`, `error_kind` |
 
 `*`: không có khi tắt "Kèm đường dẫn tệp trong sự kiện".
+
+### `step` của STATUS
+
+Bước con của tệp đang chạy, rỗng khi đang chép lời. Xử lý trên máy: `decode`, `bandpass`, `transients`, `denoise`,
+`level`, `normalize`, `trim`, `write_clean`, `write_chunks`. Xử lý trên server (bản 1.1.0): `server_upload` (đang tải
+lên), `server_process` (server đang làm sạch / tách giọng), `server_download` (đang tải kết quả về).
 
 ### `error_kind`
 

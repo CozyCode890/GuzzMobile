@@ -68,12 +68,13 @@ object GuzzIntents {
     const val EXTRA_PROGRESS = "progress"
     const val EXTRA_CHUNK = "chunk"
     const val EXTRA_CHUNK_TOTAL = "chunk_total"
+    const val EXTRA_STEP = "step"
     const val EXTRA_COMMAND = "command"
     val eventExtras = listOf(
         EXTRA_PACKAGE, EXTRA_REQUEST_ID, EXTRA_NAME, EXTRA_SOURCE, EXTRA_OUTPUT_PATH, EXTRA_OUTPUT_URI,
         EXTRA_DURATION_SEC, EXTRA_CHARS, EXTRA_MODELS, EXTRA_SKIPPED, EXTRA_ERROR, EXTRA_ERROR_KIND, EXTRA_DONE,
         EXTRA_FAILED, EXTRA_STOPPED, EXTRA_RUNNING, EXTRA_WAITING, EXTRA_CURRENT, EXTRA_PROGRESS, EXTRA_CHUNK,
-        EXTRA_CHUNK_TOTAL, EXTRA_COMMAND,
+        EXTRA_CHUNK_TOTAL, EXTRA_STEP, EXTRA_COMMAND,
     )
 
     /** `error_kind` của sự kiện ERROR (lỗi của lệnh) và FILE_FAILED (tệp không đọc được), ngoài mã lỗi của pipeline. */

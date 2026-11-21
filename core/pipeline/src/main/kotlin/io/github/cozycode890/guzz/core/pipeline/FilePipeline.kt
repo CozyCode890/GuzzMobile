@@ -21,6 +21,13 @@ import io.github.cozycode890.guzz.core.gemini.isTranscribeModel
 import io.github.cozycode890.guzz.core.gemini.DiarizationMethod
 import io.github.cozycode890.guzz.core.gemini.extractWords
 import io.github.cozycode890.guzz.core.common.audio.TimeMap
+import io.github.cozycode890.guzz.core.audio.NoSpeechException
+import io.github.cozycode890.guzz.core.remote.JobErrors
+import io.github.cozycode890.guzz.core.remote.JobRequest
+import io.github.cozycode890.guzz.core.remote.RemoteJobFailedException
+import io.github.cozycode890.guzz.core.remote.RemoteProcessor
+import io.github.cozycode890.guzz.core.remote.RemoteSteps
+import io.github.cozycode890.guzz.core.remote.RemoteUnavailableException
 import io.github.cozycode890.guzz.core.speaker.DiarizeRequest
 import io.github.cozycode890.guzz.core.speaker.SpeakerDiarizer
 import io.github.cozycode890.guzz.core.speaker.SpeakerTurn
@@ -54,6 +61,8 @@ data class FileProgress(
     val chunk: Int? = null,
     val total: Int? = null,
     val model: String? = null,
+    /** Stage 11 F3: mã lý do server lỗi khi tệp đã chuyển sang làm trên máy (`null` = không chuyển). */
+    val serverFallback: String? = null,
 )
 
 /** Kết quả một tệp. Port của transcribe.py: `FileResult`. */
@@ -80,6 +89,7 @@ data class FileResult(
  * có thể xoá thư mục đó lúc đang làm dở).
  * @param sleep hàm chờ của bộ đổi model (chờ model mở khoá) và của chờ giữa các đoạn (bản debug, D67).
  * @param diarizer tách giọng trên máy (cách `pyannote` và `hybrid`); `null` thì hai cách đó báo lỗi.
+ * @param remote server xử lý âm thanh (Stage 11), dùng khi bật `[SERVER] enabled`; `null` = luôn làm trên máy.
  */
 class FilePipeline(
     private val tempRoot: File,
@@ -91,6 +101,7 @@ class FilePipeline(
     private val diarizer: SpeakerDiarizer? = null,
     /** Prompt người dùng sửa (Stage 8 G3); mặc định là prompt đóng gói. */
     private val prompts: PromptSource = PromptSource.DEFAULT,
+    private val remote: RemoteProcessor? = null,
 ) {
     fun tempDirFor(info: SourceInfo): File = File(tempRoot, CacheKeys.tempDirName(info.displayName, fingerprint(info)))
 
@@ -164,16 +175,21 @@ class FilePipeline(
             audioKey, sp.runOn, sp.diarization.signature, sp.numSpeakers, sp.minSpeakers, sp.maxSpeakers,
         )
         val speakersJson = File(folder, "nguoi_noi.$speakerKey.json")
-        // D75: chưa có kết quả tách giọng thì giữ PCM mà tách giọng cần tới lúc có, rồi xoá ngay.
-        val keepPcm = if (onDevice && !nonEmpty(speakersJson)) {
-            if (sp.runOnOriginal) ChunkCache.RAW_PCM_FILE else ChunkPreparer.CLEAN_PCM_FILE
-        } else {
-            null
-        }
+        var keepPcm: String? = null
 
         // ---- (1) xử lý âm thanh + cắt đoạn ----
         progress(Stage.CLEAN, 0.0)
         val chunkList = try {
+            // (0) Stage 11: cache thiếu thì nhờ server cắt đoạn (+ tách giọng); server lỗi thì làm trên máy (D145).
+            if (remote != null && cfg.serverEnabled) {
+                processOnServer(remote, source, info, folder, cfg, audioKey, if (onDevice) speakerKey else null, isVideo, progress)
+            }
+            // D75: chưa có kết quả tách giọng thì giữ PCM mà tách giọng cần tới lúc có, rồi xoá ngay.
+            keepPcm = if (onDevice && !nonEmpty(speakersJson)) {
+                if (sp.runOnOriginal) ChunkCache.RAW_PCM_FILE else ChunkPreparer.CLEAN_PCM_FILE
+            } else {
+                null
+            }
             prepareChunks(source, folder, audioKey, cfg, progress, keepPcm, saveExtracted = cfg.saveExtracted && isVideo)
         } catch (e: NoAudioTrackException) {
             if (!cfg.skipSilent) throw e
@@ -266,6 +282,104 @@ class FilePipeline(
             charCount = body.length, origDuration = chunkList.originalDuration, models = models,
             minutesPerSpeaker = minutes,
         )
+    }
+
+    // ------------------------------------------------------------------ (0) server (Stage 11)
+
+    /**
+     * Cache thiếu danh sách đoạn (hoặc lượt nói khi [speakerKey] khác `null`) thì gửi tệp lên server, nhận về đúng các tệp
+     * cache vào [folder]: bước (1), (2) sau đó chỉ thấy cache trúng. Server làm cả hai việc trên cùng âm thanh sạch, nên
+     * thiếu phần nào cũng làm lại cả hai. Lỗi chuyển sang máy (mạng, token, HTTP, quá giờ, khác phiên bản, kết quả hỏng)
+     * thì ghi log lý do rồi trả về; "không có luồng âm thanh" / "không còn tiếng nói" thì ném như khi làm trên máy; Dừng
+     * thì ném `CancellationException`.
+     */
+    private suspend fun processOnServer(
+        remote: RemoteProcessor,
+        source: ChunkSource,
+        info: SourceInfo,
+        folder: File,
+        cfg: PipelineConfig,
+        audioKey: String,
+        speakerKey: String?,
+        isVideo: Boolean,
+        progress: ProgressTracker,
+    ) {
+        val saveExtracted = cfg.saveExtracted && isVideo
+        val haveChunks = withContext(io) {
+            ChunkCache.read(folder, audioKey)?.takeIf {
+                (!cfg.saveCleanAudio || nonEmpty(File(folder, ChunkSource.CLEAN_AUDIO_FILE))) &&
+                    (!saveExtracted || nonEmpty(File(folder, ChunkSource.EXTRACTED_AUDIO_FILE)))
+            } != null
+        }
+        val haveSpeakers = speakerKey == null || nonEmpty(File(folder, "nguoi_noi.$speakerKey.json"))
+        if (haveChunks && haveSpeakers) return
+        val context = currentCoroutineContext()
+        val listener = object : SourceListener {
+            override fun checkCancelled() = context.ensureActive()
+            override fun log(message: String) = logger.info(message.trim())
+        }
+        val upload = try {
+            withContext(io) {
+                folder.mkdirs()
+                source.upload(folder, cfg.audioTrack, listener)
+            }
+        } catch (e: NoAudioTrackException) {
+            throw e
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            serverFallback(progress, "upload", "không tách được âm thanh để tải lên: ${e.message}")
+            return
+        }
+        if (upload == null) {
+            logger.info("Tệp này không gửi server được (định dạng âm thanh chưa hỗ trợ), xử lý trên máy.")
+            return
+        }
+        val sp = cfg.speakers
+        val request = JobRequest(
+            fileName = upload.name, sourceName = info.id, streamIndex = upload.streamIndex, audioKey = audioKey,
+            speakerKey = speakerKey, sampleRate = PipelineConfig.SAMPLE_RATE, chunk = cfg.chunk, clean = cfg.clean,
+            saveClean = cfg.saveCleanAudio, saveExtracted = saveExtracted, bounds = sp.bounds,
+            diarization = sp.diarization, runOnOriginal = sp.runOnOriginal,
+        )
+        val mb = "%.1f".format(Locale.ROOT, upload.length / 1e6)
+        logger.info("Gửi server xử lý âm thanh" + (if (speakerKey != null) " và tách giọng" else "") + " ($mb MB)...")
+        val started = System.nanoTime()
+        try {
+            remote.process(upload, request, folder, log = { logger.info(it) }) { step, f ->
+                serverProgress(progress, speakerKey != null, step, f)
+            }
+            logger.info("Server xử lý xong sau ${seconds(started)} giây.")
+        } catch (e: RemoteUnavailableException) {
+            serverFallback(progress, e.reason, e.message.orEmpty())
+        } catch (e: RemoteJobFailedException) {
+            if (e.code == JobErrors.NO_AUDIO) throw NoAudioTrackException(e.message ?: "Tệp không có luồng âm thanh nào.")
+            throw NoSpeechException()
+        } finally {
+            withContext(io + NonCancellable) { upload.cleanup() }
+        }
+    }
+
+    private fun serverFallback(progress: ProgressTracker, reason: String, message: String) {
+        logger.warning("Server lỗi ($reason): $message. Xử lý trên máy.")
+        progress.serverFallback = reason
+        progress(Stage.CLEAN, 0.0)
+    }
+
+    /**
+     * Tiến độ khi dùng server: tải lên 0–30% bước âm thanh, server xử lý phần còn lại (có tách giọng thì phần tách giọng
+     * của server, từ 35% tiến độ của server, tính vào bước tách giọng), tải về là cuối bước cuối.
+     */
+    private fun serverProgress(progress: ProgressTracker, diarize: Boolean, step: String, f: Double) {
+        when (step) {
+            RemoteSteps.UPLOAD -> progress(Stage.CLEAN, 0.3 * f, step = step)
+            RemoteSteps.PROCESS -> when {
+                !diarize -> progress(Stage.CLEAN, 0.3 + 0.6 * f, step = step)
+                f <= SERVER_CLEAN_END -> progress(Stage.CLEAN, 0.3 + 0.7 * f / SERVER_CLEAN_END, step = step)
+                else -> progress(Stage.DIARIZE, (f - SERVER_CLEAN_END) / (1 - SERVER_CLEAN_END), step = step)
+            }
+            else -> if (diarize) progress(Stage.DIARIZE, 1.0, step = step) else progress(Stage.CLEAN, 0.9 + 0.1 * f, step = step)
+        }
     }
 
     // ------------------------------------------------------------------ (1) cắt đoạn có cache
@@ -524,6 +638,11 @@ class FilePipeline(
 
     private fun nonEmpty(f: File) = f.isFile && f.length() > 0
 
+    private companion object {
+        /** Phần tiến độ của server dành cho làm sạch + cắt đoạn khi có tách giọng (`JobProcessor` của `:server`). */
+        const val SERVER_CLEAN_END = 0.35
+    }
+
     private fun seconds(startedNanos: Long) =
         "%.0f".format(Locale.ROOT, (System.nanoTime() - startedNanos) / 1e9)
 }
@@ -533,6 +652,19 @@ class FilePipeline(
  * (tách giọng 0,15–0,35), chép lời tới 0,98, ghép 0,98–1.
  */
 class ProgressTracker(private val report: (FileProgress) -> Unit, private val hasDiarization: Boolean = false) {
+    /**
+     * Stage 11 F3: lý do server lỗi, gắn vào mọi tiến độ sau khi chuyển sang làm trên máy. Đặt giá trị thì tiến độ được
+     * phép về lại đầu (làm lại trên máy).
+     */
+    var serverFallback: String? = null
+        set(value) {
+            field = value
+            shown = 0.0
+        }
+
+    /** Tiến độ không lùi: dùng server xong thì bước (1), (2) đọc cache báo lại mốc thấp hơn. */
+    private var shown = 0.0
+
     operator fun invoke(
         stage: Stage,
         fraction: Double,
@@ -547,7 +679,8 @@ class ProgressTracker(private val report: (FileProgress) -> Unit, private val ha
             Stage.TRANSCRIBE -> (if (hasDiarization) 0.35 else 0.15) to 0.98
             Stage.MERGE -> 0.98 to 1.0
         }
-        report(FileProgress(stage, a + (b - a) * fraction.coerceIn(0.0, 1.0), step, chunk, total, model))
+        shown = maxOf(shown, a + (b - a) * fraction.coerceIn(0.0, 1.0))
+        report(FileProgress(stage, shown, step, chunk, total, model, serverFallback))
     }
 }
 

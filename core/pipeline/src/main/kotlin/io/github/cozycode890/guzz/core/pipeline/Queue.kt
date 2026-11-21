@@ -71,6 +71,8 @@ data class QueueItem(
     val ownedCopy: Boolean = false,
     val charCount: Int? = null,
     val modelsUsed: List<String>? = null,
+    /** Stage 11 F3: server lỗi, tệp đang làm trên máy; mã lý do (`Reasons` của `:core:remote`). */
+    val serverFallback: String? = null,
 )
 
 /** Cả hàng đợi. [running]: đang chạy (hoặc bị giết giữa chừng); mở lại app thì tự chạy tiếp (D64). */
@@ -254,7 +256,7 @@ class QueueRunner(
     }
 
     private fun resetForRun(item: QueueItem) = item.copy(
-        status = ItemStatus.WAITING, progress = 0.0, stage = null, step = null, chunk = null, chunkTotal = null,
+        status = ItemStatus.WAITING, progress = 0.0, stage = null, step = null, chunk = null, chunkTotal = null, serverFallback = null,
         model = null, error = null, errorKind = null, errorCode = null, errorArgs = emptyList(), charCount = null, modelsUsed = null,
     )
 
@@ -433,12 +435,13 @@ class QueueRunner(
     /** Tiến độ: luôn cập nhật trong bộ nhớ, chỉ ghi tệp khi đổi bước hoặc đoạn (ghi thưa). */
     private fun onProgress(id: String, p: FileProgress) {
         val before = state.value.items.firstOrNull { it.id == id } ?: return
-        val changed = before.stage != p.stage.code || before.chunk != p.chunk || before.model != p.model
+        val changed = before.stage != p.stage.code || before.chunk != p.chunk || before.model != p.model ||
+            before.serverFallback != p.serverFallback
         store.updateItem(id, persist = changed) {
             it.copy(
                 progress = p.fraction, stage = p.stage.code, step = p.step ?: it.step.takeIf { p.stage == Stage.CLEAN },
                 chunk = p.chunk ?: it.chunk.takeIf { p.stage == Stage.TRANSCRIBE },
-                chunkTotal = p.total ?: it.chunkTotal, model = p.model ?: it.model,
+                chunkTotal = p.total ?: it.chunkTotal, model = p.model ?: it.model, serverFallback = p.serverFallback,
             )
         }
     }

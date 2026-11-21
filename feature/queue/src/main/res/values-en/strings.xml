@@ -26,6 +26,18 @@
     <string name="step_trim">trimming silence</string>
     <string name="step_write_clean">writing clean audio</string>
     <string name="step_write_chunks">writing chunks</string>
+    <string name="step_server_upload">uploading to server</string>
+    <string name="step_server_process">server processing</string>
+    <string name="step_server_download">downloading results</string>
+
+    <string name="server_fallback">Server failed (%1$s), processing on this phone</string>
+    <string name="server_reason_network">server unreachable</string>
+    <string name="server_reason_auth">wrong token</string>
+    <string name="server_reason_protocol">version mismatch</string>
+    <string name="server_reason_timeout">timed out</string>
+    <string name="server_reason_config">URL or token missing</string>
+    <string name="server_reason_result">broken results</string>
+    <string name="server_reason_other">server error</string>
 
     <string name="google_err_overloaded">overloaded</string>
     <string name="google_err_minute">per-minute quota</string>

@@ -212,6 +212,14 @@ object SettingKeys {
      */
     val AUTOMATION_SOURCE_DIRS = StringSetting("AUTOMATION", "source_dirs", default = "", sameAsDesktop = false, clean = String::trim)
 
+    // [SERVER] (Stage 11): xử lý âm thanh trên server riêng (Modal). Token proxy lưu Keystore như API key, không ở đây.
+
+    /** Gửi làm sạch, cắt đoạn, tách giọng lên server; server lỗi thì tự làm trên máy (D145). Mặc định tắt. */
+    val SERVER_ENABLED = BoolSetting("SERVER", "enabled", default = false, sameAsDesktop = false)
+
+    /** URL của server, vd `https://<workspace>--guzz-server-web.<vùng>.modal.run`. */
+    val SERVER_URL = StringSetting("SERVER", "url", default = "", sameAsDesktop = false, clean = String::trim)
+
     val all: List<SettingKey<*>> = listOf(
         OUTPUT_DIR,
         FILENAME_TEMPLATE,
@@ -293,6 +301,8 @@ object SettingKeys {
         AUTOMATION_ENABLED,
         AUTOMATION_INCLUDE_PATHS,
         SAVE_BESIDE_SOURCE,
+        SERVER_ENABLED,
+        SERVER_URL,
     )
 
     /** Mục của máy này, không xuất / nhập cùng [all]: mã bí mật và quyền SAF chỉ có nghĩa trên máy đã cấp. */

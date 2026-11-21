@@ -10,6 +10,8 @@ dependencies {
     api(project(":core:audio"))
     api(project(":core:gemini"))
     api(project(":core:speaker"))
+    // Stage 11: xử lý âm thanh trên server (giao thức + RemoteProcessor).
+    api(project(":core:remote"))
 
     testImplementation(testFixtures(project(":core:common")))
     testImplementation(testFixtures(project(":core:gemini")))

@@ -82,6 +82,8 @@ object EventFactory {
             G.EXTRA_PROGRESS to ((current?.progress ?: 0.0) * 100).roundToInt().toString(),
             G.EXTRA_CHUNK to current?.chunk?.toString().orEmpty(),
             G.EXTRA_CHUNK_TOTAL to current?.chunkTotal?.toString().orEmpty(),
+            // Stage 11 E5: mã bước con (giải mã, làm sạch, server_upload / server_process / server_download).
+            G.EXTRA_STEP to current?.step.orEmpty(),
         )
         return AutomationEvent(G.EVENT_STATUS, e)
     }

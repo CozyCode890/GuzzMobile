@@ -183,12 +183,12 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### E. Điện thoại: client và pipeline
 
-- [ ] E1. `RemoteProcessor` (interface ở `:core:pipeline`) + phần nối vào `FilePipeline`: bật server và cache thiếu
+- [x] E1. `RemoteProcessor` (interface ở `:core:pipeline`) + phần nối vào `FilePipeline`: bật server và cache thiếu
   thì gọi trước bước (1), giải nén vào thư mục tạm, rồi bước (1), (2) đọc cache như cũ. Lỗi thuộc danh sách chuyển
   sang máy thì log lý do và chạy đường cũ. Kiểm: test JVM với `RemoteProcessor` giả: thành công thì không gọi
   `ChunkSource.prepare` / `diarizer`; lỗi mạng thì gọi; Dừng thì không chuyển; "không còn tiếng nói" từ server thì xử lý
   như trên máy (`skipSilent`); cache đủ thì không gọi server.
-- [ ] E2. Client OkHttp (`:core:remote`): tải lên dạng stream (không đọc cả tệp vào RAM), mỗi 5 giây hỏi trạng thái,
+- [x] E2. Client OkHttp (`:core:remote`): tải lên dạng stream (không đọc cả tệp vào RAM), mỗi 5 giây hỏi trạng thái,
   tải tar về `.tmp` rồi giải nén, kiểm kích thước + SHA-256, xong thì `DELETE`. Kiểm: MockWebServer cho 401, 413,
   5xx, ngắt giữa lúc tải lên / tải về, tar thiếu tệp, khác phiên bản giao thức → đúng loại lỗi để E1 chuyển sang máy.
 - [ ] E3. Làm tiếp (D64): mã job lưu `server_job.json` trong thư mục tạm. Chạy lại thì hỏi trạng thái job đó trước;
@@ -198,13 +198,13 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   theo `cfg.audioTrack` (`AudioTracks`), tách bằng MediaMuxer (AAC → `.m4a`; Opus / Vorbis → WebM / OGG khi API cho
   phép). Codec khác thì chạy trên máy và log lý do. Kiểm: test thiết bị với video trong `testdata/media`: độ dài luồng
   tách ra lệch ≤ 0,05 s so với gốc; video 1 giờ tách xong ≤ 10 giây.
-- [ ] E5. Tiến độ: thêm bước con "Đang tải lên server", "Server đang xử lý" (kèm % của server), "Đang tải kết quả về"
+- [x] E5. Tiến độ: thêm bước con "Đang tải lên server", "Server đang xử lý" (kèm % của server), "Đang tải kết quả về"
   vào `FileProgress.step`, thông báo, trả lời lệnh `STATUS` (Stage 6). Kiểm: test JVM của `ProgressTracker`;
   `docs/intents.md` ghi thêm giá trị bước mới (test so tài liệu của `:feature:automation` qua).
 
 ### F. Cài đặt và giao diện
 
-- [ ] F1. `SettingKeys`: `SERVER.enabled` (mặc định tắt), `SERVER.url`. Token lưu Keystore như `ApiKeyStore`. Xuất
+- [x] F1. `SettingKeys`: `SERVER.enabled` (mặc định tắt), `SERVER.url`. Token lưu Keystore như `ApiKeyStore`. Xuất
   `config.txt`: có URL, không có token (như D112). Kiểm: `ConfigIniTest` qua; nhập `config.txt` desktop (không có mục
   `SERVER`) không lỗi.
 - [ ] F2. Trang Cài đặt → "Server xử lý": công tắc, URL, token, nút Kiểm tra kết nối (`/health`, báo phiên bản / lỗi
@@ -276,6 +276,19 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   trên PC, đoạn FLAC giải mã ra trùng từng mẫu (ffmpeg 7.1.5 của Debian và ffmpeg của desktop), lượt nói trùng ±2 ms;
   DELETE xong GET → 404. D3: job giả `created` cũ 25 giờ bị `cleanup` (gọi tay bằng `Function.from_name(...).remote()`)
   xoá, job mới giữ lại; Volume sạch sau thử.
+- 2026-11-21/22 E1–E5, F1–F3 (code + test JVM; phần trên máy ảo / điện thoại còn chờ G1): `RemoteProcessor`,
+  `UploadSource`, `RemoteClient` đặt ở `:core:remote` (không ở `:core:pipeline` như kế hoạch) để client và interface cùng
+  chỗ; `:core:pipeline` phụ thuộc `:core:remote`. `ChunkSource.upload` mặc định `null` (nguồn không hỗ trợ thì làm trên
+  máy). Bật / tắt server đi qua `PipelineConfig.serverEnabled` (`[SERVER] enabled`), đọc lại mỗi tệp; URL / token đọc lại
+  mỗi tệp trong `ServerRemote` (`:feature:queue`). Token lưu `KeystoreApiKeyStore` riêng (`secrets/server_token.bin`,
+  alias `guzz_server_token`), không vào `config.txt`; URL và công tắc thì có. `ProgressTracker` không cho tiến độ lùi
+  (dùng server xong thì bước (1), (2) đọc cache báo mốc thấp hơn), trừ khi chuyển sang máy. F3: `QueueItem.serverFallback`
+  (mã lý do) → thông báo / màn hình Hàng đợi thêm dòng "Server lỗi (<lý do>), đang xử lý trên máy". E5: thêm extra
+  `step` cho sự kiện STATUS, giá trị ghi ở `docs/intents.md`. Test: `RemoteClientTest` 17 ca (thành công, 401, 413, 5xx,
+  khác phiên bản ở 409 và trong trạng thái, ngắt lúc tải lên / tải về, tar thiếu tệp, mất mạng, quá giờ, nối lại job,
+  job cũ 404 thì tải lên lại, Dừng thì DELETE, tar có header pax); MockWebServer cắt socket lúc tải lên vẫn có thể trả
+  200 rỗng nên ca đó chấp nhận `network` hoặc `server` (đều chuyển sang máy). `RemotePipelineTest` 8 ca. `.\gradlew test
+  assembleSideloadDebug`: 1754 test qua.
 
 ## Phát sinh
 

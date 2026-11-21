@@ -320,8 +320,14 @@ class QueueService : Service() {
             context.startService(Intent(context, QueueService::class.java).setAction(ACTION_STOP))
         }
 
-        /** Chi tiết tiến độ một tệp để hiện ở thông báo và màn hình Hàng đợi. */
-        fun describe(context: Context, item: QueueItem): String = when (item.stage) {
+        /**
+         * Chi tiết tiến độ một tệp để hiện ở thông báo và màn hình Hàng đợi. Server lỗi (Stage 11 F3) thì thêm dòng
+         * "Server lỗi (<lý do>), đang xử lý trên máy".
+         */
+        fun describe(context: Context, item: QueueItem): String =
+            describeStage(context, item) + serverFallbackText(context, item.serverFallback)?.let { "\n$it" }.orEmpty()
+
+        private fun describeStage(context: Context, item: QueueItem): String = when (item.stage) {
             Stage.CLEAN.code -> context.getString(
                 R.string.queue_detail_audio, stepText(context, item.step), (item.progress / 0.15 * 100).coerceAtMost(100.0).roundToInt(),
             )

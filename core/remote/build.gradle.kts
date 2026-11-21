@@ -11,6 +11,7 @@ dependencies {
     api(libs.kotlinx.serialization.json)
     // api: client nhận OkHttpClient qua constructor (app dùng chung một client với Gemini).
     api(libs.okhttp)
+    implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.kotlinx.coroutines.test)

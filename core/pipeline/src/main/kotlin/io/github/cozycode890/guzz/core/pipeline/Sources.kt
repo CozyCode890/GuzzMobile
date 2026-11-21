@@ -3,6 +3,7 @@ package io.github.cozycode890.guzz.core.pipeline
 import io.github.cozycode890.guzz.core.audio.ChunkList
 import io.github.cozycode890.guzz.core.audio.ChunkSettings
 import io.github.cozycode890.guzz.core.audio.CleanSettings
+import io.github.cozycode890.guzz.core.remote.UploadSource
 import java.io.File
 import java.io.IOException
 
@@ -54,6 +55,13 @@ interface ChunkSource {
         audioTrack: String,
         listener: SourceListener,
     ): ChunkList
+
+    /**
+     * Tệp tải lên server (Stage 11, D144): tệp âm thanh thì chính tệp gốc, video thì luồng âm thanh theo [audioTrack]
+     * tách ra (không giải mã) vào [folder]. `null` = không gửi server được (codec không tách được, nguồn không hỗ trợ):
+     * pipeline làm trên máy. Video không có luồng âm thanh thì ném [NoAudioTrackException].
+     */
+    fun upload(folder: File, audioTrack: String, listener: SourceListener): UploadSource? = null
 
     companion object {
         /** Âm thanh đã làm sạch trong thư mục tạm, như `CLEAN_AUDIO_FILE` của transcribe.py. */

@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import io.github.cozycode890.guzz.core.remote.RemoteProcessor
 import java.io.File
 
 /**
@@ -44,6 +45,7 @@ import java.io.File
  * @param fallbackOutput thư mục ra khi chưa chọn thư mục SAF: chỉ bản debug (`files/output`, lệnh adb), bản thật `null`.
  * @param cacheSalt mã thêm cho kết quả đoạn theo cấu hình của tệp (Gemini giả của bản debug).
  * @param allFilesAccess đang có quyền "Truy cập mọi tệp" (Stage 6): mới ghi bằng đường dẫn được (D96).
+ * @param remote server xử lý âm thanh (Stage 11), dùng khi bật `[SERVER] enabled`.
  */
 class QueueController(
     private val context: Context,
@@ -54,6 +56,7 @@ class QueueController(
     private val cacheSalt: (PipelineConfig) -> String = { "" },
     private val allFilesAccess: () -> Boolean = { false },
     private val logger: Logger = GuzzLog,
+    private val remote: RemoteProcessor? = null,
 ) {
     /** Gốc thư mục tạm (mục "Mặc định kỹ thuật"): không phải `cacheDir`, hệ thống không tự xoá; `adb pull` xem được. */
     val tempRoot = File(context.getExternalFilesDir(null) ?: context.filesDir, "tmp")
@@ -62,6 +65,7 @@ class QueueController(
     private val pipeline = FilePipeline(
         tempRoot, logger, diarizer = AndroidSpeakerDiarizer(context, log = { logger.info(it) }),
         prompts = promptSource(context),
+        remote = remote,
     )
 
     private val env = object : QueueEnvironment {

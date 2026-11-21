@@ -209,4 +209,24 @@
     <string name="prompt_state_custom">Đang dùng prompt đã sửa.</string>
     <string name="prompt_save">Lưu prompt</string>
     <string name="prompt_reset">Khôi phục mặc định</string>
+    <!-- Stage 11 F2: Cài đặt → Server xử lý -->
+    <string name="settings_server_summary">Làm sạch, cắt đoạn, tách giọng trên server riêng (Modal)</string>
+    <string name="server_title">Server xử lý</string>
+    <string name="server_enabled">Xử lý trên server</string>
+    <string name="server_enabled_hint">Gửi âm thanh lên server của bạn để làm sạch, cắt đoạn và tách giọng; điện thoại vẫn tự gửi Google AI.</string>
+    <string name="server_fallback_hint">Server lỗi (mất mạng, token sai, server không trả lời) thì Guzz tự xử lý trên máy như khi tắt mục này.</string>
+    <string name="server_connection">Kết nối</string>
+    <string name="server_connection_hint">Cách tạo server và token: docs/server.md trong mã nguồn.</string>
+    <string name="server_url">URL server</string>
+    <string name="server_url_hint">Dạng https://&lt;workspace&gt;--guzz-server-web.&lt;vùng&gt;.modal.run</string>
+    <string name="server_token_label">Token (Modal-Key.Modal-Secret)</string>
+    <string name="server_token_saved">Đã lưu token: %1$s</string>
+    <string name="server_token_none">Chưa có token.</string>
+    <string name="server_check">Kiểm tra kết nối</string>
+    <string name="server_checking">Đang kiểm tra…</string>
+    <string name="server_check_ok">Kết nối được, server phiên bản %1$s.</string>
+    <string name="server_check_auth">Server từ chối token (401).</string>
+    <string name="server_check_protocol">Server khác phiên bản giao thức với app.</string>
+    <string name="server_check_unreachable">Không tới được server.</string>
+    <string name="server_reason_config_ui">Chưa nhập URL hoặc token.</string>
 </resources>

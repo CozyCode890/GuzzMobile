@@ -36,6 +36,8 @@ data class PipelineConfig(
     val debugFakeGemini: Boolean? = null,
     /** `[AUTOMATION] save_beside_source` (Stage 6, D96): xem [OutputChoice]. */
     val saveBesideSource: Boolean = SettingKeys.SAVE_BESIDE_SOURCE.default,
+    /** `[SERVER] enabled` (Stage 11): nhờ server xử lý âm thanh, lỗi thì làm trên máy. */
+    val serverEnabled: Boolean = SettingKeys.SERVER_ENABLED.default,
 ) {
     companion object {
         /** Tần số xử lý cố định (Stage 2), có trong mã âm thanh như `sample_rate` của desktop. */
@@ -77,6 +79,7 @@ data class PipelineConfig(
             gemini = GeminiConfig.load(settings),
             speakers = SpeakerConfig.load(settings),
             saveBesideSource = settings.get(SettingKeys.SAVE_BESIDE_SOURCE),
+            serverEnabled = settings.get(SettingKeys.SERVER_ENABLED),
         )
     }
 }

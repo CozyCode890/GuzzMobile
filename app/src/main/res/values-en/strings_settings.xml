@@ -186,4 +186,23 @@
     <string name="prompt_state_custom">Using your edited prompt.</string>
     <string name="prompt_save">Save prompt</string>
     <string name="prompt_reset">Restore default</string>
+    <string name="settings_server_summary">Clean, split and diarize on your own server (Modal)</string>
+    <string name="server_title">Processing server</string>
+    <string name="server_enabled">Process on server</string>
+    <string name="server_enabled_hint">Send audio to your server for cleaning, splitting and speaker diarization; the phone still talks to Google AI itself.</string>
+    <string name="server_fallback_hint">If the server fails (no network, wrong token, no reply), Guzz processes on this phone as if this were off.</string>
+    <string name="server_connection">Connection</string>
+    <string name="server_connection_hint">How to create the server and token: docs/server.md in the source code.</string>
+    <string name="server_url">Server URL</string>
+    <string name="server_url_hint">Like https://&lt;workspace&gt;--guzz-server-web.&lt;region&gt;.modal.run</string>
+    <string name="server_token_label">Token (Modal-Key.Modal-Secret)</string>
+    <string name="server_token_saved">Token saved: %1$s</string>
+    <string name="server_token_none">No token yet.</string>
+    <string name="server_check">Test connection</string>
+    <string name="server_checking">Testing…</string>
+    <string name="server_check_ok">Connected, server version %1$s.</string>
+    <string name="server_check_auth">The server rejected the token (401).</string>
+    <string name="server_check_protocol">The server speaks a different protocol version.</string>
+    <string name="server_check_unreachable">Cannot reach the server.</string>
+    <string name="server_reason_config_ui">URL or token missing.</string>
 </resources>

@@ -31,6 +31,19 @@
     <string name="step_trim">cắt lặng</string>
     <string name="step_write_clean">ghi âm thanh sạch</string>
     <string name="step_write_chunks">ghi các đoạn</string>
+    <string name="step_server_upload">tải lên server</string>
+    <string name="step_server_process">server đang xử lý</string>
+    <string name="step_server_download">tải kết quả về</string>
+
+    <!-- Stage 11 F3: server lỗi, tệp chuyển sang làm trên máy -->
+    <string name="server_fallback">Server lỗi (%1$s), đang xử lý trên máy</string>
+    <string name="server_reason_network">không tới được server</string>
+    <string name="server_reason_auth">token sai</string>
+    <string name="server_reason_protocol">khác phiên bản</string>
+    <string name="server_reason_timeout">quá thời gian chờ</string>
+    <string name="server_reason_config">chưa nhập URL hoặc token</string>
+    <string name="server_reason_result">kết quả hỏng</string>
+    <string name="server_reason_other">server báo lỗi</string>
 
     <!-- Loại lỗi Google AI (cũng dùng ở tab Hạn mức) -->
     <string name="google_err_overloaded">quá tải</string>

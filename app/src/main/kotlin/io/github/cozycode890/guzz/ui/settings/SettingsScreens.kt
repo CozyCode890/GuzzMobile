@@ -62,6 +62,7 @@ private val entries = listOf(
     Entry(Routes.OUTPUT, R.string.settings_output_title, R.string.settings_output_summary),
     Entry(Routes.QUEUE, R.string.settings_queue_title, R.string.settings_queue_summary),
     Entry(Routes.AUTOMATION, AutomationR.string.automation_title, R.string.settings_automation_summary),
+    Entry(Routes.SERVER, R.string.server_title, R.string.settings_server_summary),
     Entry(Routes.SYSTEM, R.string.settings_system_title, R.string.settings_system_summary),
     Entry(Routes.LOGS, R.string.logs_title, R.string.settings_logs_summary),
     Entry(Routes.ABOUT, R.string.about_title, R.string.settings_about_summary),

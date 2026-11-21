@@ -4,6 +4,8 @@ import android.content.Context
 import io.github.cozycode890.guzz.core.audio.PrepareStep
 import io.github.cozycode890.guzz.core.pipeline.ErrorCodes
 import io.github.cozycode890.guzz.core.pipeline.QueueItem
+import io.github.cozycode890.guzz.core.remote.Reasons
+import io.github.cozycode890.guzz.core.remote.RemoteSteps
 
 /** Mã bước giải mã (trước các bước của [PrepareStep]) trong `QueueItem.step`. */
 const val STEP_DECODE = "decode"
@@ -23,7 +25,27 @@ fun stepText(context: Context, step: String?): String = when (step) {
     PrepareStep.TRIM.code -> context.getString(R.string.step_trim)
     PrepareStep.WRITE_CLEAN.code -> context.getString(R.string.step_write_clean)
     PrepareStep.WRITE_CHUNKS.code -> context.getString(R.string.step_write_chunks)
+    RemoteSteps.UPLOAD -> context.getString(R.string.step_server_upload)
+    RemoteSteps.PROCESS -> context.getString(R.string.step_server_process)
+    RemoteSteps.DOWNLOAD -> context.getString(R.string.step_server_download)
     else -> step
+}
+
+/** Stage 11 F3: "Server lỗi (<lý do>), đang xử lý trên máy" theo ngôn ngữ app; `null` khi không chuyển sang máy. */
+fun serverFallbackText(context: Context, reason: String?): String? {
+    reason ?: return null
+    val why = context.getString(
+        when (reason) {
+            Reasons.NETWORK -> R.string.server_reason_network
+            Reasons.AUTH -> R.string.server_reason_auth
+            Reasons.PROTOCOL -> R.string.server_reason_protocol
+            Reasons.TIMEOUT -> R.string.server_reason_timeout
+            Reasons.CONFIG -> R.string.server_reason_config
+            Reasons.RESULT -> R.string.server_reason_result
+            else -> R.string.server_reason_other
+        },
+    )
+    return context.getString(R.string.server_fallback, why)
 }
 
 /** Loại lỗi Google AI (`ErrorKind.code`, cũng là `loai_loi` trong sổ hạn mức) theo ngôn ngữ app. */

@@ -12,6 +12,7 @@ import io.github.cozycode890.guzz.feature.queue.FakeTranscriber
 import io.github.cozycode890.guzz.core.pipeline.PipelineConfig
 import io.github.cozycode890.guzz.feature.automation.Automation
 import io.github.cozycode890.guzz.feature.queue.QueueController
+import io.github.cozycode890.guzz.feature.queue.ServerRemote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,6 +46,12 @@ class AppContainer(appContext: Context) {
 
     /** API key Google AI, mã hoá bằng khoá trong Android Keystore (D54, D55). */
     val apiKeyStore: ApiKeyStore = KeystoreApiKeyStore(File(context.filesDir, "secrets/api_key.bin"))
+
+    /** Token proxy của server xử lý âm thanh (Stage 11, F1), mã hoá như API key, khoá Keystore riêng. */
+    val serverTokenStore: ApiKeyStore = KeystoreApiKeyStore(File(context.filesDir, "secrets/server_token.bin"), "guzz_server_token")
+
+    /** Server xử lý âm thanh theo cài đặt (Stage 11): hàng đợi dùng khi bật, trang cài đặt dùng để kiểm tra kết nối. */
+    val serverRemote: ServerRemote by lazy { ServerRemote(settings, serverTokenStore::read, httpClient) }
 
     /** Sổ hạn mức của cả app (D52): đọc tệp lần đầu khi cần, không ở lúc mở app. */
     val quotaTracker: QuotaTracker by lazy { QuotaTracker(File(context.filesDir, "quota/${QuotaTracker.FILENAME}")) }
@@ -88,6 +95,7 @@ class AppContainer(appContext: Context) {
             // Kết quả đoạn của Gemini giả lưu dưới mã riêng: tắt giả rồi chạy thật thì không dùng lại "Đoạn i." giả.
             cacheSalt = { cfg -> if (fakeGeminiFor(cfg)) "gemini_gia" else "" },
             allFilesAccess = { automation.fileAccess.hasAllFilesAccess() },
+            remote = serverRemote,
         ).also { automation.attach(it) }
     }
 

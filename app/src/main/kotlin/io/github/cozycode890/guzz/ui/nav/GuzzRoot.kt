@@ -43,6 +43,7 @@ import io.github.cozycode890.guzz.ui.quota.QuotaScreen
 import io.github.cozycode890.guzz.ui.settings.AboutScreen
 import io.github.cozycode890.guzz.ui.settings.OutputScreen
 import io.github.cozycode890.guzz.ui.settings.QueueSettingsScreen
+import io.github.cozycode890.guzz.ui.settings.ServerScreen
 import io.github.cozycode890.guzz.ui.settings.SettingsHomeScreen
 import io.github.cozycode890.guzz.ui.settings.SystemScreen
 import io.github.cozycode890.guzz.ui.speakers.SpeakersScreen
@@ -61,13 +62,14 @@ object Routes {
     const val QUEUE = "settings/queue"
     const val AUTOMATION = "settings/automation"
     const val SYSTEM = "settings/system"
+    const val SERVER = "settings/server"
     const val LOGS = "settings/logs"
     const val ABOUT = "settings/about"
     private const val TRANSCRIPT = "transcript"
     const val TRANSCRIPT_PATTERN = "$TRANSCRIPT?location={location}&name={name}"
 
     /** Mọi trang mở thẳng được bằng extra `route` của bản debug (`tools/device/ui_check.ps1`). */
-    val pages = listOf(CONVERT, QUOTA, SETTINGS, GOOGLE_AI, AUDIO, SPEAKERS, OUTPUT, QUEUE, AUTOMATION, SYSTEM, LOGS, ABOUT)
+    val pages = listOf(CONVERT, QUOTA, SETTINGS, GOOGLE_AI, AUDIO, SPEAKERS, OUTPUT, QUEUE, AUTOMATION, SERVER, SYSTEM, LOGS, ABOUT)
 
     fun transcript(location: String, name: String?): String =
         "$TRANSCRIPT?location=${Uri.encode(location)}&name=${Uri.encode(name.orEmpty())}"
@@ -170,6 +172,7 @@ fun GuzzRoot(container: AppContainer, resumes: StateFlow<Int>, openRoute: StateF
             composable(Routes.OUTPUT) { OutputScreen(container.settings, back) }
             composable(Routes.QUEUE) { QueueSettingsScreen(container.settings, back) }
             composable(Routes.AUTOMATION) { AutomationRoute(container, resumes, back) }
+            composable(Routes.SERVER) { ServerScreen(container, back) }
             composable(Routes.SYSTEM) { SystemScreen(container, resumes, back) { nav.navigate(it) } }
             composable(Routes.LOGS) { LogsScreen(container, back) }
             composable(Routes.ABOUT) { AboutScreen(container, back) }
