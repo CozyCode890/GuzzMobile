@@ -238,6 +238,13 @@ Remove-Item Env:GUZZ_KEYSTORE_PASSWORD
 # Tag + Release (hỏi người dùng trước): ghi chú lấy mục của phiên bản trong CHANGELOG.md, kèm SHA-256 script in ra
 git tag -a v1.0.1 -m "Guzz Mobile 1.0.1"; git push origin v1.0.1
 gh release create v1.0.1 dist\guzz-1.0.1.apk --title "Guzz 1.0.1" --notes-file <ghi chú>
+# Server xử lý âm thanh trên Modal (Stage 11). CLI ở venv ngoài repo; token proxy ở D:\GuzzMobileData\keys\modal-proxy.json.
+# Test :server cần ffmpeg (GUZZ_FFMPEG, mặc định của Guzz desktop). Deploy lại app guzz-server không cần hỏi (D148);
+# tải bài thật lên lần đầu thì hỏi.
+.\gradlew :server:test :server:serverJar
+D:\GuzzMobileData\tools\modal-venv\Scripts\modal.exe deploy server\modal_app.py
+python -X utf8 tools\server\smoke.py --url https://tunghacxi56--guzz-server-web.us-east.modal.run
+D:\GuzzMobileData\tools\modal-venv\Scripts\modal.exe app logs guzz-server
 # Bản release để thử, không cần khoá thật (ký khoá debug, CHỈ ĐỂ THỬ; khác chữ ký nên phải gỡ trước khi cài bản thật);
 # thêm x86_64 cho máy ảo. Tham số -P có dấu chấm phải để trong ngoặc kép.
 .\gradlew assembleSideloadRelease "-Pguzz.version=1.0.1" "-Pguzz.emulatorAbi=true"

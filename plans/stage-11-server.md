@@ -78,7 +78,7 @@ Lý do: tách giọng trên máy vẫn lâu, tốn pin và làm nóng máy. Stag
 ## Quyết định
 
 Hỏi người dùng ngày 2026-11-21. D140 và D141 người dùng tự nêu; từ D142 đến D148 người dùng chọn phương án
-Recommended. Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
+Recommended. D149 hỏi trong lúc làm (2026-11-21). Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
 
 | # | Câu hỏi | Chọn | Lý do |
 | --- | --- | --- | --- |
@@ -91,6 +91,7 @@ Recommended. Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-
 | D146 | Dùng mạng di động | **Vẫn dùng server**, không thêm công tắc | Như D118; các đoạn gửi Gemini vốn đã đi qua mạng di động. |
 | D147 | Lưu tệp trên server | **Tệp gốc xoá khi xử lý xong; kết quả xoá khi điện thoại báo đã nhận; mỗi ngày dọn mọi thứ cũ hơn 24 giờ** | Điện thoại bị giết giữa chừng vẫn kịp nối lại, mà không giữ bản ghi lâu. |
 | D148 | Thử bằng bài thật | **Được, hỏi trước lần đầu**: trước lần đầu tải bài thật lên Modal và trước lần deploy đầu, sau đó không hỏi lại | Đo được thời gian và chi phí thật. Modal là bên thứ ba. |
+| D149 | Model CAM++ trên GitHub bị thay ngày 2026-11-19 (D1) | **Dùng tệp cũ `aa3c…` từ cache guzz-deps của máy deploy** | Giống hệt APK 1.0.0; bản mới xuất lại bằng PyTorch 2.14.1, khác nội dung. |
 
 ## Rủi ro
 
@@ -129,7 +130,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] A2. Kiểm GitHub Releases của sherpa-onnx v2.0.1 có jar Java API và JNI cho `linux-x64` và `win-x64` không. Có thì
   thêm vào `gradle/guzz-deps.txt` kèm SHA-256 (D79). Kiểm: build tải về và khớp mã băm; một test JVM nhỏ nạp
   `OfflineSpeakerDiarization` rồi chạy `0-four-speakers-zh.wav` ra 4 người. Không có thì ghi Nhật ký và hỏi (Rủi ro 1).
-- [ ] A3. (Hỏi trước lần deploy đầu, D148.) Spike `server/spike_app.py`: image debian-slim + ffmpeg + JRE 21, một
+- [x] A3. (Hỏi trước lần deploy đầu, D148.) Spike `server/spike_app.py`: image debian-slim + ffmpeg + JRE 21, một
   endpoint `requires_proxy_auth=True`, tạo proxy token. Đo rồi ghi Nhật ký: tên header auth đúng (không token thì ra
   401); body lớn nhất nhận được (thử 100 MB và 300 MB); thời gian khởi động lạnh; giá CPU / RAM theo trang Usage. Xong
   thì `modal app stop` spike.
@@ -165,17 +166,17 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### D. Vỏ Modal (`server/modal_app.py`)
 
-- [ ] D1. Image: debian-slim + ffmpeg + `openjdk-21-jre-headless` + `guzz-server.jar` + model. Model tải lúc build
+- [x] D1. Image: debian-slim + ffmpeg + `openjdk-21-jre-headless` + `guzz-server.jar` + model. Model tải lúc build
   image theo `gradle/guzz-deps.txt`, sai SHA-256 thì dừng. Kiểm: `modal run` một hàm in phiên bản ffmpeg / java và
   băm model.
-- [ ] D2. API (FastAPI, `requires_proxy_auth=True`): `GET /health` (phiên bản giao thức + server); `POST /jobs` (nhận
+- [x] D2. API (FastAPI, `requires_proxy_auth=True`): `GET /health` (phiên bản giao thức + server); `POST /jobs` (nhận
   `JobRequest` + tệp dạng stream vào Volume `guzz-jobs`, khởi chạy hàm xử lý, trả mã job); `GET /jobs/{id}`
   (`JobStatus`); `GET /jobs/{id}/result` (tar các tệp kết quả); `DELETE /jobs/{id}` (huỷ nếu đang chạy, xoá tệp). Hàm
   xử lý: số CPU / RAM theo số đo ở A3 (bắt đầu 4 nhân, 8 GB), timeout 1 giờ. Nếu A3 thấy giới hạn body nhỏ thì tải
   lên theo phần.
-- [ ] D3. Dọn tệp (D147): tệp gốc xoá ngay khi job xong / lỗi; `DELETE` xoá kết quả; hàm chạy theo lịch hằng ngày xoá
+- [x] D3. Dọn tệp (D147): tệp gốc xoá ngay khi job xong / lỗi; `DELETE` xoá kết quả; hàm chạy theo lịch hằng ngày xoá
   mọi job cũ hơn 24 giờ. Kiểm: job giả có mốc thời gian cũ bị xoá sau một lần gọi tay.
-- [ ] D4. `tools/server/smoke.ps1`: gửi tệp thử lên server đã deploy, chờ xong, tải tar về, so với `.jar` chạy trên PC
+- [x] D4. `tools/server/smoke.ps1`: gửi tệp thử lên server đã deploy, chờ xong, tải tar về, so với `.jar` chạy trên PC
   (đoạn FLAC trùng từng bit, lượt nói trùng), rồi `DELETE`. Kiểm: script ra OK; sai token thì ra 401.
 - [ ] D5. `docs/server.md` (vi): tạo tài khoản, `modal deploy server/modal_app.py`, tạo proxy token, nhập URL / token
   vào app, chi phí ước tính theo số đo ở G3, cách tắt server. Thêm lệnh vào mục "Lệnh thường dùng" của CLAUDE.md.
@@ -233,7 +234,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ## Nhật ký
 
-- 2026-11-21 A1: CLI `modal` 1.6.4 cài bằng `uv` vào `D:\GuzzMobileData	ools\modal-venv` (Python 3.12); người dùng
+- 2026-11-21 A1: CLI `modal` 1.6.4 cài bằng `uv` vào `D:\GuzzMobileData\tools\modal-venv` (Python 3.12); người dùng
   tự chạy `modal token new`, `modal profile current` ra workspace của người dùng.
 - 2026-11-21 A2: release v2.0.1 có `sherpa-onnx-jvm-2.0.1.jar` (Java API, builder thay cho tham số đặt tên của AAR) và
   `sherpa-onnx-native-lib-{linux,win}-x64-2.0.1.jar` (JNI + onnxruntime, `LibraryUtils` tự giải nén từ classpath).
@@ -251,6 +252,30 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   4 không có luồng âm thanh, 5 không còn tiếng nói. SIGTERM bắt bằng `sun.misc.Signal` (shutdown hook không đổi được
   mã thoát), sherpa-onnx không dừng giữa một phần được nên sau 20 s thì `halt`. Số luồng sherpa-onnx = số nhân JVM thấy
   (không nằm trong `signature`, mã cache không đổi). Log server không ghi tên tệp.
+- 2026-11-21 A3 (người dùng đồng ý deploy lần đầu và tạo proxy token): `server/spike_app.py` (debian-slim Python 3.12 +
+  apt `ffmpeg` 7.1.5 + `openjdk-21-jre-headless` 21.0.13, FastAPI) build image 10,6 s, deploy 61 s. Không token / sai
+  `Modal-Secret` / sai `Authorization: Bearer <key>.<secret>` đều ra **401**; có hai cách gửi token: cặp header
+  `Modal-Key` + `Modal-Secret`, hoặc một header `Authorization: Bearer <key>.<secret>` (app dùng cách sau). Khởi động
+  lạnh **6,4 s** (gọi `/health` có chạy ffmpeg và java), ấm 1,0 s. Tải lên một yêu cầu (dữ liệu ngẫu nhiên, mạng nhà):
+  100 MB trong 35,6 s, **300 MB trong 50,5 s**, SHA-256 khớp, không gặp giới hạn cỡ body → giữ một yêu cầu cho cả tệp,
+  không chia phần (bài 2 giờ m4a vài chục tới hơn 100 MB). Giá (trang Pricing, 2026-11-21): CPU $0,0000131 / nhân vật
+  lý / s (1 nhân = 2 vCPU, tối thiểu 0,125 nhân), RAM $0,00000222 / GiB / s, Volume $0,09 / GiB / tháng (1 TiB đầu miễn
+  phí), Starter $30 tín dụng / tháng, 100 container. Hàm xử lý 4 nhân + 4 GiB ≈ $0,22 / giờ, nên tiêu chí $0,25 / bài 2
+  giờ cần xử lý xong trong khoảng 1 giờ. Token lưu ở `D:\GuzzMobileData\keys\modal-proxy.json` (ngoài repo). Spike đã
+  `modal app stop`.
+- 2026-11-21 D1–D4 (người dùng đồng ý deploy `guzz-server`; theo D148 các lần deploy sau không hỏi lại): build image
+  tải model embedding từ GitHub thì **sai SHA-256**: sherpa-onnx đã thay tệp
+  `3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx` ngày 2026-11-19 (xuất lại bằng PyTorch 2.14.1, mã băm
+  mới `53cab20b…`, khác nội dung chứ không chỉ khác tiêu đề). Hỏi người dùng → D149: image lấy đúng tệp `aa3c…` từ
+  cache guzz-deps của máy deploy (`add_local_file`), `fetch_models` kiểm lại mã băm cả hai model; segmentation vẫn tải
+  theo `guzz-deps.txt` (tệp tar không đổi). Trạng thái job đi qua `modal.Dict` (`guzz-job-status`), không phải Volume,
+  để không phải commit Volume mỗi lần báo tiến độ; jar ghi `status.json` tối đa 1 lần / s. Khác phiên bản giao thức thì
+  `POST /jobs` trả 409. Script thử viết bằng Python (`tools/server/smoke.py`, cần tar / SHA / giải mã FLAC) thay cho
+  `smoke.ps1`. Kết quả: không token / sai token → 401; khởi động lạnh `/health` 5,6 s; `tone_wav_22k.wav` xong 6,3 s,
+  `0-four-speakers-zh.wav` (tách giọng) 10,8 s tính cả khởi động hàm xử lý; danh sách đoạn và TimeMap trùng jar chạy
+  trên PC, đoạn FLAC giải mã ra trùng từng mẫu (ffmpeg 7.1.5 của Debian và ffmpeg của desktop), lượt nói trùng ±2 ms;
+  DELETE xong GET → 404. D3: job giả `created` cũ 25 giờ bị `cleanup` (gọi tay bằng `Function.from_name(...).remote()`)
+  xoá, job mới giữ lại; Volume sạch sau thử.
 
 ## Phát sinh
 
@@ -260,3 +285,6 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - Image Docker của cùng `.jar` để chạy trên PC ở nhà qua Tailscale, khi không muốn hoặc không dùng được Modal.
 - Trong lúc chép lời tệp này, tải tệp kế tiếp lên server (D60 hiện chạy lần lượt).
 - Extra intent (Stage 6) để ép một tệp chạy trên máy hoặc trên server.
+- (D149) Model CAM++ zh_en advanced trên GitHub của sherpa-onnx đã bị thay ngày 2026-11-19: máy mới build APK (plugin
+  guzz.deps) hay deploy server sẽ dừng ở bước kiểm SHA-256. Cần bản sao tệp `aa3c…` (Apache-2.0) ở chỗ mình giữ, vd đính
+  kèm một Release của GuzzMobile, rồi trỏ `gradle/guzz-deps.txt` tới đó (hỏi trước khi đăng).

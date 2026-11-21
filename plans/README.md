@@ -181,6 +181,7 @@ Thêm so với desktop: **intent** để các app tự động hoá (MacroDroid,
 | D146 | 2026-11-21 | Dùng server qua mạng di động (Stage 11) | **Có**, không thêm công tắc Wi-Fi | Như D118. |
 | D147 | 2026-11-21 | Lưu tệp trên server (Stage 11) | **Tệp gốc xoá khi xong; kết quả xoá khi điện thoại nhận; dọn mọi thứ > 24 giờ mỗi ngày** | Nối lại được khi bị giết, không giữ bản ghi lâu. |
 | D148 | 2026-11-21 | Thử bằng bài thật trên Modal (Stage 11) | **Hỏi trước lần đầu** tải bài thật và lần deploy đầu, sau đó không hỏi lại | Đo được thời gian, chi phí thật; Modal là bên thứ ba. |
+| D149 | 2026-11-21 | Model CAM++ trên GitHub bị thay (Stage 11 D1) | **Server dùng đúng tệp cũ (`aa3c…`) từ cache guzz-deps của máy deploy**, tải lên cùng lúc deploy | Giống hệt APK 1.0.0; bản xuất lại ngày 2026-11-19 khác nội dung. Máy mới cần bản sao riêng (Phát sinh). |
 
 **Mặc định chưa hỏi** (stage liên quan sẽ hỏi lại nếu cần):
 

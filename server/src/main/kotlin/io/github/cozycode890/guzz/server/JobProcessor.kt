@@ -31,9 +31,19 @@ class JobCancelledException : RuntimeException("Job bị huỷ")
 /** Yêu cầu sai (khác phiên bản giao thức, thiếu trường...). */
 class BadRequestException(message: String) : RuntimeException(message)
 
-/** Ghi trạng thái ra tệp: `.tmp` rồi đổi tên, để vỏ Modal không bao giờ đọc phải tệp ghi dở. */
-class StatusFile(private val file: File) {
+/**
+ * Ghi trạng thái ra tệp: `.tmp` rồi đổi tên, để vỏ Modal không bao giờ đọc phải tệp ghi dở. Tiến độ báo sau mỗi khối
+ * mẫu, nên khi đang chạy chỉ ghi khi đổi bước hoặc cách lần trước ≥ [minIntervalMs]; trạng thái cuối luôn ghi.
+ */
+class StatusFile(private val file: File, private val minIntervalMs: Long = 1000) {
+    private var lastStep: String? = null
+    private var lastAt = 0L
+
     fun write(status: JobStatus) {
+        val now = System.currentTimeMillis()
+        if (status.state == JobState.RUNNING && status.step == lastStep && now - lastAt < minIntervalMs) return
+        lastStep = status.step
+        lastAt = now
         val tmp = File(file.path + ".tmp")
         tmp.writeText(Protocol.json.encodeToString(JobStatus.serializer(), status), Charsets.UTF_8)
         try {
