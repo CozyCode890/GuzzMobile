@@ -53,8 +53,15 @@ Tắt server: `modal app stop guzz-server` (app tự làm trên máy khi server 
 
 ## Chi phí
 
-Giá Modal (2026-11-21): CPU $0,0000131 / nhân vật lý / giây, RAM $0,00000222 / GiB / giây. Hàm xử lý chạy 4 nhân + 4 GiB,
-khoảng $0,22 cho mỗi giờ chạy; chỉ tính lúc có job. Số đo bài thật: xem mục "Số đo" (Stage 11 G3).
+Giá Modal (2026-11-21): CPU $0,0000131 / nhân vật lý / giây, RAM $0,00000222 / GiB / giây; chỉ tính lúc có job. Hàm xử
+lý chạy 16 nhân + 12 GiB (khoảng $0,85 cho mỗi giờ chạy) và tách giọng các phần 20 phút song song, vì server chỉ một
+người dùng nên dồn tài nguyên cho nhanh.
+
+Số đo (Stage 11 G3, Xiaomi 15T, bài 135 phút, 88 phút sau cắt lặng): tải lên 175 MB mất 104 s, server giải mã 12 s,
+làm sạch + cắt đoạn 42 s, tách giọng 177 s; cả lượt tới lúc điện thoại có đủ đoạn và lượt nói **7 phút** (làm trên máy:
+41 phút). Chi phí khoảng **$0,06–0,07 mỗi bài 2 giờ**, tức hơn 400 bài với $30 tín dụng / tháng của gói Starter.
+
+Mạng chậm vẫn dùng được: tệp gửi theo phần 8 MB (D150), Modal cắt một yêu cầu kéo quá khoảng 13 phút.
 
 ## Giao thức
 

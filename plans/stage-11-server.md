@@ -78,7 +78,7 @@ Lý do: tách giọng trên máy vẫn lâu, tốn pin và làm nóng máy. Stag
 ## Quyết định
 
 Hỏi người dùng ngày 2026-11-21. D140 và D141 người dùng tự nêu; từ D142 đến D148 người dùng chọn phương án
-Recommended. D149–D151 hỏi trong lúc làm (2026-11-21, 2026-11-22). Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
+Recommended. D149–D153 hỏi / người dùng nêu trong lúc làm (2026-11-21, 2026-11-22). Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
 
 | # | Câu hỏi | Chọn | Lý do |
 | --- | --- | --- | --- |
@@ -94,6 +94,8 @@ Recommended. D149–D151 hỏi trong lúc làm (2026-11-21, 2026-11-22). Mã s�
 | D149 | Model CAM++ trên GitHub bị thay ngày 2026-11-19 (D1) | **Dùng tệp cũ `aa3c…` từ cache guzz-deps của máy deploy** | Giống hệt APK 1.0.0; bản mới xuất lại bằng PyTorch 2.14.1, khác nội dung. |
 | D150 | Tải lên khi mạng chậm (G2) | **Tải lên theo phần** (~8 MB / phần, đứt thì gửi lại phần đó, bị giết thì nối tiếp từ phần đã có) | Modal cắt một yêu cầu kéo quá ~13 phút; mạng 85 KB/s không gửi nổi bài 170 MB, di động chậm cũng vậy. |
 | D151 | B1, B2, B4 của G2 chưa gửi được | **Gửi lại khi mạng nhanh** (người dùng báo) | B1, B2 là hai bài điện thoại đạt D29. |
+| D152 | Đo pin ở G3 | **Bỏ** (tiêu chí ≤ 3% pin không kiểm) | Người dùng chọn; đo qua USB thì máy đang sạc, không dùng Tailscale. |
+| D153 | Tài nguyên server | **16 nhân, 12 GiB, tách các phần song song** | Server chỉ một người dùng: dồn tài nguyên cho nhanh. |
 
 ## Rủi ro
 
@@ -180,7 +182,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   mọi job cũ hơn 24 giờ. Kiểm: job giả có mốc thời gian cũ bị xoá sau một lần gọi tay.
 - [x] D4. `tools/server/smoke.ps1`: gửi tệp thử lên server đã deploy, chờ xong, tải tar về, so với `.jar` chạy trên PC
   (đoạn FLAC trùng từng bit, lượt nói trùng), rồi `DELETE`. Kiểm: script ra OK; sai token thì ra 401.
-- [ ] D5. `docs/server.md` (vi): tạo tài khoản, `modal deploy server/modal_app.py`, tạo proxy token, nhập URL / token
+- [x] D5. `docs/server.md` (vi): tạo tài khoản, `modal deploy server/modal_app.py`, tạo proxy token, nhập URL / token
   vào app, chi phí ước tính theo số đo ở G3, cách tắt server. Thêm lệnh vào mục "Lệnh thường dùng" của CLAUDE.md.
 
 ### E. Điện thoại: client và pipeline
@@ -222,7 +224,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   E3 nối lại job.
 - [x] G2. (Hỏi trước lần đầu tải bài thật lên Modal, D148.) B1–B5 qua server: SNR đoạn FLAC và mốc cắt so với đường
   điện thoại; DER lượt nói so với điện thoại; D29 so với desktop. Ghi bảng vào Nhật ký.
-- [ ] G3. Xiaomi 15T, bản release thử (`assembleSideloadRelease`, khoá debug), Wi-Fi, màn hình tắt, bài 2 giờ qua
+- [x] G3. Xiaomi 15T, bản release thử (`assembleSideloadRelease`, khoá debug), Wi-Fi, màn hình tắt, bài 2 giờ qua
   server: thời gian tới lúc có đoạn + lượt nói, pin, nhiệt (`measure_release.ps1`); chi phí Modal xem ở trang Usage.
   So với số đo Stage 9 (41 phút, 39,6 °C).
 - [ ] G4. (Hỏi trước, gửi thật lên Google.) Một bài 1–3 phút qua server rồi Gemini thật, ≤ 3 yêu cầu: `.txt` đúng như
@@ -383,6 +385,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   Test JVM: chia 4 phần, chạy lần lượt và song song ra trùng lượt nói. Người dùng (server chỉ một người dùng) muốn dồn
   tài nguyên cho nhanh: hàm xử lý **16 nhân, 12 GiB**. Chi phí ước tính ($0,000236 / s × ~4–5 phút tính cả khởi động):
   **~$0,06–0,07 / bài 2 giờ** (≤ $0,25).
+- 2026-11-22 G3 đóng: người dùng bỏ đo pin (D152). Chi phí ghi vào `docs/server.md` theo số đo G3 (D5).
 
 ## Phát sinh
 
