@@ -23,6 +23,7 @@ import os
 import shutil
 import subprocess
 import tarfile
+import tempfile
 import threading
 import time
 import uuid
@@ -105,6 +106,23 @@ app = modal.App(APP_NAME, image=image)
 volume = modal.Volume.from_name("guzz-jobs", create_if_missing=True)
 # Trạng thái job: hàm xử lý ghi, API đọc. Dict cập nhật ngay, không phải chờ commit Volume.
 statuses = modal.Dict.from_name("guzz-job-status", create_if_missing=True)
+
+
+def tar_blocks(base, names):
+    """tar ustar không nén của các tệp [names] trong [base], phát theo từng khối 64 KB."""
+    for n in names:
+        p = base / n
+        info = tarfile.TarInfo(n)
+        info.size = p.stat().st_size
+        info.mtime = int(p.stat().st_mtime)
+        yield info.tobuf(format=tarfile.USTAR_FORMAT)
+        with open(p, "rb") as f:
+            for b in iter(lambda: f.read(1 << 16), b""):
+                yield b
+        pad = (512 - info.size % 512) % 512
+        if pad:
+            yield b"\0" * pad
+    yield b"\0" * 1024
 
 
 def log(msg):
@@ -288,23 +306,19 @@ def web():
         if not all((out / n).is_file() for n in names):
             raise HTTPException(410, "kết quả không còn")
 
+        # Chép kết quả ra đĩa riêng của container trước khi phát (G2): tệp trên Volume mở lâu (tải về 100 MB mất cả phút)
+        # thì mọi commit / reload Volume của container này đều bị chặn, kể cả DELETE của job khác.
+        local = Path(tempfile.mkdtemp(prefix=f"kq_{job_id}_"))
+        for n in names:
+            shutil.copyfile(out / n, local / n)
+
         def gen():
             # tar không nén (FLAC đã nén), ghi tay từng khối ngay trong generator: điện thoại ngắt giữa chừng (Dừng) thì
-            # generator bị đóng, tệp đóng theo `with`, DELETE commit Volume được (G1). Không dùng luồng ghi + pipe:
-            # luồng đó kẹt ở pipe khi client ngắt và giữ tệp mở mãi.
-            for n in names:
-                p = out / n
-                info = tarfile.TarInfo(n)
-                info.size = p.stat().st_size
-                info.mtime = int(p.stat().st_mtime)
-                yield info.tobuf(format=tarfile.USTAR_FORMAT)
-                with open(p, "rb") as f:
-                    for b in iter(lambda: f.read(1 << 16), b""):
-                        yield b
-                pad = (512 - info.size % 512) % 512
-                if pad:
-                    yield b"\0" * pad
-            yield b"\0" * 1024
+            # generator bị đóng và thư mục tạm bị xoá. Không dùng luồng ghi + pipe: luồng đó kẹt ở pipe khi client ngắt.
+            try:
+                yield from tar_blocks(local, names)
+            finally:
+                shutil.rmtree(local, ignore_errors=True)
 
         return StreamingResponse(gen(), media_type="application/x-tar")
 
@@ -330,7 +344,7 @@ def web():
             try:
                 volume.commit()
                 break
-            except RuntimeError as e:
+            except Exception as e:  # RuntimeError / modal ConflictError: còn tệp đang mở
                 if attempt == 9:
                     log(f"job {job_id}: chưa xoá được ({e}), để việc dọn hằng ngày")
                     return {"deleted": job_id, "pending": True}

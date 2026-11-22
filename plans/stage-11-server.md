@@ -309,6 +309,29 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   - B1, B2: `:core:media` 9/9, `:core:diarization` 3/3 test thiết bị trên máy ảo; F2: `check_strings.ps1` sạch, trang
     Server xử lý chụp ở chữ ×2 / 360 dp và tối / tiếng Anh, không cắt chữ (ảnh ở `D:\GuzzMobileData\stage-11\f2`).
   - C2 (so `goc.pcm` của server với điện thoại) chưa làm riêng: gộp vào G2, so SNR đoạn FLAC của hai đường trên B1–B5.
+- 2026-11-22 G2 (người dùng đồng ý tải bài thật lên Modal, D148), làm dở: `tools/server/g2_real.py` gửi bài, tải kết quả
+  về `D:\GuzzMobileData\stage-11\g2`; `tools/server/g2_compare.py` so. Cấu hình như lần chạy sherpa-onnx trên PC của
+  Stage 5 (S5B1, t 1,1, P 20, không đặt số người tối thiểu / tối đa), làm sạch / cắt đoạn mặc định.
+  - Tham chiếu thay cho "chạy lại điện thoại": đoạn / âm thanh sạch so với golden chuỗi làm sạch đủ của Stage 7 (Kotlin
+    trên điện thoại đã khớp chuỗi này ≥ 86 dB); SNR tính theo khối 10 s có dò độ trễ ±64 mẫu, vì cắt lặng hai bên có thể
+    lệch 1 ms ở một khoảng (B5: khoảng 82) làm cả phần sau lệch 16 mẫu. Lượt nói: bản PC S5B1 chạy trên `sach.flac` cũ
+    của desktop (Stage 1, cắt lặng khác hẳn: B3 5118 s so với 6882 s), nên DER "server ↔ máy" ở đây lẫn cả khác biệt do
+    âm thanh sạch khác, **không dùng được cho tiêu chí DER ≤ 5%**. D29 chấm bằng `evaluate.py --remap` (mốc server đổi về
+    âm thanh gốc).
+
+    | Bài | Đoạn (server / desktop) | Mốc cắt lệch tối đa | SNR trung vị / p5 | Khối < 50 dB | D29 server (DER) | D29 điện thoại, Stage 5 (DER) | Server xử lý |
+    | --- | --- | --- | --- | --- | --- | --- | --- |
+    | B3 (115 phút) | 12 / 12 | 5 mẫu | 70,2 / 57,8 dB | 0/688 | trượt (23,6%; 7 người / 5) | trượt (16,8%) | 700 s |
+    | B5 (84 phút) | 9 / 9 | 21 mẫu | 65,6 / 56,2 dB | 2/498 | **đạt** (5,5%) | trượt (người chính) | 614 s |
+
+  - B1, B2, B4 chưa tải lên được: lần đầu gửi song song cả 5 bài (~580 MB) thì 3 bài lớn bị ngắt SSL; gửi lại từng bài
+    vẫn bị ngắt, curl đo tốc độ tải lên của mạng lúc đó chỉ **85 KB/s** (lúc A3 là 6 MB/s) và server cắt kết nối sau
+    ~800 s ("Connection was reset"), B4 còn gặp lỗi phân giải tên miền. Tức là một yêu cầu tải lên kéo quá ~13 phút sẽ
+    bị cắt: mạng chậm (di động) có thể không gửi nổi bài dài, khi đó điện thoại chuyển sang làm trên máy.
+  - Sửa server trong lúc chạy: `GET /result` chép kết quả ra đĩa riêng của container trước khi phát (tệp trên Volume mở
+    lâu chặn mọi commit / reload, kể cả `DELETE` job khác chạy song song: 500), `DELETE` bắt mọi lỗi commit để thử lại.
+  - Server xử lý bài 84–115 phút mất 10–12 phút ở 4 nhân: tiêu chí "≤ 10 phút từ lúc bắt đầu tới lúc có đủ đoạn" cho
+    bài 2 giờ sẽ cần thêm nhân (đo ở G3).
 
 ## Phát sinh
 
