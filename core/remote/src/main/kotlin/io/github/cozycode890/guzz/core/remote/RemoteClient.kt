@@ -16,9 +16,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import okio.BufferedSink
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -88,11 +87,11 @@ interface RemoteProcessor {
 
 /**
  * Client OkHttp của server Modal (Stage 11 E2, E3). Token dạng `<Modal-Key>.<Modal-Secret>` gửi trong header
- * `Authorization: Bearer` (proxy auth của Modal). Tải lên dạng stream (không đọc cả tệp vào RAM), hỏi trạng thái mỗi
- * [pollMs], tải tar về tệp `.tmp`, giải nén, kiểm cỡ + SHA-256 từng tệp, rồi `DELETE` job.
+ * `Authorization: Bearer` (proxy auth của Modal). Tải lên theo phần (D150, mỗi lần giữ một phần trong RAM), hỏi trạng
+ * thái mỗi [pollMs], tải tar về tệp `.tmp`, giải nén, kiểm cỡ + SHA-256 từng tệp, rồi `DELETE` job.
  *
  * Làm tiếp (D64, E3): mã job lưu ở `server_job.json` trong [folder] ngay khi tạo; chạy lại tệp đó thì hỏi trạng thái
- * job cũ trước, job không còn (404) thì tải lên lại.
+ * job cũ trước: còn đang nhận tệp thì gửi tiếp từ phần server đã có, job không còn (404) thì tải lên lại.
  */
 class RemoteClient(
     private val http: OkHttpClient,
@@ -102,6 +101,9 @@ class RemoteClient(
     private val maxWaitMs: Long = 90 * 60_000L,
     private val sleep: suspend (Long) -> Unit = { delay(it) },
     private val now: () -> Long = System::currentTimeMillis,
+    /** D150: cỡ một phần tải lên. 8 MB: ở 85 KB/s vẫn xong một phần trong ~100 s. */
+    private val partSize: Int = 8 shl 20,
+    private val partRetries: Int = 3,
 ) : RemoteProcessor {
     private val base: HttpUrl? = baseUrl.trim().trimEnd('/').toHttpUrlOrNull()
 
@@ -145,12 +147,17 @@ class RemoteClient(
             if (status == null) {
                 jobFile.delete()
                 onProgress(RemoteSteps.UPLOAD, 0.0)
-                status = create(upload, request, onProgress)
+                status = create(request)
                 id = status.id
                 writeJob(jobFile, SavedJob(status.id, request.audioKey, request.speakerKey))
-                log("Đã tải lên server, job ${status.id}.")
             }
             val jobId = id!!
+            if (status.state == JobState.UPLOADING) {
+                // D150: gửi theo phần, nối tiếp từ phần server đã có (bị giết giữa lúc tải lên thì không gửi lại từ đầu).
+                uploadParts(jobId, upload, status.received, log, onProgress)
+                status = startJob(jobId)
+                log("Đã tải lên server, job $jobId.")
+            }
             status = wait(jobId, status, onProgress)
             download(jobId, status, folder, onProgress)
             withContext(NonCancellable) { deleteQuietly(jobId) }
@@ -171,31 +178,89 @@ class RemoteClient(
         }
     }
 
-    private suspend fun create(upload: UploadSource, req: JobRequest, onProgress: (String, Double) -> Unit): JobStatus {
-        val body = object : RequestBody() {
-            override fun contentType() = "application/octet-stream".toMediaType()
-            override fun contentLength() = upload.length
-            override fun isOneShot() = true
-            override fun writeTo(sink: BufferedSink) {
-                upload.open().use { input ->
-                    val buf = ByteArray(1 shl 16)
-                    var done = 0L
-                    while (true) {
-                        val n = input.read(buf)
-                        if (n < 0) break
-                        sink.write(buf, 0, n)
-                        done += n
-                        if (upload.length > 0) onProgress(RemoteSteps.UPLOAD, done.toDouble() / upload.length)
-                    }
-                }
+    /** `POST /jobs?request=…&parts=1`: tạo job ở trạng thái `uploading` (D150). */
+    private suspend fun create(req: JobRequest): JobStatus {
+        val u = url("jobs").newBuilder()
+            .addQueryParameter("request", Protocol.json.encodeToString(JobRequest.serializer(), req))
+            .addQueryParameter("parts", "1").build()
+        val st = decode(send(request(u).post(ByteArray(0).toRequestBody(null)).build()), JobStatus.serializer())
+        if (st.id.isEmpty()) throw RemoteUnavailableException(Reasons.SERVER, "Server không trả mã job")
+        return st
+    }
+
+    /**
+     * Gửi tệp theo phần [partSize] byte (D150), mỗi phần một `PUT /jobs/{id}/parts/{k}` ngắn: Modal cắt một yêu cầu kéo
+     * quá ~13 phút, mạng chậm không gửi nổi bài dài trong một yêu cầu (G2). Bắt đầu từ phần chứa byte [from] (server
+     * đã có các phần trước đó). Mỗi phần thử lại [partRetries] lần khi mạng / server lỗi tạm thời.
+     */
+    private suspend fun uploadParts(
+        id: String,
+        upload: UploadSource,
+        from: Long,
+        log: (String) -> Unit,
+        onProgress: (String, Double) -> Unit,
+    ) {
+        var k = (from / partSize).toInt()
+        var done = k.toLong() * partSize
+        if (k > 0) log("Tải lên tiếp từ phần ${k + 1} (${"%.1f".format(java.util.Locale.ROOT, done / 1e6)} MB đã có trên server).")
+        val buf = ByteArray(partSize)
+        withContext(kotlinx.coroutines.Dispatchers.IO) { upload.open() }.use { input ->
+            withContext(kotlinx.coroutines.Dispatchers.IO) { skipFully(input, done) }
+            while (true) {
+                val n = withContext(kotlinx.coroutines.Dispatchers.IO) { readUpTo(input, buf) }
+                if (n == 0) break
+                putPart(id, k, buf, n)
+                done += n
+                k++
+                if (upload.length > 0) onProgress(RemoteSteps.UPLOAD, done.toDouble() / upload.length)
+                if (n < partSize) break
             }
         }
-        val u = url("jobs").newBuilder()
-            .addQueryParameter("request", Protocol.json.encodeToString(JobRequest.serializer(), req)).build()
-        val st = decode(send(request(u).post(body).build()), JobStatus.serializer())
-        if (st.id.isEmpty()) throw RemoteUnavailableException(Reasons.SERVER, "Server không trả mã job")
+        if (k == 0) throw RemoteUnavailableException(Reasons.CONFIG, "Tệp tải lên rỗng")
         onProgress(RemoteSteps.UPLOAD, 1.0)
-        return st
+    }
+
+    private suspend fun putPart(id: String, k: Int, buf: ByteArray, n: Int) {
+        var attempt = 0
+        while (true) {
+            try {
+                val body = buf.toRequestBody("application/octet-stream".toMediaType(), 0, n)
+                send(request(url("jobs", id, "parts", k.toString())).put(body).build())?.close()
+                return
+            } catch (e: RemoteUnavailableException) {
+                // Token sai / khác phiên bản thì thử lại cũng vậy; mạng đứt, 5xx thì chờ rồi gửi lại phần này.
+                if (e.reason == Reasons.AUTH || e.reason == Reasons.PROTOCOL || ++attempt > partRetries) throw e
+                sleep(RETRY_DELAYS_MS[(attempt - 1).coerceAtMost(RETRY_DELAYS_MS.size - 1)])
+            }
+        }
+    }
+
+    private suspend fun startJob(id: String): JobStatus =
+        decode(send(request(url("jobs", id, "start")).post(ByteArray(0).toRequestBody(null)).build()), JobStatus.serializer())
+
+    private fun readUpTo(input: InputStream, buf: ByteArray): Int {
+        var p = 0
+        while (p < buf.size) {
+            val r = input.read(buf, p, buf.size - p)
+            if (r < 0) break
+            p += r
+        }
+        return p
+    }
+
+    private fun skipFully(input: InputStream, n: Long) {
+        var left = n
+        val tmp = ByteArray(1 shl 16)
+        while (left > 0) {
+            val s = input.skip(left)
+            if (s > 0) {
+                left -= s
+                continue
+            }
+            val r = input.read(tmp, 0, minOf(tmp.size.toLong(), left).toInt())
+            if (r < 0) throw IOException("Tệp ngắn hơn phần server đã nhận")
+            left -= r
+        }
     }
 
     /** Trạng thái job, `null` khi server không còn job đó (404). */
@@ -350,6 +415,7 @@ class RemoteClient(
         /** Mã job đang chạy trên server, trong thư mục tạm của tệp (E3). */
         const val JOB_FILE = "server_job.json"
         private const val TMP_DIR = "server_tai_ve"
+        private val RETRY_DELAYS_MS = longArrayOf(2_000, 5_000, 10_000)
         private val SAFE_NAME = Regex("""[A-Za-z0-9_.\-]{1,120}""")
 
         fun sha256(f: File): String {

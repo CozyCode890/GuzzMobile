@@ -50,11 +50,27 @@ def request_json(name, speaker_key=None, clean_off=False, run_on_original=False)
     return r
 
 
+PART = 50_000
+
+
 def run_remote(base, token, path, req):
-    q = urllib.parse.urlencode({"request": json.dumps(req)})
-    code, body = http("POST", f"{base}/jobs?{q}", token, path.read_bytes())
+    # D150: tạo job, gửi theo phần nhỏ (50 KB, để tệp thử cũng thành vài phần), gửi lại một phần, rồi start.
+    q = urllib.parse.urlencode({"request": json.dumps(req), "parts": "1"})
+    code, body = http("POST", f"{base}/jobs?{q}", token, b"")
     assert code == 200, (code, body[:300])
     job = json.loads(body)["id"]
+    assert json.loads(body)["state"] == "uploading", body
+    data = path.read_bytes()
+    parts = [data[i:i + PART] for i in range(0, len(data), PART)]
+    for k, p in enumerate(parts):
+        code, body = http("PUT", f"{base}/jobs/{job}/parts/{k}", token, p)
+        assert code == 200, (k, code, body[:200])
+    code, _ = http("PUT", f"{base}/jobs/{job}/parts/{len(parts) + 1}", token, b"x")
+    assert code == 409, f"bỏ cách phần phải ra 409, ra {code}"
+    code, body = http("PUT", f"{base}/jobs/{job}/parts/0", token, parts[0])
+    assert code == 200 and json.loads(body)["received"] == len(data), body
+    code, body = http("POST", f"{base}/jobs/{job}/start", token, b"")
+    assert code == 200, (code, body[:200])
     t0 = time.time()
     while True:
         code, body = http("GET", f"{base}/jobs/{job}", token)
@@ -70,7 +86,7 @@ def run_remote(base, token, path, req):
     out = Path(tempfile.mkdtemp(prefix="smoke-remote-"))
     with tarfile.open(fileobj=io.BytesIO(tar)) as t:
         t.extractall(out, filter="data")
-    print(f"  {path.name}: job {job} xong sau {time.time() - t0:.1f} s, {len(st['result']['files'])} tệp")
+    print(f"  {path.name}: job {job} ({len(parts)} phần) xong sau {time.time() - t0:.1f} s, {len(st['result']['files'])} tệp")
     return job, st, out
 
 

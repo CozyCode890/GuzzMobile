@@ -64,7 +64,10 @@ Mọi yêu cầu kèm proxy auth của Modal: header `Authorization: Bearer <Mod
 | Yêu cầu | Việc |
 | --- | --- |
 | `GET /health` | `{"protocol": 1, "server": "<phiên bản>"}` |
-| `POST /jobs?request=<JobRequest JSON>` | thân là tệp âm thanh; trả `JobStatus` có `id`; khác phiên bản giao thức thì 409 |
+| `POST /jobs?request=<JobRequest JSON>&parts=1` | tạo job ở trạng thái `uploading` (thân rỗng); khác phiên bản giao thức thì 409 |
+| `PUT /jobs/{id}/parts/{k}` | phần thứ `k` (từ 0) của tệp, app dùng 8 MB / phần; chỉ nhận phần kế tiếp hoặc gửi lại phần cũ (không thì 409); trả `JobStatus` có `received` |
+| `POST /jobs/{id}/start` | nhận đủ thì bắt đầu xử lý, trả `JobStatus` (`queued`) |
+| `POST /jobs?request=<JobRequest JSON>` | cách cũ, cả tệp trong thân yêu cầu (script thử trên PC) |
 | `GET /jobs/{id}` | `JobStatus` |
 | `GET /jobs/{id}/result` | tar các tệp kết quả |
 | `DELETE /jobs/{id}` | huỷ nếu đang chạy, xoá tệp |
@@ -101,5 +104,7 @@ Mẫu `JobStatus` khi xong:
 }
 ```
 
-`state`: `queued`, `running`, `done`, `failed`. Khi `failed` có `error`: `no_audio`, `no_speech` (làm trên máy cũng ra
+`state`: `uploading`, `queued`, `running`, `done`, `failed`. Tải lên theo phần (D150) vì Modal cắt một yêu cầu kéo quá
+khoảng 13 phút: mạng chậm (vd 85 KB/s) không gửi nổi bài dài trong một yêu cầu. Phần đứt thì app gửi lại phần đó (3 lần),
+app bị giết thì lần sau hỏi `received` rồi gửi tiếp. Khi `failed` có `error`: `no_audio`, `no_speech` (làm trên máy cũng ra
 lỗi đó, nên điện thoại không làm lại), `bad_request`, `cancelled`, `internal`.

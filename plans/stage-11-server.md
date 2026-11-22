@@ -78,7 +78,7 @@ Lý do: tách giọng trên máy vẫn lâu, tốn pin và làm nóng máy. Stag
 ## Quyết định
 
 Hỏi người dùng ngày 2026-11-21. D140 và D141 người dùng tự nêu; từ D142 đến D148 người dùng chọn phương án
-Recommended. D149 hỏi trong lúc làm (2026-11-21). Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
+Recommended. D149–D151 hỏi trong lúc làm (2026-11-21, 2026-11-22). Mã số đánh tiếp bảng ở [README §2](README.md#2-quyết-định-đã-chốt).
 
 | # | Câu hỏi | Chọn | Lý do |
 | --- | --- | --- | --- |
@@ -92,6 +92,8 @@ Recommended. D149 hỏi trong lúc làm (2026-11-21). Mã số đánh tiếp b�
 | D147 | Lưu tệp trên server | **Tệp gốc xoá khi xử lý xong; kết quả xoá khi điện thoại báo đã nhận; mỗi ngày dọn mọi thứ cũ hơn 24 giờ** | Điện thoại bị giết giữa chừng vẫn kịp nối lại, mà không giữ bản ghi lâu. |
 | D148 | Thử bằng bài thật | **Được, hỏi trước lần đầu**: trước lần đầu tải bài thật lên Modal và trước lần deploy đầu, sau đó không hỏi lại | Đo được thời gian và chi phí thật. Modal là bên thứ ba. |
 | D149 | Model CAM++ trên GitHub bị thay ngày 2026-11-19 (D1) | **Dùng tệp cũ `aa3c…` từ cache guzz-deps của máy deploy** | Giống hệt APK 1.0.0; bản mới xuất lại bằng PyTorch 2.14.1, khác nội dung. |
+| D150 | Tải lên khi mạng chậm (G2) | **Tải lên theo phần** (~8 MB / phần, đứt thì gửi lại phần đó, bị giết thì nối tiếp từ phần đã có) | Modal cắt một yêu cầu kéo quá ~13 phút; mạng 85 KB/s không gửi nổi bài 170 MB, di động chậm cũng vậy. |
+| D151 | B1, B2, B4 của G2 chưa gửi được | **Gửi lại khi mạng nhanh** (người dùng báo) | B1, B2 là hai bài điện thoại đạt D29. |
 
 ## Rủi ro
 
@@ -218,7 +220,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] G1. Máy ảo `guzz_15t`, Gemini giả, server thật, tệp tổng hợp: luồng đủ ra `.txt`; năm kiểu lỗi ở Tiêu chí đều
   chuyển sang máy; Dừng giữa lúc tải lên / server xử lý / tải về thì không chuyển, và job trên server bị `DELETE`;
   E3 nối lại job.
-- [ ] G2. (Hỏi trước lần đầu tải bài thật lên Modal, D148.) B1–B5 qua server: SNR đoạn FLAC và mốc cắt so với đường
+- [x] G2. (Hỏi trước lần đầu tải bài thật lên Modal, D148.) B1–B5 qua server: SNR đoạn FLAC và mốc cắt so với đường
   điện thoại; DER lượt nói so với điện thoại; D29 so với desktop. Ghi bảng vào Nhật ký.
 - [ ] G3. Xiaomi 15T, bản release thử (`assembleSideloadRelease`, khoá debug), Wi-Fi, màn hình tắt, bài 2 giờ qua
   server: thời gian tới lúc có đoạn + lượt nói, pin, nhiệt (`measure_release.ps1`); chi phí Modal xem ở trang Usage.
@@ -332,6 +334,34 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
     lâu chặn mọi commit / reload, kể cả `DELETE` job khác chạy song song: 500), `DELETE` bắt mọi lỗi commit để thử lại.
   - Server xử lý bài 84–115 phút mất 10–12 phút ở 4 nhân: tiêu chí "≤ 10 phút từ lúc bắt đầu tới lúc có đủ đoạn" cho
     bài 2 giờ sẽ cần thêm nhân (đo ở G3).
+- 2026-11-22 G2 xong (B1, B2, B4 gửi lại trên Wi-Fi "Hiên coffee 2 5G", ~2,5–5 MB/s tải lên). Lỗi "EOF occurred in
+  violation of protocol" lúc trước là của urllib khi gửi tệp lớn qua TLS: cùng tệp, curl gửi được (B4 120 MB trong 48 s),
+  nên `g2_real.py` chuyển sang curl. Thêm `--job <mã>=<id>` để chờ job đã tạo. `g2_compare.py` dò độ trễ ±800 mẫu (1
+  khối, như tiêu chí) bằng tương quan chéo FFT: B4 lệch 187 mẫu ở chỗ cắt lặng, dò ±64 thì SNR ra âm.
+
+  | Bài | Đoạn | Mốc cắt lệch | SNR trung vị / p5 | Khối < 50 dB | D29 server (DER) | D29 điện thoại (Stage 5) | DER so với PC Stage 5* | Server (4 nhân) |
+  | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+  | B1 (114 phút) | 9 / 9 | 16 mẫu | 84,2 / 79,8 dB | 4/514 | **đạt** (2,5%) | đạt | 3,6% | 559 s |
+  | B2 (112 phút) | 10 / 10 | 22 mẫu | 81,1 / 78,3 dB | 3/569 | **đạt** (0,7%) | đạt | 5,0% | 594 s |
+  | B3 (115 phút) | 12 / 12 | 5 mẫu | 70,0 / 57,8 dB | 0/688 | trượt (23,6%) | trượt (16,8%) | 36% | 700 s |
+  | B4 (79 phút) | 5 / 5 | 187 mẫu | 75,0 / 60,6 dB | 11/284 | trượt (29,5%) | trượt (44%) | 38% | 276 s |
+  | B5 (84 phút) | 9 / 9 | 21 mẫu | 65,6 / 56,2 dB | 2/498 | **đạt** (5,5%) | trượt | 18% | 614 s |
+
+  \* Bản PC của Stage 5 chạy trên `sach.flac` cũ của desktop (cắt lặng khác), nên cột này lẫn cả khác biệt do âm thanh
+  sạch, không phải DER thuần giữa server và điện thoại. Kết luận: đoạn và mốc cắt đạt (SNR trung vị ≥ 65 dB, mốc ≤ 1
+  khối); bài nào điện thoại đạt D29 (B1, B2) thì server cũng đạt, thêm B5. Tiêu chí "DER server ↔ điện thoại ≤ 5%" chỉ
+  kiểm được gần đúng (B1, B2 ≤ 5%), xét lại ở H1. Chi phí ước tính (4 nhân + 4 GiB, $0,0000613 / s): bài 2 giờ ~600 s
+  ≈ $0,04. Server xử lý bài 2 giờ 9–12 phút ở 4 nhân, sát tiêu chí ≤ 10 phút cả lượt → nâng hàm xử lý lên 8 nhân (đo ở
+  G3; ~$0,08 / bài nếu nhanh gấp đôi).
+- 2026-11-22 D150 (tải lên theo phần): `POST /jobs?request=…&parts=1` tạo job `uploading`; `PUT /jobs/{id}/parts/{k}`
+  (app dùng 8 MB / phần) chỉ nhận phần kế tiếp hoặc gửi lại phần cũ, phần dở bị bỏ; `POST /jobs/{id}/start` thì gọi hàm
+  xử lý, hàm đó ghép các phần ra đĩa container rồi xoá trên Volume. `JobStatus` thêm `uploading` và `received`. Client:
+  mỗi phần thử lại 3 lần (chờ 2 / 5 / 10 s) khi mạng / 5xx lỗi, token sai thì không thử lại; nối lại job đang
+  `uploading` thì gửi tiếp từ phần server đã có. Vẫn giữ cách cũ (cả tệp trong một yêu cầu) cho script trên PC. Lỗi tìm ra
+  khi smoke: server gọi hàm xử lý trước khi commit `meta.json` có số phần, hàm khởi động nhanh đọc meta cũ, lỗi và job
+  kẹt `queued` → commit trước rồi mới gọi; lỗi ngoài jar trong hàm xử lý giờ báo `failed` (app chuyển sang máy ngay). Test:
+  `RemoteClientTest` 20 ca (thêm thử lại 5xx, hết lượt thử lại, token sai không thử lại, nối tiếp từ phần 2); smoke qua
+  hai lần liền (3 và 37 phần, bỏ cách phần → 409, gửi lại phần 0).
 
 ## Phát sinh
 

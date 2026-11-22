@@ -45,8 +45,9 @@ JOBS = "/jobs"
 MAX_AGE_S = 24 * 3600
 PROTOCOL = 1
 
-# Hàm xử lý: số nhân / RAM theo số đo A3 + G3 (D2). sherpa-onnx dùng số luồng = số vCPU (1 nhân vật lý = 2 vCPU).
-PROCESS_CPU = float(os.environ.get("GUZZ_CPU", "4"))
+# Hàm xử lý: số nhân / RAM theo số đo (D2). G2: 4 nhân mất ~10 phút cho bài 2 giờ, sát tiêu chí, nên 8 nhân.
+# sherpa-onnx dùng số luồng = số vCPU (1 nhân vật lý = 2 vCPU).
+PROCESS_CPU = float(os.environ.get("GUZZ_CPU", "8"))
 PROCESS_MEMORY_MB = int(os.environ.get("GUZZ_MEMORY_MB", "4096"))
 
 
@@ -136,13 +137,30 @@ def job_dir(job_id):
 @app.function(cpu=PROCESS_CPU, memory=PROCESS_MEMORY_MB, timeout=3600, volumes={JOBS: volume})
 def process(job_id: str):
     """Một job: chép tệp từ Volume ra đĩa của container, chạy jar, đưa kết quả về Volume, xoá tệp gốc (D147)."""
+    try:
+        run_job(job_id)
+    except Exception as e:
+        # Lỗi ngoài jar (Volume, meta hỏng…): báo failed để điện thoại chuyển sang máy ngay, không chờ hết giờ.
+        log(f"job {job_id}: lỗi {type(e).__name__}: {e}")
+        statuses[job_id] = {"protocol": PROTOCOL, "id": job_id, "state": "failed", "error": "internal",
+                            "message": f"{type(e).__name__}"}
+        raise
+
+
+def run_job(job_id: str):
     d = job_dir(job_id)
     volume.reload()
     meta = json.loads((d / "meta.json").read_text())
     work = Path("/tmp", job_id)
     work.mkdir(parents=True, exist_ok=True)
     src = work / meta["input"]
-    shutil.copyfile(d / meta["input"], src)
+    # Ghép các phần (D150) ra đĩa riêng của container, rồi xoá ngay trên Volume (tệp gốc không giữ trên Volume, D147).
+    with open(src, "wb") as out:
+        for k in range(meta["parts"]):
+            with open(d / "parts" / f"{k:06d}", "rb") as f:
+                shutil.copyfileobj(f, out, 1 << 20)
+    shutil.rmtree(d / "parts", ignore_errors=True)
+    volume.commit()
     status_file = work / "status.json"
     vcpu = max(1, int(PROCESS_CPU * 2))
     cmd = [
@@ -241,55 +259,134 @@ def web():
             volume.reload()
             f = job_dir(job_id) / "status.json"
             if not f.exists():
-                if (job_dir(job_id) / "meta.json").exists():
+                m = job_dir(job_id) / "meta.json"
+                if m.exists():
+                    if json.loads(m.read_text()).get("uploading"):
+                        _, total = parts_of(job_dir(job_id))
+                        return {"protocol": PROTOCOL, "id": job_id, "state": "uploading", "fraction": 0.0, "received": total}
                     return {"protocol": PROTOCOL, "id": job_id, "state": "queued", "fraction": 0.0}
                 raise HTTPException(404, "không có job này")
             st = json.loads(f.read_text())
         return st
 
-    @api.post("/jobs")
-    async def create(request: Request, req: str = Query(alias="request")):
+    def check_protocol(req):
         try:
             body = json.loads(req)
         except ValueError:
             raise HTTPException(400, "request không phải JSON")
         if body.get("protocol") != PROTOCOL:
-            return JSONResponse(
+            return body, JSONResponse(
                 {"protocol": PROTOCOL, "state": "failed", "error": "bad_request", "message": "khác phiên bản giao thức"},
                 status_code=409,
             )
-        job_id = uuid.uuid4().hex[:16]
-        d = job_dir(job_id)
-        d.mkdir(parents=True)
-        ext = Path(body.get("fileName", "")).suffix.lower()[:8] or ".bin"
-        name = "input" + ext
+        return body, None
+
+    async def receive(request, target):
+        """Ghi thân yêu cầu vào [target] (qua tệp .tmp). Đứt giữa chừng (mất mạng, Dừng) thì bỏ tệp dở. Trả về số byte."""
+        tmp = target.with_name(target.name + ".tmp")
         n = 0
         try:
-            with open(d / name, "wb") as f:
+            with open(tmp, "wb") as f:
                 async for chunk in request.stream():
                     n += len(chunk)
                     f.write(chunk)
         except BaseException:
+            tmp.unlink(missing_ok=True)
+            raise
+        if n == 0:
+            tmp.unlink(missing_ok=True)
+            raise HTTPException(400, "thân yêu cầu rỗng")
+        tmp.replace(target)
+        return n
+
+    def parts_of(d):
+        """Các phần đã nhận (`parts/NNNNNN`, liền nhau từ 0): (số phần, tổng byte)."""
+        count = total = 0
+        while (d / "parts" / f"{count:06d}").is_file():
+            total += (d / "parts" / f"{count:06d}").stat().st_size
+            count += 1
+        return count, total
+
+    def spawn(job_id, d, meta):
+        st = {"protocol": PROTOCOL, "id": job_id, "state": "queued", "fraction": 0.0, "received": meta["bytes"]}
+        statuses[job_id] = st
+        # Ghi + commit meta (số phần) TRƯỚC khi gọi hàm xử lý: hàm đó khởi động nhanh thì đọc phải meta cũ, lỗi ngay và
+        # job kẹt ở queued (smoke đầu tiên sau D150).
+        (d / "meta.json").write_text(json.dumps(meta))
+        volume.commit()
+        meta["call"] = process.spawn(job_id).object_id
+        (d / "meta.json").write_text(json.dumps(meta))
+        volume.commit()
+        return st
+
+    @api.post("/jobs")
+    async def create(request: Request, req: str = Query(alias="request"), parts: int = 0):
+        """
+        `parts=1` (D150): chỉ tạo job ở trạng thái `uploading`; tệp gửi theo phần bằng `PUT /jobs/{id}/parts/{k}`,
+        xong thì `POST /jobs/{id}/start`. Không có `parts`: cả tệp trong thân yêu cầu như trước (smoke, g2_real).
+        """
+        body, refused = check_protocol(req)
+        if refused:
+            return refused
+        job_id = uuid.uuid4().hex[:16]
+        d = job_dir(job_id)
+        (d / "parts").mkdir(parents=True)
+        ext = Path(body.get("fileName", "")).suffix.lower()[:8] or ".bin"
+        (d / "request.json").write_text(json.dumps(body))
+        meta = {"created": time.time(), "input": "input" + ext, "uploading": True}
+        (d / "meta.json").write_text(json.dumps(meta))
+        if parts:
+            volume.commit()
+            st = {"protocol": PROTOCOL, "id": job_id, "state": "uploading", "fraction": 0.0, "received": 0}
+            statuses[job_id] = st
+            log(f"job {job_id}: tạo, chờ tải lên theo phần")
+            return st
+        try:
+            n = await receive(request, d / "parts" / f"{0:06d}")
+        except BaseException:
             # Điện thoại huỷ / mất mạng giữa lúc tải lên (G1): không để lại tệp tải dở trên Volume (D147).
             shutil.rmtree(d, ignore_errors=True)
             volume.commit()
-            log(f"job {job_id}: tải lên bị huỷ sau {n} byte")
+            log(f"job {job_id}: tải lên bị huỷ")
             raise
-        if n == 0:
-            shutil.rmtree(d, ignore_errors=True)
-            raise HTTPException(400, "tệp rỗng")
-        (d / "request.json").write_text(json.dumps(body))
-        (d / "meta.json").write_text(json.dumps({"created": time.time(), "input": name, "bytes": n}))
-        volume.commit()
-        st = {"protocol": PROTOCOL, "id": job_id, "state": "queued", "fraction": 0.0}
-        statuses[job_id] = st
-        call = process.spawn(job_id)
-        meta = json.loads((d / "meta.json").read_text())
-        meta["call"] = call.object_id
-        (d / "meta.json").write_text(json.dumps(meta))
-        volume.commit()
+        meta.update(uploading=False, bytes=n, parts=1)
         log(f"job {job_id}: nhận {n} byte")
+        return spawn(job_id, d, meta)
+
+    @api.put("/jobs/{job_id}/parts/{index}")
+    async def put_part(job_id: str, index: int, request: Request):
+        volume.reload()
+        d = job_dir(job_id)
+        if not (d / "meta.json").exists():
+            raise HTTPException(404, "không có job này")
+        if not json.loads((d / "meta.json").read_text()).get("uploading"):
+            raise HTTPException(409, "job đã bắt đầu xử lý")
+        count, _ = parts_of(d)
+        if index < 0 or index > count:
+            # Chỉ nhận phần kế tiếp hoặc gửi lại phần đã có: client đọc `received` (GET /jobs/{id}) để biết gửi tiếp từ đâu.
+            raise HTTPException(409, f"thiếu phần trước, đang có {count} phần")
+        await receive(request, d / "parts" / f"{index:06d}")
+        volume.commit()
+        _, total = parts_of(d)
+        st = {"protocol": PROTOCOL, "id": job_id, "state": "uploading", "fraction": 0.0, "received": total}
+        statuses[job_id] = st
         return st
+
+    @api.post("/jobs/{job_id}/start")
+    def start(job_id: str):
+        volume.reload()
+        d = job_dir(job_id)
+        if not (d / "meta.json").exists():
+            raise HTTPException(404, "không có job này")
+        meta = json.loads((d / "meta.json").read_text())
+        if not meta.get("uploading"):
+            return status_of(job_id)
+        count, total = parts_of(d)
+        if count == 0:
+            raise HTTPException(400, "chưa có phần nào")
+        meta.update(uploading=False, bytes=total, parts=count)
+        log(f"job {job_id}: nhận đủ {count} phần, {total} byte")
+        return spawn(job_id, d, meta)
 
     @api.get("/jobs/{job_id}")
     def get(job_id: str):

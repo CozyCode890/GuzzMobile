@@ -83,13 +83,18 @@ class RemoteClientTest {
         server.start()
     }
 
-    private fun client(token: String = "k.s") = RemoteClient(http, server.url("/").toString(), token, pollMs = 1, sleep = {})
+    /** Phần 3 byte: tệp 4 byte thành 2 phần (D150). */
+    private fun client(token: String = "k.s") =
+        RemoteClient(http, server.url("/").toString(), token, pollMs = 1, sleep = {}, partSize = 3)
 
     private val upload = UploadSource("bai.m4a", 4) { ByteArrayInputStream(byteArrayOf(1, 2, 3, 4)) }
     private val req = JobRequest(fileName = "bai.m4a", sourceName = "s", audioKey = "ak", speakerKey = "sk")
 
     private val okRoutes = mapOf(
-        "POST /jobs" to listOf(json(JobStatus(id = "j1", state = JobState.QUEUED))),
+        "POST /jobs" to listOf(json(JobStatus(id = "j1", state = JobState.UPLOADING))),
+        "PUT /jobs/j1/parts/0" to listOf(json(JobStatus(id = "j1", state = JobState.UPLOADING, received = 3))),
+        "PUT /jobs/j1/parts/1" to listOf(json(JobStatus(id = "j1", state = JobState.UPLOADING, received = 4))),
+        "POST /jobs/j1/start" to listOf(json(JobStatus(id = "j1", state = JobState.QUEUED))),
         "GET /jobs/j1" to listOf(json(JobStatus(id = "j1", state = JobState.RUNNING, fraction = 0.5)), json(done)),
         "GET /jobs/j1/result" to listOf(MockResponse.Builder().body(Buffer().write(tar(files))).build()),
         "DELETE /jobs/j1" to listOf(MockResponse.Builder().body("{}").build()),
@@ -101,13 +106,20 @@ class RemoteClientTest {
         val steps = ArrayList<String>()
         client().process(upload, req, dir, onProgress = { s, _ -> steps += s })
         for ((name, data) in files) assertContentEquals(data, File(dir, name).readBytes(), name)
-        assertEquals(listOf("POST /jobs", "GET /jobs/j1", "GET /jobs/j1", "GET /jobs/j1/result", "DELETE /jobs/j1"), seen.toList())
+        assertEquals(
+            listOf(
+                "POST /jobs", "PUT /jobs/j1/parts/0", "PUT /jobs/j1/parts/1", "POST /jobs/j1/start", "GET /jobs/j1",
+                "GET /jobs/j1", "GET /jobs/j1/result", "DELETE /jobs/j1",
+            ),
+            seen.toList(),
+        )
         assertFalse(File(dir, RemoteClient.JOB_FILE).exists())
         assertEquals(listOf(RemoteSteps.UPLOAD, RemoteSteps.PROCESS, RemoteSteps.DOWNLOAD), steps.distinct())
         val post = server.takeRequest()
         assertEquals("Bearer k.s", post.headers["Authorization"])
-        assertContentEquals(byteArrayOf(1, 2, 3, 4), post.body!!.toByteArray())
-        assertTrue("request=" in post.url.toString())
+        assertTrue("request=" in post.url.toString() && "parts=1" in post.url.toString())
+        assertContentEquals(byteArrayOf(1, 2, 3), server.takeRequest().body!!.toByteArray())
+        assertContentEquals(byteArrayOf(4), server.takeRequest().body!!.toByteArray())
     }
 
     private fun unavailable(routes: Map<String, List<MockResponse>>): RemoteUnavailableException {
@@ -144,12 +156,52 @@ class RemoteClientTest {
     }
 
     @Test
-    fun `ngắt giữa lúc tải lên`() {
-        serve(mapOf("POST /jobs" to listOf(MockResponse.Builder().onRequestBody(SocketEffect.CloseSocket(true, false, false)).build())))
-        val big = UploadSource("lon.m4a", 32L shl 20) { ByteArrayInputStream(ByteArray(32 shl 20)) }
-        val e = assertFailsWith<RemoteUnavailableException> { runBlocking { client().process(big, req, dir) } }
-        // MockWebServer đóng socket rồi vẫn có thể trả 200 rỗng: mạng hay trả lời hỏng thì đều chuyển sang máy.
-        assertTrue(e.reason == Reasons.NETWORK || e.reason == Reasons.SERVER, "${e.message}")
+    fun `phần lỗi mãi thì thử lại hết lượt rồi chuyển sang máy, xoá job`() {
+        serve(okRoutes + ("PUT /jobs/j1/parts/0" to listOf(MockResponse.Builder().code(503).build())))
+        val e = assertFailsWith<RemoteUnavailableException> { runBlocking { client().process(upload, req, dir) } }
+        assertEquals(Reasons.HTTP, e.reason)
+        assertEquals(4, seen.count { it == "PUT /jobs/j1/parts/0" }, "1 lần + 3 lần thử lại")
+        assertTrue("DELETE /jobs/j1" in seen)
+    }
+
+    @Test
+    fun `token sai lúc gửi phần thì không thử lại`() {
+        serve(okRoutes + ("PUT /jobs/j1/parts/0" to listOf(MockResponse.Builder().code(401).build())))
+        assertEquals(Reasons.AUTH, assertFailsWith<RemoteUnavailableException> { runBlocking { client().process(upload, req, dir) } }.reason)
+        assertEquals(1, seen.count { it == "PUT /jobs/j1/parts/0" })
+    }
+
+    @Test
+    fun `D150 phần lỗi 5xx thì chờ rồi gửi lại phần đó`() = runTest {
+        serve(
+            okRoutes + (
+                "PUT /jobs/j1/parts/1" to listOf(
+                    MockResponse.Builder().code(503).build(),
+                    json(JobStatus(id = "j1", state = JobState.UPLOADING, received = 4)),
+                )
+                ),
+        )
+        val waits = ArrayList<Long>()
+        val c = RemoteClient(http, server.url("/").toString(), "k.s", pollMs = 1, sleep = { waits += it }, partSize = 3)
+        c.process(upload, req, dir)
+        assertEquals(2, seen.count { it == "PUT /jobs/j1/parts/1" })
+        assertEquals(1, seen.count { it == "PUT /jobs/j1/parts/0" })
+        assertTrue(2_000L in waits, "$waits")
+        assertTrue(File(dir, "doan_001.flac").isFile)
+    }
+
+    @Test
+    fun `D150 nối lại job đang nhận tệp thì gửi tiếp từ phần server đã có`() = runTest {
+        serve(okRoutes - "POST /jobs" + ("GET /jobs/j1" to listOf(
+            json(JobStatus(id = "j1", state = JobState.UPLOADING, received = 3)),
+            json(done),
+        )))
+        File(dir, RemoteClient.JOB_FILE).writeText("""{"id":"j1","audioKey":"ak","speakerKey":"sk"}""")
+        val logs = ArrayList<String>()
+        client().process(upload, req, dir, log = { logs += it })
+        assertTrue(seen.none { it == "POST /jobs" || it == "PUT /jobs/j1/parts/0" }, "$seen")
+        assertEquals(1, seen.count { it == "PUT /jobs/j1/parts/1" })
+        assertTrue(logs.any { "Tải lên tiếp từ phần 2" in it }, "$logs")
     }
 
     @Test
@@ -192,11 +244,11 @@ class RemoteClientTest {
 
     @Test
     fun `E3 nối lại job đã lưu, không tải lên lại`() = runTest {
-        serve(okRoutes - "POST /jobs")
+        serve(okRoutes - "POST /jobs" - "PUT /jobs/j1/parts/0" - "PUT /jobs/j1/parts/1" - "POST /jobs/j1/start")
         File(dir, RemoteClient.JOB_FILE).writeText("""{"id":"j1","audioKey":"ak","speakerKey":"sk"}""")
         val logs = ArrayList<String>()
         client().process(upload, req, dir, log = { logs += it })
-        assertTrue(seen.none { it.startsWith("POST") }, "$seen")
+        assertTrue(seen.none { it.startsWith("POST") || it.startsWith("PUT") }, "$seen")
         assertTrue(logs.any { "Nối lại job j1" in it }, "$logs")
         assertTrue(File(dir, "doan_001.flac").isFile)
     }

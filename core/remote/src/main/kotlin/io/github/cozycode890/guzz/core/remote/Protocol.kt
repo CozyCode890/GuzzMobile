@@ -58,6 +58,8 @@ data class JobRequest(
 
 @Serializable
 enum class JobState {
+    /** D150: đã tạo job, đang nhận tệp theo phần. */
+    @SerialName("uploading") UPLOADING,
     @SerialName("queued") QUEUED,
     @SerialName("running") RUNNING,
     @SerialName("done") DONE,
@@ -83,6 +85,7 @@ data class JobResult(val files: List<ResultFile>)
 /**
  * Trạng thái job. [step] là bước con (`decode`, `clean`, `chunks`, `diarize`), [fraction] tiến độ cả job (0..1).
  * Có [result] khi [state] = [JobState.DONE]; có [error] (mã [JobErrors]) và [message] khi [JobState.FAILED].
+ * [received]: số byte server đã nhận (các phần liền nhau từ đầu tệp), để tải lên tiếp sau khi đứt (D150).
  */
 @Serializable
 data class JobStatus(
@@ -94,6 +97,7 @@ data class JobStatus(
     val error: String? = null,
     val message: String? = null,
     val result: JobResult? = null,
+    val received: Long = 0,
 )
 
 /** `GET /health`: phiên bản giao thức và server. */

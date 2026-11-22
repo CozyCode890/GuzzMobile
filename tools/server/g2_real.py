@@ -12,6 +12,7 @@ import argparse
 import io
 import json
 import os
+import subprocess
 import tarfile
 import threading
 import time
@@ -36,18 +37,24 @@ def http(method, url, token, data=None, timeout=1800):
         return e.code, e.read()
 
 
-def run_one(base, token, code, out_root, results):
+def run_one(base, token, code, out_root, results, existing):
     src = next(p for p in (SPIKE / code).glob("goc.*") if p.suffix in (".m4a", ".aac", ".mp3", ".wav") and "16k" not in p.name)
     req = {"protocol": 1, "fileName": src.name, "sourceName": f"{code}/{src.name}", "audioKey": f"g2-{code}",
            "speakerKey": "g2", "bounds": {"min": 0, "max": 0}}
     t0 = time.time()
-    q = urllib.parse.urlencode({"request": json.dumps(req)})
-    with open(src, "rb") as f:
-        code_http, body = http("POST", f"{base}/jobs?{q}", token, f)
-    if code_http != 200:
-        results[code] = {"loi": f"POST {code_http} {body[:200]!r}"}
-        return
-    job = json.loads(body)["id"]
+    job = existing.get(code)
+    if not job:
+        # Tải lên bằng curl: urllib gửi tệp lớn qua TLS hay bị ngắt "EOF occurred in violation of protocol" (G2),
+        # cùng tệp đó curl gửi được.
+        q = urllib.parse.urlencode({"request": json.dumps(req)})
+        r = subprocess.run(
+            ["curl", "-sS", "-H", f"Authorization: Bearer {token}", "-H", "Content-Type: application/octet-stream",
+             "--data-binary", f"@{src}", f"{base}/jobs?{q}"], capture_output=True, text=True)
+        try:
+            job = json.loads(r.stdout)["id"]
+        except Exception:
+            results[code] = {"loi": f"POST lỗi: {r.stdout[:200]} {r.stderr[:200]}"}
+            return
     t_up = time.time() - t0
     print(f"{code}: tải lên {src.stat().st_size / 1e6:.0f} MB xong sau {t_up:.0f} s, job {job}", flush=True)
     last = None
@@ -85,6 +92,7 @@ def main():
     ap.add_argument("--codes", default="B1,B2,B3,B4,B5")
     ap.add_argument("--out", default=r"D:\GuzzMobileData\stage-11\g2")
     ap.add_argument("--token-file", default=r"D:\GuzzMobileData\keys\modal-proxy.json")
+    ap.add_argument("--job", action="append", default=[], help="<mã>=<id job đã tạo>: chờ job đó, không tải lên lại")
     args = ap.parse_args()
     t = json.loads(Path(args.token_file).read_text())
     token = f"{t['Modal-Key']}.{t['Modal-Secret']}"
@@ -93,7 +101,7 @@ def main():
     results = {}
     def guarded(c):
         try:
-            run_one(args.url.rstrip("/"), token, c, out, results)
+            run_one(args.url.rstrip("/"), token, c, out, results, dict(j.split("=", 1) for j in args.job))
         except Exception as e:
             results[c] = {"loi": f"{type(e).__name__}: {e}"}
             print(f"{c}: lỗi {e}", flush=True)

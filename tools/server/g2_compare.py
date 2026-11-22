@@ -6,7 +6,7 @@ Tham chiếu (cùng dữ liệu, không chạy lại điện thoại):
 - đoạn / mốc cắt: golden chuỗi làm sạch đủ của Stage 7 (`golden-stage-07/<mã>.json` + `.boosted.pcm`): Kotlin trên
   điện thoại đã khớp chuỗi này ≥ 86 dB (Stage 7), nên lệch so với nó là lệch so với điện thoại. Mốc cắt tính bằng mẫu,
   lệch ≤ 1 khối (50 ms = 800 mẫu); SNR của âm thanh sạch ghép từ các đoạn FLAC ≥ 50 dB.
-  SNR tính theo khối 10 s, mỗi khối dò độ trễ ±64 mẫu: cắt lặng hai bên có thể lệch 1 ms ở vài khoảng (B5), làm cả
+  SNR tính theo khối 10 s, mỗi khối dò độ trễ ±800 mẫu (1 khối): cắt lặng hai bên có thể lệch 1 ms ở vài khoảng (B5), làm cả
   phần sau lệch vài chục mẫu; chuyện đó đã nằm trong tiêu chí "mốc cắt lệch ≤ 1 khối".
 - lượt nói: sherpa-onnx trên PC cùng cấu hình (Stage 5 S5B1, t 1,1, P 20), đã khớp điện thoại (Stage 5 D1). Bản đó chạy
   trên `sach.flac` cũ của desktop (Stage 1, cắt lặng khác), nên lượt nói của server đổi về âm thanh gốc (TimeMap của
@@ -40,23 +40,28 @@ c.use_desktop_modules()
 import audio_processing  # noqa: E402
 
 BLOCK = 10 * SR
-MAX_LAG = 64
+MAX_LAG = 800  # 1 khối 50 ms: mốc cắt lệch tới mức này vẫn đạt tiêu chí
 
 
 def block_snr(ref, got):
-    """SNR từng khối 10 s, mỗi khối lấy độ trễ (±MAX_LAG mẫu) cho sai số nhỏ nhất. Trả về danh sách SNR (dB)."""
+    """
+    SNR từng khối 10 s. Khối nào không khớp ở độ trễ 0 thì tìm độ trễ (±MAX_LAG mẫu) bằng tương quan chéo FFT, rồi tính
+    sai số ở độ trễ đó. Trả về danh sách SNR (dB).
+    """
     out = []
     n = min(len(ref), len(got))
     for a in range(MAX_LAG, n - BLOCK - MAX_LAG, BLOCK):
         r = ref[a:a + BLOCK].astype(np.float64)
         sig = float(np.sum(r * r))
-        best = None
-        for lag in [0] + [k for k in range(-MAX_LAG, MAX_LAG + 1) if k != 0]:
-            e = float(np.sum((r - got[a + lag:a + lag + BLOCK].astype(np.float64)) ** 2))
-            best = e if best is None else min(best, e)
-            if lag == 0 and e <= 1e-6 * sig + 1:
-                break  # khớp ở độ trễ 0 (> 60 dB), khỏi dò
-        out.append(10 * np.log10(max(sig, 1e-9) / max(best, 1e-9)))
+        e = float(np.sum((r - got[a:a + BLOCK].astype(np.float64)) ** 2))
+        if e > 1e-6 * sig + 1:
+            win = got[a - MAX_LAG:a + BLOCK + MAX_LAG].astype(np.float64)
+            m = 1 << int(np.ceil(np.log2(len(win) + BLOCK)))
+            xc = np.fft.irfft(np.fft.rfft(win, m) * np.conj(np.fft.rfft(r, m)), m)[:2 * MAX_LAG + 1]
+            lag = int(np.argmax(xc)) - MAX_LAG
+            g = got[a + lag:a + lag + BLOCK].astype(np.float64)
+            e = min(e, float(np.sum((r - g) ** 2)))
+        out.append(10 * np.log10(max(sig, 1e-9) / max(e, 1e-9)))
     return np.array(out)
 
 
