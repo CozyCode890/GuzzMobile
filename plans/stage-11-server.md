@@ -1,6 +1,6 @@
 # Stage 11 — Xử lý âm thanh trên server (Modal)
 
-**Trạng thái:** 🔨 đang làm (plan chi tiết 2026-11-21) · **Cần xong trước:** 5, 7, 9
+**Trạng thái:** ✅ xong 2026-11-22 (plan chi tiết 2026-11-21) · **Cần xong trước:** 5, 7, 9
 
 ## Mục tiêu
 
@@ -238,8 +238,8 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 ### H. Đóng stage
 
 - [x] H1. Kiểm đủ Tiêu chí; ghi `CHANGELOG.md`; nâng `guzz` lên 1.1.0.
-- [ ] H2. (Hỏi trước tag / Release.) Phát hành 1.1.0 theo mục "Phát hành" trong CLAUDE.md.
-- [ ] H3. Đổi trạng thái sang ✅ ở CLAUDE.md và README, cập nhật "Stage hiện tại" / "Việc tiếp theo".
+- [x] H2. (Hỏi trước tag / Release.) Phát hành 1.1.0 theo mục "Phát hành" trong CLAUDE.md.
+- [x] H3. Đổi trạng thái sang ✅ ở CLAUDE.md và README, cập nhật "Stage hiện tại" / "Việc tiếp theo".
 
 ## Nhật ký
 
@@ -400,6 +400,11 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - 2026-11-22 H1: C2 và C4 đánh dấu xong qua G2 (đoạn của server khớp chuỗi làm sạch mà điện thoại đã khớp; golden 4 người
   trùng `run_sherpa.py`, B1–B5 đo D29 / DER ở G2), không làm riêng so `goc.pcm` với điện thoại. `test` + `lint` qua
   (1758 test). `CHANGELOG.md` mục 1.1.0, `guzz` = 1.1.0; server deploy lại với jar 1.1.0, smoke qua.
+- 2026-11-22 H2, H3 (người dùng bảo phát hành 1.1.0, tự gõ mật khẩu keystore trong tab terminal): `release.ps1 -Version
+  1.1.0` qua (test, lint, build bó RAM, ký Morphe), `dist\guzz-1.1.0.apk` 41,9 MB, versionCode 10100, SHA-256
+  `ed5ae457…a75ade`, cùng chứng chỉ ký với 1.0.0 (`3a2819db…`). Tag `v1.1.0`, GitHub Release kèm APK (digest khớp). Để
+  `release.ps1` thấy cây git sạch, `.vscode/` và các `*/bin/` (đầu ra extension VS Code) được thêm vào `.git/info/exclude`
+  của máy này, không sửa `.gitignore`.
 
 ## Phát sinh
 
