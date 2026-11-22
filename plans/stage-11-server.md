@@ -227,7 +227,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] G3. Xiaomi 15T, bản release thử (`assembleSideloadRelease`, khoá debug), Wi-Fi, màn hình tắt, bài 2 giờ qua
   server: thời gian tới lúc có đoạn + lượt nói, pin, nhiệt (`measure_release.ps1`); chi phí Modal xem ở trang Usage.
   So với số đo Stage 9 (41 phút, 39,6 °C).
-- [ ] G4. (Hỏi trước, gửi thật lên Google.) Một bài 1–3 phút qua server rồi Gemini thật, ≤ 3 yêu cầu: `.txt` đúng như
+- [x] G4. (Hỏi trước, gửi thật lên Google.) Một bài 1–3 phút qua server rồi Gemini thật, ≤ 3 yêu cầu: `.txt` đúng như
   đường điện thoại.
 
 ### H. Đóng stage
@@ -386,6 +386,12 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   tài nguyên cho nhanh: hàm xử lý **16 nhân, 12 GiB**. Chi phí ước tính ($0,000236 / s × ~4–5 phút tính cả khởi động):
   **~$0,06–0,07 / bài 2 giờ** (≤ $0,25).
 - 2026-11-22 G3 đóng: người dùng bỏ đo pin (D152). Chi phí ghi vào `docs/server.md` theo số đo G3 (D5).
+- 2026-11-22 G4 (người dùng đồng ý gửi B1_1m.m4a lên Google): qua server, Gemini thật, tách giọng `pyannote`. Tốn đủ 3 yêu
+  cầu: `gemini-3.8-flash` trả 503 (quá tải) hai lần, app khoá model 10 phút và đổi sang `gemini-3.5-flash-lite`, chép lời
+  xong (361 ký tự). Không chạy thêm lượt trên máy (vượt 3 yêu cầu); so với bản làm trên máy có tách giọng của Stage 9
+  (`B1_1m (2).txt`, ngày 19/11): cùng nhãn "Giảng viên", cùng các mốc 00:00:03 / 00:00:08 / 00:00:33 / 00:00:57 (bản qua
+  server thêm một lượt 00:00:21); chữ khác vì khác model và Gemini không lặp lại từng chữ. Đạt: đường server ra `.txt`
+  đúng định dạng như đường điện thoại.
 
 ## Phát sinh
 
