@@ -16,8 +16,9 @@ thanh đầy đủ) xong ngày 2026-11-17 (D83–D90; khớp desktop ≥ 86 dB, 
 nghe thử chấp nhận theo số đo). Stage 5 (tách giọng trên máy) xong ngày 2026-11-15 (D71–D82; tiêu chí "bài giảng thật
 gần desktop" trượt ở B4, D82). Stage 4 (MVP) xong ngày 2026-11-14, Stage 3 xong ngày 2026-11-11, Stage 2 xong ngày
 2026-11-11, Stage 1 xong ngày 2026-11-10 (rút gọn, D39–D42), Stage 0 xong ngày 2026-11-01.
-**Việc tiếp theo:** Stage 11 (xử lý âm thanh trên server Modal, D140–D148) đã plan chi tiết ngày 2026-11-21, làm từ
-bước A1. Stage 10 (tuỳ chọn, plugin Tasker/Locale) vẫn chờ plan. Bản sau: sửa,
+**Việc tiếp theo:** Stage 11 (xử lý âm thanh trên server Modal, D140–D151) đã xong A–F, G1, G2 (server `guzz-server`
+đã deploy, tải lên theo phần D150); làm tiếp từ G3 (Xiaomi 15T, bài 2 giờ qua server, server đang 8 nhân), rồi G4, H.
+Stage 10 (tuỳ chọn, plugin Tasker/Locale) vẫn chờ plan. Bản sau: sửa,
 ghi `CHANGELOG.md`, nâng `guzz` trong `gradle/libs.versions.toml`, chạy `tools/release.ps1` (mục "Phát hành" ở
 dưới). Gửi bất cứ thứ gì lên Google, push tag hay tạo Release thì hỏi người dùng ngay trước khi làm.
 
