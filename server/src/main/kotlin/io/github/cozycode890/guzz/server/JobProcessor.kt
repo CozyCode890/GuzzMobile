@@ -145,7 +145,9 @@ class JobProcessor(
         // (3) Tách giọng, trên âm thanh đã làm sạch hoặc gốc (D75) như điện thoại.
         if (diarize) {
             t = System.nanoTime()
-            val settings = req.diarization.copy(threads = threads)
+            // Bộ dùng chung (luật min–max tách lại phần) tối đa MAX_ENGINE_THREADS: 32 luồng làm onnxruntime crash ở LSTM
+            // ("GetElementType is not implemented", người dùng 2026-11-22); các phần song song đã chia nhỏ luồng.
+            val settings = req.diarization.copy(threads = minOf(threads, MAX_ENGINE_THREADS))
             val out = File(outDir, Protocol.speakersFile(req.speakerKey!!))
             val pcm = File(outDir, if (req.runOnOriginal) RAW_PCM_FILE else ChunkPreparer.CLEAN_PCM_FILE)
             report(JobSteps.DIARIZE, cleanEnd)
@@ -188,7 +190,7 @@ class JobProcessor(
         if (bounds.size < 2) return
         val workers = minOf(bounds.size, maxOf(1, threads / PIECE_THREADS))
         if (workers < 2) return
-        val pieceSettings = settings.copy(threads = maxOf(1, threads / workers))
+        val pieceSettings = settings.copy(threads = (threads / workers).coerceIn(1, MAX_ENGINE_THREADS))
         val pool = java.util.concurrent.Executors.newFixedThreadPool(workers)
         val done = java.util.concurrent.atomic.AtomicInteger()
         try {
@@ -237,6 +239,9 @@ class JobProcessor(
 
         /** Số luồng của mỗi bộ sherpa-onnx khi tách các phần song song (như điện thoại: 4 luồng). */
         const val PIECE_THREADS = 4
+
+        /** Số luồng tối đa của một bộ sherpa-onnx (32 luồng thì onnxruntime crash). */
+        const val MAX_ENGINE_THREADS = 8
         const val CLEAN_AUDIO_FILE = "sach.flac"
         const val EXTRACTED_AUDIO_FILE = "am_thanh.flac"
 
