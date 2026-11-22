@@ -362,6 +362,27 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   kẹt `queued` → commit trước rồi mới gọi; lỗi ngoài jar trong hàm xử lý giờ báo `failed` (app chuyển sang máy ngay). Test:
   `RemoteClientTest` 20 ca (thêm thử lại 5xx, hết lượt thử lại, token sai không thử lại, nối tiếp từ phần 2); smoke qua
   hai lần liền (3 và 37 phần, bỏ cách phần → 409, gửi lại phần 0).
+- 2026-11-22 G3 (làm dở: còn số pin). Xiaomi 15T, **bản debug** (gói `…guzz.debug`, cài cạnh bản thật 1.0.0) thay cho bản
+  release ký khoá debug của kế hoạch: bản release thử phải gỡ bản thật của người dùng; phần việc của điện thoại khi dùng
+  server chỉ là đọc tệp / mạng, nên bản debug đủ để đo. Cài qua USB bị HyperOS huỷ hai lần (`INSTALL_FAILED_USER_RESTRICTED`),
+  lần thứ ba người dùng cho phép thì cài được. Người dùng không dùng Tailscale, nên đo qua USB: máy đang sạc, **số pin
+  không dùng được** cho tiêu chí ≤ 3%. Bài `L1_120m.m4a` (135 phút gốc, 88 phút sau cắt lặng, cùng bài Stage 9: 41
+  phút, 39,6 °C khi làm trên máy), Wi-Fi của điện thoại "P 16.12_5G", màn hình tắt, Gemini giả, tách giọng `pyannote`.
+
+  | | Lần 1: 8 nhân, phần chạy lần lượt | Lần 2: 16 nhân, phần song song |
+  | --- | --- | --- |
+  | Tải lên 174,9 MB (22 phần) | 130 s | 104 s |
+  | Server: giải mã / làm sạch + cắt đoạn | ~54 s | 12 s / 42 s |
+  | Server: tách giọng | 622 s (16 luồng, 5 phần lần lượt) | **177 s** (5 bộ × 6 luồng) |
+  | Tổng tới lúc có đủ đoạn + lượt nói | 14 phút 14 s (trượt) | **7 phút** (đạt ≤ 10 phút) |
+  | Nhiệt điện thoại | đỉnh 36,7 °C | 37,6 → 37,7 °C (đạt ≤ 3 °C) |
+
+  Sửa server: tách giọng 8 nhân không nhanh hơn 4 nhân vì `ChunkedDiarization` chạy 5 phần 20 phút lần lượt và
+  sherpa-onnx không tận dụng thêm luồng. `JobProcessor.prefetchPieces` tách mọi phần song song trước (mỗi bộ ≥ 4 luồng,
+  ghi `phan_NN.json` đúng tên), rồi `ChunkedDiarization` đọc lại các tệp đó và chạy luật min–max + nối người nói như cũ.
+  Test JVM: chia 4 phần, chạy lần lượt và song song ra trùng lượt nói. Người dùng (server chỉ một người dùng) muốn dồn
+  tài nguyên cho nhanh: hàm xử lý **16 nhân, 12 GiB**. Chi phí ước tính ($0,000236 / s × ~4–5 phút tính cả khởi động):
+  **~$0,06–0,07 / bài 2 giờ** (≤ $0,25).
 
 ## Phát sinh
 

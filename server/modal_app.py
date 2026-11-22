@@ -45,10 +45,10 @@ JOBS = "/jobs"
 MAX_AGE_S = 24 * 3600
 PROTOCOL = 1
 
-# Hàm xử lý: số nhân / RAM theo số đo (D2). G2: 4 nhân mất ~10 phút cho bài 2 giờ, sát tiêu chí, nên 8 nhân.
+# Hàm xử lý: số nhân / RAM theo số đo (D2). Server chỉ một người dùng: dồn tài nguyên cho nhanh (G3, 16 nhân).
 # sherpa-onnx dùng số luồng = số vCPU (1 nhân vật lý = 2 vCPU).
-PROCESS_CPU = float(os.environ.get("GUZZ_CPU", "8"))
-PROCESS_MEMORY_MB = int(os.environ.get("GUZZ_MEMORY_MB", "4096"))
+PROCESS_CPU = float(os.environ.get("GUZZ_CPU", "16"))
+PROCESS_MEMORY_MB = int(os.environ.get("GUZZ_MEMORY_MB", "12288"))  # G3: tới 8 bộ sherpa-onnx song song
 
 
 def fetch_models():

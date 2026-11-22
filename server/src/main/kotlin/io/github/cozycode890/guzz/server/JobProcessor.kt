@@ -152,7 +152,12 @@ class JobProcessor(
             SherpaJvmPieceEngine(modelDir, settings).use { engine ->
                 val chunked = ChunkedDiarization(CancellableEngine(engine), settings, { log(it) })
                 val request = DiarizeRequest(pcm, out, req.bounds)
-                val r = runBlocking { chunked.diarize(request) { report(JobSteps.DIARIZE, cleanEnd + (0.97 - cleanEnd) * it) } }
+                // G3: tách các phần song song trước (ghi tệp từng phần), ChunkedDiarization sau đó chỉ đọc lại các tệp đó
+                // ("Dùng lại phần N") rồi luật min–max + nối người nói như cũ, nên kết quả không đổi cách làm.
+                prefetchPieces(chunked, request, settings) { report(JobSteps.DIARIZE, cleanEnd + (0.97 - cleanEnd) * 0.9 * it) }
+                val r = runBlocking {
+                    chunked.diarize(request) { report(JobSteps.DIARIZE, cleanEnd + (0.97 - cleanEnd) * (0.9 + 0.1 * it)) }
+                }
                 chunked.cleanPieces(request)
                 log("Tách giọng xong trong %.1f s: %d lượt, %d người".format(java.util.Locale.ROOT, secs(t), r.turns.size, r.numSpeakers))
             }
@@ -163,6 +168,53 @@ class JobProcessor(
         report(JobSteps.PACK, 0.98)
         cleanup(outDir, keep)
         return JobResult(keep.map { name -> File(outDir, name).let { ResultFile(name, it.length(), sha256(it)) } })
+    }
+
+    /**
+     * Tách giọng các phần 20 phút song song, mỗi phần một bộ sherpa-onnx [PIECE_THREADS] luồng (G3: một bộ 16 luồng chạy
+     * lần lượt 5 phần của bài 2 giờ mất 622 s, 8 nhân không nhanh hơn 4 nhân). Ghi `phan_NN.json` đúng tên
+     * [ChunkedDiarization.pieceFile] với số cụm theo ngưỡng (0), như lượt đầu của luật min–max.
+     */
+    private fun prefetchPieces(
+        chunked: ChunkedDiarization,
+        request: DiarizeRequest,
+        settings: io.github.cozycode890.guzz.core.speaker.DiarizationSettings,
+        onProgress: (Double) -> Unit,
+    ) {
+        val sr = settings.sampleRate.toLong()
+        val bounds = io.github.cozycode890.guzz.core.speaker.PieceLinker.pieceBounds(
+            request.pcm.length() / 2, (settings.pieceMinutes * 60 * sr).toLong(), (settings.overlapSeconds * sr).toLong(),
+        )
+        if (bounds.size < 2) return
+        val workers = minOf(bounds.size, maxOf(1, threads / PIECE_THREADS))
+        if (workers < 2) return
+        val pieceSettings = settings.copy(threads = maxOf(1, threads / workers))
+        val pool = java.util.concurrent.Executors.newFixedThreadPool(workers)
+        val done = java.util.concurrent.atomic.AtomicInteger()
+        try {
+            val futures = bounds.mapIndexed { k, (a, b) ->
+                pool.submit {
+                    check()
+                    SherpaJvmPieceEngine(modelDir, pieceSettings).use { e ->
+                        val piece = e.runBlocking(request.pcm, a, b, 0) { _, _ -> }
+                        io.github.cozycode890.guzz.core.speaker.PieceJson.write(
+                            chunked.pieceFile(request, k, 0), io.github.cozycode890.guzz.core.speaker.PieceJson.from(piece, 0),
+                        )
+                    }
+                    onProgress(done.incrementAndGet().toDouble() / bounds.size)
+                }
+            }
+            for (f in futures) {
+                try {
+                    f.get()
+                } catch (e: java.util.concurrent.ExecutionException) {
+                    throw e.cause ?: e
+                }
+            }
+            log("Tách giọng song song: ${bounds.size} phần, $workers bộ × ${pieceSettings.threads} luồng")
+        } finally {
+            pool.shutdownNow()
+        }
     }
 
     /** Kiểm Dừng trước mỗi phần: sherpa-onnx không dừng được giữa một phần (Stage 1 D7). */
@@ -182,6 +234,9 @@ class JobProcessor(
 
     companion object {
         const val RAW_PCM_FILE = "goc.pcm"
+
+        /** Số luồng của mỗi bộ sherpa-onnx khi tách các phần song song (như điện thoại: 4 luồng). */
+        const val PIECE_THREADS = 4
         const val CLEAN_AUDIO_FILE = "sach.flac"
         const val EXTRACTED_AUDIO_FILE = "am_thanh.flac"
 

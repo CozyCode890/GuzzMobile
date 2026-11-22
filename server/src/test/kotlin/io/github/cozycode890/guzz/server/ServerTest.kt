@@ -175,6 +175,34 @@ class ServerTest {
         assertTrue(File(tmp, "out").list()!!.none { it.endsWith(".pcm") || ".phan_" in it })
     }
 
+    /** G3: tách các phần song song ra cùng lượt nói như chạy lần lượt (mỗi bộ sherpa-onnx cùng 4 luồng). */
+    @Test
+    fun `tách phần song song ra như chạy lần lượt`() {
+        needFfmpeg()
+        val small = DiarizationSettings(pieceMinutes = 20.0 / 60, overlapSeconds = 2.0)
+        val req = request("four.wav", speakerKey = "sk", clean = CleanSettings.OFF, runOnOriginal = true)
+            .copy(diarization = small, bounds = io.github.cozycode890.guzz.core.speaker.SpeakerBounds(1, 6))
+        fun run(threads: Int): DiarizationJson {
+            val reqFile = File(tmp, "req.json").apply { writeText(Protocol.json.encodeToString(JobRequest.serializer(), req)) }
+            val out = File(tmp, "out$threads")
+            val logs = ArrayList<String>()
+            val code = runCli(
+                arrayOf(
+                    "process", "--in", fourSpeakers.path, "--request", reqFile.path, "--out", out.path,
+                    "--status", File(tmp, "st$threads.json").path, "--models", models.path, "--threads", "$threads",
+                ),
+                log = { logs += it },
+            )
+            assertEquals(ExitCodes.OK, code, logs.joinToString("\n"))
+            if (threads >= 8) assertTrue(logs.any { "song song: 4 phần, 2 bộ" in it }, logs.joinToString("\n"))
+            return DiarizationJson.decode(File(out, "nguoi_noi.sk.json").readText())
+        }
+        val seq = run(4)
+        val par = run(8)
+        fun turns(d: DiarizationJson) = d.turns.map { LabeledTurn(it.start, it.end, it.speaker.removePrefix("SPEAKER_").toInt()) }
+        assertTurns(turns(seq), turns(par), tol = 0.0)
+    }
+
     /** C5: mã thoát và mã lỗi của từng trường hợp. */
     @Test
     fun `mã thoát của từng lỗi`() {
