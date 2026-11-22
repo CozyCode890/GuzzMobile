@@ -2,6 +2,26 @@
 
 Các bản phát hành của Guzz Mobile. Số phiên bản theo [SemVer](https://semver.org/lang/vi/); bản mới nhất ở trên.
 
+## 1.1.0
+
+### Xử lý âm thanh trên server riêng (tuỳ chọn)
+
+- Cài đặt → Server xử lý: gửi làm sạch, cắt đoạn và tách giọng lên server của bạn trên [Modal](https://modal.com), chạy
+  chính code của app (Kotlin) trong một `.jar`. Điện thoại vẫn tự gửi Google AI Studio; key và hạn mức không rời máy.
+- Bài 2 giờ trên Xiaomi 15T: khoảng 7 phút tới lúc có đủ đoạn và lượt nói (làm trên máy: 41 phút), máy gần như không nóng
+  thêm. Chi phí Modal khoảng $0,06–0,07 / bài 2 giờ (gói Starter có $30 tín dụng / tháng).
+- Server lỗi (mất mạng, token sai, server không trả lời, khác phiên bản…) thì app tự làm trên máy như trước; thông báo
+  ghi "Server lỗi (lý do), đang xử lý trên máy". Bấm Dừng thì job trên server bị xoá.
+- Video chỉ tách luồng âm thanh để tải lên (không giải mã); tải lên theo phần 8 MB, đứt mạng thì gửi lại phần đó, app bị
+  tắt giữa chừng thì làm tiếp từ phần đã có hoặc nối lại job đang chạy.
+- Server xoá tệp tải lên ngay khi xử lý xong, xoá kết quả khi điện thoại đã nhận, và mỗi ngày xoá mọi thứ cũ hơn 24 giờ.
+- Cách tạo server và token: `docs/server.md`.
+
+### Khác
+
+- Sự kiện STATUS (MacroDroid / Tasker) có thêm `step` (bước đang làm, gồm các bước của server).
+- Cài đặt `[SERVER]` (bật / tắt, URL) có trong `config.txt` xuất / nhập; token không xuất.
+
 ## 1.0.0
 
 Bản phát hành đầu tiên.

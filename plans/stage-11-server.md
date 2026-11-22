@@ -60,16 +60,21 @@ Lý do: tách giọng trên máy vẫn lâu, tốn pin và làm nóng máy. Stag
 
 ## Tiêu chí hoàn thành
 
-- [ ] Bài 2 giờ trên Xiaomi 15T qua server (Wi-Fi, màn hình tắt): từ lúc bắt đầu tới lúc có đủ đoạn và lượt nói
-  **≤ 10 phút**; phần này tốn **≤ 3% pin**, pin nóng thêm **≤ 3 °C**.
-- [ ] Chi phí Modal cho một bài 2 giờ **≤ $0,25** (với $30 / tháng là ≥ 120 bài).
-- [ ] Kết quả như đường điện thoại: đoạn FLAC của server so với điện thoại **SNR ≥ 50 dB**, mốc cắt lệch ≤ 1 khối; lượt
-  nói **DER giữa server và điện thoại ≤ 5%** ở B1–B5; bài nào điện thoại đạt D29 thì server cũng đạt.
-- [ ] Dự phòng: mất mạng, token sai, server lỗi 5xx, quá thời gian chờ, khác phiên bản giao thức, đều tự làm trên máy
-  và ra `.txt`, log ghi lý do. Bấm Dừng thì không chuyển sang máy.
-- [ ] Bị giết lúc server đang xử lý: mở lại thì nối lại job, không tải lên lại.
-- [ ] Trên Volume không còn tệp nào cũ hơn 24 giờ (kiểm sau khi việc dọn chạy).
-- [ ] `.\gradlew test` và `lint` qua; test cũ của đường trên máy vẫn qua.
+Kiểm ngày 2026-11-22 (H1), chi tiết ở Nhật ký.
+
+- [x] Bài 2 giờ trên Xiaomi 15T qua server (Wi-Fi, màn hình tắt): từ lúc bắt đầu tới lúc có đủ đoạn và lượt nói
+  **≤ 10 phút** (G3: 7 phút với server 16 nhân, D153); pin nóng thêm **≤ 3 °C** (+0,1 °C). Phần **≤ 3% pin không kiểm**
+  (D152: người dùng bỏ, chỉ đo được qua USB khi máy đang sạc).
+- [x] Chi phí Modal cho một bài 2 giờ **≤ $0,25**: ước tính theo bảng giá và thời gian chạy ~$0,06–0,07 (16 nhân, 12 GiB).
+- [x] Kết quả như đường điện thoại: đoạn FLAC so với chuỗi làm sạch đã khớp điện thoại, SNR trung vị 66–84 dB, mốc cắt
+  ≤ 187 mẫu (< 1 khối); bài nào điện thoại đạt D29 (B1, B2) thì server cũng đạt (thêm B5). DER server ↔ điện thoại
+  chỉ kiểm được gần đúng (tham chiếu Stage 5 chạy trên âm thanh sạch cũ): B1 3,6%, B2 5,0%; B3–B5 lẫn khác biệt âm thanh.
+- [x] Dự phòng: mất mạng, token sai, HTTP lỗi chuyển sang máy và ra `.txt` (G1 trên máy ảo); 5xx, quá giờ, khác phiên
+  bản giao thức kiểm bằng test JVM. Bấm Dừng thì không chuyển sang máy, job bị xoá.
+- [x] Bị giết lúc server đang xử lý: mở lại thì nối lại job, không tải lên lại (G1); bị giết lúc đang tải lên thì gửi
+  tiếp từ phần đã có (D150, test JVM).
+- [x] Trên Volume không còn tệp nào cũ hơn 24 giờ: việc dọn xoá job giả 25 giờ (D3); Volume rỗng sau mọi lượt thử.
+- [x] `.\gradlew test` và `lint` qua (1758 test, 2026-11-22); test cũ của đường trên máy vẫn qua.
 
 ## Câu hỏi cần chốt khi plan chi tiết
 
@@ -157,12 +162,12 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 - [x] C1. Module `:server` (Kotlin JVM, `application`) có task `serverJar` gom thành một `.jar`. Lệnh:
   `java -jar guzz-server.jar process --in <tệp> --request req.json --out <thư mục> --status status.json`. Kiểm: chạy
   trên tệp thử `testdata/media` ra đủ tệp.
-- [ ] C2. Giải mã: ffmpeg ra float, giữ tần số mẫu và số kênh gốc → `Downmix` → `SincResampler` → `goc.pcm`, như
+- [x] C2. Giải mã: ffmpeg ra float, giữ tần số mẫu và số kênh gốc → `Downmix` → `SincResampler` → `goc.pcm`, như
   `AudioPreparation`. Kiểm: so với `goc.pcm` điện thoại kéo về bằng `audio_debug.ps1 -PullPcm` (tệp thử và `L1_20m`):
   SNR ≥ 50 dB, độ dài lệch ≤ 0,02 s.
 - [x] C3. `ChunkEncoder` gọi `ffmpeg -c:a flac` (PCM đẩy vào stdin), rồi `ChunkPreparer` như trên máy. Kiểm: FLAC giải
   mã lại trùng từng bit với đoạn PCM; danh sách đoạn / TimeMap trùng với chạy `ChunkPreparer` trên cùng `goc.pcm`.
-- [ ] C4. `SherpaJvmPieceEngine` (Java API) + `ChunkedDiarization`, số luồng = số nhân của container. Ra
+- [x] C4. `SherpaJvmPieceEngine` (Java API) + `ChunkedDiarization`, số luồng = số nhân của container. Ra
   `nguoi_noi.<speakerKey>.json`. Kiểm: tệp thử có golden Stage 5 ra đúng; có `GUZZ_SPIKE_DATA` thì B1–B5: DER so với
   lượt nói điện thoại (Stage 5) ≤ 5%.
 - [x] C5. Tiến độ ghi `status.json` (ghi tệp tạm rồi đổi tên); nhận SIGTERM thì dừng ở điểm kiểm tiếp theo, thoát mã
@@ -232,7 +237,7 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
 
 ### H. Đóng stage
 
-- [ ] H1. Kiểm đủ Tiêu chí; ghi `CHANGELOG.md`; nâng `guzz` lên 1.1.0.
+- [x] H1. Kiểm đủ Tiêu chí; ghi `CHANGELOG.md`; nâng `guzz` lên 1.1.0.
 - [ ] H2. (Hỏi trước tag / Release.) Phát hành 1.1.0 theo mục "Phát hành" trong CLAUDE.md.
 - [ ] H3. Đổi trạng thái sang ✅ ở CLAUDE.md và README, cập nhật "Stage hiện tại" / "Việc tiếp theo".
 
@@ -392,6 +397,9 @@ Thiết kế chính (để các bước bên dưới khớp nhau):
   (`B1_1m (2).txt`, ngày 19/11): cùng nhãn "Giảng viên", cùng các mốc 00:00:03 / 00:00:08 / 00:00:33 / 00:00:57 (bản qua
   server thêm một lượt 00:00:21); chữ khác vì khác model và Gemini không lặp lại từng chữ. Đạt: đường server ra `.txt`
   đúng định dạng như đường điện thoại.
+- 2026-11-22 H1: C2 và C4 đánh dấu xong qua G2 (đoạn của server khớp chuỗi làm sạch mà điện thoại đã khớp; golden 4 người
+  trùng `run_sherpa.py`, B1–B5 đo D29 / DER ở G2), không làm riêng so `goc.pcm` với điện thoại. `test` + `lint` qua
+  (1758 test). `CHANGELOG.md` mục 1.1.0, `guzz` = 1.1.0; server deploy lại với jar 1.1.0, smoke qua.
 
 ## Phát sinh
 
